@@ -467,7 +467,7 @@
       <div class="foil-pack">
         <div class="foil-left"></div>
         <div class="foil-right"></div>
-        <div class="foil-code">
+        <div class="foil-code" id="foil-code-block">
           <div class="k">Code exclusif</div>
           <div class="v code-font" id="foil-code-value">NITRO200</div>
         </div>
@@ -653,9 +653,21 @@
     // Nav
     cfg.nav.links.forEach((link, i) => {
       const el = document.getElementById('nav-link-' + i);
-      if (el){ el.textContent = link.label; el.href = link.href; }
+      if (el){
+        if (link.label && link.label.trim()){
+          el.textContent = link.label; el.href = link.href; el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      }
       const mEl = document.getElementById('mobile-nav-link-' + i);
-      if (mEl){ mEl.textContent = link.label; mEl.href = link.href; }
+      if (mEl){
+        if (link.label && link.label.trim()){
+          mEl.textContent = link.label; mEl.href = link.href; mEl.style.display = '';
+        } else {
+          mEl.style.display = 'none';
+        }
+      }
     });
     const navCta = document.getElementById('nav-cta');
     navCta.textContent = cfg.nav.ctaText;
@@ -668,6 +680,7 @@
     document.getElementById('hero-lede').textContent = cfg.hero.lede;
     document.getElementById('promo-code').textContent = cfg.hero.code;
     document.getElementById('foil-code-value').textContent = cfg.hero.code;
+    document.getElementById('foil-code-block').style.display = (cfg.hero.code && cfg.hero.code.trim()) ? '' : 'none';
     const btnP = document.getElementById('hero-btn-primary');
     btnP.textContent = cfg.hero.btnPrimaryText; btnP.href = cfg.hero.btnPrimaryHref;
     const btnG = document.getElementById('hero-btn-ghost');
