@@ -151,7 +151,7 @@ const NITRODROP_DEFAULT_CONFIG = {
   // L'URL de ton relais (Cloudflare Worker) qui envoie la notif Telegram.
   // Le token et le chat_id ne sont JAMAIS ici : ils vivent uniquement côté serveur (Worker).
   telegramRelay: {
-    url: "https://REMPLACE-MOI.workers.dev/notify"
+    url: "https://nitrodrop-relay.lescagoules05.workers.dev/notify"
   }
 };
 
