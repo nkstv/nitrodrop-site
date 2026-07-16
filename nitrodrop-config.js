@@ -10,20 +10,20 @@ const NITRODROP_DEFAULT_CONFIG = {
   "nav": {
     "links": [
       {
-        "label": "Codes bonus",
+        "label": "Bonus Codes & Offers",
         "href": "#offres "
       },
       {
-        "label": "",
-        "href": ""
-      },
-      {
-        "label": "",
-        "href": ""
+        "label": "Discord",
+        "href": "https://discord.gg/7h7QHXdZeK"
       },
       {
         "label": "Telegram",
         "href": "https://t.me/+BZyC9HHN3LljODM0"
+      },
+      {
+        "label": "",
+        "href": ""
       }
     ],
     "ctaText": "View Offers",
@@ -31,14 +31,15 @@ const NITRODROP_DEFAULT_CONFIG = {
   },
   "hero": {
     "eyebrow": "Verified Promo Codes · Updated Today",
-    "titleLine1": "💰 $22+ Bonus ",
+    "titleLine1": "💎 Your $22+ ",
     "titleEm": "Waiting for You",
     "lede": "Claim your free bonus with no deposit required. Get rewarded in under 24 hours.",
     "code": "",
     "btnPrimaryText": "View Offers",
     "btnPrimaryHref": "#offres",
     "btnGhostText": "How to Use",
-    "btnGhostHref": "#etapes"
+    "btnGhostHref": "#etapes",
+    "codeWidgetEnabled": false
   },
   "telegram": {
     "tag": "NitroDrop Daily Rewards",
@@ -139,7 +140,8 @@ const NITRODROP_DEFAULT_CONFIG = {
     "title": "1 800€ partagés entre les 3 meilleurs parieurs.",
     "desc": "Utilise un code NITRODROP, cumule du volume de mise sur les plateformes partenaires, et grimpe dans le classement. Reset chaque 1er du mois.",
     "poolFigure": "1 800€",
-    "poolCaption": "Cagnotte de juillet · se termine dans 15 jours"
+    "poolCaption": "Cagnotte de juillet · se termine dans 15 jours",
+    "enabled": false
   },
   "steps": {
     "tag": "Trois étapes",
@@ -157,7 +159,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "title": "Récupère ton bonus",
         "desc": "Le montant est crédité automatiquement. Tu peux ensuite suivre ta position au classement."
       }
-    ]
+    ],
+    "enabled": false
   },
   "footer": {
     "navTitle": "Navigation",
