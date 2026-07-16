@@ -47,7 +47,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "codeWidgetEnabled": false
       },
       "telegram": {
-        "tag": "Drop Daily Rewards",
+        "tag": "Drop Cash Daily Rewards",
         "title": "Daily giveaways are waiting for you on Telegram",
         "desc": "Join our Telegram community to discover daily giveaways, exclusive bonuses, updates, and new opportunities to earn rewards.",
         "btnText": "Join Telegram →",
@@ -74,7 +74,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": true
         },
         {
           "featured": false,
@@ -91,7 +92,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": true
         },
         {
           "featured": false,
@@ -108,7 +110,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": true
         },
         {
           "featured": false,
@@ -125,7 +128,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": false,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": false
         }
       ],
       "tickerSettings": {
@@ -304,7 +308,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": true
         },
         {
           "featured": false,
@@ -321,7 +326,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": true
         },
         {
           "featured": false,
@@ -338,7 +344,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": true
         },
         {
           "featured": false,
@@ -355,7 +362,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": false,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": false
         }
       ],
       "tickerSettings": {
