@@ -200,6 +200,10 @@
     <div class="field"><label>Titre</label><input type="text" id="modal-confirmTitle"></div>
     <div class="field"><label>Texte de confirmation</label><textarea id="modal-confirmTextTemplate"></textarea></div>
     <div class="field"><label>Note en petit texte</label><input type="text" id="modal-confirmNote"></div>
+    <div class="row">
+      <div class="field"><label>Texte du bouton Telegram</label><input type="text" id="modal-confirmTelegramText"></div>
+      <div class="field"><label>Lien du bouton Telegram</label><input type="text" id="modal-confirmTelegramHref"></div>
+    </div>
   </div>
 
   <!-- TELEGRAM RELAY -->
@@ -308,6 +312,12 @@
       const in2 = el('input', {type:'text', id:`offer-sub-${i}`, value: offer.sub}); f2.appendChild(in2);
       row1.appendChild(f1); row1.appendChild(f2);
       block.appendChild(row1);
+
+      const rowMark = el('div', {class:'row'});
+      const fMark = el('div', {class:'field'}); fMark.appendChild(el('label', {text:'Lettre affichée dans le carré'}));
+      const inMark = el('input', {type:'text', id:`offer-mark-${i}`, value: offer.mark, maxlength:'2'}); fMark.appendChild(inMark);
+      rowMark.appendChild(fMark);
+      block.appendChild(rowMark);
 
       const row2 = el('div', {class:'row'});
       const f3 = el('div', {class:'field'}); f3.appendChild(el('label', {text:'Montant du bonus'}));
@@ -423,6 +433,8 @@
     document.getElementById('modal-confirmTitle').value = cfg.modal.confirmTitle;
     document.getElementById('modal-confirmTextTemplate').value = cfg.modal.confirmTextTemplate;
     document.getElementById('modal-confirmNote').value = cfg.modal.confirmNote;
+    document.getElementById('modal-confirmTelegramText').value = cfg.modal.confirmTelegramText || '';
+    document.getElementById('modal-confirmTelegramHref').value = cfg.modal.confirmTelegramHref || '';
 
     document.getElementById('relay-url').value = cfg.telegramRelay.url;
 
@@ -468,6 +480,7 @@
       featured: document.getElementById(`offer-featured-${i}`).checked,
       name: document.getElementById(`offer-name-${i}`).value,
       sub: document.getElementById(`offer-sub-${i}`).value,
+      mark: document.getElementById(`offer-mark-${i}`).value,
       bonusAmount: document.getElementById(`offer-bonusAmount-${i}`).value,
       bonusSuffix: document.getElementById(`offer-bonusSuffix-${i}`).value,
       desc: document.getElementById(`offer-desc-${i}`).value,
@@ -508,6 +521,8 @@
     cfg.modal.confirmTitle = document.getElementById('modal-confirmTitle').value;
     cfg.modal.confirmTextTemplate = document.getElementById('modal-confirmTextTemplate').value;
     cfg.modal.confirmNote = document.getElementById('modal-confirmNote').value;
+    cfg.modal.confirmTelegramText = document.getElementById('modal-confirmTelegramText').value;
+    cfg.modal.confirmTelegramHref = document.getElementById('modal-confirmTelegramHref').value;
 
     cfg.telegramRelay.url = document.getElementById('relay-url').value;
   }

@@ -603,6 +603,7 @@
       <p id="confirm-text">Ton bonus sera envoyé sous moins de 24h après vérification de ton inscription sur Voltra.</p>
       <div class="countdown code-font" id="countdown">24:00:00</div>
       <p class="modal-note" id="confirm-note">Un email de confirmation t'a été envoyé. Tu peux fermer cette fenêtre.</p>
+      <a href="#" class="tg-btn" id="confirm-telegram-btn" style="margin-top:20px; width:100%; justify-content:center;">Rejoindre le canal Telegram</a>
     </div>
   </div>
 </div>
@@ -695,6 +696,9 @@
     document.getElementById('claim-submit-btn').textContent = cfg.modal.submitText;
     document.getElementById('confirm-title').textContent = cfg.modal.confirmTitle;
     document.getElementById('confirm-note').textContent = cfg.modal.confirmNote;
+    const confirmTgBtn = document.getElementById('confirm-telegram-btn');
+    confirmTgBtn.textContent = cfg.modal.confirmTelegramText || 'Rejoindre le canal Telegram';
+    confirmTgBtn.href = cfg.modal.confirmTelegramHref || '#';
   }
 
   // ---------- Génère les cartes d'offres depuis la config ----------
