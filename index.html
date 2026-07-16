@@ -278,6 +278,14 @@
     font-size:13px;
   }
   .offer-code-row .c{color:var(--green); font-weight:700;}
+  .offer-code-row .code-right{display:flex; align-items:center; gap:10px;}
+  .offer-copy-btn{
+    background:var(--bg-raise); border:1px solid var(--line-strong); color:var(--text-dim);
+    font-size:11.5px; font-weight:700; padding:5px 10px; border-radius:7px; cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .offer-copy-btn:hover{color:var(--text); border-color:var(--green);}
+  .offer-copy-btn.copied{background:var(--green); color:#08130a; border-color:transparent;}
   .offer-btns{display:flex; flex-direction:column; gap:10px;}
   .offer-cta{
     text-align:center; padding:13px; border-radius:10px; font-weight:700; font-size:14px;
@@ -769,13 +777,31 @@
         </div>
         <div class="offer-bonus">${escapeHtml(offer.bonusAmount)} <small>${escapeHtml(offer.bonusSuffix)}</small></div>
         <div class="offer-desc">${escapeHtml(offer.desc)}</div>
-        <div class="offer-code-row"><span>Code</span><span class="c code-font">${escapeHtml(offer.code)}</span></div>
+        <div class="offer-code-row">
+          <span>Code</span>
+          <div class="code-right">
+            <span class="c code-font">${escapeHtml(offer.code)}</span>
+            <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}">Copier</button>
+          </div>
+        </div>
         <div class="offer-btns">
           <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta secondary${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
           <a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>
         </div>
       `;
       grid.appendChild(card);
+    });
+
+    grid.querySelectorAll('[data-copy-code]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.dataset.copyCode;
+        navigator.clipboard.writeText(code).then(() => {
+          const original = btn.textContent;
+          btn.textContent = 'Copié !';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+        });
+      });
     });
 
     grid.querySelectorAll('[data-claim-idx]').forEach(btn => {
