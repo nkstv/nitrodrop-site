@@ -68,6 +68,11 @@
     padding:14px 16px; font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-bottom:22px;
   }
   .note strong{color:var(--violet);}
+  .lang-tab{
+    background:var(--bg-raise); border:1px solid var(--line-strong); color:var(--text-dim);
+    font-weight:700; font-size:13.5px; padding:10px 18px; border-radius:9px; cursor:pointer;
+  }
+  .lang-tab.active{background:var(--violet); color:#fff; border-color:transparent;}
 </style>
 </head>
 <body>
@@ -87,6 +92,22 @@
     <strong>Note :</strong> les modifications sont stockées dans le navigateur (localStorage) et lues par index.html.
     Ouvre les deux fichiers depuis le même dossier via un petit serveur local (ex. <code>python3 -m http.server</code>) plutôt qu'en double-cliquant dessus,
     sinon certains navigateurs bloquent le stockage local pour les fichiers ouverts en <code>file://</code>.
+  </div>
+
+  <!-- LANGUES -->
+  <div class="panel" style="border-color:rgba(139,92,255,0.4);">
+    <h2>Langues</h2>
+    <div class="sub">Modifie les textes séparément pour chaque langue. Bascule l'onglet ci-dessous pour éditer l'anglais ou le français — ils sont indépendants (rien n'est traduit automatiquement).</div>
+    <div style="display:flex; gap:10px; margin-bottom:14px;">
+      <button type="button" class="lang-tab active" data-lang="en" onclick="switchAdminLang('en')">🇬🇧 English</button>
+      <button type="button" class="lang-tab" data-lang="fr" onclick="switchAdminLang('fr')">🇫🇷 Français</button>
+    </div>
+    <div class="field"><label>Langue affichée par défaut aux visiteurs</label>
+      <select id="defaultLang" onchange="cfg.defaultLang = this.value;">
+        <option value="en">Anglais</option>
+        <option value="fr">Français</option>
+      </select>
+    </div>
   </div>
 
   <!-- MENU / HEADER -->
@@ -324,6 +345,32 @@
 
   let cfg = nitrodropLoadConfig();
 
+  // ---------- Migration vers la structure multilingue (une seule fois, transparente) ----------
+  function migrateToI18n(cfg){
+    if (cfg.content) return;
+    const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
+                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle'];
+    const en = {};
+    textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
+    cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
+    cfg.defaultLang = cfg.defaultLang || 'en';
+  }
+  migrateToI18n(cfg);
+
+  let activeLang = 'en';
+  let content = cfg.content[activeLang];
+
+  function switchAdminLang(lang){
+    if (lang === activeLang) return;
+    readForm(); // sauvegarde les changements de l'onglet actuel avant de changer
+    activeLang = lang;
+    content = cfg.content[activeLang];
+    fillForm();
+    document.querySelectorAll('.lang-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === activeLang);
+    });
+  }
+
   function el(tag, attrs, children){
     const e = document.createElement(tag);
     Object.entries(attrs || {}).forEach(([k,v]) => { if (k === 'text') e.textContent = v; else e.setAttribute(k, v); });
@@ -335,7 +382,7 @@
   function renderNavLinks(){
     const container = document.getElementById('nav-links-fields');
     container.innerHTML = '';
-    cfg.nav.links.forEach((link, i) => {
+    content.nav.links.forEach((link, i) => {
       const row = el('div', {class:'row'});
       const f1 = el('div', {class:'field'});
       f1.appendChild(el('label', {text:`Lien ${i+1} — texte`}));
@@ -353,7 +400,7 @@
   function renderOffersFields(){
     const container = document.getElementById('offers-fields');
     container.innerHTML = '';
-    cfg.offers.forEach((offer, i) => {
+    content.offers.forEach((offer, i) => {
       const block = el('div', {class:'offer-block'});
       block.appendChild(el('h3', {text:`Offre ${i+1}`}));
 
@@ -427,7 +474,7 @@
   function renderTickerFields(){
     const container = document.getElementById('ticker-fields');
     container.innerHTML = '';
-    cfg.ticker.forEach((item, i) => {
+    content.ticker.forEach((item, i) => {
       const row = el('div', {class:'ticker-row'});
       const in1 = el('input', {type:'text', id:`ticker-name-${i}`, value: item.name});
       const in2 = el('input', {type:'text', id:`ticker-message-${i}`, value: item.message});
@@ -440,7 +487,7 @@
     const container = document.getElementById('footer-links-fields');
     container.innerHTML = '';
     const rowNav = el('div', {class:'row'});
-    cfg.footer.navLinks.forEach((link, i) => {
+    content.footer.navLinks.forEach((link, i) => {
       const f = el('div', {class:'field'});
       f.appendChild(el('label', {text:`Colonne 1 — lien ${i+1}`}));
       const wrap = el('div', {style:'display:flex; gap:6px;'});
@@ -453,7 +500,7 @@
     container.appendChild(rowNav);
 
     const rowCom = el('div', {class:'row'});
-    cfg.footer.communityLinks.forEach((link, i) => {
+    content.footer.communityLinks.forEach((link, i) => {
       const f = el('div', {class:'field'});
       f.appendChild(el('label', {text:`Colonne 2 — lien ${i+1}`}));
       const wrap = el('div', {style:'display:flex; gap:6px;'});
@@ -468,73 +515,74 @@
 
   // ---------- Remplit tous les champs simples depuis cfg ----------
   function fillForm(){
-    document.getElementById('brand-text1').value = (cfg.brand && cfg.brand.text1) || 'NITRO';
-    document.getElementById('brand-text2').value = (cfg.brand && cfg.brand.text2) || 'DROP';
-    document.getElementById('page-title').value = cfg.pageTitle || 'NITRODROP — Codes bonus crypto vérifiés';
+    document.getElementById('defaultLang').value = cfg.defaultLang || 'en';
+    document.getElementById('brand-text1').value = (content.brand && content.brand.text1) || 'NITRO';
+    document.getElementById('brand-text2').value = (content.brand && content.brand.text2) || 'DROP';
+    document.getElementById('page-title').value = content.pageTitle || 'NITRODROP — Codes bonus crypto vérifiés';
 
-    document.getElementById('nav-ctaText').value = cfg.nav.ctaText;
-    document.getElementById('nav-ctaHref').value = cfg.nav.ctaHref;
+    document.getElementById('nav-ctaText').value = content.nav.ctaText;
+    document.getElementById('nav-ctaHref').value = content.nav.ctaHref;
 
-    document.getElementById('hero-eyebrow').value = cfg.hero.eyebrow;
-    document.getElementById('hero-titleLine1').value = cfg.hero.titleLine1;
-    document.getElementById('hero-titleEm').value = cfg.hero.titleEm;
-    document.getElementById('hero-lede').value = cfg.hero.lede;
-    document.getElementById('hero-code').value = cfg.hero.code;
-    document.getElementById('hero-codeWidgetEnabled').checked = cfg.hero.codeWidgetEnabled !== false;
-    document.getElementById('hero-btnPrimaryText').value = cfg.hero.btnPrimaryText;
-    document.getElementById('hero-btnPrimaryHref').value = cfg.hero.btnPrimaryHref;
-    document.getElementById('hero-btnGhostText').value = cfg.hero.btnGhostText;
-    document.getElementById('hero-btnGhostHref').value = cfg.hero.btnGhostHref;
+    document.getElementById('hero-eyebrow').value = content.hero.eyebrow;
+    document.getElementById('hero-titleLine1').value = content.hero.titleLine1;
+    document.getElementById('hero-titleEm').value = content.hero.titleEm;
+    document.getElementById('hero-lede').value = content.hero.lede;
+    document.getElementById('hero-code').value = content.hero.code;
+    document.getElementById('hero-codeWidgetEnabled').checked = content.hero.codeWidgetEnabled !== false;
+    document.getElementById('hero-btnPrimaryText').value = content.hero.btnPrimaryText;
+    document.getElementById('hero-btnPrimaryHref').value = content.hero.btnPrimaryHref;
+    document.getElementById('hero-btnGhostText').value = content.hero.btnGhostText;
+    document.getElementById('hero-btnGhostHref').value = content.hero.btnGhostHref;
 
-    document.getElementById('tg-tag').value = cfg.telegram.tag;
-    document.getElementById('tg-title').value = cfg.telegram.title;
-    document.getElementById('tg-desc').value = cfg.telegram.desc;
-    document.getElementById('tg-btnText').value = cfg.telegram.btnText;
-    document.getElementById('tg-btnHref').value = cfg.telegram.btnHref;
+    document.getElementById('tg-tag').value = content.telegram.tag;
+    document.getElementById('tg-title').value = content.telegram.title;
+    document.getElementById('tg-desc').value = content.telegram.desc;
+    document.getElementById('tg-btnText').value = content.telegram.btnText;
+    document.getElementById('tg-btnHref').value = content.telegram.btnHref;
 
-    document.getElementById('offersSection-tag').value = cfg.offersSection.tag;
-    document.getElementById('offersSection-title').value = cfg.offersSection.title;
-    document.getElementById('offersSection-desc').value = cfg.offersSection.desc;
+    document.getElementById('offersSection-tag').value = content.offersSection.tag;
+    document.getElementById('offersSection-title').value = content.offersSection.title;
+    document.getElementById('offersSection-desc').value = content.offersSection.desc;
 
-    document.getElementById('lb-enabled').checked = cfg.leaderboard.enabled !== false;
-    document.getElementById('lb-tag').value = cfg.leaderboard.tag;
-    document.getElementById('lb-title').value = cfg.leaderboard.title;
-    document.getElementById('lb-desc').value = cfg.leaderboard.desc;
-    document.getElementById('lb-poolFigure').value = cfg.leaderboard.poolFigure;
-    document.getElementById('lb-poolCaption').value = cfg.leaderboard.poolCaption;
+    document.getElementById('lb-enabled').checked = content.leaderboard.enabled !== false;
+    document.getElementById('lb-tag').value = content.leaderboard.tag;
+    document.getElementById('lb-title').value = content.leaderboard.title;
+    document.getElementById('lb-desc').value = content.leaderboard.desc;
+    document.getElementById('lb-poolFigure').value = content.leaderboard.poolFigure;
+    document.getElementById('lb-poolCaption').value = content.leaderboard.poolCaption;
 
-    document.getElementById('steps-enabled').checked = cfg.steps.enabled !== false;
-    document.getElementById('steps-tag').value = cfg.steps.tag;
-    document.getElementById('steps-title').value = cfg.steps.title;
-    cfg.steps.items.forEach((step, i) => {
+    document.getElementById('steps-enabled').checked = content.steps.enabled !== false;
+    document.getElementById('steps-tag').value = content.steps.tag;
+    document.getElementById('steps-title').value = content.steps.title;
+    content.steps.items.forEach((step, i) => {
       document.getElementById(`step-title-${i}`).value = step.title;
       document.getElementById(`step-desc-${i}`).value = step.desc;
     });
 
-    document.getElementById('footer-navTitle').value = cfg.footer.navTitle;
-    document.getElementById('footer-communityTitle').value = cfg.footer.communityTitle;
-    document.getElementById('footer-disclaimer').value = cfg.footer.disclaimer;
+    document.getElementById('footer-navTitle').value = content.footer.navTitle;
+    document.getElementById('footer-communityTitle').value = content.footer.communityTitle;
+    document.getElementById('footer-disclaimer').value = content.footer.disclaimer;
 
-    document.getElementById('modal-gateTag').value = cfg.modal.gateTag || '';
-    document.getElementById('modal-gateSubTemplate').value = cfg.modal.gateSubTemplate;
-    document.getElementById('modal-gateYesText').value = cfg.modal.gateYesText;
-    document.getElementById('modal-gateNoText').value = cfg.modal.gateNoText;
-    document.getElementById('modal-formTag').value = cfg.modal.formTag;
-    document.getElementById('modal-formSubTemplate').value = cfg.modal.formSubTemplate;
-    document.getElementById('modal-emailLabel').value = cfg.modal.emailLabel;
-    document.getElementById('modal-pseudoLabel').value = cfg.modal.pseudoLabel;
-    document.getElementById('modal-emailPlaceholder').value = cfg.modal.emailPlaceholder || '';
-    document.getElementById('modal-pseudoPlaceholder').value = cfg.modal.pseudoPlaceholder || '';
-    document.getElementById('modal-submitText').value = cfg.modal.submitText;
-    document.getElementById('modal-confirmTitle').value = cfg.modal.confirmTitle;
-    document.getElementById('modal-confirmTextTemplate').value = cfg.modal.confirmTextTemplate;
-    document.getElementById('modal-confirmNote').value = cfg.modal.confirmNote;
-    document.getElementById('modal-confirmTelegramText').value = cfg.modal.confirmTelegramText || '';
-    document.getElementById('modal-confirmTelegramHref').value = cfg.modal.confirmTelegramHref || '';
+    document.getElementById('modal-gateTag').value = content.modal.gateTag || '';
+    document.getElementById('modal-gateSubTemplate').value = content.modal.gateSubTemplate;
+    document.getElementById('modal-gateYesText').value = content.modal.gateYesText;
+    document.getElementById('modal-gateNoText').value = content.modal.gateNoText;
+    document.getElementById('modal-formTag').value = content.modal.formTag;
+    document.getElementById('modal-formSubTemplate').value = content.modal.formSubTemplate;
+    document.getElementById('modal-emailLabel').value = content.modal.emailLabel;
+    document.getElementById('modal-pseudoLabel').value = content.modal.pseudoLabel;
+    document.getElementById('modal-emailPlaceholder').value = content.modal.emailPlaceholder || '';
+    document.getElementById('modal-pseudoPlaceholder').value = content.modal.pseudoPlaceholder || '';
+    document.getElementById('modal-submitText').value = content.modal.submitText;
+    document.getElementById('modal-confirmTitle').value = content.modal.confirmTitle;
+    document.getElementById('modal-confirmTextTemplate').value = content.modal.confirmTextTemplate;
+    document.getElementById('modal-confirmNote').value = content.modal.confirmNote;
+    document.getElementById('modal-confirmTelegramText').value = content.modal.confirmTelegramText || '';
+    document.getElementById('modal-confirmTelegramHref').value = content.modal.confirmTelegramHref || '';
 
     document.getElementById('relay-url').value = cfg.telegramRelay.url;
 
-    document.getElementById('ticker-verbText').value = cfg.tickerSettings.verbText;
+    document.getElementById('ticker-verbText').value = content.tickerSettings.verbText;
 
     renderNavLinks();
     renderOffersFields();
@@ -544,55 +592,55 @@
 
   // ---------- Lit tous les champs et reconstruit cfg ----------
   function readForm(){
-    cfg.brand = cfg.brand || {};
-    cfg.brand.text1 = document.getElementById('brand-text1').value;
-    cfg.brand.text2 = document.getElementById('brand-text2').value;
-    cfg.pageTitle = document.getElementById('page-title').value;
+    content.brand = content.brand || {};
+    content.brand.text1 = document.getElementById('brand-text1').value;
+    content.brand.text2 = document.getElementById('brand-text2').value;
+    content.pageTitle = document.getElementById('page-title').value;
 
-    cfg.nav.links = cfg.nav.links.map((link, i) => ({
+    content.nav.links = content.nav.links.map((link, i) => ({
       label: document.getElementById(`nav-link-label-${i}`).value,
       href: document.getElementById(`nav-link-href-${i}`).value
     }));
-    cfg.nav.ctaText = document.getElementById('nav-ctaText').value;
-    cfg.nav.ctaHref = document.getElementById('nav-ctaHref').value;
+    content.nav.ctaText = document.getElementById('nav-ctaText').value;
+    content.nav.ctaHref = document.getElementById('nav-ctaHref').value;
 
-    cfg.hero.eyebrow = document.getElementById('hero-eyebrow').value;
-    cfg.hero.titleLine1 = document.getElementById('hero-titleLine1').value;
-    cfg.hero.titleEm = document.getElementById('hero-titleEm').value;
-    cfg.hero.lede = document.getElementById('hero-lede').value;
-    cfg.hero.code = document.getElementById('hero-code').value;
-    cfg.hero.codeWidgetEnabled = document.getElementById('hero-codeWidgetEnabled').checked;
-    cfg.hero.btnPrimaryText = document.getElementById('hero-btnPrimaryText').value;
-    cfg.hero.btnPrimaryHref = document.getElementById('hero-btnPrimaryHref').value;
-    cfg.hero.btnGhostText = document.getElementById('hero-btnGhostText').value;
-    cfg.hero.btnGhostHref = document.getElementById('hero-btnGhostHref').value;
+    content.hero.eyebrow = document.getElementById('hero-eyebrow').value;
+    content.hero.titleLine1 = document.getElementById('hero-titleLine1').value;
+    content.hero.titleEm = document.getElementById('hero-titleEm').value;
+    content.hero.lede = document.getElementById('hero-lede').value;
+    content.hero.code = document.getElementById('hero-code').value;
+    content.hero.codeWidgetEnabled = document.getElementById('hero-codeWidgetEnabled').checked;
+    content.hero.btnPrimaryText = document.getElementById('hero-btnPrimaryText').value;
+    content.hero.btnPrimaryHref = document.getElementById('hero-btnPrimaryHref').value;
+    content.hero.btnGhostText = document.getElementById('hero-btnGhostText').value;
+    content.hero.btnGhostHref = document.getElementById('hero-btnGhostHref').value;
 
-    cfg.telegram.tag = document.getElementById('tg-tag').value;
-    cfg.telegram.title = document.getElementById('tg-title').value;
-    cfg.telegram.desc = document.getElementById('tg-desc').value;
-    cfg.telegram.btnText = document.getElementById('tg-btnText').value;
-    cfg.telegram.btnHref = document.getElementById('tg-btnHref').value;
+    content.telegram.tag = document.getElementById('tg-tag').value;
+    content.telegram.title = document.getElementById('tg-title').value;
+    content.telegram.desc = document.getElementById('tg-desc').value;
+    content.telegram.btnText = document.getElementById('tg-btnText').value;
+    content.telegram.btnHref = document.getElementById('tg-btnHref').value;
 
-    cfg.offersSection.tag = document.getElementById('offersSection-tag').value;
-    cfg.offersSection.title = document.getElementById('offersSection-title').value;
-    cfg.offersSection.desc = document.getElementById('offersSection-desc').value;
+    content.offersSection.tag = document.getElementById('offersSection-tag').value;
+    content.offersSection.title = document.getElementById('offersSection-title').value;
+    content.offersSection.desc = document.getElementById('offersSection-desc').value;
 
-    cfg.leaderboard.enabled = document.getElementById('lb-enabled').checked;
-    cfg.leaderboard.tag = document.getElementById('lb-tag').value;
-    cfg.leaderboard.title = document.getElementById('lb-title').value;
-    cfg.leaderboard.desc = document.getElementById('lb-desc').value;
-    cfg.leaderboard.poolFigure = document.getElementById('lb-poolFigure').value;
-    cfg.leaderboard.poolCaption = document.getElementById('lb-poolCaption').value;
+    content.leaderboard.enabled = document.getElementById('lb-enabled').checked;
+    content.leaderboard.tag = document.getElementById('lb-tag').value;
+    content.leaderboard.title = document.getElementById('lb-title').value;
+    content.leaderboard.desc = document.getElementById('lb-desc').value;
+    content.leaderboard.poolFigure = document.getElementById('lb-poolFigure').value;
+    content.leaderboard.poolCaption = document.getElementById('lb-poolCaption').value;
 
-    cfg.steps.enabled = document.getElementById('steps-enabled').checked;
-    cfg.steps.tag = document.getElementById('steps-tag').value;
-    cfg.steps.title = document.getElementById('steps-title').value;
-    cfg.steps.items = cfg.steps.items.map((step, i) => ({
+    content.steps.enabled = document.getElementById('steps-enabled').checked;
+    content.steps.tag = document.getElementById('steps-tag').value;
+    content.steps.title = document.getElementById('steps-title').value;
+    content.steps.items = content.steps.items.map((step, i) => ({
       title: document.getElementById(`step-title-${i}`).value,
       desc: document.getElementById(`step-desc-${i}`).value
     }));
 
-    cfg.offers = cfg.offers.map((offer, i) => ({
+    content.offers = content.offers.map((offer, i) => ({
       ...offer,
       featured: document.getElementById(`offer-featured-${i}`).checked,
       name: document.getElementById(`offer-name-${i}`).value,
@@ -610,41 +658,41 @@
       badge: document.getElementById(`offer-featured-${i}`).checked ? (offer.badge || 'TOP') : offer.badge
     }));
 
-    cfg.tickerSettings.verbText = document.getElementById('ticker-verbText').value;
+    content.tickerSettings.verbText = document.getElementById('ticker-verbText').value;
 
-    cfg.ticker = cfg.ticker.map((item, i) => ({
+    content.ticker = content.ticker.map((item, i) => ({
       name: document.getElementById(`ticker-name-${i}`).value,
       message: document.getElementById(`ticker-message-${i}`).value
     }));
 
-    cfg.footer.navTitle = document.getElementById('footer-navTitle').value;
-    cfg.footer.navLinks = cfg.footer.navLinks.map((link, i) => ({
+    content.footer.navTitle = document.getElementById('footer-navTitle').value;
+    content.footer.navLinks = content.footer.navLinks.map((link, i) => ({
       label: document.getElementById(`footer-nav-label-${i}`).value,
       href: document.getElementById(`footer-nav-href-${i}`).value
     }));
-    cfg.footer.communityTitle = document.getElementById('footer-communityTitle').value;
-    cfg.footer.communityLinks = cfg.footer.communityLinks.map((link, i) => ({
+    content.footer.communityTitle = document.getElementById('footer-communityTitle').value;
+    content.footer.communityLinks = content.footer.communityLinks.map((link, i) => ({
       label: document.getElementById(`footer-community-label-${i}`).value,
       href: document.getElementById(`footer-community-href-${i}`).value
     }));
-    cfg.footer.disclaimer = document.getElementById('footer-disclaimer').value;
+    content.footer.disclaimer = document.getElementById('footer-disclaimer').value;
 
-    cfg.modal.gateTag = document.getElementById('modal-gateTag').value;
-    cfg.modal.gateSubTemplate = document.getElementById('modal-gateSubTemplate').value;
-    cfg.modal.gateYesText = document.getElementById('modal-gateYesText').value;
-    cfg.modal.gateNoText = document.getElementById('modal-gateNoText').value;
-    cfg.modal.formTag = document.getElementById('modal-formTag').value;
-    cfg.modal.formSubTemplate = document.getElementById('modal-formSubTemplate').value;
-    cfg.modal.emailLabel = document.getElementById('modal-emailLabel').value;
-    cfg.modal.pseudoLabel = document.getElementById('modal-pseudoLabel').value;
-    cfg.modal.emailPlaceholder = document.getElementById('modal-emailPlaceholder').value;
-    cfg.modal.pseudoPlaceholder = document.getElementById('modal-pseudoPlaceholder').value;
-    cfg.modal.submitText = document.getElementById('modal-submitText').value;
-    cfg.modal.confirmTitle = document.getElementById('modal-confirmTitle').value;
-    cfg.modal.confirmTextTemplate = document.getElementById('modal-confirmTextTemplate').value;
-    cfg.modal.confirmNote = document.getElementById('modal-confirmNote').value;
-    cfg.modal.confirmTelegramText = document.getElementById('modal-confirmTelegramText').value;
-    cfg.modal.confirmTelegramHref = document.getElementById('modal-confirmTelegramHref').value;
+    content.modal.gateTag = document.getElementById('modal-gateTag').value;
+    content.modal.gateSubTemplate = document.getElementById('modal-gateSubTemplate').value;
+    content.modal.gateYesText = document.getElementById('modal-gateYesText').value;
+    content.modal.gateNoText = document.getElementById('modal-gateNoText').value;
+    content.modal.formTag = document.getElementById('modal-formTag').value;
+    content.modal.formSubTemplate = document.getElementById('modal-formSubTemplate').value;
+    content.modal.emailLabel = document.getElementById('modal-emailLabel').value;
+    content.modal.pseudoLabel = document.getElementById('modal-pseudoLabel').value;
+    content.modal.emailPlaceholder = document.getElementById('modal-emailPlaceholder').value;
+    content.modal.pseudoPlaceholder = document.getElementById('modal-pseudoPlaceholder').value;
+    content.modal.submitText = document.getElementById('modal-submitText').value;
+    content.modal.confirmTitle = document.getElementById('modal-confirmTitle').value;
+    content.modal.confirmTextTemplate = document.getElementById('modal-confirmTextTemplate').value;
+    content.modal.confirmNote = document.getElementById('modal-confirmNote').value;
+    content.modal.confirmTelegramText = document.getElementById('modal-confirmTelegramText').value;
+    content.modal.confirmTelegramHref = document.getElementById('modal-confirmTelegramHref').value;
 
     cfg.telegramRelay.url = document.getElementById('relay-url').value;
   }

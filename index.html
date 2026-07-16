@@ -81,6 +81,12 @@
     transition:box-shadow .2s ease, transform .2s ease;
   }
   .nav-cta:hover{box-shadow:0 0 26px rgba(182,255,60,0.45); transform:translateY(-1px);}
+  .lang-switch{display:flex; gap:4px; background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:8px; padding:3px;}
+  .lang-switch-btn{
+    background:none; border:none; color:var(--text-dim); font-weight:700; font-size:12px;
+    padding:6px 10px; border-radius:6px; cursor:pointer; letter-spacing:0.03em;
+  }
+  .lang-switch-btn.active{background:var(--green); color:#08130a;}
   .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer;}
   .burger span{width:22px; height:2px; background:var(--text); transition:transform .2s ease, opacity .2s ease;}
   .mobile-nav{
@@ -440,10 +446,18 @@
       <a href="#etapes" id="nav-link-2">Comment ça marche</a>
       <a href="#" id="nav-link-3">Discord</a>
     </div>
+    <div class="lang-switch">
+      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
+      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
+    </div>
     <a href="#offres" class="nav-cta" id="nav-cta">Voir les codes</a>
     <button class="burger" aria-label="Menu" id="burger-btn"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-nav" id="mobile-nav">
+    <div class="lang-switch" style="padding:14px 32px; border-bottom:1px solid var(--line);">
+      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
+      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
+    </div>
     <a href="#offres" id="mobile-nav-link-0">Codes bonus</a>
     <a href="#classement" id="mobile-nav-link-1">Classement</a>
     <a href="#etapes" id="mobile-nav-link-2">Comment ça marche</a>
@@ -637,6 +651,22 @@
 <script src="nitrodrop-config.js"></script>
 <script>
   const CONFIG = nitrodropLoadConfig();
+
+  // ---------- Migration vers la structure multilingue (une seule fois, transparente) ----------
+  (function migrateToI18n(cfg){
+    if (cfg.content) return;
+    const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
+                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle'];
+    const en = {};
+    textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
+    cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
+    cfg.defaultLang = cfg.defaultLang || 'en';
+  })(CONFIG);
+
+  let currentLang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
+  if (!CONFIG.content[currentLang]) currentLang = CONFIG.defaultLang || 'en';
+
+  function getActive(){ return CONFIG.content[currentLang]; }
 
   function escapeHtml(str){
     return String(str)
@@ -846,12 +876,12 @@
     currentSignupUrl = signupUrl || '#';
     document.getElementById('gate-platform-name').innerText = platform;
     document.getElementById('gate-sub').innerHTML =
-      fillTemplate(escapeHtml(CONFIG.modal.gateSubTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
+      fillTemplate(escapeHtml(getActive().modal.gateSubTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
     document.getElementById('modal-platform-name').innerText = platform;
     document.getElementById('form-sub').innerHTML =
-      fillTemplate(escapeHtml(CONFIG.modal.formSubTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
+      fillTemplate(escapeHtml(getActive().modal.formSubTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
     document.getElementById('confirm-text').innerHTML =
-      fillTemplate(escapeHtml(CONFIG.modal.confirmTextTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
+      fillTemplate(escapeHtml(getActive().modal.confirmTextTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
 
     stepGate.style.display = 'block';
     stepForm.style.display = 'none';
@@ -945,9 +975,26 @@
     _openModalOriginal(platform, code, signupUrl);
   };
 
-  applyStaticConfig(CONFIG);
-  renderOffers(CONFIG);
-  renderTicker(CONFIG);
+  applyStaticConfig(getActive());
+  renderOffers(getActive());
+  renderTicker(getActive());
+
+  function setLanguage(lang){
+    if (!CONFIG.content[lang]) return;
+    currentLang = lang;
+    localStorage.setItem('nitrodrop_lang', lang);
+    document.documentElement.lang = lang;
+    applyStaticConfig(getActive());
+    renderOffers(getActive());
+    renderTicker(getActive());
+    document.querySelectorAll('.lang-switch-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
+  document.querySelectorAll('.lang-switch-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+  });
 
   // ---- Menu mobile ----
   const burgerBtn = document.getElementById('burger-btn');
