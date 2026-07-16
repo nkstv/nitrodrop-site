@@ -130,6 +130,10 @@
       <label for="hero-banner-enabled">Activer la bannière</label>
     </div>
     <div class="field"><label>Nom du fichier image (doit être uploadé à la racine du repo GitHub)</label><input type="text" id="hero-banner-url" placeholder="hero-banner.jpg"></div>
+    <div class="checkbox-row" style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line);">
+      <input type="checkbox" id="foil-pack-enabled">
+      <label for="foil-pack-enabled">Afficher le pack "foil" décoratif (visuel à droite du hero, sur PC et mobile)</label>
+    </div>
   </div>
 
   <!-- MENU / HEADER -->
@@ -597,6 +601,7 @@
     cfg.heroBanner = cfg.heroBanner || {};
     document.getElementById('hero-banner-enabled').checked = !!cfg.heroBanner.enabled;
     document.getElementById('hero-banner-url').value = cfg.heroBanner.imageUrl || 'hero-banner.jpg';
+    document.getElementById('foil-pack-enabled').checked = cfg.foilPackEnabled !== false;
 
     document.getElementById('nav-ctaText').value = content.nav.ctaText;
     document.getElementById('nav-ctaHref').value = content.nav.ctaHref;
@@ -684,6 +689,7 @@
     cfg.heroBanner = cfg.heroBanner || {};
     cfg.heroBanner.enabled = document.getElementById('hero-banner-enabled').checked;
     cfg.heroBanner.imageUrl = document.getElementById('hero-banner-url').value;
+    cfg.foilPackEnabled = document.getElementById('foil-pack-enabled').checked;
 
     content.nav.links = content.nav.links.map((link, i) => ({
       label: document.getElementById(`nav-link-label-${i}`).value,

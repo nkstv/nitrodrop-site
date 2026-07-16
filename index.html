@@ -501,7 +501,7 @@
       </div>
     </div>
 
-    <div class="foil-stage">
+    <div class="foil-stage" id="foil-stage">
       <div class="foil-glow"></div>
       <div class="foil-pack">
         <div class="foil-left"></div>
@@ -1051,6 +1051,13 @@
       heroEl.style.backgroundImage = '';
       heroEl.classList.remove('has-banner');
     }
+  })();
+
+  // Pack "foil" décoratif (visuel à droite du hero) — indépendant de la langue
+  (function applyFoilVisibility(){
+    const foilEl = document.getElementById('foil-stage');
+    const enabled = CONFIG.foilPackEnabled !== false; // activé par défaut
+    foilEl.style.display = enabled ? '' : 'none';
   })();
 
   function setLanguage(lang){
