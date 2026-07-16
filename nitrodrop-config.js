@@ -255,7 +255,9 @@ const NITRODROP_DEFAULT_CONFIG = {
         "confirmTelegramHref": "https://t.me/+BZyC9HHN3LljODM0",
         "gateTag": "Get the bonus",
         "emailPlaceholder": "your email",
-        "pseudoPlaceholder": "your username"
+        "pseudoPlaceholder": "your username",
+        "discordLabel": "",
+        "discordPlaceholder": ""
       },
       "brand": {
         "text1": "DROP",
@@ -516,7 +518,10 @@ const NITRODROP_DEFAULT_CONFIG = {
       "pageTitle": "Drop-Cash.com - Claim your free bonus with no deposit required"
     }
   },
-  "defaultLang": "en"
+  "defaultLang": "en",
+  "discordOAuth": {
+    "clientId": "1527360448557482056"
+  }
 };
 
 // ---------- Fonctions de stockage (partagées site + admin) ----------
