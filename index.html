@@ -708,14 +708,54 @@
   }
 
   // ---------- Applique la config statique (nav, hero, telegram, sections, footer) ----------
+  // ---------- Effet "machine à sous" pour un texte (lettres qui tournent puis se figent) ----------
+  const SLOT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  function slotSpinText(el, finalText){
+    if (!el) return;
+    // Évite de relancer l'animation si le texte final est déjà identique et déjà stable
+    if (el.dataset.slotValue === finalText && !el.dataset.slotSpinning) return;
+    el.dataset.slotValue = finalText;
+    el.dataset.slotSpinning = '1';
+    el.innerHTML = '';
+    const letters = finalText.split('');
+    const spans = letters.map(ch => {
+      const s = document.createElement('span');
+      s.style.display = 'inline-block';
+      s.style.minWidth = '0.55em';
+      s.style.textAlign = 'center';
+      s.textContent = ch === ' ' ? '\u00A0' : ch;
+      el.appendChild(s);
+      return s;
+    });
+    let remaining = spans.length;
+    spans.forEach((span, i) => {
+      const finalChar = letters[i];
+      if (finalChar === ' '){ remaining--; if (remaining <= 0) el.dataset.slotSpinning = ''; return; }
+      const spinTime = 550 + i * 90;
+      const stepTime = 45;
+      let elapsed = 0;
+      const interval = setInterval(() => {
+        elapsed += stepTime;
+        if (elapsed >= spinTime){
+          span.textContent = finalChar;
+          clearInterval(interval);
+          remaining--;
+          if (remaining <= 0) el.dataset.slotSpinning = '';
+        } else {
+          span.textContent = SLOT_CHARS[Math.floor(Math.random() * SLOT_CHARS.length)];
+        }
+      }, stepTime);
+    });
+  }
+
   function applyStaticConfig(cfg){
     // Logo / nom de marque (nav + footer)
     const brandText1 = (cfg.brand && cfg.brand.text1) || 'NITRO';
     const brandText2 = (cfg.brand && cfg.brand.text2) || 'DROP';
     document.getElementById('brand-text1-nav').textContent = brandText1;
-    document.getElementById('brand-text2-nav').textContent = brandText2;
+    slotSpinText(document.getElementById('brand-text2-nav'), brandText2);
     document.getElementById('brand-text1-footer').textContent = brandText1;
-    document.getElementById('brand-text2-footer').textContent = brandText2;
+    slotSpinText(document.getElementById('brand-text2-footer'), brandText2);
 
     // Nav
     cfg.nav.links.forEach((link, i) => {
