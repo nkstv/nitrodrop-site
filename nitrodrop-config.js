@@ -16,7 +16,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Bonus Codes & Offers",
-            "href": "#offres"
+            "href": "#offres "
           },
           {
             "label": "Discord",
@@ -47,7 +47,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "codeWidgetEnabled": false
       },
       "telegram": {
-        "tag": "Drop Cash Daily Rewards",
+        "tag": "Drop Daily Rewards",
         "title": "Daily giveaways are waiting for you on Telegram",
         "desc": "Join our Telegram community to discover daily giveaways, exclusive bonuses, updates, and new opportunities to earn rewards.",
         "btnText": "Join Telegram →",
@@ -198,7 +198,7 @@ const NITRODROP_DEFAULT_CONFIG = {
             "href": "#"
           }
         ],
-        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. Drop-Cash.com is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. Help and information: joueurs-info-service.fr."
+        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. NITRODROP is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. Help and information: joueurs-info-service.fr."
       },
       "modal": {
         "gateSubTemplate": "Have you already signed up to {platform} using the code {code}?",
@@ -228,8 +228,8 @@ const NITRODROP_DEFAULT_CONFIG = {
       "nav": {
         "links": [
           {
-            "label": "Bonus Codes & Offers",
-            "href": "#offres"
+            "label": "Codes bonus et offres",
+            "href": "#offres "
           },
           {
             "label": "Discord",
@@ -244,7 +244,7 @@ const NITRODROP_DEFAULT_CONFIG = {
             "href": ""
           }
         ],
-        "ctaText": "View Offers",
+        "ctaText": "Voir les offres",
         "ctaHref": "#offres"
       },
       "hero": {
@@ -411,7 +411,7 @@ const NITRODROP_DEFAULT_CONFIG = {
             "href": "#"
           }
         ],
-        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. NITRODROP is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. Help and information: joueurs-info-service.fr."
+        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. Drop-cash.com is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. Help and information: joueurs-info-service.fr."
       },
       "modal": {
         "gateSubTemplate": "Have you already signed up to {platform} using the code {code}?",
