@@ -739,7 +739,7 @@
   function renderTicker(cfg){
     const track = document.getElementById('ticker-track');
     const renderClaims = () => cfg.ticker.map(item =>
-      `<div class="ticker-item"><b>${escapeHtml(item.name)}</b> vient de réclamer ${escapeHtml(item.message)}<span class="ticker-dot"></span></div>`
+      `<div class="ticker-item"><b>${escapeHtml(item.name)}</b> ${escapeHtml(cfg.tickerSettings.verbText)} ${escapeHtml(item.message)}<span class="ticker-dot"></span></div>`
     ).join('');
     track.innerHTML = renderClaims() + renderClaims();
   }

@@ -160,6 +160,7 @@
   <div class="panel">
     <h2>Bandeau défilant (notifications)</h2>
     <div class="sub">Les messages qui défilent en boucle sous le hero (pseudo + montant réclamé).</div>
+    <div class="field"><label>Texte de liaison (entre le pseudo et le montant)</label><input type="text" id="ticker-verbText"></div>
     <div id="ticker-fields"></div>
   </div>
 
@@ -381,6 +382,8 @@
 
     document.getElementById('relay-url').value = cfg.telegramRelay.url;
 
+    document.getElementById('ticker-verbText').value = cfg.tickerSettings.verbText;
+
     renderNavLinks();
     renderOffersFields();
     renderTickerFields();
@@ -430,6 +433,8 @@
       claimText: document.getElementById(`offer-claimText-${i}`).value,
       badge: document.getElementById(`offer-featured-${i}`).checked ? (offer.badge || 'TOP') : offer.badge
     }));
+
+    cfg.tickerSettings.verbText = document.getElementById('ticker-verbText').value;
 
     cfg.ticker = cfg.ticker.map((item, i) => ({
       name: document.getElementById(`ticker-name-${i}`).value,

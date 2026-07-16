@@ -91,6 +91,10 @@ const NITRODROP_DEFAULT_CONFIG = {
     }
   ],
 
+  tickerSettings: {
+    verbText: "vient de réclamer"
+  },
+
   ticker: [
     { name: "kaelynn_", message: "+180€ sur Voltra" },
     { name: "dr0p_ghost", message: "+95€ sur Runeblock" },
