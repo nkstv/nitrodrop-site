@@ -248,28 +248,28 @@ const NITRODROP_DEFAULT_CONFIG = {
         "ctaHref": "#offres"
       },
       "hero": {
-        "eyebrow": "Verified Promo Codes · Updated Today",
-        "titleLine1": "💎 Your $22+ ",
-        "titleEm": "Waiting for You",
-        "lede": "Claim your free bonus with no deposit required. Get rewarded in under 24 hours.",
+        "eyebrow": "Codes promo vérifiés · Mis à jour aujourd'hui",
+        "titleLine1": "💎 Vos 22 $ ",
+        "titleEm": "Vous attendent",
+        "lede": "Réclamez votre bonus gratuit sans dépôt. Recevez votre récompense en moins de 24 heures.",
         "code": "",
-        "btnPrimaryText": "View Offers",
+        "btnPrimaryText": "Voir les offres",
         "btnPrimaryHref": "#offres",
-        "btnGhostText": "No deposit bonus",
+        "btnGhostText": "Bonus sans dépôt",
         "btnGhostHref": "#offres",
         "codeWidgetEnabled": false
       },
       "telegram": {
-        "tag": "NitroDrop Daily Rewards",
-        "title": "Daily giveaways are waiting for you on Telegram",
-        "desc": "Join our Telegram community to discover daily giveaways, exclusive bonuses, updates, and new opportunities to earn rewards.",
-        "btnText": "Join Telegram →",
+        "tag": "Récompenses quotidiennes Drop Cash",
+        "title": "Des cadeaux quotidiens vous attendent sur Telegram",
+        "desc": "Rejoignez notre communauté Telegram pour découvrir des cadeaux quotidiens, des bonus exclusifs, des actualités et de nouvelles opportunités de gagner des récompenses.",
+        "btnText": "Rejoignez-nous sur Telegram →",
         "btnHref": "https://t.me/+BZyC9HHN3LljODM0"
       },
       "offersSection": {
-        "tag": "Exclusive Offers",
-        "title": "No Deposit Bonuses",
-        "desc": "Sign up, verify your account, and click \"Claim My Bonus\" to unlock your no deposit bonus."
+        "tag": "Offres exclusives",
+        "title": "Bonus sans dépôt",
+        "desc": "Inscrivez-vous, vérifiez votre compte, puis cliquez sur « Réclamer mon bonus » pour débloquer votre bonus sans dépôt."
       },
       "offers": [
         {
@@ -280,12 +280,12 @@ const NITRODROP_DEFAULT_CONFIG = {
           "name": "Duel.com",
           "sub": "Crypto Casino · Best Deals",
           "bonusAmount": "$9.00",
-          "bonusSuffix": "$1.50/day × 6",
-          "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+          "bonusSuffix": "$1.50/jour × 6",
+          "desc": "Inscrivez-vous avec le code, indiquez votre nom d'utilisateur et recevez votre bonus. Aucun dépôt requis.",
           "code": "welcomebonus2026",
           "signupHref": "https://duel.com/r/welcomebonus2026",
-          "signupText": "1. Create Account",
-          "claimText": "2. Claim My Bonus",
+          "signupText": "1. Créer un compte",
+          "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
           "claimHighlighted": false
         },
@@ -297,12 +297,12 @@ const NITRODROP_DEFAULT_CONFIG = {
           "name": "Stake.com",
           "sub": "Crypto Casino · Instant Payouts",
           "bonusAmount": "$7.00",
-          "bonusSuffix": "$1.00/day × 7",
-          "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+          "bonusSuffix": "$1.00/jour × 7",
+          "desc": "Inscrivez-vous avec le code, indiquez votre nom d'utilisateur et recevez votre bonus. Aucun dépôt requis.",
           "code": "NKSCAS",
           "signupHref": "https://stake.bet/?c=3eccdsPf",
-          "signupText": "1. Create Account",
-          "claimText": "2. Claim My Bonus",
+          "signupText": "1. Créer un compte",
+          "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
           "claimHighlighted": false
         },
@@ -314,43 +314,43 @@ const NITRODROP_DEFAULT_CONFIG = {
           "name": "Rainbet.com",
           "sub": "Crypto Casino · Exclusive Offers",
           "bonusAmount": "$6.00",
-          "bonusSuffix": "$1.50/day × 4",
-          "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+          "bonusSuffix": "$1.50/jour × 4",
+          "desc": "Inscrivez-vous avec le code, indiquez votre nom d'utilisateur et recevez votre bonus. Aucun dépôt requis.",
           "code": "new",
           "signupHref": "https://rainbet.com/?r=new",
-          "signupText": "1. Create Account",
-          "claimText": "2. Claim My Bonus",
+          "signupText": "1. Créer un compte",
+          "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
           "claimHighlighted": false
         }
       ],
       "tickerSettings": {
-        "verbText": "just claimed"
+        "verbText": "vient de recevoir"
       },
       "ticker": [
         {
           "name": "kaelynn_",
-          "message": "$7.00 on Stake"
+          "message": "$7.00 sur Stake"
         },
         {
           "name": "dr0p_ghost",
-          "message": "$9.00 on Duel"
+          "message": "$9.00 sur Duel"
         },
         {
           "name": "valen.tt",
-          "message": "$7.00 on Stake"
+          "message": "$7.00 sur Stake"
         },
         {
           "name": "ryu_odds",
-          "message": "$9.00 on Duel"
+          "message": "$9.00 sur Duel"
         },
         {
           "name": "noa.reef",
-          "message": "$9.00 on Duel"
+          "message": "$9.00 sur Duel"
         },
         {
           "name": "mika_x",
-          "message": "$7.00 on Stake"
+          "message": "$7.00 sur Stake"
         }
       ],
       "leaderboard": {
@@ -411,25 +411,25 @@ const NITRODROP_DEFAULT_CONFIG = {
             "href": "#"
           }
         ],
-        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. Drop-cash.com is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. Help and information: joueurs-info-service.fr."
+        "disclaimer": "Les jeux d'argent comportent des risques : endettement, isolement social et dépendance. Drop-cash.com est un site web indépendant proposé à titre purement informatif ; il n'exploite aucune plateforme de jeux d'argent et ne garantit pas les offres présentées, qui restent soumises aux conditions générales de chaque opérateur. Jouez de manière responsable. Aide et informations : joueurs-info-service.fr."
       },
       "modal": {
-        "gateSubTemplate": "Have you already signed up to {platform} using the code {code}?",
-        "gateYesText": "Yes, I'm registered",
-        "gateNoText": "No, I’ll sign up first",
-        "formTag": "Claim the bonus",
-        "formSubTemplate": "Enter the email address and username for your account on {platform}. The tip will be sent manually within 24 hours of your registration being verified. No deposit required.",
+        "gateSubTemplate": "Vous êtes-vous déjà inscrit sur {platform} en utilisant le code {code} ?",
+        "gateYesText": "Oui, je suis inscrit(e)",
+        "gateNoText": "Non, je vais d'abord m'inscrire",
+        "formTag": "Réclamez le bonus",
+        "formSubTemplate": "Saisissez l'adresse e-mail et le nom d'utilisateur associés à votre compte sur {platform}. Le pourboire vous sera envoyé manuellement dans moins de 24 heures. Aucun dépôt n'est requis.",
         "emailLabel": "Email*",
         "pseudoLabel": "Username*",
-        "submitText": "Confirm my request",
-        "confirmTitle": "Request sent",
-        "confirmTextTemplate": "Your bonus will be sent within 24 hours of your registration on {platform} being verified.",
-        "confirmNote": "🎁 Join our Telegram channel now to receive FREE money every day!",
-        "confirmTelegramText": "Join the Telegram Giveaway Channel →",
+        "submitText": "Valider ma demande",
+        "confirmTitle": "Demande envoyée",
+        "confirmTextTemplate": "Votre bonus vous sera versé dans les 24 heures suivant la validation de votre inscription sur {platform}.",
+        "confirmNote": "🎁 Rejoignez dès maintenant notre chaîne Telegram pour recevoir de l'argent GRATUIT chaque jour !",
+        "confirmTelegramText": "Rejoignez la chaîne Telegram dédiée aux jeux-concours →",
         "confirmTelegramHref": "https://t.me/+BZyC9HHN3LljODM0",
-        "gateTag": "Get the bonus",
-        "emailPlaceholder": "your email",
-        "pseudoPlaceholder": "your username"
+        "gateTag": "Profitez du bonus",
+        "emailPlaceholder": "votre adresse e-mail",
+        "pseudoPlaceholder": "votre nom d'utilisateur"
       },
       "brand": {
         "text1": "DROP",
