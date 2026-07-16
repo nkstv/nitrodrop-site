@@ -207,6 +207,7 @@
         <td>${escapeHtml(s.pseudo || '')}</td>
         <td class="mono">${escapeHtml(s.email || '')}</td>
         <td class="mono">${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}</td>
+        <td class="mono">${escapeHtml(s.discordId || '—')}</td>
         <td style="text-align:center;">
           <input type="checkbox" ${s.tipped ? 'checked' : ''} onchange="toggleTipped('${s.id}', this.checked)">
         </td>
@@ -222,7 +223,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Code</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Tipsé</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Code</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Tipsé</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -256,12 +257,39 @@
         body: JSON.stringify({ id, tipped })
       });
       if (!resp.ok) throw new Error('Échec de la sauvegarde');
+      const data = await resp.json();
       const entry = allSubmissions.find(s => s.id === id);
       if (entry) entry.tipped = tipped;
       renderStats();
+
+      if (tipped && data.discord && data.discord.attempted){
+        if (data.discord.ok){
+          showBanner('✅ DM Discord de confirmation envoyé avec succès.');
+        } else {
+          showBanner('⚠️ Coché "Tipsé", mais le DM Discord a échoué : ' + (data.discord.error || 'raison inconnue'), true);
+        }
+      } else if (tipped && !data.discord.attempted){
+        showBanner('ℹ️ Coché "Tipsé" — aucun ID Discord fourni pour cette demande, pas de DM envoyé.');
+      }
     }catch(err){
       alert('Erreur : ' + err.message);
     }
+  }
+
+  function showBanner(msg, isError){
+    let banner = document.getElementById('discord-banner');
+    if (!banner){
+      banner = document.createElement('div');
+      banner.id = 'discord-banner';
+      banner.style.cssText = 'position:fixed; bottom:20px; left:50%; transform:translateX(-50%); padding:12px 20px; border-radius:10px; font-size:13px; font-weight:600; z-index:100; max-width:90vw;';
+      document.body.appendChild(banner);
+    }
+    banner.style.background = isError ? 'rgba(255,122,144,0.15)' : 'rgba(182,255,60,0.15)';
+    banner.style.border = isError ? '1px solid #FF7A90' : '1px solid var(--green)';
+    banner.style.color = isError ? '#FF7A90' : 'var(--green)';
+    banner.textContent = msg;
+    clearTimeout(banner._timeout);
+    banner._timeout = setTimeout(() => banner.remove(), 5000);
   }
 
   async function toggleArchived(id, archived){

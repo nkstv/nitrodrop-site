@@ -206,7 +206,6 @@
     <h2>Les 3 offres</h2>
     <div class="sub">Nom, bonus, description, code, lien d'inscription et textes des boutons pour chaque plateforme.</div>
     <div id="offers-fields"></div>
-    <button type="button" class="btn btn-save" onclick="addOffer()" style="margin-top:6px;">+ Ajouter une offre</button>
   </div>
 
   <!-- STEPS -->
@@ -274,6 +273,10 @@
     <div class="row">
       <div class="field"><label>Texte d'exemple (placeholder) — email</label><input type="text" id="modal-emailPlaceholder"></div>
       <div class="field"><label>Texte d'exemple (placeholder) — pseudo</label><input type="text" id="modal-pseudoPlaceholder"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Libellé champ Discord ID</label><input type="text" id="modal-discordLabel"></div>
+      <div class="field"><label>Texte d'exemple (placeholder) — Discord ID</label><input type="text" id="modal-discordPlaceholder"></div>
     </div>
     <div class="field"><label>Texte du bouton d'envoi</label><input type="text" id="modal-submitText"></div>
 
@@ -398,50 +401,12 @@
     });
   }
 
-  function addOffer(){
-    readForm(); // garde les modifs en cours avant de modifier le tableau
-    const markClasses = ['mark-1', 'mark-2', 'mark-3'];
-    const idx = content.offers.length;
-    content.offers.push({
-      featured: false,
-      badge: '',
-      mark: 'N',
-      markClass: markClasses[idx % markClasses.length],
-      name: 'Nouvelle offre',
-      sub: '',
-      bonusAmount: '',
-      bonusSuffix: '',
-      desc: '',
-      code: '',
-      codeEnabled: true,
-      signupHref: '',
-      signupText: "S'inscrire",
-      claimText: 'Recevoir le bonus',
-      signupHighlighted: false,
-      claimHighlighted: false
-    });
-    renderOffersFields();
-    showToast('Nouvelle offre ajoutée — pense à la remplir puis publier');
-  }
-
-  function removeOffer(i){
-    if (!confirm('Supprimer définitivement cette offre ?')) return;
-    readForm();
-    content.offers.splice(i, 1);
-    renderOffersFields();
-  }
-
   function renderOffersFields(){
     const container = document.getElementById('offers-fields');
     container.innerHTML = '';
     content.offers.forEach((offer, i) => {
       const block = el('div', {class:'offer-block'});
-      const headerRow = el('div', {style:'display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;'});
-      headerRow.appendChild(el('h3', {text:`Offre ${i+1}`, style:'margin-bottom:0;'}));
-      const delBtn = el('button', {type:'button', class:'btn btn-reset', text:'Supprimer', style:'padding:6px 12px; font-size:12px;'});
-      delBtn.addEventListener('click', () => removeOffer(i));
-      headerRow.appendChild(delBtn);
-      block.appendChild(headerRow);
+      block.appendChild(el('h3', {text:`Offre ${i+1}`}));
 
       const chk = el('div', {class:'checkbox-row'});
       const chkInput = el('input', {type:'checkbox', id:`offer-featured-${i}`});
@@ -483,13 +448,6 @@
       const in6 = el('input', {type:'text', id:`offer-signupHref-${i}`, value: offer.signupHref}); f6.appendChild(in6);
       row3.appendChild(f5); row3.appendChild(f6);
       block.appendChild(row3);
-
-      const chkCode = el('div', {class:'checkbox-row'});
-      const chkCodeInput = el('input', {type:'checkbox', id:`offer-codeEnabled-${i}`});
-      chkCodeInput.checked = (offer.codeEnabled !== false);
-      chkCode.appendChild(chkCodeInput);
-      chkCode.appendChild(el('label', {for:`offer-codeEnabled-${i}`, text:'Afficher un code promo sur cette offre (décoche si inscription simple sans code)'}));
-      block.appendChild(chkCode);
 
       const row4 = el('div', {class:'row'});
       const f7 = el('div', {class:'field'}); f7.appendChild(el('label', {text:'Texte bouton "S\'inscrire"'}));
@@ -619,6 +577,8 @@
     document.getElementById('modal-pseudoLabel').value = content.modal.pseudoLabel;
     document.getElementById('modal-emailPlaceholder').value = content.modal.emailPlaceholder || '';
     document.getElementById('modal-pseudoPlaceholder').value = content.modal.pseudoPlaceholder || '';
+    document.getElementById('modal-discordLabel').value = content.modal.discordLabel || '';
+    document.getElementById('modal-discordPlaceholder').value = content.modal.discordPlaceholder || '';
     document.getElementById('modal-submitText').value = content.modal.submitText;
     document.getElementById('modal-confirmTitle').value = content.modal.confirmTitle;
     document.getElementById('modal-confirmTextTemplate').value = content.modal.confirmTextTemplate;
@@ -696,7 +656,6 @@
       bonusSuffix: document.getElementById(`offer-bonusSuffix-${i}`).value,
       desc: document.getElementById(`offer-desc-${i}`).value,
       code: document.getElementById(`offer-code-${i}`).value,
-      codeEnabled: document.getElementById(`offer-codeEnabled-${i}`).checked,
       signupHref: document.getElementById(`offer-signupHref-${i}`).value,
       signupText: document.getElementById(`offer-signupText-${i}`).value,
       claimText: document.getElementById(`offer-claimText-${i}`).value,
@@ -734,6 +693,8 @@
     content.modal.pseudoLabel = document.getElementById('modal-pseudoLabel').value;
     content.modal.emailPlaceholder = document.getElementById('modal-emailPlaceholder').value;
     content.modal.pseudoPlaceholder = document.getElementById('modal-pseudoPlaceholder').value;
+    content.modal.discordLabel = document.getElementById('modal-discordLabel').value;
+    content.modal.discordPlaceholder = document.getElementById('modal-discordPlaceholder').value;
     content.modal.submitText = document.getElementById('modal-submitText').value;
     content.modal.confirmTitle = document.getElementById('modal-confirmTitle').value;
     content.modal.confirmTextTemplate = document.getElementById('modal-confirmTextTemplate').value;
