@@ -347,6 +347,20 @@
       row4.appendChild(f7); row4.appendChild(f8);
       block.appendChild(row4);
 
+      const rowColors = el('div', {class:'row'});
+      const cSignup = el('div', {class:'checkbox-row'});
+      const cSignupInput = el('input', {type:'checkbox', id:`offer-signupHighlighted-${i}`});
+      cSignupInput.checked = !!offer.signupHighlighted;
+      cSignup.appendChild(cSignupInput);
+      cSignup.appendChild(el('label', {for:`offer-signupHighlighted-${i}`, text:'Bouton "S\'inscrire" en jaune'}));
+      const cClaim = el('div', {class:'checkbox-row'});
+      const cClaimInput = el('input', {type:'checkbox', id:`offer-claimHighlighted-${i}`});
+      cClaimInput.checked = !!offer.claimHighlighted;
+      cClaim.appendChild(cClaimInput);
+      cClaim.appendChild(el('label', {for:`offer-claimHighlighted-${i}`, text:'Bouton "Recevoir le bonus" en jaune'}));
+      rowColors.appendChild(cSignup); rowColors.appendChild(cClaim);
+      block.appendChild(rowColors);
+
       container.appendChild(block);
     });
   }
@@ -488,6 +502,8 @@
       signupHref: document.getElementById(`offer-signupHref-${i}`).value,
       signupText: document.getElementById(`offer-signupText-${i}`).value,
       claimText: document.getElementById(`offer-claimText-${i}`).value,
+      signupHighlighted: document.getElementById(`offer-signupHighlighted-${i}`).checked,
+      claimHighlighted: document.getElementById(`offer-claimHighlighted-${i}`).checked,
       badge: document.getElementById(`offer-featured-${i}`).checked ? (offer.badge || 'TOP') : offer.badge
     }));
 

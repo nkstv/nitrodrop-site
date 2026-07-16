@@ -273,7 +273,7 @@
     transition:background .15s ease, border-color .15s ease;
   }
   .offer-cta.secondary{background:transparent;}
-  .offer-card.featured .offer-cta:not(.secondary){background:var(--green); color:#08130a; border-color:transparent;}
+  .offer-cta.accent{background:var(--green); color:#08130a; border-color:transparent;}
   .offer-cta:hover{border-color:var(--green);}
 
   /* ---------- LEADERBOARD ---------- */
@@ -721,8 +721,8 @@
         <div class="offer-desc">${escapeHtml(offer.desc)}</div>
         <div class="offer-code-row"><span>Code</span><span class="c code-font">${escapeHtml(offer.code)}</span></div>
         <div class="offer-btns">
-          <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta secondary">${escapeHtml(offer.signupText)}</a>
-          <a href="#" class="offer-cta" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>
+          <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta secondary${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
+          <a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>
         </div>
       `;
       grid.appendChild(card);
