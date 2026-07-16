@@ -237,7 +237,7 @@ const NITRODROP_DEFAULT_CONFIG = {
             "href": "#"
           }
         ],
-        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. NITRODROP is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. Help and information: joueurs-info-service.fr."
+        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. Drop-Cash.com is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. "
       },
       "modal": {
         "gateSubTemplate": "Have you already signed up to {platform} using the code {code}?",
