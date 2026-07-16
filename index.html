@@ -807,6 +807,7 @@
         </div>
         <div class="offer-bonus">${escapeHtml(offer.bonusAmount)} <small>${escapeHtml(offer.bonusSuffix)}</small></div>
         <div class="offer-desc">${escapeHtml(offer.desc)}</div>
+        ${offer.codeEnabled === false ? '' : `
         <div class="offer-code-row">
           <span>Code</span>
           <div class="code-right">
@@ -814,6 +815,7 @@
             <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}">Copier</button>
           </div>
         </div>
+        `}
         <div class="offer-btns">
           <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta secondary${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
           <a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>

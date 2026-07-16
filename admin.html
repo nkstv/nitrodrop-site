@@ -413,6 +413,7 @@
       bonusSuffix: '',
       desc: '',
       code: '',
+      codeEnabled: true,
       signupHref: '',
       signupText: "S'inscrire",
       claimText: 'Recevoir le bonus',
@@ -482,6 +483,13 @@
       const in6 = el('input', {type:'text', id:`offer-signupHref-${i}`, value: offer.signupHref}); f6.appendChild(in6);
       row3.appendChild(f5); row3.appendChild(f6);
       block.appendChild(row3);
+
+      const chkCode = el('div', {class:'checkbox-row'});
+      const chkCodeInput = el('input', {type:'checkbox', id:`offer-codeEnabled-${i}`});
+      chkCodeInput.checked = (offer.codeEnabled !== false);
+      chkCode.appendChild(chkCodeInput);
+      chkCode.appendChild(el('label', {for:`offer-codeEnabled-${i}`, text:'Afficher un code promo sur cette offre (décoche si inscription simple sans code)'}));
+      block.appendChild(chkCode);
 
       const row4 = el('div', {class:'row'});
       const f7 = el('div', {class:'field'}); f7.appendChild(el('label', {text:'Texte bouton "S\'inscrire"'}));
@@ -688,6 +696,7 @@
       bonusSuffix: document.getElementById(`offer-bonusSuffix-${i}`).value,
       desc: document.getElementById(`offer-desc-${i}`).value,
       code: document.getElementById(`offer-code-${i}`).value,
+      codeEnabled: document.getElementById(`offer-codeEnabled-${i}`).checked,
       signupHref: document.getElementById(`offer-signupHref-${i}`).value,
       signupText: document.getElementById(`offer-signupText-${i}`).value,
       claimText: document.getElementById(`offer-claimText-${i}`).value,
