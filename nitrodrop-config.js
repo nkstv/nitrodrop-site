@@ -529,7 +529,8 @@ const NITRODROP_DEFAULT_CONFIG = {
   "heroBanner": {
     "enabled": true,
     "imageUrl": "hero-banner.jpg"
-  }
+  },
+  "foilPackEnabled": false
 };
 
 // ---------- Fonctions de stockage (partagées site + admin) ----------
