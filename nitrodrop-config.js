@@ -201,17 +201,17 @@ const NITRODROP_DEFAULT_CONFIG = {
     "gateNoText": "No, I’ll sign up first",
     "formTag": "Claim the bonus",
     "formSubTemplate": "Enter the email address and username for your account on {platform}. The tip will be sent manually within 24 hours of your registration being verified. No deposit required.",
-    "emailLabel": "Email",
-    "pseudoLabel": "Username",
+    "emailLabel": "Email*",
+    "pseudoLabel": "Username*",
     "submitText": "Confirm my request",
     "confirmTitle": "Request sent",
     "confirmTextTemplate": "Your bonus will be sent within 24 hours of your registration on {platform} being verified.",
     "confirmNote": "🎁 Join our Telegram channel now to receive FREE money every day!",
     "confirmTelegramText": "Join the Telegram Giveaway Channel →",
     "confirmTelegramHref": "https://t.me/+BZyC9HHN3LljODM0",
-    "gateTag": "",
-    "emailPlaceholder": "",
-    "pseudoPlaceholder": ""
+    "gateTag": "Get the bonus",
+    "emailPlaceholder": "your email",
+    "pseudoPlaceholder": "your username"
   },
   "telegramRelay": {
     "url": "https://nitrodrop-relay.lescagoules05.workers.dev/notify"
