@@ -212,6 +212,10 @@ const NITRODROP_DEFAULT_CONFIG = {
   },
   "telegramRelay": {
     "url": "https://nitrodrop-relay.lescagoules05.workers.dev/notify"
+  },
+  "brand": {
+    "text1": "DROP",
+    "text2": "CASH"
   }
 };
 
