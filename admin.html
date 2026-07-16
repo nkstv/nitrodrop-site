@@ -209,6 +209,32 @@
     <div class="field"><label>URL du relais</label><input type="text" id="relay-url"></div>
   </div>
 
+  <!-- PUBLICATION GITHUB -->
+  <div class="panel" style="border-color:rgba(182,255,60,0.4);">
+    <h2>Publier en ligne (GitHub)</h2>
+    <div class="sub">
+      Envoie directement tes modifications sur GitHub. Le site public (index.html) se met à jour pour <strong>tout le monde</strong> en ~1 minute, sans que tu aies besoin de re-uploader un fichier à la main.
+    </div>
+    <div class="row">
+      <div class="field"><label>Propriétaire (owner)</label><input type="text" id="gh-owner" placeholder="nkstv"></div>
+      <div class="field"><label>Nom du repo</label><input type="text" id="gh-repo" placeholder="nitrodrop-site"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Branche</label><input type="text" id="gh-branch" placeholder="main"></div>
+      <div class="field"><label>Chemin du fichier</label><input type="text" id="gh-path" placeholder="nitrodrop-config.js"></div>
+    </div>
+    <div class="field">
+      <label>Token GitHub (fine-grained, permission Contents: Read and write)</label>
+      <input type="password" id="gh-token" placeholder="github_pat_...">
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="gh-remember">
+      <label for="gh-remember">Se souvenir du owner/repo/branche/chemin sur cet appareil (le token n'est jamais mémorisé, tu devras le recoller à chaque fois)</label>
+    </div>
+    <button class="btn btn-save" onclick="publishToGitHub()" style="margin-top:6px;">Publier sur GitHub</button>
+    <div id="gh-status" style="margin-top:12px; font-size:12.5px; color:var(--text-dim);"></div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast">Enregistré ✓</div>
@@ -489,7 +515,160 @@
     showToast('Réinitialisé aux valeurs par défaut');
   }
 
+  // ---------- Publication directe sur GitHub ----------
+  const GH_SETTINGS_KEY = 'nitrodrop_gh_settings_v1';
+
+  function loadGithubSettings(){
+    try{
+      const raw = localStorage.getItem(GH_SETTINGS_KEY);
+      if (!raw) return {};
+      return JSON.parse(raw);
+    }catch(e){ return {}; }
+  }
+
+  function saveGithubSettings(settings){
+    localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(settings));
+  }
+
+  function fillGithubFields(){
+    const s = loadGithubSettings();
+    document.getElementById('gh-owner').value = s.owner || '';
+    document.getElementById('gh-repo').value = s.repo || '';
+    document.getElementById('gh-branch').value = s.branch || 'main';
+    document.getElementById('gh-path').value = s.path || 'nitrodrop-config.js';
+    document.getElementById('gh-remember').checked = !!s.remember;
+  }
+
+  // Reconstruit le fichier nitrodrop-config.js complet avec la config actuelle
+  function buildConfigFileSource(currentCfg){
+    const configJson = JSON.stringify(currentCfg, null, 2);
+    return `// ===================================================================
+// NITRODROP — Configuration du site
+// Ce fichier est mis à jour automatiquement par admin.html (bouton "Publier sur GitHub").
+// Tu peux aussi le modifier à la main si besoin.
+// ===================================================================
+
+const NITRODROP_STORAGE_KEY = 'nitrodrop_config_v1';
+
+const NITRODROP_DEFAULT_CONFIG = ${configJson};
+
+// ---------- Fonctions de stockage (partagées site + admin) ----------
+
+function nitrodropDeepClone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function nitrodropLoadConfig() {
+  try {
+    const raw = localStorage.getItem(NITRODROP_STORAGE_KEY);
+    if (!raw) return nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
+    const saved = JSON.parse(raw);
+    const merged = nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
+    for (const key of Object.keys(merged)) {
+      if (saved[key] !== undefined) merged[key] = saved[key];
+    }
+    return merged;
+  } catch (e) {
+    console.error('Config NitroDrop illisible, retour aux valeurs par défaut.', e);
+    return nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
+  }
+}
+
+function nitrodropSaveConfig(cfg) {
+  localStorage.setItem(NITRODROP_STORAGE_KEY, JSON.stringify(cfg));
+}
+
+function nitrodropResetConfig() {
+  localStorage.removeItem(NITRODROP_STORAGE_KEY);
+}
+`;
+  }
+
+  function utf8ToBase64(str){
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  function setGhStatus(msg, isError){
+    const el = document.getElementById('gh-status');
+    el.textContent = msg;
+    el.style.color = isError ? '#FF7A90' : 'var(--text-dim)';
+  }
+
+  async function publishToGitHub(){
+    readForm();
+
+    const owner = document.getElementById('gh-owner').value.trim();
+    const repo = document.getElementById('gh-repo').value.trim();
+    const branch = document.getElementById('gh-branch').value.trim() || 'main';
+    const path = document.getElementById('gh-path').value.trim() || 'nitrodrop-config.js';
+    const token = document.getElementById('gh-token').value.trim();
+    const remember = document.getElementById('gh-remember').checked;
+
+    if (!owner || !repo || !token){
+      setGhStatus('Renseigne au minimum le owner, le repo et le token.', true);
+      return;
+    }
+
+    if (remember){
+      saveGithubSettings({ owner, repo, branch, path, remember: true });
+    } else {
+      saveGithubSettings({});
+    }
+
+    setGhStatus('Publication en cours…');
+
+    const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+
+    try{
+      // 1. Récupérer le sha du fichier existant (nécessaire pour le mettre à jour)
+      const getResp = await fetch(`${apiBase}?ref=${encodeURIComponent(branch)}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json'
+        }
+      });
+      if (!getResp.ok){
+        const errBody = await getResp.json().catch(() => ({}));
+        throw new Error(`Lecture du fichier impossible (${getResp.status}) ${errBody.message || ''}`);
+      }
+      const getData = await getResp.json();
+      const sha = getData.sha;
+
+      // 2. Construire le nouveau contenu du fichier
+      const newSource = buildConfigFileSource(cfg);
+      const encoded = utf8ToBase64(newSource);
+
+      // 3. Envoyer la mise à jour (crée un commit)
+      const putResp = await fetch(apiBase, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'Mise à jour de la config NitroDrop depuis le panel admin',
+          content: encoded,
+          sha: sha,
+          branch: branch
+        })
+      });
+
+      if (!putResp.ok){
+        const errBody = await putResp.json().catch(() => ({}));
+        throw new Error(`Échec de la publication (${putResp.status}) ${errBody.message || ''}`);
+      }
+
+      setGhStatus('Publié ✓ — en ligne sur ton site dans ~1 minute.');
+      showToast('Publié sur GitHub ✓');
+    }catch(err){
+      console.error(err);
+      setGhStatus('Erreur : ' + err.message, true);
+    }
+  }
+
   fillForm();
+  fillGithubFields();
 </script>
 
 </body>
