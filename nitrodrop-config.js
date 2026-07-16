@@ -11,7 +11,7 @@ const NITRODROP_DEFAULT_CONFIG = {
     "links": [
       {
         "label": "Bonus Codes & Offers",
-        "href": "#offres"
+        "href": "#offres "
       },
       {
         "label": "Discord",
@@ -93,7 +93,7 @@ const NITRODROP_DEFAULT_CONFIG = {
       "badge": "",
       "mark": "R",
       "markClass": "mark-3",
-      "name": "Rainbet",
+      "name": "Rainbet.com",
       "sub": "Crypto Casino · Exclusive Offers",
       "bonusAmount": "$6.00",
       "bonusSuffix": "$1.50/day × 4",
@@ -235,8 +235,7 @@ function nitrodropLoadConfig() {
     if (!raw) return nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
     const saved = JSON.parse(raw);
     const merged = nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
-    const allKeys = new Set([...Object.keys(merged), ...Object.keys(saved)]);
-    for (const key of allKeys) {
+    for (const key of Object.keys(merged)) {
       if (saved[key] !== undefined) merged[key] = saved[key];
     }
     return merged;
