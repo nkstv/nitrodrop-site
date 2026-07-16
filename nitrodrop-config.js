@@ -256,7 +256,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "gateTag": "Get the bonus",
         "emailPlaceholder": "your email",
         "pseudoPlaceholder": "your username",
-        "discordLabel": "",
+        "discordLabel": "Discord*",
         "discordPlaceholder": "",
         "discordConnectText": "🎮 Log in with Discord"
       },
@@ -511,7 +511,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "gateTag": "Profitez du bonus",
         "emailPlaceholder": "votre adresse e-mail",
         "pseudoPlaceholder": "votre nom d'utilisateur",
-        "discordLabel": "",
+        "discordLabel": "Discord*",
         "discordPlaceholder": "",
         "discordConnectText": "🎮 Se connecter avec Discord"
       },
