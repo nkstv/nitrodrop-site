@@ -208,7 +208,10 @@ const NITRODROP_DEFAULT_CONFIG = {
     "confirmTextTemplate": "Your bonus will be sent within 24 hours of your registration on {platform} being verified.",
     "confirmNote": "🎁 Join our Telegram channel now to receive FREE money every day!",
     "confirmTelegramText": "Join the Telegram Giveaway Channel →",
-    "confirmTelegramHref": "https://t.me/+BZyC9HHN3LljODM0"
+    "confirmTelegramHref": "https://t.me/+BZyC9HHN3LljODM0",
+    "gateTag": "",
+    "emailPlaceholder": "",
+    "pseudoPlaceholder": ""
   },
   "telegramRelay": {
     "url": "https://nitrodrop-relay.lescagoules05.workers.dev/notify"
@@ -216,7 +219,8 @@ const NITRODROP_DEFAULT_CONFIG = {
   "brand": {
     "text1": "DROP",
     "text2": "CASH"
-  }
+  },
+  "pageTitle": "Drop-Cash.com - Claim your free bonus with no deposit required"
 };
 
 // ---------- Fonctions de stockage (partagées site + admin) ----------
