@@ -685,6 +685,14 @@
   })(CONFIG);
 
   let currentLang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
+
+  // Permet de forcer la langue via un lien du type https://tondomaine.com/?lang=fr
+  // Le choix est ensuite mémorisé comme si la personne avait cliqué sur le bouton FR/EN elle-même.
+  const urlLangParam = new URLSearchParams(location.search).get('lang');
+  if (urlLangParam && CONFIG.content[urlLangParam]) {
+    currentLang = urlLangParam;
+    localStorage.setItem('nitrodrop_lang', currentLang);
+  }
   if (!CONFIG.content[currentLang]) currentLang = CONFIG.defaultLang || 'en';
 
   function getActive(){ return CONFIG.content[currentLang]; }
