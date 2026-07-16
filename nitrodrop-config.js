@@ -16,7 +16,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Bonus Codes & Offers",
-            "href": "#offres "
+            "href": "#offres"
           },
           {
             "label": "Discord",
@@ -229,7 +229,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Bonus Codes & Offers",
-            "href": "#offres "
+            "href": "#offres"
           },
           {
             "label": "Discord",
