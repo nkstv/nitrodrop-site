@@ -36,7 +36,7 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "hero": {
         "eyebrow": "Verified Promo Codes · Updated Today",
-        "titleLine1": "💎 Your $22+ ",
+        "titleLine1": "💎 Your $50+ ",
         "titleEm": "Waiting for You",
         "lede": "Claim your free bonus with no deposit required. Get rewarded in under 24 hours.",
         "code": "",
@@ -108,6 +108,23 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
+          "claimHighlighted": false
+        },
+        {
+          "featured": false,
+          "badge": "",
+          "mark": "W",
+          "markClass": "mark-1",
+          "name": "Winningz.com",
+          "sub": "",
+          "bonusAmount": "$30.00",
+          "bonusSuffix": "& 500 FS",
+          "desc": "Sign up via the link, make a deposit of at least $30 and receive $30 back. ",
+          "code": "",
+          "signupHref": "https://taap.it/30free",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": false,
           "claimHighlighted": false
         }
       ],
