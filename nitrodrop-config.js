@@ -506,7 +506,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "confirmTitle": "Demande envoyée",
         "confirmTextTemplate": "Votre bonus vous sera versé dans les 24 heures suivant la validation de votre inscription sur {platform}.",
         "confirmNote": "🎁 Rejoignez dès maintenant notre chaîne Telegram pour recevoir de l'argent GRATUIT chaque jour !",
-        "confirmTelegramText": "Rejoignez la chaîne Telegram dédiée aux jeux-concours →",
+        "confirmTelegramText": "Rejoignez-nous sur Telegram →",
         "confirmTelegramHref": "https://t.me/+BZyC9HHN3LljODM0",
         "gateTag": "Profitez du bonus",
         "emailPlaceholder": "votre adresse e-mail",
