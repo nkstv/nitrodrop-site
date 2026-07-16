@@ -148,9 +148,10 @@ const NITRODROP_DEFAULT_CONFIG = {
     confirmNote: "Un email de confirmation t'a été envoyé. Tu peux fermer cette fenêtre."
   },
 
-  telegramBot: {
-    token: "8915086966:AAHpNZzoYE4MTRl4yrxhw3Zp0OrfVgI-4D0",
-    chatId: "6922566094"
+  // L'URL de ton relais (Cloudflare Worker) qui envoie la notif Telegram.
+  // Le token et le chat_id ne sont JAMAIS ici : ils vivent uniquement côté serveur (Worker).
+  telegramRelay: {
+    url: "https://REMPLACE-MOI.workers.dev/notify"
   }
 };
 

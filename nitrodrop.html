@@ -800,25 +800,17 @@
     // reste sur l'étape gate : l'utilisateur revient cliquer "Oui" une fois inscrit
   }
 
-  // ---- Telegram notification ----
+  // ---- Telegram notification (via relais sécurisé, jamais d'appel direct depuis le navigateur) ----
   async function sendTelegramNotification({ platform, code, email, pseudo }){
-    const token = CONFIG.telegramBot.token;
-    const chatId = CONFIG.telegramBot.chatId;
-    if (!token || !chatId || token.includes('TON_') || chatId.includes('TON_')){
-      console.warn('Telegram non configuré : renseigne le token et le chat_id dans nitrodrop-config.js.');
+    const relayUrl = CONFIG.telegramRelay.url;
+    if (!relayUrl || relayUrl.includes('REMPLACE-MOI')){
+      console.warn('Relais Telegram non configuré : renseigne telegramRelay.url dans nitrodrop-config.js.');
       return;
     }
-    const text =
-      `🔔 Nouvelle demande de bonus sans dépôt\n\n` +
-      `Plateforme : ${platform}\n` +
-      `Code : ${code}\n` +
-      `Pseudo : ${pseudo}\n` +
-      `Email : ${email}`;
-    const url = `https://api.telegram.org/bot${token}/sendMessage`;
-    await fetch(url, {
+    await fetch(relayUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text })
+      body: JSON.stringify({ platform, code, email, pseudo })
     });
   }
 

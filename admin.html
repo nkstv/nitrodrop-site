@@ -201,14 +201,11 @@
     <div class="field"><label>Note en petit texte</label><input type="text" id="modal-confirmNote"></div>
   </div>
 
-  <!-- TELEGRAM BOT -->
+  <!-- TELEGRAM RELAY -->
   <div class="panel">
-    <h2>Notification Telegram (backend)</h2>
-    <div class="sub">Le bot qui te prévient quand quelqu'un réclame un bonus. À ne partager avec personne.</div>
-    <div class="row">
-      <div class="field"><label>Bot token</label><input type="text" id="bot-token"></div>
-      <div class="field"><label>Chat ID</label><input type="text" id="bot-chatId"></div>
-    </div>
+    <h2>Notification Telegram (relais)</h2>
+    <div class="sub">L'URL de ton Cloudflare Worker qui reçoit les demandes et les transmet à ton bot Telegram. Le token du bot n'est jamais stocké ici — il vit uniquement côté Worker.</div>
+    <div class="field"><label>URL du relais</label><input type="text" id="relay-url"></div>
   </div>
 
 </div>
@@ -382,8 +379,7 @@
     document.getElementById('modal-confirmTextTemplate').value = cfg.modal.confirmTextTemplate;
     document.getElementById('modal-confirmNote').value = cfg.modal.confirmNote;
 
-    document.getElementById('bot-token').value = cfg.telegramBot.token;
-    document.getElementById('bot-chatId').value = cfg.telegramBot.chatId;
+    document.getElementById('relay-url').value = cfg.telegramRelay.url;
 
     renderNavLinks();
     renderOffersFields();
@@ -464,8 +460,7 @@
     cfg.modal.confirmTextTemplate = document.getElementById('modal-confirmTextTemplate').value;
     cfg.modal.confirmNote = document.getElementById('modal-confirmNote').value;
 
-    cfg.telegramBot.token = document.getElementById('bot-token').value;
-    cfg.telegramBot.chatId = document.getElementById('bot-chatId').value;
+    cfg.telegramRelay.url = document.getElementById('relay-url').value;
   }
 
   function showToast(msg){
