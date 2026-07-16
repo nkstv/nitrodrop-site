@@ -100,32 +100,32 @@ const NITRODROP_DEFAULT_CONFIG = {
     }
   ],
   "tickerSettings": {
-    "verbText": "vient de réclamer"
+    "verbText": "just claimed"
   },
   "ticker": [
     {
       "name": "kaelynn_",
-      "message": "+180€ sur Voltra"
+      "message": "$7.00 on Stake"
     },
     {
       "name": "dr0p_ghost",
-      "message": "+95€ sur Runeblock"
+      "message": "$9.00 on Duel"
     },
     {
       "name": "valen.tt",
-      "message": "+220€ sur Voltra"
+      "message": "$7.00 on Stake"
     },
     {
       "name": "ryu_odds",
-      "message": "+40€ de cashback sur Blazepit"
+      "message": "$9.00 on Duel"
     },
     {
       "name": "noa.reef",
-      "message": "+310€ sur Voltra"
+      "message": "$9.00 on Duel"
     },
     {
       "name": "mika_x",
-      "message": "+120€ sur Runeblock"
+      "message": "$7.00 on Stake"
     }
   ],
   "leaderboard": {
@@ -184,20 +184,20 @@ const NITRODROP_DEFAULT_CONFIG = {
         "href": "#"
       }
     ],
-    "disclaimer": "Le jeu comporte des risques : endettement, isolement, dépendance. NITRODROP est un site indépendant à but informatif, il n'exploite aucune plateforme de jeu et ne garantit pas les offres listées, qui restent soumises aux conditions générales de chaque opérateur. Joue avec modération. Aide et information : joueurs-info-service.fr."
+    "disclaimer": "Gambling carries risks: debt, social isolation and addiction. NITRODROP is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. Help and information: joueurs-info-service.fr."
   },
   "modal": {
-    "gateSubTemplate": "Es-tu déjà inscrit sur {platform} avec le code {code} ?",
-    "gateYesText": "Oui, je suis inscrit",
-    "gateNoText": "Non, je m'inscris d'abord",
-    "formTag": "Réclamer le bonus",
-    "formSubTemplate": "Indique l'email et le pseudo de ton compte sur la plateforme. Le tip lié au code {code} est envoyé manuellement sous 24h après vérification de ton inscription — aucun dépôt requis.",
+    "gateSubTemplate": "Have you already signed up to {platform} using the code {code}?",
+    "gateYesText": "Yes, I'm registered",
+    "gateNoText": "No, I’ll sign up first",
+    "formTag": "Claim the bonus",
+    "formSubTemplate": "Enter the email address and username for your account on the Casino. The tip will be sent manually within 24 hours of your registration being verified — no deposit required.",
     "emailLabel": "Email",
-    "pseudoLabel": "Pseudo sur la plateforme",
-    "submitText": "Confirmer ma demande",
-    "confirmTitle": "Demande envoyée",
-    "confirmTextTemplate": "Ton bonus sera envoyé sous moins de 24h après vérification de ton inscription sur {platform}.",
-    "confirmNote": "Un email de confirmation t'a été envoyé. Tu peux fermer cette fenêtre."
+    "pseudoLabel": "Username",
+    "submitText": "Confirm my request",
+    "confirmTitle": "Request sent",
+    "confirmTextTemplate": "Your bonus will be sent within 24 hours of your registration on {platform} being verified.",
+    "confirmNote": "Join our Telegram channel now to receive money every day!"
   },
   "telegramRelay": {
     "url": "https://nitrodrop-relay.lescagoules05.workers.dev/notify"
