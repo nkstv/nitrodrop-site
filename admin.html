@@ -121,6 +121,17 @@
     <div class="field"><label>Titre de l'onglet du navigateur</label><input type="text" id="page-title"></div>
   </div>
 
+  <!-- BANNIÈRE HERO -->
+  <div class="panel">
+    <h2>Bannière du header (image de fond)</h2>
+    <div class="sub">Affiche une image en fond du bloc principal, avec un filtre sombre automatique pour garder les textes et boutons bien lisibles. Désactivée = rendu actuel (fond uni).</div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="hero-banner-enabled">
+      <label for="hero-banner-enabled">Activer la bannière</label>
+    </div>
+    <div class="field"><label>Nom du fichier image (doit être uploadé à la racine du repo GitHub)</label><input type="text" id="hero-banner-url" placeholder="hero-banner.jpg"></div>
+  </div>
+
   <!-- MENU / HEADER -->
   <div class="panel">
     <h2>Menu (nav)</h2>
@@ -583,6 +594,9 @@
     document.getElementById('brand-text1').value = (content.brand && content.brand.text1) || 'NITRO';
     document.getElementById('brand-text2').value = (content.brand && content.brand.text2) || 'DROP';
     document.getElementById('page-title').value = content.pageTitle || 'NITRODROP — Codes bonus crypto vérifiés';
+    cfg.heroBanner = cfg.heroBanner || {};
+    document.getElementById('hero-banner-enabled').checked = !!cfg.heroBanner.enabled;
+    document.getElementById('hero-banner-url').value = cfg.heroBanner.imageUrl || 'hero-banner.jpg';
 
     document.getElementById('nav-ctaText').value = content.nav.ctaText;
     document.getElementById('nav-ctaHref').value = content.nav.ctaHref;
@@ -667,6 +681,9 @@
     content.brand.text1 = document.getElementById('brand-text1').value;
     content.brand.text2 = document.getElementById('brand-text2').value;
     content.pageTitle = document.getElementById('page-title').value;
+    cfg.heroBanner = cfg.heroBanner || {};
+    cfg.heroBanner.enabled = document.getElementById('hero-banner-enabled').checked;
+    cfg.heroBanner.imageUrl = document.getElementById('hero-banner-url').value;
 
     content.nav.links = content.nav.links.map((link, i) => ({
       label: document.getElementById(`nav-link-label-${i}`).value,

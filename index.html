@@ -105,7 +105,20 @@
   /* ---------- HERO ---------- */
   .hero{
     padding:96px 0 80px;
+    position:relative;
+    background-size:cover; background-position:center 30%; background-repeat:no-repeat;
+    transition:background-image .2s ease;
   }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(7,7,12,0.55) 0%, rgba(7,7,12,0.75) 55%, var(--bg) 100%),
+      linear-gradient(90deg, rgba(7,7,12,0.75) 0%, rgba(7,7,12,0.25) 55%, rgba(7,7,12,0.75) 100%);
+    pointer-events:none; z-index:0; display:none;
+  }
+  .hero.has-banner::after{display:block;}
+  .hero.has-banner .wrap{position:relative; z-index:1;}
   .hero-grid{
     display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;
   }
@@ -469,7 +482,7 @@
   </div>
 </nav>
 
-<header class="hero">
+<header class="hero" id="hero-header">
   <div class="wrap hero-grid">
     <div>
       <div class="eyebrow" id="hero-eyebrow">Codes vérifiés · Mis à jour aujourd'hui</div>
@@ -1026,6 +1039,19 @@
   applyStaticConfig(getActive());
   renderOffers(getActive());
   renderTicker(getActive());
+
+  // Bannière hero (image de fond) — indépendante de la langue
+  (function applyHeroBanner(){
+    const heroEl = document.getElementById('hero-header');
+    const banner = CONFIG.heroBanner || {};
+    if (banner.enabled && banner.imageUrl){
+      heroEl.style.backgroundImage = `url('${banner.imageUrl}')`;
+      heroEl.classList.add('has-banner');
+    } else {
+      heroEl.style.backgroundImage = '';
+      heroEl.classList.remove('has-banner');
+    }
+  })();
 
   function setLanguage(lang){
     if (!CONFIG.content[lang]) return;
