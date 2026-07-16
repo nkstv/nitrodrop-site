@@ -91,6 +91,16 @@
 
   <!-- MENU / HEADER -->
   <div class="panel">
+    <h2>Nom du site (logo)</h2>
+    <div class="sub">Le texte affiché en haut à gauche et dans le pied de page.</div>
+    <div class="row">
+      <div class="field"><label>Première partie (blanc)</label><input type="text" id="brand-text1"></div>
+      <div class="field"><label>Deuxième partie (vert)</label><input type="text" id="brand-text2"></div>
+    </div>
+  </div>
+
+  <!-- MENU / HEADER -->
+  <div class="panel">
     <h2>Menu (nav)</h2>
     <div class="sub">Les 4 liens du menu du haut, et le bouton vert en haut à droite.</div>
 
@@ -452,6 +462,9 @@
 
   // ---------- Remplit tous les champs simples depuis cfg ----------
   function fillForm(){
+    document.getElementById('brand-text1').value = (cfg.brand && cfg.brand.text1) || 'NITRO';
+    document.getElementById('brand-text2').value = (cfg.brand && cfg.brand.text2) || 'DROP';
+
     document.getElementById('nav-ctaText').value = cfg.nav.ctaText;
     document.getElementById('nav-ctaHref').value = cfg.nav.ctaHref;
 
@@ -521,6 +534,10 @@
 
   // ---------- Lit tous les champs et reconstruit cfg ----------
   function readForm(){
+    cfg.brand = cfg.brand || {};
+    cfg.brand.text1 = document.getElementById('brand-text1').value;
+    cfg.brand.text2 = document.getElementById('brand-text2').value;
+
     cfg.nav.links = cfg.nav.links.map((link, i) => ({
       label: document.getElementById(`nav-link-label-${i}`).value,
       href: document.getElementById(`nav-link-href-${i}`).value

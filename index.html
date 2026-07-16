@@ -71,7 +71,7 @@
     box-shadow:0 0 22px rgba(139,92,255,0.55);
     font-size:16px;
   }
-  .logo span{color:var(--green);}
+  .logo .logo-accent{color:var(--green);}
   .nav-links{display:flex; gap:34px; font-size:14.5px; color:var(--text-dim); font-weight:500;}
   .nav-links a:hover{color:var(--text);}
   .nav-cta{
@@ -425,7 +425,7 @@
 
 <nav>
   <div class="wrap nav-inner">
-    <div class="logo"><div class="logo-mark">⚡</div>NITRO<span>DROP</span></div>
+    <div class="logo"><div class="logo-mark">⚡</div><span id="brand-text1-nav">NITRO</span><span id="brand-text2-nav" class="logo-accent">DROP</span></div>
     <div class="nav-links" id="nav-links">
       <a href="#offres" id="nav-link-0">Codes bonus</a>
       <a href="#classement" id="nav-link-1">Classement</a>
@@ -564,7 +564,7 @@
 <footer>
   <div class="wrap">
     <div class="footer-top">
-      <div class="logo"><div class="logo-mark">⚡</div>NITRO<span>DROP</span></div>
+      <div class="logo"><div class="logo-mark">⚡</div><span id="brand-text1-footer">NITRO</span><span id="brand-text2-footer" class="logo-accent">DROP</span></div>
       <div class="footer-cols">
         <div class="footer-col">
           <h4 id="footer-nav-title">Navigation</h4>
@@ -642,6 +642,14 @@
 
   // ---------- Applique la config statique (nav, hero, telegram, sections, footer) ----------
   function applyStaticConfig(cfg){
+    // Logo / nom de marque (nav + footer)
+    const brandText1 = (cfg.brand && cfg.brand.text1) || 'NITRO';
+    const brandText2 = (cfg.brand && cfg.brand.text2) || 'DROP';
+    document.getElementById('brand-text1-nav').textContent = brandText1;
+    document.getElementById('brand-text2-nav').textContent = brandText2;
+    document.getElementById('brand-text1-footer').textContent = brandText1;
+    document.getElementById('brand-text2-footer').textContent = brandText2;
+
     // Nav
     cfg.nav.links.forEach((link, i) => {
       const el = document.getElementById('nav-link-' + i);
