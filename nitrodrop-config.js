@@ -130,6 +130,24 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": false,
           "claimHighlighted": false,
           "codeEnabled": false
+        },
+        {
+          "featured": false,
+          "badge": "",
+          "mark": "G",
+          "markClass": "mark-2",
+          "name": "Gamdom.com",
+          "sub": "Crypto Casino · Exclusive Offers",
+          "bonusAmount": "20 Free Spins",
+          "bonusSuffix": "",
+          "desc": "Register with the code, submit your username, and get your free spins. (limited offer)",
+          "code": "casinofr",
+          "codeEnabled": true,
+          "signupHref": "https://gamdom.com/r/casinofr",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false
         }
       ],
       "tickerSettings": {
@@ -364,6 +382,24 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": false,
           "claimHighlighted": false,
           "codeEnabled": false
+        },
+        {
+          "featured": false,
+          "badge": "",
+          "mark": "G",
+          "markClass": "mark-2",
+          "name": "Gamdom.com",
+          "sub": "Crypto Casino · Exclusive Offers",
+          "bonusAmount": "20 Free Spins",
+          "bonusSuffix": "",
+          "desc": "Inscrivez-vous avec le code, indiquez votre nom d'utilisateur et obtenez vos tours gratuits. ",
+          "code": "casinofr",
+          "codeEnabled": true,
+          "signupHref": "https://gamdom.com/r/casinofr",
+          "signupText": "1. Créer un compte",
+          "claimText": "2. Réclamer mon bonus",
+          "signupHighlighted": false,
+          "claimHighlighted": false
         }
       ],
       "tickerSettings": {
