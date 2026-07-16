@@ -786,6 +786,7 @@
     document.getElementById('claim-pseudo-input').placeholder = cfg.modal.pseudoPlaceholder || 'Ton pseudo de compte';
     document.getElementById('discord-label-text').textContent = cfg.modal.discordLabel || 'Ton ID Discord';
     document.getElementById('claim-discord-input').placeholder = cfg.modal.discordPlaceholder || 'Ex: 123456789012345678';
+    document.getElementById('discord-connect-btn').textContent = cfg.modal.discordConnectText || '🎮 Se connecter avec Discord';
     document.getElementById('gate-yes-btn').textContent = cfg.modal.gateYesText;
     document.getElementById('gate-no-btn').textContent = cfg.modal.gateNoText;
     document.getElementById('form-tag-label').textContent = cfg.modal.formTag;
@@ -900,7 +901,7 @@
     document.getElementById('claim-discord-input').value = '';
     document.getElementById('discord-connected-info').style.display = 'none';
     document.getElementById('discord-connect-btn').style.display = '';
-    document.getElementById('discord-connect-btn').textContent = '🎮 Se connecter avec Discord';
+    document.getElementById('discord-connect-btn').textContent = getActive().modal.discordConnectText || '🎮 Se connecter avec Discord';
     clearInterval(countdownInterval);
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';

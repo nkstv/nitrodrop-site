@@ -278,6 +278,7 @@
       <div class="field"><label>Libellé champ Discord ID</label><input type="text" id="modal-discordLabel"></div>
       <div class="field"><label>Texte d'exemple (placeholder) — Discord ID</label><input type="text" id="modal-discordPlaceholder"></div>
     </div>
+    <div class="field"><label>Texte du bouton "Se connecter avec Discord"</label><input type="text" id="modal-discordConnectText"></div>
     <div class="field"><label>Texte du bouton d'envoi</label><input type="text" id="modal-submitText"></div>
 
     <div class="subheading">Étape 3 — Confirmation</div>
@@ -592,6 +593,7 @@
     document.getElementById('modal-pseudoPlaceholder').value = content.modal.pseudoPlaceholder || '';
     document.getElementById('modal-discordLabel').value = content.modal.discordLabel || '';
     document.getElementById('modal-discordPlaceholder').value = content.modal.discordPlaceholder || '';
+    document.getElementById('modal-discordConnectText').value = content.modal.discordConnectText || '';
     document.getElementById('modal-submitText').value = content.modal.submitText;
     document.getElementById('modal-confirmTitle').value = content.modal.confirmTitle;
     document.getElementById('modal-confirmTextTemplate').value = content.modal.confirmTextTemplate;
@@ -712,6 +714,7 @@
     content.modal.pseudoPlaceholder = document.getElementById('modal-pseudoPlaceholder').value;
     content.modal.discordLabel = document.getElementById('modal-discordLabel').value;
     content.modal.discordPlaceholder = document.getElementById('modal-discordPlaceholder').value;
+    content.modal.discordConnectText = document.getElementById('modal-discordConnectText').value;
     content.modal.submitText = document.getElementById('modal-submitText').value;
     content.modal.confirmTitle = document.getElementById('modal-confirmTitle').value;
     content.modal.confirmTextTemplate = document.getElementById('modal-confirmTextTemplate').value;
