@@ -210,34 +210,34 @@ const NITRODROP_DEFAULT_CONFIG = {
         "navTitle": "Navigation",
         "navLinks": [
           {
-            "label": "Codes bonus",
+            "label": "Bonus Codes & Offers",
             "href": "#offres"
           },
           {
-            "label": "Classement",
+            "label": "Ranking",
             "href": "#classement"
           },
           {
-            "label": "Comment ça marche",
+            "label": "How it works",
             "href": "#etapes"
           }
         ],
-        "communityTitle": "Communauté",
+        "communityTitle": "Community",
         "communityLinks": [
           {
             "label": "Discord",
-            "href": "#"
+            "href": "https://discord.gg/7h7QHXdZeK"
           },
           {
             "label": "Telegram",
-            "href": "#"
+            "href": "https://t.me/+BZyC9HHN3LljODM0"
           },
           {
             "label": "Contact",
             "href": "#"
           }
         ],
-        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. Drop-Cash.com is an independent website provided for information purposes only; it does not operate any gambling platforms and does not guarantee the offers listed, which remain subject to each operator’s terms and conditions. Please gamble responsibly. "
+        "disclaimer": "Gambling carries risks: debt, social isolation and addiction. "
       },
       "modal": {
         "gateSubTemplate": "Have you already signed up to {platform} using the code {code}?",
@@ -481,18 +481,18 @@ const NITRODROP_DEFAULT_CONFIG = {
         "communityLinks": [
           {
             "label": "Discord",
-            "href": "#"
+            "href": "https://discord.gg/7h7QHXdZeK"
           },
           {
             "label": "Telegram",
-            "href": "#"
+            "href": "https://t.me/+BZyC9HHN3LljODM0"
           },
           {
             "label": "Contact",
             "href": "#"
           }
         ],
-        "disclaimer": "Les jeux d'argent comportent des risques : endettement, isolement social et dépendance. Drop-cash.com est un site web indépendant proposé à titre purement informatif ; il n'exploite aucune plateforme de jeux d'argent et ne garantit pas les offres présentées, qui restent soumises aux conditions générales de chaque opérateur. Jouez de manière responsable. Aide et informations : joueurs-info-service.fr."
+        "disclaimer": "Les jeux d'argent comportent des risques : endettement, isolement social et dépendance. "
       },
       "modal": {
         "gateSubTemplate": "Vous êtes-vous déjà inscrit sur {platform} en utilisant le code {code} ?",
