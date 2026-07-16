@@ -30,7 +30,7 @@
     color:var(--text);
     font-family:'Inter',sans-serif;
     -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    overflow-x:clip;
   }
   body::before{
     content:"";
@@ -82,7 +82,19 @@
   }
   .nav-cta:hover{box-shadow:0 0 26px rgba(182,255,60,0.45); transform:translateY(-1px);}
   .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer;}
-  .burger span{width:22px; height:2px; background:var(--text);}
+  .burger span{width:22px; height:2px; background:var(--text); transition:transform .2s ease, opacity .2s ease;}
+  .mobile-nav{
+    display:none; flex-direction:column; gap:2px;
+    background:var(--bg-raise); border-bottom:1px solid var(--line);
+    padding:8px 0;
+  }
+  .mobile-nav.open{display:flex;}
+  .mobile-nav a{
+    padding:14px 32px; font-size:15px; color:var(--text-dim); font-weight:500;
+    border-bottom:1px solid var(--line);
+  }
+  .mobile-nav a:last-child{border-bottom:none;}
+  .mobile-nav a:active{color:var(--text); background:var(--bg-card);}
 
   /* ---------- HERO ---------- */
   .hero{
@@ -421,7 +433,13 @@
       <a href="#" id="nav-link-3">Discord</a>
     </div>
     <a href="#offres" class="nav-cta" id="nav-cta">Voir les codes</a>
-    <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <button class="burger" aria-label="Menu" id="burger-btn"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="#offres" id="mobile-nav-link-0">Codes bonus</a>
+    <a href="#classement" id="mobile-nav-link-1">Classement</a>
+    <a href="#etapes" id="mobile-nav-link-2">Comment ça marche</a>
+    <a href="#" id="mobile-nav-link-3">Discord</a>
   </div>
 </nav>
 
@@ -628,6 +646,8 @@
     cfg.nav.links.forEach((link, i) => {
       const el = document.getElementById('nav-link-' + i);
       if (el){ el.textContent = link.label; el.href = link.href; }
+      const mEl = document.getElementById('mobile-nav-link-' + i);
+      if (mEl){ mEl.textContent = link.label; mEl.href = link.href; }
     });
     const navCta = document.getElementById('nav-cta');
     navCta.textContent = cfg.nav.ctaText;
@@ -877,6 +897,16 @@
   applyStaticConfig(CONFIG);
   renderOffers(CONFIG);
   renderTicker(CONFIG);
+
+  // ---- Menu mobile ----
+  const burgerBtn = document.getElementById('burger-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+  burgerBtn.addEventListener('click', () => {
+    mobileNav.classList.toggle('open');
+  });
+  mobileNav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => mobileNav.classList.remove('open'));
+  });
 </script>
 
 </body>
