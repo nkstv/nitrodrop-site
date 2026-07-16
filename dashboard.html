@@ -90,6 +90,11 @@
         <option value="yes">Tipsé : oui</option>
         <option value="no">Tipsé : non</option>
       </select>
+      <select id="filter-archived" onchange="applyFilters()">
+        <option value="active">Actives</option>
+        <option value="archived">Archivées</option>
+        <option value="all">Toutes</option>
+      </select>
     </div>
 
     <div id="table-container"></div>
@@ -153,8 +158,11 @@
     const casino = document.getElementById('filter-casino').value;
     const search = document.getElementById('filter-search').value.toLowerCase();
     const tippedFilter = document.getElementById('filter-tipped').value;
+    const archivedFilter = document.getElementById('filter-archived').value;
 
     filtered = allSubmissions.filter(s => {
+      if (archivedFilter === 'active' && s.archived) return false;
+      if (archivedFilter === 'archived' && !s.archived) return false;
       if (casino && s.platform !== casino) return false;
       if (tippedFilter === 'yes' && !s.tipped) return false;
       if (tippedFilter === 'no' && s.tipped) return false;
@@ -192,7 +200,7 @@
     const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
     const rows = pageItems.map(s => `
-      <tr>
+      <tr style="${s.archived ? 'opacity:0.45;' : ''}">
         <td class="mono">${escapeHtml(s.date || '')}</td>
         <td><span class="badge">${escapeHtml(s.platform || '')}</span></td>
         <td class="mono">${escapeHtml(s.code || '')}</td>
@@ -202,6 +210,11 @@
         <td style="text-align:center;">
           <input type="checkbox" ${s.tipped ? 'checked' : ''} onchange="toggleTipped('${s.id}', this.checked)">
         </td>
+        <td style="text-align:center;">
+          <button class="btn" style="padding:5px 10px; font-size:11.5px;" onclick="toggleArchived('${s.id}', ${!s.archived})">
+            ${s.archived ? 'Désarchiver' : 'Archiver'}
+          </button>
+        </td>
       </tr>
     `).join('');
 
@@ -209,7 +222,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Code</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Tipsé</th>
+            <th>Date</th><th>Casino</th><th>Code</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Tipsé</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -246,6 +259,22 @@
       const entry = allSubmissions.find(s => s.id === id);
       if (entry) entry.tipped = tipped;
       renderStats();
+    }catch(err){
+      alert('Erreur : ' + err.message);
+    }
+  }
+
+  async function toggleArchived(id, archived){
+    try{
+      const resp = await fetch(`${workerBaseUrl}/submissions/archive`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ id, archived })
+      });
+      if (!resp.ok) throw new Error('Échec de la sauvegarde');
+      const entry = allSubmissions.find(s => s.id === id);
+      if (entry) entry.archived = archived;
+      applyFilters(); // ré-applique le filtre courant pour faire disparaître/réapparaître la ligne si besoin
     }catch(err){
       alert('Erreur : ' + err.message);
     }
