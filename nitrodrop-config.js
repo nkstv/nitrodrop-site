@@ -544,7 +544,8 @@ function nitrodropLoadConfig() {
     if (!raw) return nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
     const saved = JSON.parse(raw);
     const merged = nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
-    for (const key of Object.keys(merged)) {
+    const allKeys = new Set([...Object.keys(merged), ...Object.keys(saved)]);
+    for (const key of allKeys) {
       if (saved[key] !== undefined) merged[key] = saved[key];
     }
     return merged;
