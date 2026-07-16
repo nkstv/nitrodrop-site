@@ -14,26 +14,26 @@ const NITRODROP_DEFAULT_CONFIG = {
         "href": "#offres "
       },
       {
-        "label": "Classement",
-        "href": "#classement"
+        "label": "",
+        "href": ""
       },
       {
-        "label": "Comment ça marche",
-        "href": "#etapes"
+        "label": "",
+        "href": ""
       },
       {
-        "label": "Discord",
-        "href": "#"
+        "label": "Telegram",
+        "href": "https://t.me/+BZyC9HHN3LljODM0"
       }
     ],
-    "ctaText": "Voir les codes",
+    "ctaText": "View Offers",
     "ctaHref": "#offres"
   },
   "hero": {
     "eyebrow": "Verified Promo Codes · Updated Today",
-    "titleLine1": "Free $22+ ",
-    "titleEm": "waiting for you",
-    "lede": "Claim over $22 for free without depositing a single cent! Receive your money in less than 24 hours, sent directly to your account.\n",
+    "titleLine1": "💰 $22+ Bonus ",
+    "titleEm": "Waiting for You",
+    "lede": "Claim your free bonus with no deposit required. Get rewarded in under 24 hours.",
     "code": "",
     "btnPrimaryText": "View Offers",
     "btnPrimaryHref": "#offres",
@@ -45,7 +45,7 @@ const NITRODROP_DEFAULT_CONFIG = {
     "title": "Daily giveaways are waiting for you on Telegram",
     "desc": "Join our Telegram community to discover daily giveaways, exclusive bonuses, updates, and new opportunities to earn rewards.",
     "btnText": "Join Telegram →",
-    "btnHref": "#"
+    "btnHref": "https://t.me/+BZyC9HHN3LljODM0"
   },
   "offersSection": {
     "tag": "Exclusive Offers",
@@ -66,7 +66,9 @@ const NITRODROP_DEFAULT_CONFIG = {
       "code": "welcomebonus2026",
       "signupHref": "https://duel.com/r/welcomebonus2026",
       "signupText": "1. Create Account",
-      "claimText": "2. Claim My Bonus"
+      "claimText": "2. Claim My Bonus",
+      "signupHighlighted": true,
+      "claimHighlighted": false
     },
     {
       "featured": false,
@@ -81,7 +83,9 @@ const NITRODROP_DEFAULT_CONFIG = {
       "code": "NKSCAS",
       "signupHref": "https://stake.bet/?c=3eccdsPf",
       "signupText": "1. Create Account",
-      "claimText": "2. Claim My Bonus"
+      "claimText": "2. Claim My Bonus",
+      "signupHighlighted": true,
+      "claimHighlighted": false
     },
     {
       "featured": false,
@@ -96,7 +100,9 @@ const NITRODROP_DEFAULT_CONFIG = {
       "code": "new",
       "signupHref": "https://rainbet.com/?r=new",
       "signupText": "1. Create Account",
-      "claimText": "2. Claim My Bonus"
+      "claimText": "2. Claim My Bonus",
+      "signupHighlighted": true,
+      "claimHighlighted": false
     }
   ],
   "tickerSettings": {
@@ -197,9 +203,9 @@ const NITRODROP_DEFAULT_CONFIG = {
     "submitText": "Confirm my request",
     "confirmTitle": "Request sent",
     "confirmTextTemplate": "Your bonus will be sent within 24 hours of your registration on {platform} being verified.",
-    "confirmNote": "Join our Telegram channel now to receive money every day!",
-    "confirmTelegramText": "",
-    "confirmTelegramHref": ""
+    "confirmNote": "🎁 Join our Telegram channel now to receive FREE money every day!",
+    "confirmTelegramText": "Join the Telegram Giveaway Channel →",
+    "confirmTelegramHref": "https://t.me/+BZyC9HHN3LljODM0"
   },
   "telegramRelay": {
     "url": "https://nitrodrop-relay.lescagoules05.workers.dev/notify"
