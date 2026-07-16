@@ -241,6 +241,24 @@
 
 <script src="nitrodrop-config.js"></script>
 <script>
+  // ---------- Verrou d'accès (dissuasif, pas une vraie sécurité) ----------
+  // Change ce mot de passe avant de publier. N'importe qui sait lire du code
+  // source peut le voir ici : ça bloque juste les visiteurs qui tombent sur
+  // l'URL par hasard, pas une personne motivée. Pour une vraie protection,
+  // il faut un service d'authentification (ex. Cloudflare Access).
+  const ADMIN_PASSWORD = 'change-moi-avant-de-publier';
+
+  (function requireAdminPassword(){
+    if (sessionStorage.getItem('nitrodrop_admin_ok') === '1') return;
+    const attempt = prompt('Mot de passe admin :');
+    if (attempt !== ADMIN_PASSWORD){
+      document.documentElement.innerHTML =
+        '<body style="background:#07070C;color:#F1F0FA;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;"><p>Accès refusé.</p></body>';
+      throw new Error('Accès admin refusé');
+    }
+    sessionStorage.setItem('nitrodrop_admin_ok', '1');
+  })();
+
   let cfg = nitrodropLoadConfig();
 
   function el(tag, attrs, children){
