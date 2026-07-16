@@ -637,12 +637,10 @@
         <label><span id="pseudo-label-text">Pseudo sur la plateforme</span>
           <input type="text" required placeholder="Ton pseudo de compte" id="claim-pseudo-input">
         </label>
-        <label><span id="discord-label-text">Ton ID Discord</span>
-          <input type="text" required placeholder="Ex: 123456789012345678" id="claim-discord-input">
-        </label>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="discord-help-text">
-          Pour le trouver : Discord → Paramètres → Avancés → active "Mode développeur", puis clique droit sur ton profil → "Copier l'ID utilisateur".
-        </p>
+        <label><span id="discord-label-text">Ton compte Discord</span></label>
+        <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
+        <div id="discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
+        <input type="hidden" id="claim-discord-input">
         <button type="submit" class="modal-submit" id="claim-submit-btn">Confirmer ma demande</button>
       </form>
     </div>
@@ -899,6 +897,10 @@
     stepForm.style.display = 'none';
     stepConfirm.style.display = 'none';
     claimForm.reset();
+    document.getElementById('claim-discord-input').value = '';
+    document.getElementById('discord-connected-info').style.display = 'none';
+    document.getElementById('discord-connect-btn').style.display = '';
+    document.getElementById('discord-connect-btn').textContent = '🎮 Se connecter avec Discord';
     clearInterval(countdownInterval);
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -934,12 +936,42 @@
     });
   }
 
+  // ---- Connexion Discord (OAuth, récupère l'ID automatiquement) ----
+  function connectDiscord(){
+    const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
+    if (!clientId){
+      alert('Connexion Discord non configurée par l\'administrateur du site.');
+      return;
+    }
+    const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
+    const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify`;
+    const btn = document.getElementById('discord-connect-btn');
+    btn.textContent = 'Connexion en cours…';
+    window.open(authUrl, 'discord-oauth', 'width=500,height=750');
+  }
+
+  window.addEventListener('message', (event) => {
+    if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
+    const { discordId, username } = event.data;
+    document.getElementById('claim-discord-input').value = discordId;
+    document.getElementById('discord-connect-btn').style.display = 'none';
+    const info = document.getElementById('discord-connected-info');
+    info.style.display = 'block';
+    info.textContent = `✓ Connecté en tant que ${username || 'Discord'}`;
+  });
+
   async function submitClaim(e){
     e.preventDefault();
     const platform = document.getElementById('modal-platform-name').innerText;
     const email = claimForm.querySelector('input[type="email"]').value;
     const pseudo = document.getElementById('claim-pseudo-input').value;
     const discordId = document.getElementById('claim-discord-input').value;
+
+    if (!discordId){
+      alert('Connecte-toi avec Discord avant de valider ta demande.');
+      return;
+    }
 
     const submitBtn = claimForm.querySelector('.modal-submit');
     const originalLabel = submitBtn.textContent;

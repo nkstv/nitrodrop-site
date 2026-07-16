@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Connexion Discord…</title>
+<style>
+  body{
+    background:#07070C; color:#F1F0FA; font-family:system-ui, sans-serif;
+    display:flex; align-items:center; justify-content:center; height:100vh; margin:0;
+    text-align:center; padding:20px;
+  }
+</style>
+</head>
+<body>
+<p id="msg">Connexion en cours…</p>
+<script>
+(async function(){
+  const msgEl = document.getElementById('msg');
+  const hashParams = new URLSearchParams(location.hash.slice(1));
+  const accessToken = hashParams.get('access_token');
+
+  if (!accessToken){
+    msgEl.textContent = "Échec de la connexion Discord. Tu peux fermer cette fenêtre et réessayer.";
+    return;
+  }
+
+  try{
+    const resp = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    if (!resp.ok) throw new Error('Réponse Discord invalide (' + resp.status + ')');
+    const user = await resp.json();
+
+    if (window.opener){
+      window.opener.postMessage({
+        type: 'nitrodrop-discord-auth',
+        discordId: user.id,
+        username: user.username
+      }, '*');
+    }
+    msgEl.textContent = "Connecté ! Cette fenêtre va se fermer…";
+  }catch(err){
+    msgEl.textContent = "Erreur : " + err.message;
+  }
+
+  setTimeout(() => window.close(), 1200);
+})();
+</script>
+</body>
+</html>

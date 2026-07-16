@@ -297,6 +297,19 @@
     <div class="field"><label>URL du relais</label><input type="text" id="relay-url"></div>
   </div>
 
+  <!-- DISCORD OAUTH -->
+  <div class="panel">
+    <h2>Connexion Discord (bouton du formulaire)</h2>
+    <div class="sub">
+      Le "Client ID" de ton application Discord (donnée publique, sans risque à afficher). Va sur
+      <a href="https://discord.com/developers/applications" target="_blank" style="color:var(--violet);">discord.com/developers/applications</a>
+      → ton application → "General Information" → copie "Application ID" (aussi appelé "Client ID").<br><br>
+      <strong style="color:var(--violet);">Important :</strong> dans la même application → "OAuth2" → "General" → section "Redirects" → ajoute cette URL exacte :
+      <code id="discord-redirect-hint" style="display:block; margin-top:6px; padding:8px; background:var(--bg-raise); border-radius:6px; word-break:break-all;"></code>
+    </div>
+    <div class="field"><label>Discord Client ID</label><input type="text" id="discord-client-id" placeholder="Ex: 1527360448557482056"></div>
+  </div>
+
   <!-- PUBLICATION GITHUB -->
   <div class="panel" style="border-color:rgba(182,255,60,0.4);">
     <h2>Publier en ligne (GitHub)</h2>
@@ -587,6 +600,10 @@
     document.getElementById('modal-confirmTelegramHref').value = content.modal.confirmTelegramHref || '';
 
     document.getElementById('relay-url').value = cfg.telegramRelay.url;
+    cfg.discordOAuth = cfg.discordOAuth || {};
+    document.getElementById('discord-client-id').value = cfg.discordOAuth.clientId || '';
+    document.getElementById('discord-redirect-hint').textContent =
+      `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
 
     document.getElementById('ticker-verbText').value = content.tickerSettings.verbText;
 
@@ -703,6 +720,8 @@
     content.modal.confirmTelegramHref = document.getElementById('modal-confirmTelegramHref').value;
 
     cfg.telegramRelay.url = document.getElementById('relay-url').value;
+    cfg.discordOAuth = cfg.discordOAuth || {};
+    cfg.discordOAuth.clientId = document.getElementById('discord-client-id').value;
   }
 
   function showToast(msg){
