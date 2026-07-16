@@ -48,9 +48,9 @@ const NITRODROP_DEFAULT_CONFIG = {
     "btnHref": "#"
   },
   "offersSection": {
-    "tag": "Offres du moment",
-    "title": "Trois plateformes, trois codes actifs.",
-    "desc": "Chaque code est testé manuellement avant publication. Le bonus s'applique automatiquement à l'inscription ou en le collant dans le champ dédié."
+    "tag": "Exclusive Offers",
+    "title": "No Deposit Bonuses",
+    "desc": "Sign up, verify your account, and click \"Claim My Bonus\" to unlock your no deposit bonus."
   },
   "offers": [
     {
@@ -58,30 +58,30 @@ const NITRODROP_DEFAULT_CONFIG = {
       "badge": "TOP",
       "mark": "V",
       "markClass": "mark-1",
-      "name": "Voltra",
-      "sub": "Casino crypto · retraits instantanés",
-      "bonusAmount": "20€",
-      "bonusSuffix": "sans dépôt",
-      "desc": "Inscris-toi avec le code, envoie ton pseudo, reçois ton tip sous 24h. Aucun dépôt requis.",
-      "code": "NITRO200",
-      "signupHref": "https://voltra.example/signup?ref=NITRO200",
-      "signupText": "S'inscrire",
-      "claimText": "Recevoir le bonus"
+      "name": "Duel.com",
+      "sub": "Crypto Casino · Instant Withdrawals",
+      "bonusAmount": "$9.00",
+      "bonusSuffix": "$1.50/day × 6",
+      "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+      "code": "welcomebonus2026",
+      "signupHref": "https://duel.com/r/welcomebonus2026",
+      "signupText": "Create Account",
+      "claimText": "Claim My Bonus"
     },
     {
       "featured": false,
       "badge": "",
       "mark": "R",
       "markClass": "mark-2",
-      "name": "Runeblock",
-      "sub": "Paris sportifs & casino",
-      "bonusAmount": "12€",
-      "bonusSuffix": "sans dépôt",
-      "desc": "Inscription + pseudo envoyé = tip sous 24h. Aucun dépôt requis pour débloquer le bonus.",
-      "code": "NITRORUNE",
-      "signupHref": "https://runeblock.example/signup?ref=NITRORUNE",
-      "signupText": "S'inscrire",
-      "claimText": "Recevoir le bonus"
+      "name": "Stake.com",
+      "sub": "Crypto Casino · Instant Payouts",
+      "bonusAmount": "$7.00",
+      "bonusSuffix": "$1.00/day × 7",
+      "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+      "code": "NKSCAS",
+      "signupHref": "https://stake.bet/?c=3eccdsPf",
+      "signupText": "Create Account",
+      "claimText": "Claim My Bonus"
     },
     {
       "featured": false,
