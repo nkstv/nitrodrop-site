@@ -37,8 +37,8 @@ const NITRODROP_DEFAULT_CONFIG = {
     "code": "",
     "btnPrimaryText": "View Offers",
     "btnPrimaryHref": "#offres",
-    "btnGhostText": "How to Use",
-    "btnGhostHref": "#etapes",
+    "btnGhostText": "No deposit bonus",
+    "btnGhostHref": "#offres",
     "codeWidgetEnabled": false
   },
   "telegram": {
