@@ -525,6 +525,10 @@ const NITRODROP_DEFAULT_CONFIG = {
   "defaultLang": "en",
   "discordOAuth": {
     "clientId": "1527360448557482056"
+  },
+  "heroBanner": {
+    "enabled": true,
+    "imageUrl": "hero-banner.jpg"
   }
 };
 
