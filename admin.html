@@ -206,6 +206,7 @@
     <h2>Les 3 offres</h2>
     <div class="sub">Nom, bonus, description, code, lien d'inscription et textes des boutons pour chaque plateforme.</div>
     <div id="offers-fields"></div>
+    <button type="button" class="btn btn-save" onclick="addOffer()" style="margin-top:6px;">+ Ajouter une offre</button>
   </div>
 
   <!-- STEPS -->
@@ -397,12 +398,49 @@
     });
   }
 
+  function addOffer(){
+    readForm(); // garde les modifs en cours avant de modifier le tableau
+    const markClasses = ['mark-1', 'mark-2', 'mark-3'];
+    const idx = content.offers.length;
+    content.offers.push({
+      featured: false,
+      badge: '',
+      mark: 'N',
+      markClass: markClasses[idx % markClasses.length],
+      name: 'Nouvelle offre',
+      sub: '',
+      bonusAmount: '',
+      bonusSuffix: '',
+      desc: '',
+      code: '',
+      signupHref: '',
+      signupText: "S'inscrire",
+      claimText: 'Recevoir le bonus',
+      signupHighlighted: false,
+      claimHighlighted: false
+    });
+    renderOffersFields();
+    showToast('Nouvelle offre ajoutée — pense à la remplir puis publier');
+  }
+
+  function removeOffer(i){
+    if (!confirm('Supprimer définitivement cette offre ?')) return;
+    readForm();
+    content.offers.splice(i, 1);
+    renderOffersFields();
+  }
+
   function renderOffersFields(){
     const container = document.getElementById('offers-fields');
     container.innerHTML = '';
     content.offers.forEach((offer, i) => {
       const block = el('div', {class:'offer-block'});
-      block.appendChild(el('h3', {text:`Offre ${i+1}`}));
+      const headerRow = el('div', {style:'display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;'});
+      headerRow.appendChild(el('h3', {text:`Offre ${i+1}`, style:'margin-bottom:0;'}));
+      const delBtn = el('button', {type:'button', class:'btn btn-reset', text:'Supprimer', style:'padding:6px 12px; font-size:12px;'});
+      delBtn.addEventListener('click', () => removeOffer(i));
+      headerRow.appendChild(delBtn);
+      block.appendChild(headerRow);
 
       const chk = el('div', {class:'checkbox-row'});
       const chkInput = el('input', {type:'checkbox', id:`offer-featured-${i}`});
