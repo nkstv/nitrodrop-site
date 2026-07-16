@@ -30,21 +30,21 @@ const NITRODROP_DEFAULT_CONFIG = {
     "ctaHref": "#offres"
   },
   "hero": {
-    "eyebrow": "Codes vérifiés · Mis à jour aujourd'hui",
-    "titleLine1": "Ton dépôt mérite",
-    "titleEm": "un vrai bonus.",
-    "lede": "NITRODROP tipe directement les joueurs qui s'inscrivent avec son code. Pas de dépôt requis : renseigne ton pseudo, et ton bonus est envoyé sous 24h.",
-    "code": "NITRO200",
-    "btnPrimaryText": "Voir les offres",
+    "eyebrow": "Verified Promo Codes · Updated Today",
+    "titleLine1": "Free $22+ ",
+    "titleEm": "waiting for you",
+    "lede": "Claim over $22 for free without depositing a single cent! Receive your money in less than 24 hours, sent directly to your account.\n",
+    "code": "",
+    "btnPrimaryText": "View Offers",
     "btnPrimaryHref": "#offres",
-    "btnGhostText": "Comment l'utiliser",
+    "btnGhostText": "How to Use",
     "btnGhostHref": "#etapes"
   },
   "telegram": {
-    "tag": "Tuto NitroDrop FR",
-    "title": "Un guide pas à pas t'attend sur Telegram",
-    "desc": "Création du compte, saisie du code NITRO200, dépôt et suivi du classement : tout est expliqué en français, étape par étape.",
-    "btnText": "Ouvrir le tuto Telegram →",
+    "tag": "NitroDrop Daily Rewards",
+    "title": "Daily giveaways are waiting for you on Telegram",
+    "desc": "Join our Telegram community to discover daily giveaways, exclusive bonuses, updates, and new opportunities to earn rewards.",
+    "btnText": "Join Telegram →",
     "btnHref": "#"
   },
   "offersSection": {
@@ -56,22 +56,22 @@ const NITRODROP_DEFAULT_CONFIG = {
     {
       "featured": true,
       "badge": "TOP",
-      "mark": "V",
+      "mark": "D",
       "markClass": "mark-1",
       "name": "Duel.com",
-      "sub": "Crypto Casino · Instant Withdrawals",
+      "sub": "Crypto Casino · Best Deals",
       "bonusAmount": "$9.00",
       "bonusSuffix": "$1.50/day × 6",
       "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
       "code": "welcomebonus2026",
       "signupHref": "https://duel.com/r/welcomebonus2026",
-      "signupText": "Create Account",
-      "claimText": "Claim My Bonus"
+      "signupText": "1. Create Account",
+      "claimText": "2. Claim My Bonus"
     },
     {
       "featured": false,
       "badge": "",
-      "mark": "R",
+      "mark": "S",
       "markClass": "mark-2",
       "name": "Stake.com",
       "sub": "Crypto Casino · Instant Payouts",
@@ -80,23 +80,23 @@ const NITRODROP_DEFAULT_CONFIG = {
       "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
       "code": "NKSCAS",
       "signupHref": "https://stake.bet/?c=3eccdsPf",
-      "signupText": "Create Account",
-      "claimText": "Claim My Bonus"
+      "signupText": "1. Create Account",
+      "claimText": "2. Claim My Bonus"
     },
     {
       "featured": false,
       "badge": "",
-      "mark": "B",
+      "mark": "R",
       "markClass": "mark-3",
-      "name": "Blazepit",
-      "sub": "Nouvelle plateforme · cashback quotidien",
-      "bonusAmount": "10€",
-      "bonusSuffix": "sans dépôt",
-      "desc": "Tip envoyé sous 24h après vérification de ton inscription, sans dépôt requis.",
-      "code": "NITROBLAZE",
-      "signupHref": "https://blazepit.example/signup?ref=NITROBLAZE",
-      "signupText": "S'inscrire",
-      "claimText": "Recevoir le bonus"
+      "name": "Rainbet",
+      "sub": "Crypto Casino · Exclusive Offers",
+      "bonusAmount": "$6.00",
+      "bonusSuffix": "$1.50/day × 4",
+      "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+      "code": "new",
+      "signupHref": "https://rainbet.com/?r=new",
+      "signupText": "1. Create Account",
+      "claimText": "2. Claim My Bonus"
     }
   ],
   "tickerSettings": {
@@ -191,13 +191,15 @@ const NITRODROP_DEFAULT_CONFIG = {
     "gateYesText": "Yes, I'm registered",
     "gateNoText": "No, I’ll sign up first",
     "formTag": "Claim the bonus",
-    "formSubTemplate": "Enter the email address and username for your account on the Casino. The tip will be sent manually within 24 hours of your registration being verified — no deposit required.",
+    "formSubTemplate": "Enter the email address and username for your account on {platform}. The tip will be sent manually within 24 hours of your registration being verified. No deposit required.",
     "emailLabel": "Email",
     "pseudoLabel": "Username",
     "submitText": "Confirm my request",
     "confirmTitle": "Request sent",
     "confirmTextTemplate": "Your bonus will be sent within 24 hours of your registration on {platform} being verified.",
-    "confirmNote": "Join our Telegram channel now to receive money every day!"
+    "confirmNote": "Join our Telegram channel now to receive money every day!",
+    "confirmTelegramText": "",
+    "confirmTelegramHref": ""
   },
   "telegramRelay": {
     "url": "https://nitrodrop-relay.lescagoules05.workers.dev/notify"
