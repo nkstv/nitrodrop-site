@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NITRODROP — Panel admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07070C; --bg-raise:#100F1C; --bg-card:#131226;
+    --line:rgba(255,255,255,0.08); --line-strong:rgba(255,255,255,0.16);
+    --green:#B6FF3C; --violet:#8B5CFF;
+    --text:#F1F0FA; --text-dim:#9591B0; --text-faint:#5F5C77;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; padding:0 0 100px;}
+  a{color:var(--green);}
+  .topbar{
+    position:sticky; top:0; z-index:10; background:rgba(7,7,12,0.9); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line); padding:18px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+  }
+  .topbar h1{font-family:'Unbounded'; font-size:18px; font-weight:900;}
+  .topbar h1 span{color:var(--green);}
+  .topbar-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+  .wrap{max-width:960px; margin:0 auto; padding:32px;}
+  .panel{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:16px;
+    padding:26px; margin-bottom:22px;
+  }
+  .panel h2{font-family:'Unbounded'; font-size:16px; margin-bottom:6px; color:#fff;}
+  .panel .sub{font-size:12.5px; color:var(--text-faint); margin-bottom:18px;}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
+  .row.single{grid-template-columns:1fr;}
+  label{display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-dim); font-weight:600; margin-bottom:6px;}
+  input[type=text], input[type=url], textarea{
+    width:100%; background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:9px;
+    padding:10px 12px; color:var(--text); font-size:13.5px; font-family:'Inter'; resize:vertical;
+  }
+  input:focus, textarea:focus{outline:none; border-color:var(--green);}
+  textarea{min-height:64px; line-height:1.5;}
+  .field{margin-bottom:14px;}
+  .subheading{font-size:12.5px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:0.05em; margin:18px 0 10px; padding-top:14px; border-top:1px solid var(--line);}
+  .subheading:first-of-type{border-top:none; margin-top:0; padding-top:0;}
+  .checkbox-row{display:flex; align-items:center; gap:8px; margin-bottom:14px;}
+  .checkbox-row input{width:auto;}
+  .checkbox-row label{margin:0; text-transform:none; font-size:13.5px; color:var(--text);}
+  .offer-block{border:1px solid var(--line-strong); border-radius:12px; padding:18px; margin-bottom:14px; background:var(--bg-raise);}
+  .offer-block h3{font-family:'Unbounded'; font-size:14px; margin-bottom:12px; color:var(--green);}
+  .ticker-row{display:grid; grid-template-columns:1fr 2fr; gap:10px; margin-bottom:10px;}
+  .btn{
+    border:none; border-radius:10px; padding:10px 18px; font-weight:700; font-size:13.5px; cursor:pointer;
+    transition:filter .15s ease, transform .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-save{background:var(--green); color:#08130a;}
+  .btn-reset{background:transparent; border:1px solid var(--line-strong); color:var(--text);}
+  .btn-open{background:var(--violet); color:#fff;}
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--green); color:#08130a; font-weight:700; font-size:13.5px;
+    padding:12px 22px; border-radius:10px; opacity:0; pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease; z-index:50;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .note{
+    background:rgba(139,92,255,0.08); border:1px solid rgba(139,92,255,0.3); border-radius:10px;
+    padding:14px 16px; font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-bottom:22px;
+  }
+  .note strong{color:var(--violet);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>NITRO<span>DROP</span> — Panel admin</h1>
+  <div class="topbar-actions">
+    <button class="btn btn-reset" onclick="doReset()">Réinitialiser</button>
+    <a href="nitrodrop.html" target="_blank"><button class="btn btn-open" type="button">Ouvrir le site</button></a>
+    <button class="btn btn-save" onclick="doSave()">Enregistrer</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="note">
+    <strong>Note :</strong> les modifications sont stockées dans le navigateur (localStorage) et lues par nitrodrop.html.
+    Ouvre les deux fichiers depuis le même dossier via un petit serveur local (ex. <code>python3 -m http.server</code>) plutôt qu'en double-cliquant dessus,
+    sinon certains navigateurs bloquent le stockage local pour les fichiers ouverts en <code>file://</code>.
+  </div>
+
+  <!-- MENU / HEADER -->
+  <div class="panel">
+    <h2>Menu (nav)</h2>
+    <div class="sub">Les 4 liens du menu du haut, et le bouton vert en haut à droite.</div>
+
+    <div class="subheading">Liens du menu</div>
+    <div id="nav-links-fields"></div>
+
+    <div class="subheading">Bouton du header</div>
+    <div class="row">
+      <div class="field"><label>Texte du bouton</label><input type="text" id="nav-ctaText"></div>
+      <div class="field"><label>Lien du bouton</label><input type="text" id="nav-ctaHref"></div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="panel">
+    <h2>Bloc principal (hero)</h2>
+    <div class="sub">Le gros message d'accueil en haut de page.</div>
+
+    <div class="field"><label>Étiquette (eyebrow)</label><input type="text" id="hero-eyebrow"></div>
+    <div class="row">
+      <div class="field"><label>Titre — ligne 1</label><input type="text" id="hero-titleLine1"></div>
+      <div class="field"><label>Titre — ligne 2 (en vert)</label><input type="text" id="hero-titleEm"></div>
+    </div>
+    <div class="field"><label>Texte descriptif</label><textarea id="hero-lede"></textarea></div>
+    <div class="field"><label>Code promo affiché</label><input type="text" id="hero-code"></div>
+
+    <div class="subheading">Boutons du hero</div>
+    <div class="row">
+      <div class="field"><label>Bouton 1 — texte</label><input type="text" id="hero-btnPrimaryText"></div>
+      <div class="field"><label>Bouton 1 — lien</label><input type="text" id="hero-btnPrimaryHref"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Bouton 2 — texte</label><input type="text" id="hero-btnGhostText"></div>
+      <div class="field"><label>Bouton 2 — lien</label><input type="text" id="hero-btnGhostHref"></div>
+    </div>
+  </div>
+
+  <!-- TELEGRAM -->
+  <div class="panel">
+    <h2>Bandeau Telegram</h2>
+    <div class="sub">Le bloc "Un guide pas à pas t'attend sur Telegram".</div>
+    <div class="field"><label>Étiquette</label><input type="text" id="tg-tag"></div>
+    <div class="field"><label>Titre</label><input type="text" id="tg-title"></div>
+    <div class="field"><label>Description</label><textarea id="tg-desc"></textarea></div>
+    <div class="row">
+      <div class="field"><label>Texte du bouton</label><input type="text" id="tg-btnText"></div>
+      <div class="field"><label>Lien du bouton</label><input type="text" id="tg-btnHref"></div>
+    </div>
+  </div>
+
+  <!-- OFFERS SECTION -->
+  <div class="panel">
+    <h2>Section "Offres du moment"</h2>
+    <div class="field"><label>Étiquette</label><input type="text" id="offersSection-tag"></div>
+    <div class="field"><label>Titre</label><input type="text" id="offersSection-title"></div>
+    <div class="field"><label>Description</label><textarea id="offersSection-desc"></textarea></div>
+  </div>
+
+  <!-- OFFERS -->
+  <div class="panel">
+    <h2>Les 3 offres</h2>
+    <div class="sub">Nom, bonus, description, code, lien d'inscription et textes des boutons pour chaque plateforme.</div>
+    <div id="offers-fields"></div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="panel">
+    <h2>Bandeau défilant (notifications)</h2>
+    <div class="sub">Les messages qui défilent en boucle sous le hero (pseudo + montant réclamé).</div>
+    <div id="ticker-fields"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="panel">
+    <h2>Pied de page</h2>
+    <div class="row">
+      <div class="field"><label>Titre colonne 1</label><input type="text" id="footer-navTitle"></div>
+      <div class="field"><label>Titre colonne 2</label><input type="text" id="footer-communityTitle"></div>
+    </div>
+    <div id="footer-links-fields"></div>
+    <div class="field"><label>Texte du disclaimer (bas de page)</label><textarea id="footer-disclaimer" style="min-height:100px;"></textarea></div>
+  </div>
+
+  <!-- MODAL / POPUP -->
+  <div class="panel">
+    <h2>Popup "Recevoir le bonus"</h2>
+    <div class="sub">Les textes du popup qui s'ouvre quand on clique sur "Recevoir le bonus". Utilise <code>{platform}</code> et <code>{code}</code> comme variables — elles seront remplacées automatiquement par la plateforme et le code concernés.</div>
+
+    <div class="subheading">Étape 1 — Es-tu déjà inscrit ?</div>
+    <div class="field"><label>Texte de la question</label><textarea id="modal-gateSubTemplate"></textarea></div>
+    <div class="row">
+      <div class="field"><label>Bouton "Oui"</label><input type="text" id="modal-gateYesText"></div>
+      <div class="field"><label>Bouton "Non"</label><input type="text" id="modal-gateNoText"></div>
+    </div>
+
+    <div class="subheading">Étape 2 — Formulaire</div>
+    <div class="field"><label>Étiquette</label><input type="text" id="modal-formTag"></div>
+    <div class="field"><label>Texte d'explication</label><textarea id="modal-formSubTemplate"></textarea></div>
+    <div class="row">
+      <div class="field"><label>Libellé champ email</label><input type="text" id="modal-emailLabel"></div>
+      <div class="field"><label>Libellé champ pseudo</label><input type="text" id="modal-pseudoLabel"></div>
+    </div>
+    <div class="field"><label>Texte du bouton d'envoi</label><input type="text" id="modal-submitText"></div>
+
+    <div class="subheading">Étape 3 — Confirmation</div>
+    <div class="field"><label>Titre</label><input type="text" id="modal-confirmTitle"></div>
+    <div class="field"><label>Texte de confirmation</label><textarea id="modal-confirmTextTemplate"></textarea></div>
+    <div class="field"><label>Note en petit texte</label><input type="text" id="modal-confirmNote"></div>
+  </div>
+
+  <!-- TELEGRAM BOT -->
+  <div class="panel">
+    <h2>Notification Telegram (backend)</h2>
+    <div class="sub">Le bot qui te prévient quand quelqu'un réclame un bonus. À ne partager avec personne.</div>
+    <div class="row">
+      <div class="field"><label>Bot token</label><input type="text" id="bot-token"></div>
+      <div class="field"><label>Chat ID</label><input type="text" id="bot-chatId"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Enregistré ✓</div>
+
+<script src="nitrodrop-config.js"></script>
+<script>
+  let cfg = nitrodropLoadConfig();
+
+  function el(tag, attrs, children){
+    const e = document.createElement(tag);
+    Object.entries(attrs || {}).forEach(([k,v]) => { if (k === 'text') e.textContent = v; else e.setAttribute(k, v); });
+    (children || []).forEach(c => e.appendChild(c));
+    return e;
+  }
+
+  // ---------- Rendu des champs dynamiques ----------
+  function renderNavLinks(){
+    const container = document.getElementById('nav-links-fields');
+    container.innerHTML = '';
+    cfg.nav.links.forEach((link, i) => {
+      const row = el('div', {class:'row'});
+      const f1 = el('div', {class:'field'});
+      f1.appendChild(el('label', {text:`Lien ${i+1} — texte`}));
+      const in1 = el('input', {type:'text', id:`nav-link-label-${i}`, value: link.label});
+      f1.appendChild(in1);
+      const f2 = el('div', {class:'field'});
+      f2.appendChild(el('label', {text:`Lien ${i+1} — url`}));
+      const in2 = el('input', {type:'text', id:`nav-link-href-${i}`, value: link.href});
+      f2.appendChild(in2);
+      row.appendChild(f1); row.appendChild(f2);
+      container.appendChild(row);
+    });
+  }
+
+  function renderOffersFields(){
+    const container = document.getElementById('offers-fields');
+    container.innerHTML = '';
+    cfg.offers.forEach((offer, i) => {
+      const block = el('div', {class:'offer-block'});
+      block.appendChild(el('h3', {text:`Offre ${i+1}`}));
+
+      const chk = el('div', {class:'checkbox-row'});
+      const chkInput = el('input', {type:'checkbox', id:`offer-featured-${i}`});
+      chkInput.checked = !!offer.featured;
+      chk.appendChild(chkInput);
+      chk.appendChild(el('label', {for:`offer-featured-${i}`, text:'Offre mise en avant (badge "TOP")'}));
+      block.appendChild(chk);
+
+      const row1 = el('div', {class:'row'});
+      const f1 = el('div', {class:'field'}); f1.appendChild(el('label', {text:'Nom plateforme'}));
+      const in1 = el('input', {type:'text', id:`offer-name-${i}`, value: offer.name}); f1.appendChild(in1);
+      const f2 = el('div', {class:'field'}); f2.appendChild(el('label', {text:'Sous-titre'}));
+      const in2 = el('input', {type:'text', id:`offer-sub-${i}`, value: offer.sub}); f2.appendChild(in2);
+      row1.appendChild(f1); row1.appendChild(f2);
+      block.appendChild(row1);
+
+      const row2 = el('div', {class:'row'});
+      const f3 = el('div', {class:'field'}); f3.appendChild(el('label', {text:'Montant du bonus'}));
+      const in3 = el('input', {type:'text', id:`offer-bonusAmount-${i}`, value: offer.bonusAmount}); f3.appendChild(in3);
+      const f4 = el('div', {class:'field'}); f4.appendChild(el('label', {text:'Précision (ex: sans dépôt)'}));
+      const in4 = el('input', {type:'text', id:`offer-bonusSuffix-${i}`, value: offer.bonusSuffix}); f4.appendChild(in4);
+      row2.appendChild(f3); row2.appendChild(f4);
+      block.appendChild(row2);
+
+      const fDesc = el('div', {class:'field'}); fDesc.appendChild(el('label', {text:'Description'}));
+      const taDesc = el('textarea', {id:`offer-desc-${i}`}); taDesc.value = offer.desc; fDesc.appendChild(taDesc);
+      block.appendChild(fDesc);
+
+      const row3 = el('div', {class:'row'});
+      const f5 = el('div', {class:'field'}); f5.appendChild(el('label', {text:'Code promo'}));
+      const in5 = el('input', {type:'text', id:`offer-code-${i}`, value: offer.code}); f5.appendChild(in5);
+      const f6 = el('div', {class:'field'}); f6.appendChild(el('label', {text:'Lien d\'inscription'}));
+      const in6 = el('input', {type:'text', id:`offer-signupHref-${i}`, value: offer.signupHref}); f6.appendChild(in6);
+      row3.appendChild(f5); row3.appendChild(f6);
+      block.appendChild(row3);
+
+      const row4 = el('div', {class:'row'});
+      const f7 = el('div', {class:'field'}); f7.appendChild(el('label', {text:'Texte bouton "S\'inscrire"'}));
+      const in7 = el('input', {type:'text', id:`offer-signupText-${i}`, value: offer.signupText}); f7.appendChild(in7);
+      const f8 = el('div', {class:'field'}); f8.appendChild(el('label', {text:'Texte bouton "Recevoir le bonus"'}));
+      const in8 = el('input', {type:'text', id:`offer-claimText-${i}`, value: offer.claimText}); f8.appendChild(in8);
+      row4.appendChild(f7); row4.appendChild(f8);
+      block.appendChild(row4);
+
+      container.appendChild(block);
+    });
+  }
+
+  function renderTickerFields(){
+    const container = document.getElementById('ticker-fields');
+    container.innerHTML = '';
+    cfg.ticker.forEach((item, i) => {
+      const row = el('div', {class:'ticker-row'});
+      const in1 = el('input', {type:'text', id:`ticker-name-${i}`, value: item.name});
+      const in2 = el('input', {type:'text', id:`ticker-message-${i}`, value: item.message});
+      row.appendChild(in1); row.appendChild(in2);
+      container.appendChild(row);
+    });
+  }
+
+  function renderFooterLinks(){
+    const container = document.getElementById('footer-links-fields');
+    container.innerHTML = '';
+    const rowNav = el('div', {class:'row'});
+    cfg.footer.navLinks.forEach((link, i) => {
+      const f = el('div', {class:'field'});
+      f.appendChild(el('label', {text:`Colonne 1 — lien ${i+1}`}));
+      const wrap = el('div', {style:'display:flex; gap:6px;'});
+      const in1 = el('input', {type:'text', id:`footer-nav-label-${i}`, value: link.label, style:'flex:1;'});
+      const in2 = el('input', {type:'text', id:`footer-nav-href-${i}`, value: link.href, style:'flex:1;'});
+      wrap.appendChild(in1); wrap.appendChild(in2);
+      f.appendChild(wrap);
+      rowNav.appendChild(f);
+    });
+    container.appendChild(rowNav);
+
+    const rowCom = el('div', {class:'row'});
+    cfg.footer.communityLinks.forEach((link, i) => {
+      const f = el('div', {class:'field'});
+      f.appendChild(el('label', {text:`Colonne 2 — lien ${i+1}`}));
+      const wrap = el('div', {style:'display:flex; gap:6px;'});
+      const in1 = el('input', {type:'text', id:`footer-community-label-${i}`, value: link.label, style:'flex:1;'});
+      const in2 = el('input', {type:'text', id:`footer-community-href-${i}`, value: link.href, style:'flex:1;'});
+      wrap.appendChild(in1); wrap.appendChild(in2);
+      f.appendChild(wrap);
+      rowCom.appendChild(f);
+    });
+    container.appendChild(rowCom);
+  }
+
+  // ---------- Remplit tous les champs simples depuis cfg ----------
+  function fillForm(){
+    document.getElementById('nav-ctaText').value = cfg.nav.ctaText;
+    document.getElementById('nav-ctaHref').value = cfg.nav.ctaHref;
+
+    document.getElementById('hero-eyebrow').value = cfg.hero.eyebrow;
+    document.getElementById('hero-titleLine1').value = cfg.hero.titleLine1;
+    document.getElementById('hero-titleEm').value = cfg.hero.titleEm;
+    document.getElementById('hero-lede').value = cfg.hero.lede;
+    document.getElementById('hero-code').value = cfg.hero.code;
+    document.getElementById('hero-btnPrimaryText').value = cfg.hero.btnPrimaryText;
+    document.getElementById('hero-btnPrimaryHref').value = cfg.hero.btnPrimaryHref;
+    document.getElementById('hero-btnGhostText').value = cfg.hero.btnGhostText;
+    document.getElementById('hero-btnGhostHref').value = cfg.hero.btnGhostHref;
+
+    document.getElementById('tg-tag').value = cfg.telegram.tag;
+    document.getElementById('tg-title').value = cfg.telegram.title;
+    document.getElementById('tg-desc').value = cfg.telegram.desc;
+    document.getElementById('tg-btnText').value = cfg.telegram.btnText;
+    document.getElementById('tg-btnHref').value = cfg.telegram.btnHref;
+
+    document.getElementById('offersSection-tag').value = cfg.offersSection.tag;
+    document.getElementById('offersSection-title').value = cfg.offersSection.title;
+    document.getElementById('offersSection-desc').value = cfg.offersSection.desc;
+
+    document.getElementById('footer-navTitle').value = cfg.footer.navTitle;
+    document.getElementById('footer-communityTitle').value = cfg.footer.communityTitle;
+    document.getElementById('footer-disclaimer').value = cfg.footer.disclaimer;
+
+    document.getElementById('modal-gateSubTemplate').value = cfg.modal.gateSubTemplate;
+    document.getElementById('modal-gateYesText').value = cfg.modal.gateYesText;
+    document.getElementById('modal-gateNoText').value = cfg.modal.gateNoText;
+    document.getElementById('modal-formTag').value = cfg.modal.formTag;
+    document.getElementById('modal-formSubTemplate').value = cfg.modal.formSubTemplate;
+    document.getElementById('modal-emailLabel').value = cfg.modal.emailLabel;
+    document.getElementById('modal-pseudoLabel').value = cfg.modal.pseudoLabel;
+    document.getElementById('modal-submitText').value = cfg.modal.submitText;
+    document.getElementById('modal-confirmTitle').value = cfg.modal.confirmTitle;
+    document.getElementById('modal-confirmTextTemplate').value = cfg.modal.confirmTextTemplate;
+    document.getElementById('modal-confirmNote').value = cfg.modal.confirmNote;
+
+    document.getElementById('bot-token').value = cfg.telegramBot.token;
+    document.getElementById('bot-chatId').value = cfg.telegramBot.chatId;
+
+    renderNavLinks();
+    renderOffersFields();
+    renderTickerFields();
+    renderFooterLinks();
+  }
+
+  // ---------- Lit tous les champs et reconstruit cfg ----------
+  function readForm(){
+    cfg.nav.links = cfg.nav.links.map((link, i) => ({
+      label: document.getElementById(`nav-link-label-${i}`).value,
+      href: document.getElementById(`nav-link-href-${i}`).value
+    }));
+    cfg.nav.ctaText = document.getElementById('nav-ctaText').value;
+    cfg.nav.ctaHref = document.getElementById('nav-ctaHref').value;
+
+    cfg.hero.eyebrow = document.getElementById('hero-eyebrow').value;
+    cfg.hero.titleLine1 = document.getElementById('hero-titleLine1').value;
+    cfg.hero.titleEm = document.getElementById('hero-titleEm').value;
+    cfg.hero.lede = document.getElementById('hero-lede').value;
+    cfg.hero.code = document.getElementById('hero-code').value;
+    cfg.hero.btnPrimaryText = document.getElementById('hero-btnPrimaryText').value;
+    cfg.hero.btnPrimaryHref = document.getElementById('hero-btnPrimaryHref').value;
+    cfg.hero.btnGhostText = document.getElementById('hero-btnGhostText').value;
+    cfg.hero.btnGhostHref = document.getElementById('hero-btnGhostHref').value;
+
+    cfg.telegram.tag = document.getElementById('tg-tag').value;
+    cfg.telegram.title = document.getElementById('tg-title').value;
+    cfg.telegram.desc = document.getElementById('tg-desc').value;
+    cfg.telegram.btnText = document.getElementById('tg-btnText').value;
+    cfg.telegram.btnHref = document.getElementById('tg-btnHref').value;
+
+    cfg.offersSection.tag = document.getElementById('offersSection-tag').value;
+    cfg.offersSection.title = document.getElementById('offersSection-title').value;
+    cfg.offersSection.desc = document.getElementById('offersSection-desc').value;
+
+    cfg.offers = cfg.offers.map((offer, i) => ({
+      ...offer,
+      featured: document.getElementById(`offer-featured-${i}`).checked,
+      name: document.getElementById(`offer-name-${i}`).value,
+      sub: document.getElementById(`offer-sub-${i}`).value,
+      bonusAmount: document.getElementById(`offer-bonusAmount-${i}`).value,
+      bonusSuffix: document.getElementById(`offer-bonusSuffix-${i}`).value,
+      desc: document.getElementById(`offer-desc-${i}`).value,
+      code: document.getElementById(`offer-code-${i}`).value,
+      signupHref: document.getElementById(`offer-signupHref-${i}`).value,
+      signupText: document.getElementById(`offer-signupText-${i}`).value,
+      claimText: document.getElementById(`offer-claimText-${i}`).value,
+      badge: document.getElementById(`offer-featured-${i}`).checked ? (offer.badge || 'TOP') : offer.badge
+    }));
+
+    cfg.ticker = cfg.ticker.map((item, i) => ({
+      name: document.getElementById(`ticker-name-${i}`).value,
+      message: document.getElementById(`ticker-message-${i}`).value
+    }));
+
+    cfg.footer.navTitle = document.getElementById('footer-navTitle').value;
+    cfg.footer.navLinks = cfg.footer.navLinks.map((link, i) => ({
+      label: document.getElementById(`footer-nav-label-${i}`).value,
+      href: document.getElementById(`footer-nav-href-${i}`).value
+    }));
+    cfg.footer.communityTitle = document.getElementById('footer-communityTitle').value;
+    cfg.footer.communityLinks = cfg.footer.communityLinks.map((link, i) => ({
+      label: document.getElementById(`footer-community-label-${i}`).value,
+      href: document.getElementById(`footer-community-href-${i}`).value
+    }));
+    cfg.footer.disclaimer = document.getElementById('footer-disclaimer').value;
+
+    cfg.modal.gateSubTemplate = document.getElementById('modal-gateSubTemplate').value;
+    cfg.modal.gateYesText = document.getElementById('modal-gateYesText').value;
+    cfg.modal.gateNoText = document.getElementById('modal-gateNoText').value;
+    cfg.modal.formTag = document.getElementById('modal-formTag').value;
+    cfg.modal.formSubTemplate = document.getElementById('modal-formSubTemplate').value;
+    cfg.modal.emailLabel = document.getElementById('modal-emailLabel').value;
+    cfg.modal.pseudoLabel = document.getElementById('modal-pseudoLabel').value;
+    cfg.modal.submitText = document.getElementById('modal-submitText').value;
+    cfg.modal.confirmTitle = document.getElementById('modal-confirmTitle').value;
+    cfg.modal.confirmTextTemplate = document.getElementById('modal-confirmTextTemplate').value;
+    cfg.modal.confirmNote = document.getElementById('modal-confirmNote').value;
+
+    cfg.telegramBot.token = document.getElementById('bot-token').value;
+    cfg.telegramBot.chatId = document.getElementById('bot-chatId').value;
+  }
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function doSave(){
+    readForm();
+    nitrodropSaveConfig(cfg);
+    showToast('Enregistré ✓ — recharge le site pour voir les changements');
+  }
+
+  function doReset(){
+    if (!confirm('Réinitialiser tous les textes aux valeurs par défaut ? Cette action est irréversible.')) return;
+    nitrodropResetConfig();
+    cfg = nitrodropLoadConfig();
+    fillForm();
+    showToast('Réinitialisé aux valeurs par défaut');
+  }
+
+  fillForm();
+</script>
+
+</body>
+</html>
