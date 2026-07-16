@@ -432,7 +432,7 @@
       <h1><span id="hero-title-line1">Ton dépôt mérite</span><br><em id="hero-title-em">un vrai bonus.</em></h1>
       <p class="lede" id="hero-lede">NITRODROP tipe directement les joueurs qui s'inscrivent avec son code. Pas de dépôt requis : renseigne ton pseudo, et ton bonus est envoyé sous 24h.</p>
 
-      <div class="code-widget">
+      <div class="code-widget" id="hero-code-widget">
         <span class="label">Code</span>
         <span class="code code-font" id="promo-code">NITRO200</span>
         <button id="copy-btn" onclick="copyCode()">Copier</button>
@@ -663,6 +663,11 @@
     document.getElementById('lb-desc').textContent = cfg.leaderboard.desc;
     document.getElementById('lb-pool-figure').textContent = cfg.leaderboard.poolFigure;
     document.getElementById('lb-pool-caption').textContent = cfg.leaderboard.poolCaption;
+
+    // Sections activables/désactivables
+    document.getElementById('hero-code-widget').style.display = (cfg.hero.codeWidgetEnabled === false) ? 'none' : '';
+    document.getElementById('classement').style.display = (cfg.leaderboard.enabled === false) ? 'none' : '';
+    document.getElementById('etapes').style.display = (cfg.steps.enabled === false) ? 'none' : '';
 
     // Steps
     document.getElementById('steps-tag').textContent = cfg.steps.tag;

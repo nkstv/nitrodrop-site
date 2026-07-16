@@ -116,6 +116,10 @@
     </div>
     <div class="field"><label>Texte descriptif</label><textarea id="hero-lede"></textarea></div>
     <div class="field"><label>Code promo affiché</label><input type="text" id="hero-code"></div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="hero-codeWidgetEnabled">
+      <label for="hero-codeWidgetEnabled">Afficher le bloc "Code / Copier"</label>
+    </div>
 
     <div class="subheading">Boutons du hero</div>
     <div class="row">
@@ -141,6 +145,22 @@
     </div>
   </div>
 
+  <!-- LEADERBOARD -->
+  <div class="panel">
+    <h2>Classement mensuel</h2>
+    <div class="checkbox-row">
+      <input type="checkbox" id="lb-enabled">
+      <label for="lb-enabled">Afficher la section "Classement"</label>
+    </div>
+    <div class="field"><label>Étiquette</label><input type="text" id="lb-tag"></div>
+    <div class="field"><label>Titre</label><input type="text" id="lb-title"></div>
+    <div class="field"><label>Description</label><textarea id="lb-desc"></textarea></div>
+    <div class="row">
+      <div class="field"><label>Montant de la cagnotte</label><input type="text" id="lb-poolFigure"></div>
+      <div class="field"><label>Légende de la cagnotte</label><input type="text" id="lb-poolCaption"></div>
+    </div>
+  </div>
+
   <!-- OFFERS SECTION -->
   <div class="panel">
     <h2>Section "Offres du moment"</h2>
@@ -154,6 +174,29 @@
     <h2>Les 3 offres</h2>
     <div class="sub">Nom, bonus, description, code, lien d'inscription et textes des boutons pour chaque plateforme.</div>
     <div id="offers-fields"></div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="panel">
+    <h2>Section "Comment réclamer un code"</h2>
+    <div class="checkbox-row">
+      <input type="checkbox" id="steps-enabled">
+      <label for="steps-enabled">Afficher la section "Trois étapes"</label>
+    </div>
+    <div class="field"><label>Étiquette</label><input type="text" id="steps-tag"></div>
+    <div class="field"><label>Titre</label><input type="text" id="steps-title"></div>
+
+    <div class="subheading">Étape 1</div>
+    <div class="field"><label>Titre</label><input type="text" id="step-title-0"></div>
+    <div class="field"><label>Description</label><textarea id="step-desc-0"></textarea></div>
+
+    <div class="subheading">Étape 2</div>
+    <div class="field"><label>Titre</label><input type="text" id="step-title-1"></div>
+    <div class="field"><label>Description</label><textarea id="step-desc-1"></textarea></div>
+
+    <div class="subheading">Étape 3</div>
+    <div class="field"><label>Titre</label><input type="text" id="step-title-2"></div>
+    <div class="field"><label>Description</label><textarea id="step-desc-2"></textarea></div>
   </div>
 
   <!-- TICKER -->
@@ -417,6 +460,7 @@
     document.getElementById('hero-titleEm').value = cfg.hero.titleEm;
     document.getElementById('hero-lede').value = cfg.hero.lede;
     document.getElementById('hero-code').value = cfg.hero.code;
+    document.getElementById('hero-codeWidgetEnabled').checked = cfg.hero.codeWidgetEnabled !== false;
     document.getElementById('hero-btnPrimaryText').value = cfg.hero.btnPrimaryText;
     document.getElementById('hero-btnPrimaryHref').value = cfg.hero.btnPrimaryHref;
     document.getElementById('hero-btnGhostText').value = cfg.hero.btnGhostText;
@@ -431,6 +475,21 @@
     document.getElementById('offersSection-tag').value = cfg.offersSection.tag;
     document.getElementById('offersSection-title').value = cfg.offersSection.title;
     document.getElementById('offersSection-desc').value = cfg.offersSection.desc;
+
+    document.getElementById('lb-enabled').checked = cfg.leaderboard.enabled !== false;
+    document.getElementById('lb-tag').value = cfg.leaderboard.tag;
+    document.getElementById('lb-title').value = cfg.leaderboard.title;
+    document.getElementById('lb-desc').value = cfg.leaderboard.desc;
+    document.getElementById('lb-poolFigure').value = cfg.leaderboard.poolFigure;
+    document.getElementById('lb-poolCaption').value = cfg.leaderboard.poolCaption;
+
+    document.getElementById('steps-enabled').checked = cfg.steps.enabled !== false;
+    document.getElementById('steps-tag').value = cfg.steps.tag;
+    document.getElementById('steps-title').value = cfg.steps.title;
+    cfg.steps.items.forEach((step, i) => {
+      document.getElementById(`step-title-${i}`).value = step.title;
+      document.getElementById(`step-desc-${i}`).value = step.desc;
+    });
 
     document.getElementById('footer-navTitle').value = cfg.footer.navTitle;
     document.getElementById('footer-communityTitle').value = cfg.footer.communityTitle;
@@ -474,6 +533,7 @@
     cfg.hero.titleEm = document.getElementById('hero-titleEm').value;
     cfg.hero.lede = document.getElementById('hero-lede').value;
     cfg.hero.code = document.getElementById('hero-code').value;
+    cfg.hero.codeWidgetEnabled = document.getElementById('hero-codeWidgetEnabled').checked;
     cfg.hero.btnPrimaryText = document.getElementById('hero-btnPrimaryText').value;
     cfg.hero.btnPrimaryHref = document.getElementById('hero-btnPrimaryHref').value;
     cfg.hero.btnGhostText = document.getElementById('hero-btnGhostText').value;
@@ -488,6 +548,21 @@
     cfg.offersSection.tag = document.getElementById('offersSection-tag').value;
     cfg.offersSection.title = document.getElementById('offersSection-title').value;
     cfg.offersSection.desc = document.getElementById('offersSection-desc').value;
+
+    cfg.leaderboard.enabled = document.getElementById('lb-enabled').checked;
+    cfg.leaderboard.tag = document.getElementById('lb-tag').value;
+    cfg.leaderboard.title = document.getElementById('lb-title').value;
+    cfg.leaderboard.desc = document.getElementById('lb-desc').value;
+    cfg.leaderboard.poolFigure = document.getElementById('lb-poolFigure').value;
+    cfg.leaderboard.poolCaption = document.getElementById('lb-poolCaption').value;
+
+    cfg.steps.enabled = document.getElementById('steps-enabled').checked;
+    cfg.steps.tag = document.getElementById('steps-tag').value;
+    cfg.steps.title = document.getElementById('steps-title').value;
+    cfg.steps.items = cfg.steps.items.map((step, i) => ({
+      title: document.getElementById(`step-title-${i}`).value,
+      desc: document.getElementById(`step-desc-${i}`).value
+    }));
 
     cfg.offers = cfg.offers.map((offer, i) => ({
       ...offer,
