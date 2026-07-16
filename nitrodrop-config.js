@@ -257,7 +257,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "emailPlaceholder": "your email",
         "pseudoPlaceholder": "your username",
         "discordLabel": "",
-        "discordPlaceholder": ""
+        "discordPlaceholder": "",
+        "discordConnectText": "🎮 Log in with Discord"
       },
       "brand": {
         "text1": "DROP",
@@ -509,7 +510,10 @@ const NITRODROP_DEFAULT_CONFIG = {
         "confirmTelegramHref": "https://t.me/+BZyC9HHN3LljODM0",
         "gateTag": "Profitez du bonus",
         "emailPlaceholder": "votre adresse e-mail",
-        "pseudoPlaceholder": "votre nom d'utilisateur"
+        "pseudoPlaceholder": "votre nom d'utilisateur",
+        "discordLabel": "",
+        "discordPlaceholder": "",
+        "discordConnectText": "🎮 Se connecter avec Discord"
       },
       "brand": {
         "text1": "DROP",
