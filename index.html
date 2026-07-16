@@ -261,10 +261,14 @@
   .offer-card:hover{border-color:var(--line-strong); transform:translateY(-3px);}
   .offer-card.featured{border-color:rgba(182,255,60,0.4); box-shadow:0 0 0 1px rgba(182,255,60,0.12) inset;}
   .featured-tag{
-    position:absolute; top:18px; right:-34px; transform:rotate(35deg);
-    background:var(--green); color:#08130a; font-size:11px; font-weight:800;
-    padding:4px 40px; letter-spacing:0.05em;
+    position:absolute; top:16px; right:16px;
+    display:inline-flex; align-items:center; gap:5px;
+    background:linear-gradient(135deg, var(--green), #DFFF9E);
+    color:#08130a; font-family:'Unbounded', sans-serif; font-weight:800; font-size:10.5px;
+    padding:6px 13px; border-radius:999px; letter-spacing:0.04em;
+    box-shadow:0 6px 16px rgba(182,255,60,0.32);
   }
+  .featured-tag::before{content:"★"; font-size:9px;}
   .offer-top{display:flex; align-items:center; gap:12px;}
   .offer-mark{
     width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center;
@@ -807,7 +811,6 @@
         </div>
         <div class="offer-bonus">${escapeHtml(offer.bonusAmount)} <small>${escapeHtml(offer.bonusSuffix)}</small></div>
         <div class="offer-desc">${escapeHtml(offer.desc)}</div>
-        ${offer.codeEnabled === false ? '' : `
         <div class="offer-code-row">
           <span>Code</span>
           <div class="code-right">
@@ -815,7 +818,6 @@
             <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}">Copier</button>
           </div>
         </div>
-        `}
         <div class="offer-btns">
           <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta secondary${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
           <a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>
