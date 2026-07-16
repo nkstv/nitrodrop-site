@@ -438,6 +438,8 @@
   /* ---------- RESPONSIVE ---------- */
   @media (max-width:960px){
     .nav-links{display:none;}
+    .nav-inner > .lang-switch{display:none;}
+    .nav-inner > .nav-cta{display:none;}
     .burger{display:flex;}
     .hero{padding-top:56px;}
     .hero-grid{grid-template-columns:1fr;}
@@ -474,6 +476,9 @@
     <div class="lang-switch" style="padding:14px 32px; border-bottom:1px solid var(--line);">
       <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
       <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
+    </div>
+    <div style="padding:14px 32px; border-bottom:1px solid var(--line);">
+      <a href="#offres" class="nav-cta" id="nav-cta-mobile" style="display:block; text-align:center;">Voir les codes</a>
     </div>
     <a href="#offres" id="mobile-nav-link-0">Codes bonus</a>
     <a href="#classement" id="mobile-nav-link-1">Classement</a>
@@ -779,6 +784,9 @@
     const navCta = document.getElementById('nav-cta');
     navCta.textContent = cfg.nav.ctaText;
     navCta.href = cfg.nav.ctaHref;
+    const navCtaMobile = document.getElementById('nav-cta-mobile');
+    navCtaMobile.textContent = cfg.nav.ctaText;
+    navCtaMobile.href = cfg.nav.ctaHref;
 
     // Hero
     document.getElementById('hero-eyebrow').textContent = cfg.hero.eyebrow;
