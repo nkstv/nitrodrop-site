@@ -36,7 +36,7 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "hero": {
         "eyebrow": "Verified Promo Codes · Updated Today",
-        "titleLine1": "💎 Your $50+ ",
+        "titleLine1": "💎 Your $100",
         "titleEm": "Waiting for You",
         "lede": "Claim your free bonus with no deposit required. Get rewarded in under 24 hours.",
         "code": "",
@@ -288,7 +288,7 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "hero": {
         "eyebrow": "Codes promo vérifiés · Mis à jour aujourd'hui",
-        "titleLine1": "💎 Vos 50 $ ",
+        "titleLine1": "💎 Vos 100$",
         "titleEm": "Vous attendent",
         "lede": "Réclamez votre bonus gratuit sans dépôt. Recevez votre récompense en moins de 24 heures.",
         "code": "",
@@ -398,7 +398,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHref": "https://gamdom.com/r/casinofr",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
-          "signupHighlighted": false,
+          "signupHighlighted": true,
           "claimHighlighted": false
         }
       ],
