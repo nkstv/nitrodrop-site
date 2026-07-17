@@ -341,6 +341,7 @@
     </div>
 
     <button type="button" class="btn" onclick="loadVaultState()">Charger l'état actuel</button>
+    <button type="button" class="btn btn-reset" onclick="clearVaultHistory()" style="margin-left:8px;">Vider l'historique des gains</button>
     <div id="vault-current-state" style="margin-top:10px; font-size:12.5px; color:var(--text-dim);"></div>
 
     <div class="subheading">Nouveau round</div>
@@ -999,6 +1000,26 @@ function nitrodropResetConfig() {
   // ---------- Coffre-fort : appels directs au Worker (jamais via GitHub) ----------
   function getVaultWorkerBase(){
     return document.getElementById('vault-worker-url').value.trim().replace(/\/$/, '');
+  }
+
+  async function clearVaultHistory(){
+    const base = getVaultWorkerBase();
+    const key = document.getElementById('vault-dashboard-key').value.trim();
+    if (!base || !key){
+      alert('Renseigne l\'URL du Worker et la clé du dashboard.');
+      return;
+    }
+    if (!confirm('Supprimer définitivement tout l\'historique des gains affiché sur /vault.html ?')) return;
+    try{
+      const resp = await fetch(`${base}/vault/history/clear`, {
+        method: 'POST',
+        headers: { 'X-Dashboard-Key': key }
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      showToast('Historique du coffre vidé ✓');
+    }catch(err){
+      alert('Erreur : ' + err.message);
+    }
   }
 
   async function loadVaultState(){
