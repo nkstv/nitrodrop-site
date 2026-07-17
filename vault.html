@@ -119,6 +119,55 @@
 
   /* ---------- VAULT ---------- */
   .vault-section{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:64px 20px;}
+
+  .vault-stats-bar{display:flex; gap:12px; justify-content:center; margin-bottom:24px; flex-wrap:wrap;}
+  .vault-stat-card{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:12px;
+    padding:14px 26px; text-align:center; min-width:120px;
+  }
+  .vault-stat-card .n{font-family:'Unbounded'; font-weight:900; font-size:20px; color:var(--green);}
+  .vault-stat-card .l{font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;}
+
+  .vault-columns{display:grid; grid-template-columns:200px 1fr 200px; gap:20px; align-items:start; margin-bottom:24px;}
+
+  .telegram-panel{
+    background:radial-gradient(120% 140% at 20% 10%, rgba(63,169,245,0.14), transparent 60%), var(--bg-card);
+    border:1px solid rgba(105,175,255,0.32); border-radius:16px; padding:22px 18px; text-align:center;
+  }
+  .telegram-panel .icon{
+    width:48px; height:48px; margin:0 auto 14px; border-radius:50%;
+    background:linear-gradient(135deg,#5FC1FF,#1C6FD1); display:flex; align-items:center; justify-content:center; font-size:20px;
+    box-shadow:0 0 20px rgba(63,169,245,0.4);
+  }
+  .telegram-panel .tag{font-size:10.5px; color:#6FC0FF; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;}
+  .telegram-panel h4{font-size:15px; color:#fff; margin-bottom:10px;}
+  .telegram-panel p{font-size:12px; color:var(--text-dim); line-height:1.6; margin-bottom:16px;}
+  .telegram-panel a{
+    display:block; background:linear-gradient(135deg,#6CC4FF,#3FA9F5); color:#071018;
+    font-weight:700; font-size:12.5px; padding:11px; border-radius:9px;
+  }
+
+  .winners-panel{background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:18px 16px;}
+  .winners-panel h4{font-size:12px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; text-align:center; margin-bottom:14px; font-weight:600;}
+  .winner-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+  .winner-row:last-child{margin-bottom:0;}
+  .winner-avatar{
+    width:26px; height:26px; border-radius:50%; background:var(--bg-raise); border:1px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0;
+  }
+  .winner-name{flex:1; font-size:13px; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .winner-amount{font-size:13px; color:var(--green); font-weight:700; font-family:'JetBrains Mono';}
+
+  .steps-strip{display:flex; gap:12px; flex-wrap:wrap; justify-content:center;}
+  .step-chip{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:10px; padding:12px 20px;
+    font-size:12.5px; color:var(--text-dim); flex:1; min-width:200px; max-width:280px;
+  }
+  .step-chip b{color:var(--green);}
+
+  @media (max-width:900px){
+    .vault-columns{grid-template-columns:1fr; max-width:440px; margin-left:auto; margin-right:auto;}
+  }
   .vault-card{
     width:100%; max-width:440px; text-align:center;
     background:var(--bg-card); border:1px solid var(--line); border-radius:24px;
@@ -245,29 +294,70 @@
 </nav>
 
 <section class="vault-section">
-  <div class="wrap" style="display:flex; justify-content:center; padding:0;">
-    <div class="vault-card">
-      <div class="vault-eyebrow" id="vault-eyebrow">Accès exclusif</div>
-      <h1 class="vault-title" id="vault-title">Le coffre-fort</h1>
-      <p class="vault-subtitle" id="vault-subtitle">Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.</p>
+  <div class="wrap" style="padding:0; max-width:1000px;">
 
-      <div class="vault-visual" id="vault-visual">
-        <div class="vault-door" id="vault-door">
-          <div class="vault-dial" id="vault-dial"></div>
-        </div>
-        <div class="vault-half vault-half-left"></div>
-        <div class="vault-half vault-half-right"></div>
-        <div class="vault-amount" id="vault-amount"></div>
+    <div class="vault-stats-bar" id="vault-stats-bar">
+      <div class="vault-stat-card">
+        <div class="n" id="vault-stat-total">$0</div>
+        <div class="l" id="vault-stat-total-label">Total distribué</div>
+      </div>
+      <div class="vault-stat-card">
+        <div class="n" id="vault-stat-rounds" style="color:var(--violet);">0</div>
+        <div class="l" id="vault-stat-rounds-label">Coffres ouverts</div>
+      </div>
+      <div class="vault-stat-card">
+        <div class="n" id="vault-stat-participants" style="color:#fff;">0</div>
+        <div class="l" id="vault-stat-participants-label">Participants</div>
+      </div>
+    </div>
+
+    <div class="vault-columns">
+
+      <div class="telegram-panel">
+        <div class="icon">✈</div>
+        <div class="tag" id="vault-tg-tag">Récompenses quotidiennes</div>
+        <h4 id="vault-tg-title">Rejoins le Telegram</h4>
+        <p id="vault-tg-desc">Cadeaux quotidiens, bonus exclusifs et nouvelles opportunités.</p>
+        <a href="#" id="vault-tg-btn" target="_blank">Rejoindre →</a>
       </div>
 
-      <form class="vault-form" id="vault-form">
-        <input type="text" id="vault-username-input" placeholder="Ton pseudo" autocomplete="off">
-        <input type="text" id="vault-code-input" placeholder="Code secret" autocomplete="off">
-        <button type="submit" class="vault-submit" id="vault-submit-btn">Ouvrir le coffre</button>
-      </form>
+      <div class="vault-card">
+        <div class="vault-eyebrow" id="vault-eyebrow">Accès exclusif</div>
+        <h1 class="vault-title" id="vault-title">Le coffre-fort</h1>
+        <p class="vault-subtitle" id="vault-subtitle">Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.</p>
 
-      <p class="vault-message" id="vault-message"></p>
+        <div class="vault-visual" id="vault-visual">
+          <div class="vault-door" id="vault-door">
+            <div class="vault-dial" id="vault-dial"></div>
+          </div>
+          <div class="vault-half vault-half-left"></div>
+          <div class="vault-half vault-half-right"></div>
+          <div class="vault-amount" id="vault-amount"></div>
+        </div>
+
+        <form class="vault-form" id="vault-form">
+          <input type="text" id="vault-username-input" placeholder="Ton pseudo" autocomplete="off">
+          <input type="text" id="vault-code-input" placeholder="Code secret" autocomplete="off">
+          <button type="submit" class="vault-submit" id="vault-submit-btn">Ouvrir le coffre</button>
+        </form>
+
+        <p class="vault-message" id="vault-message"></p>
+      </div>
+
+      <div class="winners-panel">
+        <h4 id="vault-winners-title">🏆 Derniers gagnants</h4>
+        <div id="vault-winners-list"></div>
+        <p id="vault-winners-empty" style="font-size:11.5px; color:var(--text-faint); text-align:center; display:none;">Personne pour l'instant.</p>
+      </div>
+
     </div>
+
+    <div class="steps-strip">
+      <div class="step-chip"><b>1.</b> <span id="vault-step1">Rejoins le Discord</span></div>
+      <div class="step-chip"><b>2.</b> <span id="vault-step2">Repère le code du jour</span></div>
+      <div class="step-chip"><b>3.</b> <span id="vault-step3">Sois le premier à l'entrer</span></div>
+    </div>
+
   </div>
 
   <div class="wrap" style="display:flex; justify-content:center; padding:0; margin-top:28px;">
@@ -425,6 +515,26 @@
     document.getElementById('vault-subtitle').textContent = v.subtitle || "Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.";
     document.getElementById('vault-code-input').placeholder = v.codePlaceholder || 'Code secret';
     document.getElementById('vault-submit-btn').textContent = v.submitText || 'Ouvrir le coffre';
+
+    // Bandeau Telegram (réutilise le texte déjà configuré pour le site)
+    document.getElementById('vault-tg-tag').textContent = cfg.telegram.tag;
+    document.getElementById('vault-tg-title').textContent = cfg.telegram.title;
+    document.getElementById('vault-tg-desc').textContent = cfg.telegram.desc;
+    const tgBtn = document.getElementById('vault-tg-btn');
+    tgBtn.textContent = cfg.telegram.btnText;
+    tgBtn.href = cfg.telegram.btnHref;
+
+    // Étapes "comment participer"
+    document.getElementById('vault-step1').textContent = v.step1 || 'Rejoins le Discord';
+    document.getElementById('vault-step2').textContent = v.step2 || 'Repère le code du jour';
+    document.getElementById('vault-step3').textContent = v.step3 || "Sois le premier à l'entrer";
+
+    // Textes des stats et du panneau gagnants
+    document.getElementById('vault-stat-total-label').textContent = v.statTotalLabel || 'Total distribué';
+    document.getElementById('vault-stat-rounds-label').textContent = v.statRoundsLabel || 'Coffres ouverts';
+    document.getElementById('vault-stat-participants-label').textContent = v.statParticipantsLabel || 'Participants';
+    document.getElementById('vault-winners-title').textContent = '🏆 ' + (v.winnersTitle || 'Derniers gagnants');
+    document.getElementById('vault-winners-empty').textContent = v.winnersEmpty || "Personne pour l'instant.";
     document.getElementById('vault-username-input').placeholder = v.usernamePlaceholder || 'Ton pseudo';
     document.getElementById('vault-history-title').textContent = v.historyTitle || 'Historique des gains';
     document.getElementById('vault-history-empty').textContent = v.historyEmpty || 'Aucun gain pour l\'instant.';
@@ -528,6 +638,33 @@
       if (!resp.ok) return;
       const data = await resp.json();
       const history = data.history || [];
+
+      // ---- Stats globales ----
+      const totalAmount = history.reduce((sum, h) => sum + (parseFloat(h.amount) || 0), 0);
+      const totalParticipants = history.reduce((sum, h) => sum + (h.participants || 0), 0);
+      document.getElementById('vault-stat-total').textContent = '$' + (Number.isInteger(totalAmount) ? totalAmount : totalAmount.toFixed(2));
+      document.getElementById('vault-stat-rounds').textContent = String(history.length);
+      document.getElementById('vault-stat-participants').textContent = String(totalParticipants);
+
+      // ---- Derniers gagnants (panneau latéral, 3 max) ----
+      const winnersListEl = document.getElementById('vault-winners-list');
+      const winnersEmptyEl = document.getElementById('vault-winners-empty');
+      if (history.length === 0){
+        winnersEmptyEl.style.display = 'block';
+        winnersListEl.innerHTML = '';
+      } else {
+        winnersEmptyEl.style.display = 'none';
+        winnersListEl.innerHTML = history.slice(0, 3).map(h => {
+          const initial = (h.username || '?').trim().charAt(0).toUpperCase() || '?';
+          return `<div class="winner-row">
+            <div class="winner-avatar">${escapeHtml(initial)}</div>
+            <span class="winner-name">${escapeHtml(h.username || '?')}</span>
+            <span class="winner-amount">$${escapeHtml(h.amount || '?')}</span>
+          </div>`;
+        }).join('');
+      }
+
+      // ---- Historique complet (en bas de page) ----
       if (history.length === 0){
         emptyEl.style.display = 'block';
         listEl.innerHTML = '';

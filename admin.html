@@ -378,6 +378,24 @@
     </div>
     <div class="field"><label>Texte si aucun gain</label><input type="text" id="vault-historyEmpty" placeholder="Aucun gain pour l'instant."></div>
     <div class="field"><label>Texte "Participants" (avant le nombre, dans chaque ligne d'historique)</label><input type="text" id="vault-participantsLabel" placeholder="Participants"></div>
+
+    <div class="subheading">Panneau "Comment participer" (3 étapes, sous le coffre)</div>
+    <div class="field"><label>Étape 1</label><input type="text" id="vault-step1" placeholder="Rejoins le Discord"></div>
+    <div class="field"><label>Étape 2</label><input type="text" id="vault-step2" placeholder="Repère le code du jour"></div>
+    <div class="field"><label>Étape 3</label><input type="text" id="vault-step3" placeholder="Sois le premier à l'entrer"></div>
+
+    <div class="subheading">Barre de statistiques (calculées automatiquement, juste les libellés à traduire)</div>
+    <div class="row">
+      <div class="field"><label>Libellé "Total distribué"</label><input type="text" id="vault-statTotalLabel" placeholder="Total distribué"></div>
+      <div class="field"><label>Libellé "Coffres ouverts"</label><input type="text" id="vault-statRoundsLabel" placeholder="Coffres ouverts"></div>
+    </div>
+    <div class="field"><label>Libellé "Participants"</label><input type="text" id="vault-statParticipantsLabel" placeholder="Participants"></div>
+
+    <div class="subheading">Panneau "Derniers gagnants" (à côté du coffre)</div>
+    <div class="row">
+      <div class="field"><label>Titre du panneau</label><input type="text" id="vault-winnersTitle" placeholder="Derniers gagnants"></div>
+      <div class="field"><label>Texte si personne n'a encore gagné</label><input type="text" id="vault-winnersEmpty" placeholder="Personne pour l'instant."></div>
+    </div>
   </div>
 
   <!-- PUBLICATION GITHUB -->
@@ -745,6 +763,14 @@
     document.getElementById('vault-historyTitle').value = content.vault.historyTitle || '';
     document.getElementById('vault-historyEmpty').value = content.vault.historyEmpty || '';
     document.getElementById('vault-participantsLabel').value = content.vault.participantsLabel || '';
+    document.getElementById('vault-step1').value = content.vault.step1 || '';
+    document.getElementById('vault-step2').value = content.vault.step2 || '';
+    document.getElementById('vault-step3').value = content.vault.step3 || '';
+    document.getElementById('vault-statTotalLabel').value = content.vault.statTotalLabel || '';
+    document.getElementById('vault-statRoundsLabel').value = content.vault.statRoundsLabel || '';
+    document.getElementById('vault-statParticipantsLabel').value = content.vault.statParticipantsLabel || '';
+    document.getElementById('vault-winnersTitle').value = content.vault.winnersTitle || '';
+    document.getElementById('vault-winnersEmpty').value = content.vault.winnersEmpty || '';
     document.getElementById('discord-redirect-hint').textContent =
       `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
 
@@ -894,6 +920,14 @@
     content.vault.historyTitle = document.getElementById('vault-historyTitle').value;
     content.vault.historyEmpty = document.getElementById('vault-historyEmpty').value;
     content.vault.participantsLabel = document.getElementById('vault-participantsLabel').value;
+    content.vault.step1 = document.getElementById('vault-step1').value;
+    content.vault.step2 = document.getElementById('vault-step2').value;
+    content.vault.step3 = document.getElementById('vault-step3').value;
+    content.vault.statTotalLabel = document.getElementById('vault-statTotalLabel').value;
+    content.vault.statRoundsLabel = document.getElementById('vault-statRoundsLabel').value;
+    content.vault.statParticipantsLabel = document.getElementById('vault-statParticipantsLabel').value;
+    content.vault.winnersTitle = document.getElementById('vault-winnersTitle').value;
+    content.vault.winnersEmpty = document.getElementById('vault-winnersEmpty').value;
   }
 
   function showToast(msg){
