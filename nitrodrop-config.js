@@ -305,14 +305,14 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "pageTitle": "Drop-Cash.com - Claim your free bonus with no deposit required",
       "vault": {
-        "eyebrow": "",
-        "title": "",
-        "subtitle": "",
-        "codePlaceholder": "",
-        "submitText": "",
+        "eyebrow": "Try your luck",
+        "title": "Lucky Vault",
+        "subtitle": "A code has been shared on Discord. The first person to find it here wins the contents of the Vault.",
+        "codePlaceholder": "Secret code",
+        "submitText": "Open Vault",
         "successMessage": "",
-        "alreadyClaimedMessage": "",
-        "wrongCodeMessage": "",
+        "alreadyClaimedMessage": "The reward has already been claimed by someone else.",
+        "wrongCodeMessage": "Incorrect code, the vault remains locked.",
         "notConfiguredMessage": ""
       }
     },
@@ -608,7 +608,18 @@ const NITRODROP_DEFAULT_CONFIG = {
         "text1": "DROP",
         "text2": "CASH"
       },
-      "pageTitle": "Drop-Cash.com - Claim your free bonus with no deposit required"
+      "pageTitle": "Drop-Cash.com - Claim your free bonus with no deposit required",
+      "vault": {
+        "eyebrow": "Tente ta chance",
+        "title": "Le coffre-fort",
+        "subtitle": "Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.",
+        "codePlaceholder": "Code Secret",
+        "submitText": "Ouvrir le coffre",
+        "successMessage": "",
+        "alreadyClaimedMessage": "La récompense a déjà été réclamée par quelqu'un d'autre.",
+        "wrongCodeMessage": "Code incorrect, le coffre reste verrouillé.",
+        "notConfiguredMessage": ""
+      }
     }
   },
   "defaultLang": "en",
@@ -621,7 +632,7 @@ const NITRODROP_DEFAULT_CONFIG = {
   },
   "foilPackEnabled": false,
   "vaultSounds": {
-    "attempt": "",
+    "attempt": "vault-attempt.mp3",
     "success": "",
     "fail": ""
   }
