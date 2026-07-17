@@ -297,7 +297,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordConnectText": "🎮 Log in with Discord",
         "discordJoinNote": "First, join our {link}, otherwise we won’t be able to send you the confirmation via DM.",
         "discordJoinLinkText": "Discord server",
-        "discordConnectedText": "✓ Logged in as {username}"
+        "discordConnectedText": "✓ Logged in as {username}",
+        "duplicateRequestMessage": "You have already applied to this casino recently. Please try again in approximately {hours}h."
       },
       "brand": {
         "text1": "DROP",
@@ -614,7 +615,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordConnectText": "🎮 Se connecter avec Discord",
         "discordJoinNote": "Rejoins d'abord notre {link}, sinon on ne pourra pas t'envoyer la confirmation en DM.",
         "discordJoinLinkText": "",
-        "discordConnectedText": "✓ Connecté en tant que {username}"
+        "discordConnectedText": "✓ Connecté en tant que {username}",
+        "duplicateRequestMessage": "Tu as déjà fait une demande pour ce casino récemment. Réessaie dans environ {hours}h."
       },
       "brand": {
         "text1": "DROP",
