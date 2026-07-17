@@ -476,7 +476,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHref": "https://rollbit.com/referral/NksCasino",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
-          "signupHighlighted": false,
+          "signupHighlighted": true,
           "claimHighlighted": false
         }
       ],
