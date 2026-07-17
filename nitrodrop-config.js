@@ -317,7 +317,15 @@ const NITRODROP_DEFAULT_CONFIG = {
         "usernamePlaceholder": "Username",
         "historyTitle": "Earnings history",
         "historyEmpty": "No gains so far.",
-        "participantsLabel": "entry"
+        "participantsLabel": "entry",
+        "step1": "Join the Discord",
+        "step2": "Find the code",
+        "step3": "Be the first to enter",
+        "statTotalLabel": "Total distributed",
+        "statRoundsLabel": "Vault opened",
+        "statParticipantsLabel": "",
+        "winnersTitle": "Latest winners",
+        "winnersEmpty": ""
       }
     },
     "fr": {
@@ -626,7 +634,15 @@ const NITRODROP_DEFAULT_CONFIG = {
         "usernamePlaceholder": "Pseudo",
         "historyTitle": "Historique des gains",
         "historyEmpty": "Aucun gain pour l'instant.",
-        "participantsLabel": "participants"
+        "participantsLabel": "participants",
+        "step1": "Rejoins le Discord",
+        "step2": "Trouve le code",
+        "step3": "Sois le premier à l'entrer",
+        "statTotalLabel": "Total distribué",
+        "statRoundsLabel": "Coffres ouverts",
+        "statParticipantsLabel": "Participants",
+        "winnersTitle": "Derniers gagnants",
+        "winnersEmpty": ""
       }
     }
   },
