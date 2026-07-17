@@ -16,7 +16,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Bonus Codes & Offers",
-            "href": "#offres "
+            "href": "#offres"
           },
           {
             "label": "Discord",
@@ -313,7 +313,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "successMessage": "Congratulations, you win {amount}! Contact NEKOS on Discord to claim your reward at the casino of your choice.",
         "alreadyClaimedMessage": "The reward has already been claimed by someone else.",
         "wrongCodeMessage": "Incorrect code, the vault remains locked.",
-        "notConfiguredMessage": "The reward has already been claimed by someone else.",
+        "notConfiguredMessage": "No active vault right now. Check back soon!",
         "usernamePlaceholder": "Username",
         "historyTitle": "Earnings history",
         "historyEmpty": "No gains so far.",
@@ -325,7 +325,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Codes bonus et offres",
-            "href": "#offres "
+            "href": "#offres"
           },
           {
             "label": "Discord",
@@ -622,7 +622,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "successMessage": "Félicitations, tu remportes {amount} ! Contact NEKOS sur Discord pour réclamer ta récompense dans le casino de ton choix.",
         "alreadyClaimedMessage": "La récompense a déjà été réclamée par quelqu'un d'autre.",
         "wrongCodeMessage": "Code incorrect, le coffre reste verrouillé.",
-        "notConfiguredMessage": "La récompense a déjà été réclamée par quelqu'un d'autre.",
+        "notConfiguredMessage": "Aucun coffre actif pour le moment. Reviens bientôt !",
         "usernamePlaceholder": "Pseudo",
         "historyTitle": "Historique des gains",
         "historyEmpty": "Aucun gain pour l'instant.",
