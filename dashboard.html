@@ -88,7 +88,7 @@
       <select id="filter-casino" onchange="applyFilters()">
         <option value="">Tous les casinos</option>
       </select>
-      <input type="text" id="filter-search" placeholder="Rechercher pseudo / email / IP..." oninput="applyFilters()" style="min-width:220px;">
+      <input type="text" id="filter-search" placeholder="Rechercher pseudo / email / IP / Discord..." oninput="applyFilters()" style="min-width:220px;">
       <select id="filter-tipped" onchange="applyFilters()">
         <option value="">Tipsé : tous</option>
         <option value="yes">Tipsé : oui</option>
@@ -145,39 +145,39 @@
       s._reasons = [];
       let score = 0;
 
-      const sameIp = submissions.filter(o => o.id !== s.id && o.ip && o.ip !== 'inconnue' && o.ip === s.ip);
+      const sameIp = submissions.filter(o => o.id !== s.id && o.platform === s.platform && o.ip && o.ip !== 'inconnue' && o.ip === s.ip);
       if (sameIp.length){
         score += Math.min(sameIp.length * 25, 50);
-        s._reasons.push(`Même IP que : ${[...new Set(sameIp.map(o => o.pseudo))].join(', ')}`);
+        s._reasons.push(`Même IP que (même casino) : ${[...new Set(sameIp.map(o => o.pseudo))].join(', ')}`);
       }
 
-      const sameDiscord = submissions.filter(o => o.id !== s.id && o.discordId && o.discordId === s.discordId);
+      const sameDiscord = submissions.filter(o => o.id !== s.id && o.platform === s.platform && o.discordId && o.discordId === s.discordId);
       if (sameDiscord.length){
         score += Math.min(sameDiscord.length * 40, 60);
-        s._reasons.push(`Même ID Discord que : ${[...new Set(sameDiscord.map(o => o.pseudo))].join(', ')}`);
+        s._reasons.push(`Même ID Discord que (même casino) : ${[...new Set(sameDiscord.map(o => o.pseudo))].join(', ')}`);
       }
 
-      const sameEmail = submissions.filter(o => o.id !== s.id && o.email && o.email.toLowerCase() === (s.email || '').toLowerCase());
+      const sameEmail = submissions.filter(o => o.id !== s.id && o.platform === s.platform && o.email && o.email.toLowerCase() === (s.email || '').toLowerCase());
       if (sameEmail.length){
         score += Math.min(sameEmail.length * 15, 30);
-        s._reasons.push(`Même email que : ${[...new Set(sameEmail.map(o => o.pseudo))].join(', ')}`);
+        s._reasons.push(`Même email que (même casino) : ${[...new Set(sameEmail.map(o => o.pseudo))].join(', ')}`);
       }
 
       const base = normalizeBase(s.pseudo);
       if (base.length >= 3){
-        const similarPseudo = submissions.filter(o => o.id !== s.id && o.pseudo !== s.pseudo && normalizeBase(o.pseudo) === base);
+        const similarPseudo = submissions.filter(o => o.id !== s.id && o.platform === s.platform && o.pseudo !== s.pseudo && normalizeBase(o.pseudo) === base);
         if (similarPseudo.length){
           score += Math.min(similarPseudo.length * 15, 30);
-          s._reasons.push(`Pseudo très proche de : ${[...new Set(similarPseudo.map(o => o.pseudo))].join(', ')}`);
+          s._reasons.push(`Pseudo très proche de (même casino) : ${[...new Set(similarPseudo.map(o => o.pseudo))].join(', ')}`);
         }
       }
 
       const emailLocal = normalizeBase((s.email || '').split('@')[0]);
       if (emailLocal.length >= 3){
-        const similarEmail = submissions.filter(o => o.id !== s.id && o.email !== s.email && normalizeBase((o.email || '').split('@')[0]) === emailLocal);
+        const similarEmail = submissions.filter(o => o.id !== s.id && o.platform === s.platform && o.email !== s.email && normalizeBase((o.email || '').split('@')[0]) === emailLocal);
         if (similarEmail.length){
           score += Math.min(similarEmail.length * 10, 20);
-          s._reasons.push(`Email très proche de : ${[...new Set(similarEmail.map(o => o.email))].join(', ')}`);
+          s._reasons.push(`Email très proche de (même casino) : ${[...new Set(similarEmail.map(o => o.email))].join(', ')}`);
         }
       }
 
@@ -231,7 +231,7 @@
       if (tippedFilter === 'yes' && !s.tipped) return false;
       if (tippedFilter === 'no' && s.tipped) return false;
       if (search){
-        const haystack = `${s.pseudo} ${s.email} ${s.ip}`.toLowerCase();
+        const haystack = `${s.pseudo || ''} ${s.email || ''} ${s.ip || ''} ${s.discordId || ''} ${s.platform || ''} ${s.code || ''}`.toLowerCase();
         if (!haystack.includes(search)) return false;
       }
       return true;
