@@ -313,7 +313,10 @@ const NITRODROP_DEFAULT_CONFIG = {
         "successMessage": "Congratulations, you win {amount}!",
         "alreadyClaimedMessage": "The reward has already been claimed by someone else.",
         "wrongCodeMessage": "Incorrect code, the vault remains locked.",
-        "notConfiguredMessage": ""
+        "notConfiguredMessage": "",
+        "usernamePlaceholder": "Username",
+        "historyTitle": "Earnings history",
+        "historyEmpty": "No gains so far."
       }
     },
     "fr": {
@@ -618,7 +621,10 @@ const NITRODROP_DEFAULT_CONFIG = {
         "successMessage": "Félicitations, tu remportes {amount} !",
         "alreadyClaimedMessage": "La récompense a déjà été réclamée par quelqu'un d'autre.",
         "wrongCodeMessage": "Code incorrect, le coffre reste verrouillé.",
-        "notConfiguredMessage": ""
+        "notConfiguredMessage": "",
+        "usernamePlaceholder": "Pseudo",
+        "historyTitle": "Historique des gains",
+        "historyEmpty": "Aucun gain pour l'instant."
       }
     }
   },
