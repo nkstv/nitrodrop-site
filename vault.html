@@ -199,6 +199,7 @@
   .vault-history-row .name{color:var(--text); font-weight:600;}
   .vault-history-row .amount{color:var(--green); font-family:'JetBrains Mono'; font-weight:700;}
   .vault-history-row .participants{color:var(--text-dim); font-size:11.5px;}
+  .vault-history-row .code-used{color:var(--violet); font-size:12px; font-weight:700;}
   .vault-history-row .date{color:var(--text-faint); font-size:11.5px;}
 
   @media (max-width:960px){
@@ -396,6 +397,14 @@
       }
     });
 
+    const ctaHref = cfg.nav.ctaHref && cfg.nav.ctaHref.startsWith('#') ? 'index.html' + cfg.nav.ctaHref : cfg.nav.ctaHref;
+    const navCta = document.getElementById('nav-cta');
+    navCta.textContent = cfg.nav.ctaText;
+    navCta.href = ctaHref;
+    const navCtaMobile = document.getElementById('nav-cta-mobile');
+    navCtaMobile.textContent = cfg.nav.ctaText;
+    navCtaMobile.href = ctaHref;
+
     document.getElementById('footer-nav-title').textContent = cfg.footer.navTitle;
     cfg.footer.navLinks.forEach((link, i) => {
       const href = link.href && link.href.startsWith('#') ? 'index.html' + link.href : link.href;
@@ -531,6 +540,7 @@
         return `<div class="vault-history-row">
           <span class="name">${escapeHtml(h.username || '?')}</span>
           <span class="amount">$${escapeHtml(h.amount || '?')}</span>
+          <span class="code-used code-font">${escapeHtml(h.code || '?')}</span>
           <span class="participants">${escapeHtml(participantsLabel)} : ${escapeHtml(String(h.participants != null ? h.participants : '?'))}</span>
           <span class="date">${escapeHtml(date)}</span>
         </div>`;
