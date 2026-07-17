@@ -303,7 +303,18 @@ const NITRODROP_DEFAULT_CONFIG = {
         "text1": "DROP",
         "text2": "CASH"
       },
-      "pageTitle": "Drop-Cash.com - Claim your free bonus with no deposit required"
+      "pageTitle": "Drop-Cash.com - Claim your free bonus with no deposit required",
+      "vault": {
+        "eyebrow": "",
+        "title": "",
+        "subtitle": "",
+        "codePlaceholder": "",
+        "submitText": "",
+        "successMessage": "",
+        "alreadyClaimedMessage": "",
+        "wrongCodeMessage": "",
+        "notConfiguredMessage": ""
+      }
     },
     "fr": {
       "nav": {
@@ -608,7 +619,12 @@ const NITRODROP_DEFAULT_CONFIG = {
     "enabled": true,
     "imageUrl": "hero-banner.jpg"
   },
-  "foilPackEnabled": false
+  "foilPackEnabled": false,
+  "vaultSounds": {
+    "attempt": "",
+    "success": "",
+    "fail": ""
+  }
 };
 
 // ---------- Fonctions de stockage (partagées site + admin) ----------
