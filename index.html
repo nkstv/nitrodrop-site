@@ -1002,6 +1002,8 @@
     stepForm.style.display = 'none';
     stepConfirm.style.display = 'none';
     claimForm.reset();
+    const existingErr = document.getElementById('claim-form-error');
+    if (existingErr) existingErr.remove();
     document.getElementById('claim-discord-input').value = '';
     document.getElementById('discord-connected-info').style.display = 'none';
     document.getElementById('discord-connect-btn').style.display = '';
@@ -1032,13 +1034,18 @@
     const relayUrl = CONFIG.telegramRelay.url;
     if (!relayUrl || relayUrl.includes('REMPLACE-MOI')){
       console.warn('Relais Telegram non configuré : renseigne telegramRelay.url dans nitrodrop-config.js.');
-      return;
+      return { ok: true }; // pas de blocage si le relais n'est simplement pas configuré
     }
-    await fetch(relayUrl, {
+    const resp = await fetch(relayUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ platform, code, email, pseudo, discordId })
     });
+    try{
+      return await resp.json();
+    }catch(e){
+      return { ok: true }; // réponse non-JSON (ancienne version du Worker) : on laisse passer
+    }
   }
 
   // ---- Connexion Discord (OAuth, récupère l'ID automatiquement) ----
@@ -1084,17 +1091,37 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Envoi en cours…';
 
+    let result = { ok: true };
     try{
-      await sendTelegramNotification({ platform, code: currentClaimCode, email, pseudo, discordId });
+      result = await sendTelegramNotification({ platform, code: currentClaimCode, email, pseudo, discordId });
     }catch(err){
       console.error('Échec de la notification Telegram :', err);
     }
 
     submitBtn.disabled = false;
     submitBtn.textContent = originalLabel;
+
+    if (result && result.ok === false && result.reason === 'duplicate_24h'){
+      const template = getActive().modal.duplicateRequestMessage ||
+        "Tu as déjà fait une demande pour ce casino récemment. Réessaie dans environ {hours}h.";
+      showFormError(fillTemplate(template, { hours: result.hoursRemaining || '24' }));
+      return;
+    }
+
     stepForm.style.display = 'none';
     stepConfirm.style.display = 'block';
     startCountdown();
+  }
+
+  function showFormError(msg){
+    let errEl = document.getElementById('claim-form-error');
+    if (!errEl){
+      errEl = document.createElement('p');
+      errEl.id = 'claim-form-error';
+      errEl.style.cssText = 'color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; line-height:1.5;';
+      claimForm.appendChild(errEl);
+    }
+    errEl.textContent = msg;
   }
 
   function startCountdown(){

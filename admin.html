@@ -311,6 +311,7 @@
     <div class="field"><label>Texte du lien dans cette note</label><input type="text" id="modal-discordJoinLinkText" placeholder="serveur Discord"></div>
     <div class="field"><label>Message une fois connecté (utilise <code>{username}</code> pour le pseudo Discord)</label><input type="text" id="modal-discordConnectedText" placeholder="✓ Connecté en tant que {username}"></div>
     <div class="field"><label>Texte du bouton d'envoi</label><input type="text" id="modal-submitText"></div>
+    <div class="field"><label>Message si déjà demandé sur ce casino (utilise <code>{hours}</code> pour le temps restant)</label><input type="text" id="modal-duplicateRequestMessage" placeholder="Tu as déjà fait une demande pour ce casino récemment. Réessaie dans environ {hours}h."></div>
 
     <div class="subheading">Étape 3 — Confirmation</div>
     <div class="field"><label>Titre</label><input type="text" id="modal-confirmTitle"></div>
@@ -750,6 +751,7 @@
     document.getElementById('modal-discordJoinLinkText').value = content.modal.discordJoinLinkText || '';
     document.getElementById('modal-discordConnectedText').value = content.modal.discordConnectedText || '';
     document.getElementById('modal-submitText').value = content.modal.submitText;
+    document.getElementById('modal-duplicateRequestMessage').value = content.modal.duplicateRequestMessage || '';
     document.getElementById('modal-confirmTitle').value = content.modal.confirmTitle;
     document.getElementById('modal-confirmTextTemplate').value = content.modal.confirmTextTemplate;
     document.getElementById('modal-confirmNote').value = content.modal.confirmNote;
@@ -911,6 +913,7 @@
     content.modal.discordJoinLinkText = document.getElementById('modal-discordJoinLinkText').value;
     content.modal.discordConnectedText = document.getElementById('modal-discordConnectedText').value;
     content.modal.submitText = document.getElementById('modal-submitText').value;
+    content.modal.duplicateRequestMessage = document.getElementById('modal-duplicateRequestMessage').value;
     content.modal.confirmTitle = document.getElementById('modal-confirmTitle').value;
     content.modal.confirmTextTemplate = document.getElementById('modal-confirmTextTemplate').value;
     content.modal.confirmNote = document.getElementById('modal-confirmNote').value;
