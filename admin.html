@@ -136,6 +136,18 @@
     </div>
   </div>
 
+  <!-- BOUTON FLOTTANT -->
+  <div class="panel">
+    <h2>Bouton flottant (bas à droite, sur toutes les pages)</h2>
+    <div class="sub">Une icône ronde flottante en bas à droite (index.html et vault.html), avec un badge Discord en superposition. Clique dessus pour aller vers un lien de ton choix, ouvert dans un nouvel onglet.</div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="floating-widget-enabled">
+      <label for="floating-widget-enabled">Activer le bouton flottant</label>
+    </div>
+    <div class="field"><label>Nom du fichier image (doit être uploadé à la racine du repo GitHub)</label><input type="text" id="floating-widget-image" placeholder="floating-icon.png"></div>
+    <div class="field"><label>Lien de redirection (s'ouvre dans un nouvel onglet)</label><input type="text" id="floating-widget-link" placeholder="https://discord.gg/..."></div>
+  </div>
+
   <!-- MENU / HEADER -->
   <div class="panel">
     <h2>Menu (nav)</h2>
@@ -673,6 +685,10 @@
     document.getElementById('hero-banner-enabled').checked = !!cfg.heroBanner.enabled;
     document.getElementById('hero-banner-url').value = cfg.heroBanner.imageUrl || 'hero-banner.jpg';
     document.getElementById('foil-pack-enabled').checked = cfg.foilPackEnabled !== false;
+    cfg.floatingWidget = cfg.floatingWidget || {};
+    document.getElementById('floating-widget-enabled').checked = !!cfg.floatingWidget.enabled;
+    document.getElementById('floating-widget-image').value = cfg.floatingWidget.imageUrl || '';
+    document.getElementById('floating-widget-link').value = cfg.floatingWidget.linkUrl || '';
 
     document.getElementById('nav-ctaText').value = content.nav.ctaText;
     document.getElementById('nav-ctaHref').value = content.nav.ctaHref;
@@ -792,6 +808,10 @@
     cfg.heroBanner.enabled = document.getElementById('hero-banner-enabled').checked;
     cfg.heroBanner.imageUrl = document.getElementById('hero-banner-url').value;
     cfg.foilPackEnabled = document.getElementById('foil-pack-enabled').checked;
+    cfg.floatingWidget = cfg.floatingWidget || {};
+    cfg.floatingWidget.enabled = document.getElementById('floating-widget-enabled').checked;
+    cfg.floatingWidget.imageUrl = document.getElementById('floating-widget-image').value;
+    cfg.floatingWidget.linkUrl = document.getElementById('floating-widget-link').value;
 
     content.nav.links = content.nav.links.map((link, i) => ({
       label: document.getElementById(`nav-link-label-${i}`).value,
