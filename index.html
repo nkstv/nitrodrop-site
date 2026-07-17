@@ -1039,7 +1039,8 @@
     document.getElementById('discord-connect-btn').style.display = 'none';
     const info = document.getElementById('discord-connected-info');
     info.style.display = 'block';
-    info.textContent = `✓ Connecté en tant que ${username || 'Discord'}`;
+    const template = getActive().modal.discordConnectedText || '✓ Connecté en tant que {username}';
+    info.textContent = template.replace('{username}', username || 'Discord');
   });
 
   async function submitClaim(e){
