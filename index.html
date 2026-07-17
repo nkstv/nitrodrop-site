@@ -657,6 +657,9 @@
         </label>
         <label><span id="discord-label-text">Ton compte Discord</span></label>
         <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
+        <p id="discord-join-note" style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;">
+          Rejoins d'abord notre <a href="#" id="discord-join-link" target="_blank" style="color:var(--green); font-weight:600;">serveur Discord</a>, sinon on ne pourra pas t'envoyer la confirmation en DM.
+        </p>
         <div id="discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
         <input type="hidden" id="claim-discord-input">
         <button type="submit" class="modal-submit" id="claim-submit-btn">Confirmer ma demande</button>
@@ -856,6 +859,12 @@
     document.getElementById('discord-label-text').textContent = cfg.modal.discordLabel || 'Ton ID Discord';
     document.getElementById('claim-discord-input').placeholder = cfg.modal.discordPlaceholder || 'Ex: 123456789012345678';
     document.getElementById('discord-connect-btn').textContent = cfg.modal.discordConnectText || '🎮 Se connecter avec Discord';
+    const discordNavLink = cfg.nav.links.find(l => (l.label || '').toLowerCase().includes('discord'));
+    const discordHref = (discordNavLink && discordNavLink.href) || '#';
+    const discordLinkText = cfg.modal.discordJoinLinkText || 'serveur Discord';
+    const discordLinkHtml = `<a href="${escapeHtml(discordHref)}" target="_blank" style="color:var(--green); font-weight:600;">${escapeHtml(discordLinkText)}</a>`;
+    const joinNoteTemplate = cfg.modal.discordJoinNote || `Rejoins d'abord notre {link}, sinon on ne pourra pas t'envoyer la confirmation en DM.`;
+    document.getElementById('discord-join-note').innerHTML = escapeHtml(joinNoteTemplate).replace('{link}', discordLinkHtml);
     document.getElementById('gate-yes-btn').textContent = cfg.modal.gateYesText;
     document.getElementById('gate-no-btn').textContent = cfg.modal.gateNoText;
     document.getElementById('form-tag-label').textContent = cfg.modal.formTag;
