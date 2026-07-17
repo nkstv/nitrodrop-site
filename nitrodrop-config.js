@@ -436,7 +436,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "bonusSuffix": "jusqu'à $1,500",
           "desc": "Inscrivez-vous via le lien, effectuez votre premier dépôt et profitez de votre bonus de bienvenue.",
           "code": "",
-          "codeEnabled": true,
+          "codeEnabled": false,
           "signupHref": "https://flush.com/?LCG6LC",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
