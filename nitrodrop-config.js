@@ -16,7 +16,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Bonus Codes & Offers",
-            "href": "#offres"
+            "href": "#offres "
           },
           {
             "label": "Discord",
@@ -27,8 +27,8 @@ const NITRODROP_DEFAULT_CONFIG = {
             "href": "https://t.me/+BZyC9HHN3LljODM0"
           },
           {
-            "label": "",
-            "href": ""
+            "label": "Vault",
+            "href": "https://drop-cash.com/vault"
           }
         ],
         "ctaText": "View Offers",
@@ -311,9 +311,9 @@ const NITRODROP_DEFAULT_CONFIG = {
         "codePlaceholder": "Secret code",
         "submitText": "Open Vault",
         "successMessage": "Congratulations, you win {amount}! Contact NEKOS on Discord to claim your reward at the casino of your choice.",
-        "alreadyClaimedMessage": "The reward has already been claimed by someone else.",
+        "alreadyClaimedMessage": "The reward has already been claimed by someone else..",
         "wrongCodeMessage": "Incorrect code, the vault remains locked.",
-        "notConfiguredMessage": "No active vault right now. Check back soon!",
+        "notConfiguredMessage": "The reward has already been claimed by someone else.",
         "usernamePlaceholder": "Username",
         "historyTitle": "Earnings history",
         "historyEmpty": "No gains so far.",
@@ -325,7 +325,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Codes bonus et offres",
-            "href": "#offres"
+            "href": "#offres "
           },
           {
             "label": "Discord",
@@ -622,11 +622,11 @@ const NITRODROP_DEFAULT_CONFIG = {
         "successMessage": "Félicitations, tu remportes {amount} ! Contact NEKOS sur Discord pour réclamer ta récompense dans le casino de ton choix.",
         "alreadyClaimedMessage": "La récompense a déjà été réclamée par quelqu'un d'autre.",
         "wrongCodeMessage": "Code incorrect, le coffre reste verrouillé.",
-        "notConfiguredMessage": "Aucun coffre actif pour le moment. Reviens bientôt !",
+        "notConfiguredMessage": "Coffre non actif.",
         "usernamePlaceholder": "Pseudo",
         "historyTitle": "Historique des gains",
         "historyEmpty": "Aucun gain pour l'instant.",
-        "participantsLabel": "participant(s)"
+        "participantsLabel": "participants"
       }
     }
   },
