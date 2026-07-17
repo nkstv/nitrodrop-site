@@ -258,7 +258,9 @@ const NITRODROP_DEFAULT_CONFIG = {
         "pseudoPlaceholder": "your username",
         "discordLabel": "Discord*",
         "discordPlaceholder": "",
-        "discordConnectText": "🎮 Log in with Discord"
+        "discordConnectText": "🎮 Log in with Discord",
+        "discordJoinNote": "Rejoins d'abord notre {link}, sinon on ne pourra pas t'envoyer la confirmation en DM.",
+        "discordJoinLinkText": ""
       },
       "brand": {
         "text1": "DROP",
@@ -513,7 +515,9 @@ const NITRODROP_DEFAULT_CONFIG = {
         "pseudoPlaceholder": "votre nom d'utilisateur",
         "discordLabel": "Discord*",
         "discordPlaceholder": "",
-        "discordConnectText": "🎮 Se connecter avec Discord"
+        "discordConnectText": "🎮 Se connecter avec Discord",
+        "discordJoinNote": "Rejoins d'abord notre {link}, sinon on ne pourra pas t'envoyer la confirmation en DM.",
+        "discordJoinLinkText": ""
       },
       "brand": {
         "text1": "DROP",
