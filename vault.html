@@ -118,7 +118,7 @@
   }
 
   /* ---------- VAULT ---------- */
-  .vault-section{flex:1; display:flex; align-items:center; justify-content:center; padding:64px 20px;}
+  .vault-section{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:64px 20px;}
   .vault-card{
     width:100%; max-width:440px; text-align:center;
     background:var(--bg-card); border:1px solid var(--line); border-radius:24px;
@@ -191,6 +191,14 @@
   .vault-message.error{color:#FF7A90;}
   .vault-message.success{color:var(--green);}
   .vault-message.info{color:var(--text-dim);}
+  .vault-history-row{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--bg-raise); border:1px solid var(--line); border-radius:10px;
+    padding:10px 14px; font-size:13px;
+  }
+  .vault-history-row .name{color:var(--text); font-weight:600;}
+  .vault-history-row .amount{color:var(--green); font-family:'JetBrains Mono'; font-weight:700;}
+  .vault-history-row .date{color:var(--text-faint); font-size:11.5px;}
 
   @media (max-width:960px){
     .nav-links{display:none;}
@@ -251,11 +259,20 @@
       </div>
 
       <form class="vault-form" id="vault-form">
+        <input type="text" id="vault-username-input" placeholder="Ton pseudo" autocomplete="off">
         <input type="text" id="vault-code-input" placeholder="Code secret" autocomplete="off">
         <button type="submit" class="vault-submit" id="vault-submit-btn">Ouvrir le coffre</button>
       </form>
 
       <p class="vault-message" id="vault-message"></p>
+    </div>
+  </div>
+
+  <div class="wrap" style="display:flex; justify-content:center; padding:0; margin-top:28px;">
+    <div class="vault-card" style="max-width:440px;">
+      <h3 id="vault-history-title" style="font-size:16px; color:#fff; margin-bottom:16px;">Historique des gains</h3>
+      <div id="vault-history-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <p id="vault-history-empty" style="font-size:13px; color:var(--text-faint); display:none;">Aucun gain pour l'instant.</p>
     </div>
   </div>
 </section>
@@ -398,6 +415,9 @@
     document.getElementById('vault-subtitle').textContent = v.subtitle || "Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.";
     document.getElementById('vault-code-input').placeholder = v.codePlaceholder || 'Code secret';
     document.getElementById('vault-submit-btn').textContent = v.submitText || 'Ouvrir le coffre';
+    document.getElementById('vault-username-input').placeholder = v.usernamePlaceholder || 'Ton pseudo';
+    document.getElementById('vault-history-title').textContent = v.historyTitle || 'Historique des gains';
+    document.getElementById('vault-history-empty').textContent = v.historyEmpty || 'Aucun gain pour l\'instant.';
   }
 
   applyChrome(getActive());
@@ -457,6 +477,7 @@
   function lockFormOut(){
     vaultCodeInput.disabled = true;
     vaultSubmitBtn.disabled = true;
+    document.getElementById('vault-username-input').disabled = true;
   }
 
   async function checkInitialStatus(){
@@ -480,9 +501,45 @@
   }
   checkInitialStatus();
 
+  async function loadHistory(){
+    const listEl = document.getElementById('vault-history-list');
+    const emptyEl = document.getElementById('vault-history-empty');
+    if (!workerBase) return;
+    try{
+      const resp = await fetch(`${workerBase}/vault/history`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      const history = data.history || [];
+      if (history.length === 0){
+        emptyEl.style.display = 'block';
+        listEl.innerHTML = '';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      listEl.innerHTML = history.map(h => {
+        const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString() : '';
+        return `<div class="vault-history-row">
+          <span class="name">${escapeHtml(h.username || '?')}</span>
+          <span class="amount">$${escapeHtml(h.amount || '?')}</span>
+          <span class="date">${escapeHtml(date)}</span>
+        </div>`;
+      }).join('');
+    }catch(e){
+      console.error('Impossible de charger l\'historique du coffre :', e);
+    }
+  }
+  loadHistory();
+
+  const vaultUsernameInput = document.getElementById('vault-username-input');
+
   vaultForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const code = vaultCodeInput.value.trim();
+    const username = vaultUsernameInput.value.trim();
+    if (!username){
+      showMessage('Indique ton pseudo avant de tenter ta chance.', 'error');
+      return;
+    }
     if (!code) return;
 
     vaultSubmitBtn.disabled = true;
@@ -494,7 +551,7 @@
       const resp = await fetch(`${workerBase}/vault/attempt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
+        body: JSON.stringify({ code, username })
       });
       const data = await resp.json();
       const v = getActive().vault || {};
@@ -509,6 +566,7 @@
           const template = v.successMessage || 'Félicitations, tu remportes {amount} !';
           showMessage(fillTemplate(template, { amount: data.amount ? '$' + data.amount : '' }), 'success');
           lockFormOut();
+          loadHistory();
         } else if (data.reason === 'already_claimed'){
           playSound('fail');
           vaultDoor.classList.add('shake');
@@ -518,6 +576,9 @@
         } else if (data.reason === 'not_configured'){
           showMessage(v.notConfiguredMessage || 'Aucun coffre actif pour le moment.', 'info');
           lockFormOut();
+        } else if (data.reason === 'missing_username'){
+          showMessage('Indique ton pseudo avant de tenter ta chance.', 'error');
+          vaultSubmitBtn.disabled = false;
         } else {
           playSound('fail');
           vaultDoor.classList.add('shake');

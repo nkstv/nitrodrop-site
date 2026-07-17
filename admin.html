@@ -371,6 +371,11 @@
     <div class="field"><label>Message "déjà réclamé"</label><input type="text" id="vault-alreadyClaimedMessage"></div>
     <div class="field"><label>Message "mauvais code"</label><input type="text" id="vault-wrongCodeMessage"></div>
     <div class="field"><label>Message "coffre non actif"</label><input type="text" id="vault-notConfiguredMessage"></div>
+    <div class="row">
+      <div class="field"><label>Placeholder du champ pseudo</label><input type="text" id="vault-usernamePlaceholder" placeholder="Ton pseudo"></div>
+      <div class="field"><label>Titre de la section historique</label><input type="text" id="vault-historyTitle" placeholder="Historique des gains"></div>
+    </div>
+    <div class="field"><label>Texte si aucun gain</label><input type="text" id="vault-historyEmpty" placeholder="Aucun gain pour l'instant."></div>
   </div>
 
   <!-- PUBLICATION GITHUB -->
@@ -734,6 +739,9 @@
     document.getElementById('vault-alreadyClaimedMessage').value = content.vault.alreadyClaimedMessage || '';
     document.getElementById('vault-wrongCodeMessage').value = content.vault.wrongCodeMessage || '';
     document.getElementById('vault-notConfiguredMessage').value = content.vault.notConfiguredMessage || '';
+    document.getElementById('vault-usernamePlaceholder').value = content.vault.usernamePlaceholder || '';
+    document.getElementById('vault-historyTitle').value = content.vault.historyTitle || '';
+    document.getElementById('vault-historyEmpty').value = content.vault.historyEmpty || '';
     document.getElementById('discord-redirect-hint').textContent =
       `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
 
@@ -879,6 +887,9 @@
     content.vault.alreadyClaimedMessage = document.getElementById('vault-alreadyClaimedMessage').value;
     content.vault.wrongCodeMessage = document.getElementById('vault-wrongCodeMessage').value;
     content.vault.notConfiguredMessage = document.getElementById('vault-notConfiguredMessage').value;
+    content.vault.usernamePlaceholder = document.getElementById('vault-usernamePlaceholder').value;
+    content.vault.historyTitle = document.getElementById('vault-historyTitle').value;
+    content.vault.historyEmpty = document.getElementById('vault-historyEmpty').value;
   }
 
   function showToast(msg){
@@ -1010,7 +1021,7 @@ function nitrodropResetConfig() {
         statusEl.innerHTML =
           `Code actuel : <strong>${data.code}</strong> — Montant : <strong>$${data.amount || '?'}</strong><br>` +
           (data.claimed
-            ? `Déjà réclamé le ${data.claimedAt || '?'} par l'IP ${data.claimedIp || '?'}`
+            ? `Déjà réclamé le ${data.claimedAt || '?'} par ${data.username || '?'} (IP ${data.claimedIp || '?'})`
             : 'Pas encore réclamé.');
       }
       statusEl.style.color = 'var(--text-dim)';
