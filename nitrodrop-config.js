@@ -659,6 +659,11 @@ const NITRODROP_DEFAULT_CONFIG = {
     "attempt": "vault-attempt.mp3",
     "success": "vault-success.mp3",
     "fail": ""
+  },
+  "floatingWidget": {
+    "enabled": true,
+    "imageUrl": "floating-icon.png",
+    "linkUrl": "https://discord.gg/7h7QHXdZeK"
   }
 };
 
