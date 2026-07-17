@@ -376,6 +376,7 @@
       <div class="field"><label>Titre de la section historique</label><input type="text" id="vault-historyTitle" placeholder="Historique des gains"></div>
     </div>
     <div class="field"><label>Texte si aucun gain</label><input type="text" id="vault-historyEmpty" placeholder="Aucun gain pour l'instant."></div>
+    <div class="field"><label>Texte "Participants" (avant le nombre, dans chaque ligne d'historique)</label><input type="text" id="vault-participantsLabel" placeholder="Participants"></div>
   </div>
 
   <!-- PUBLICATION GITHUB -->
@@ -742,6 +743,7 @@
     document.getElementById('vault-usernamePlaceholder').value = content.vault.usernamePlaceholder || '';
     document.getElementById('vault-historyTitle').value = content.vault.historyTitle || '';
     document.getElementById('vault-historyEmpty').value = content.vault.historyEmpty || '';
+    document.getElementById('vault-participantsLabel').value = content.vault.participantsLabel || '';
     document.getElementById('discord-redirect-hint').textContent =
       `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
 
@@ -890,6 +892,7 @@
     content.vault.usernamePlaceholder = document.getElementById('vault-usernamePlaceholder').value;
     content.vault.historyTitle = document.getElementById('vault-historyTitle').value;
     content.vault.historyEmpty = document.getElementById('vault-historyEmpty').value;
+    content.vault.participantsLabel = document.getElementById('vault-participantsLabel').value;
   }
 
   function showToast(msg){
@@ -1022,7 +1025,7 @@ function nitrodropResetConfig() {
           `Code actuel : <strong>${data.code}</strong> — Montant : <strong>$${data.amount || '?'}</strong><br>` +
           (data.claimed
             ? `Déjà réclamé le ${data.claimedAt || '?'} par ${data.username || '?'} (IP ${data.claimedIp || '?'})`
-            : 'Pas encore réclamé.');
+            : `Pas encore réclamé. Participants jusqu'ici : ${(data.attemptedIps && data.attemptedIps.length) || 0}.`);
       }
       statusEl.style.color = 'var(--text-dim)';
     }catch(err){
