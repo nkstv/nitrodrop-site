@@ -429,6 +429,11 @@
     localStorage.setItem('nitrodrop_lang', lang);
     document.documentElement.lang = lang;
     applyChrome(getActive());
+    if (vaultAlreadyClaimed){
+      const v = getActive().vault || {};
+      showMessage(v.alreadyClaimedMessage || 'Ce coffre a déjà été réclamé par quelqu\u0027un d\u0027autre.', 'info');
+    }
+    loadHistory();
     document.querySelectorAll('.lang-switch-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.lang === lang);
     });
@@ -481,6 +486,8 @@
     document.getElementById('vault-username-input').disabled = true;
   }
 
+  let vaultAlreadyClaimed = false;
+
   async function checkInitialStatus(){
     if (!workerBase){
       showMessage('Coffre non configuré.', 'info');
@@ -492,6 +499,7 @@
       if (!resp.ok) return;
       const data = await resp.json();
       if (data.claimed){
+        vaultAlreadyClaimed = true;
         const v = getActive().vault || {};
         showMessage(v.alreadyClaimedMessage || 'Ce coffre a déjà été réclamé par quelqu\'un d\'autre.', 'info');
         lockFormOut();
