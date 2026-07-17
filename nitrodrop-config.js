@@ -260,7 +260,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordPlaceholder": "",
         "discordConnectText": "🎮 Log in with Discord",
         "discordJoinNote": "First, join our {link}, otherwise we won’t be able to send you the confirmation via DM.",
-        "discordJoinLinkText": ""
+        "discordJoinLinkText": "",
+        "discordConnectedText": "✓ Logged in as {username}"
       },
       "brand": {
         "text1": "DROP",
@@ -517,7 +518,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordPlaceholder": "",
         "discordConnectText": "🎮 Se connecter avec Discord",
         "discordJoinNote": "Rejoins d'abord notre {link}, sinon on ne pourra pas t'envoyer la confirmation en DM.",
-        "discordJoinLinkText": ""
+        "discordJoinLinkText": "",
+        "discordConnectedText": "✓ Connecté en tant que {username}"
       },
       "brand": {
         "text1": "DROP",
