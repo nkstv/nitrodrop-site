@@ -316,7 +316,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "notConfiguredMessage": "The reward has already been claimed by someone else.",
         "usernamePlaceholder": "Username",
         "historyTitle": "Earnings history",
-        "historyEmpty": "No gains so far."
+        "historyEmpty": "No gains so far.",
+        "participantsLabel": "entry"
       }
     },
     "fr": {
@@ -624,7 +625,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "notConfiguredMessage": "La récompense a déjà été réclamée par quelqu'un d'autre.",
         "usernamePlaceholder": "Pseudo",
         "historyTitle": "Historique des gains",
-        "historyEmpty": "Aucun gain pour l'instant."
+        "historyEmpty": "Aucun gain pour l'instant.",
+        "participantsLabel": "participant(s)"
       }
     }
   },
