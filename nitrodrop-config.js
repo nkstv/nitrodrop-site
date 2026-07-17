@@ -310,7 +310,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "subtitle": "A code has been shared on Discord. The first person to find it here wins the contents of the Vault.",
         "codePlaceholder": "Secret code",
         "submitText": "Open Vault",
-        "successMessage": "",
+        "successMessage": "Congratulations, you win {amount}!",
         "alreadyClaimedMessage": "The reward has already been claimed by someone else.",
         "wrongCodeMessage": "Incorrect code, the vault remains locked.",
         "notConfiguredMessage": ""
@@ -332,8 +332,8 @@ const NITRODROP_DEFAULT_CONFIG = {
             "href": "https://t.me/+BZyC9HHN3LljODM0"
           },
           {
-            "label": "",
-            "href": ""
+            "label": "Vault",
+            "href": "https://drop-cash.com/vault"
           }
         ],
         "ctaText": "Voir les offres",
@@ -615,7 +615,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "subtitle": "Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.",
         "codePlaceholder": "Code Secret",
         "submitText": "Ouvrir le coffre",
-        "successMessage": "",
+        "successMessage": "Félicitations, tu remportes {amount} !",
         "alreadyClaimedMessage": "La récompense a déjà été réclamée par quelqu'un d'autre.",
         "wrongCodeMessage": "Code incorrect, le coffre reste verrouillé.",
         "notConfiguredMessage": ""
