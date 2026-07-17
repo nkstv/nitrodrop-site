@@ -633,7 +633,7 @@ const NITRODROP_DEFAULT_CONFIG = {
   "foilPackEnabled": false,
   "vaultSounds": {
     "attempt": "vault-attempt.mp3",
-    "success": "",
+    "success": "vault-success.mp3",
     "fail": ""
   }
 };
