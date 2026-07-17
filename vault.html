@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Coffre-fort — Drop-Cash.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07070C;
+    --bg-raise:#100F1C;
+    --bg-card:#131226;
+    --line:rgba(255,255,255,0.08);
+    --line-strong:rgba(255,255,255,0.16);
+    --green:#B6FF3C;
+    --green-dim:#7FCB1F;
+    --violet:#8B5CFF;
+    --violet-deep:#4B2FBF;
+    --text:#F1F0FA;
+    --text-dim:#9591B0;
+    --text-faint:#5F5C77;
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:clip;
+    min-height:100vh;
+    display:flex; flex-direction:column;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+    pointer-events:none;
+    z-index:0;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  :focus-visible{outline:2px solid var(--green); outline-offset:3px; border-radius:4px;}
+
+  .wrap{max-width:1240px; margin:0 auto; padding:0 32px; position:relative; z-index:1;}
+  h1,h2,h3{font-family:'Unbounded', sans-serif; line-height:1.05; letter-spacing:-0.01em;}
+  .code-font{font-family:'JetBrains Mono', monospace; letter-spacing:0.04em;}
+
+  /* ---------- NAV (identique au site) ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(7,7,12,0.75);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:18px 0;}
+  .logo{display:flex; align-items:center; gap:10px; font-family:'Unbounded'; font-weight:900; font-size:19px;}
+  .logo-mark{
+    width:34px; height:34px; border-radius:9px;
+    background:linear-gradient(135deg, var(--violet), var(--violet-deep));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 22px rgba(139,92,255,0.55);
+    font-size:16px;
+  }
+  .logo .logo-accent{color:var(--green);}
+  .nav-links{display:flex; gap:34px; font-size:14.5px; color:var(--text-dim); font-weight:500;}
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{
+    background:var(--green); color:#08130a; font-weight:700; font-size:14px;
+    padding:10px 20px; border-radius:10px;
+    box-shadow:0 0 0 0 rgba(182,255,60,0.6);
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  .nav-cta:hover{box-shadow:0 0 26px rgba(182,255,60,0.45); transform:translateY(-1px);}
+  .lang-switch{display:flex; gap:4px; background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:8px; padding:3px;}
+  .lang-switch-btn{
+    background:none; border:none; color:var(--text-dim); font-weight:700; font-size:12px;
+    padding:6px 10px; border-radius:6px; cursor:pointer; letter-spacing:0.03em;
+  }
+  .lang-switch-btn.active{background:var(--green); color:#08130a;}
+  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer;}
+  .burger span{width:22px; height:2px; background:var(--text); transition:transform .2s ease, opacity .2s ease;}
+  .mobile-nav{
+    display:none; flex-direction:column; gap:2px;
+    background:var(--bg-raise); border-bottom:1px solid var(--line);
+    padding:8px 0;
+  }
+  .mobile-nav.open{display:flex;}
+  .mobile-nav a{
+    padding:14px 32px; font-size:15px; color:var(--text-dim); font-weight:500;
+    border-bottom:1px solid var(--line);
+  }
+  .mobile-nav a:last-child{border-bottom:none;}
+  .mobile-nav a:active{color:var(--text); background:var(--bg-card);}
+
+  /* ---------- FOOTER (identique au site) ---------- */
+  footer{border-top:1px solid var(--line); padding:56px 0 40px; margin-top:auto;}
+  .footer-top{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:32px;}
+  .footer-cols{display:flex; gap:64px; flex-wrap:wrap;}
+  .footer-col h4{font-size:12.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px;}
+  .footer-col a{display:block; font-size:14px; color:var(--text-dim); margin-bottom:10px;}
+  .footer-col a:hover{color:var(--text);}
+  .disclaimer{
+    margin-top:44px; padding-top:28px; border-top:1px solid var(--line);
+    font-size:12px; color:var(--text-faint); line-height:1.7; max-width:820px;
+  }
+  .age-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:28px; height:28px; border:1px solid var(--line-strong); border-radius:6px;
+    font-size:11px; font-weight:800; margin-right:8px; color:var(--text-dim);
+  }
+
+  /* ---------- VAULT ---------- */
+  .vault-section{flex:1; display:flex; align-items:center; justify-content:center; padding:64px 20px;}
+  .vault-card{
+    width:100%; max-width:440px; text-align:center;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:24px;
+    padding:40px 32px;
+  }
+  .vault-eyebrow{
+    color:var(--green); font-size:12.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .vault-title{font-size:26px; color:#fff; margin-bottom:10px;}
+  .vault-subtitle{font-size:14px; color:var(--text-dim); line-height:1.6; margin-bottom:32px;}
+
+  .vault-visual{width:180px; height:180px; margin:0 auto 32px; position:relative;}
+  .vault-door{
+    position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #2a2840, #100F1C 70%);
+    border:4px solid #3a3850;
+    display:flex; align-items:center; justify-content:center;
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .vault-door.shake{animation:vaultShake .4s ease;}
+  @keyframes vaultShake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px) rotate(-2deg);}
+    40%{transform:translateX(8px) rotate(2deg);}
+    60%{transform:translateX(-6px) rotate(-1deg);}
+    80%{transform:translateX(6px) rotate(1deg);}
+  }
+  .vault-dial{
+    width:84px; height:84px; border-radius:50%; border:3px solid #4a4870;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .6s cubic-bezier(.34,1.56,.64,1);
+  }
+  .vault-dial::before{content:""; width:5px; height:32px; background:var(--violet); border-radius:3px;}
+  .vault-dial.spin{transform:rotate(1080deg);}
+
+  .vault-half{
+    position:absolute; top:14px; width:66px; height:150px;
+    background:linear-gradient(135deg,#3a3850,#100F1C);
+    border:2px solid #4a4870; transition:transform .6s cubic-bezier(.6,-0.28,.4,1.3), opacity .4s ease;
+  }
+  .vault-half-left{left:2px; border-radius:14px 3px 3px 14px; transform:rotate(-18deg) translateX(-4px);}
+  .vault-half-right{right:2px; border-radius:3px 14px 14px 3px; transform:rotate(18deg) translateX(4px);}
+  .vault-half{display:none;}
+  .vault-visual.opened .vault-door{opacity:0; transform:scale(0.9);}
+  .vault-visual.opened .vault-half{display:block;}
+  .vault-visual.opened .vault-half-left{transform:rotate(-38deg) translate(-30px, -6px);}
+  .vault-visual.opened .vault-half-right{transform:rotate(38deg) translate(30px, -6px);}
+  .vault-amount{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Unbounded'; font-weight:900; font-size:26px; color:var(--green);
+    opacity:0; transition:opacity .3s ease .35s;
+  }
+  .vault-visual.opened .vault-amount{opacity:1;}
+
+  .vault-form{display:flex; flex-direction:column; gap:14px;}
+  .vault-form input{
+    background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
+    padding:14px 16px; color:var(--text); font-size:15px; text-align:center; font-family:'JetBrains Mono';
+    letter-spacing:0.05em;
+  }
+  .vault-form input:focus{border-color:var(--green); outline:none;}
+  .vault-submit{
+    background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
+    padding:14px; border:none; border-radius:10px; cursor:pointer;
+  }
+  .vault-submit:hover{background:#c8ff6a;}
+  .vault-submit:disabled{opacity:0.6; cursor:default;}
+  .vault-message{font-size:13.5px; margin-top:16px; line-height:1.6;}
+  .vault-message.error{color:#FF7A90;}
+  .vault-message.success{color:var(--green);}
+  .vault-message.info{color:var(--text-dim);}
+
+  @media (max-width:960px){
+    .nav-links{display:none;}
+    .nav-inner > .lang-switch{display:none;}
+    .nav-inner > .nav-cta{display:none;}
+    .burger{display:flex;}
+    .wrap{padding:0 20px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <div class="logo"><div class="logo-mark">⚡</div><span id="brand-text1-nav">DROP</span><span id="brand-text2-nav" class="logo-accent">CASH</span></div>
+    <div class="nav-links" id="nav-links">
+      <a href="#" id="nav-link-0">Codes bonus</a>
+      <a href="#" id="nav-link-1">Classement</a>
+      <a href="#" id="nav-link-2">Comment ça marche</a>
+      <a href="#" id="nav-link-3">Discord</a>
+    </div>
+    <div class="lang-switch">
+      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
+      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
+    </div>
+    <a href="index.html#offres" class="nav-cta" id="nav-cta">Voir les codes</a>
+    <button class="burger" aria-label="Menu" id="burger-btn"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="lang-switch" style="padding:14px 32px; border-bottom:1px solid var(--line);">
+      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
+      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
+    </div>
+    <div style="padding:14px 32px; border-bottom:1px solid var(--line);">
+      <a href="index.html#offres" class="nav-cta" id="nav-cta-mobile" style="display:block; text-align:center;">Voir les codes</a>
+    </div>
+    <a href="#" id="mobile-nav-link-0">Codes bonus</a>
+    <a href="#" id="mobile-nav-link-1">Classement</a>
+    <a href="#" id="mobile-nav-link-2">Comment ça marche</a>
+    <a href="#" id="mobile-nav-link-3">Discord</a>
+  </div>
+</nav>
+
+<section class="vault-section">
+  <div class="wrap" style="display:flex; justify-content:center; padding:0;">
+    <div class="vault-card">
+      <div class="vault-eyebrow" id="vault-eyebrow">Accès exclusif</div>
+      <h1 class="vault-title" id="vault-title">Le coffre-fort</h1>
+      <p class="vault-subtitle" id="vault-subtitle">Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.</p>
+
+      <div class="vault-visual" id="vault-visual">
+        <div class="vault-door" id="vault-door">
+          <div class="vault-dial" id="vault-dial"></div>
+        </div>
+        <div class="vault-half vault-half-left"></div>
+        <div class="vault-half vault-half-right"></div>
+        <div class="vault-amount" id="vault-amount"></div>
+      </div>
+
+      <form class="vault-form" id="vault-form">
+        <input type="text" id="vault-code-input" placeholder="Code secret" autocomplete="off">
+        <button type="submit" class="vault-submit" id="vault-submit-btn">Ouvrir le coffre</button>
+      </form>
+
+      <p class="vault-message" id="vault-message"></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="logo"><div class="logo-mark">⚡</div><span id="brand-text1-footer">DROP</span><span id="brand-text2-footer" class="logo-accent">CASH</span></div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4 id="footer-nav-title">Navigation</h4>
+          <a href="#" id="footer-nav-link-0">Codes bonus</a>
+          <a href="#" id="footer-nav-link-1">Classement</a>
+          <a href="#" id="footer-nav-link-2">Comment ça marche</a>
+        </div>
+        <div class="footer-col">
+          <h4 id="footer-community-title">Communauté</h4>
+          <a href="#" id="footer-community-link-0">Discord</a>
+          <a href="#" id="footer-community-link-1">Telegram</a>
+          <a href="#" id="footer-community-link-2">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <span class="age-badge">18+</span><span id="footer-disclaimer">Le jeu comporte des risques : endettement, isolement, dépendance.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="nitrodrop-config.js"></script>
+<script>
+  const CONFIG = nitrodropLoadConfig();
+
+  (function migrateToI18n(cfg){
+    if (cfg.content) return;
+    const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
+                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault'];
+    const en = {};
+    textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
+    cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
+    cfg.defaultLang = cfg.defaultLang || 'en';
+  })(CONFIG);
+
+  let currentLang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
+  const urlLangParam = new URLSearchParams(location.search).get('lang');
+  if (urlLangParam && CONFIG.content[urlLangParam]) {
+    currentLang = urlLangParam;
+    localStorage.setItem('nitrodrop_lang', currentLang);
+  }
+  if (!CONFIG.content[currentLang]) currentLang = CONFIG.defaultLang || 'en';
+  function getActive(){ return CONFIG.content[currentLang]; }
+
+  function escapeHtml(str){
+    return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+  }
+  function fillTemplate(tpl, vars){
+    return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
+  }
+
+  const SLOT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  function slotSpinText(el, finalText){
+    if (!el) return;
+    if (el.dataset.slotValue === finalText && !el.dataset.slotSpinning) return;
+    el.dataset.slotValue = finalText;
+    el.dataset.slotSpinning = '1';
+    el.innerHTML = '';
+    const letters = finalText.split('');
+    const spans = letters.map(ch => {
+      const s = document.createElement('span');
+      s.style.display = 'inline-block';
+      s.style.minWidth = '0.55em';
+      s.style.textAlign = 'center';
+      s.textContent = ch === ' ' ? '\u00A0' : ch;
+      el.appendChild(s);
+      return s;
+    });
+    let remaining = spans.length;
+    spans.forEach((span, i) => {
+      const finalChar = letters[i];
+      if (finalChar === ' '){ remaining--; if (remaining <= 0) el.dataset.slotSpinning = ''; return; }
+      const spinTime = 550 + i * 90;
+      const stepTime = 45;
+      let elapsed = 0;
+      const interval = setInterval(() => {
+        elapsed += stepTime;
+        if (elapsed >= spinTime){
+          span.textContent = finalChar;
+          clearInterval(interval);
+          remaining--;
+          if (remaining <= 0) el.dataset.slotSpinning = '';
+        } else {
+          span.textContent = SLOT_CHARS[Math.floor(Math.random() * SLOT_CHARS.length)];
+        }
+      }, stepTime);
+    });
+  }
+
+  // ---------- Applique nav / footer / brand / textes du coffre ----------
+  function applyChrome(cfg){
+    const brandText1 = (cfg.brand && cfg.brand.text1) || 'NITRO';
+    const brandText2 = (cfg.brand && cfg.brand.text2) || 'DROP';
+    document.getElementById('brand-text1-nav').textContent = brandText1;
+    slotSpinText(document.getElementById('brand-text2-nav'), brandText2);
+    document.getElementById('brand-text1-footer').textContent = brandText1;
+    slotSpinText(document.getElementById('brand-text2-footer'), brandText2);
+    document.getElementById('page-title').textContent = (cfg.pageTitle || 'Drop-Cash.com') + ' — Vault';
+
+    // Les liens du menu pointent vers les sections de la page d'accueil
+    cfg.nav.links.forEach((link, i) => {
+      const href = link.href && link.href.startsWith('#') ? 'index.html' + link.href : link.href;
+      const el = document.getElementById('nav-link-' + i);
+      if (el){
+        if (link.label && link.label.trim()){ el.textContent = link.label; el.href = href; el.style.display = ''; }
+        else { el.style.display = 'none'; }
+      }
+      const mEl = document.getElementById('mobile-nav-link-' + i);
+      if (mEl){
+        if (link.label && link.label.trim()){ mEl.textContent = link.label; mEl.href = href; mEl.style.display = ''; }
+        else { mEl.style.display = 'none'; }
+      }
+    });
+
+    document.getElementById('footer-nav-title').textContent = cfg.footer.navTitle;
+    cfg.footer.navLinks.forEach((link, i) => {
+      const href = link.href && link.href.startsWith('#') ? 'index.html' + link.href : link.href;
+      const el = document.getElementById('footer-nav-link-' + i);
+      if (el){ el.textContent = link.label; el.href = href; }
+    });
+    document.getElementById('footer-community-title').textContent = cfg.footer.communityTitle;
+    cfg.footer.communityLinks.forEach((link, i) => {
+      const el = document.getElementById('footer-community-link-' + i);
+      if (el){ el.textContent = link.label; el.href = link.href; }
+    });
+    document.getElementById('footer-disclaimer').textContent = cfg.footer.disclaimer;
+
+    // Textes du coffre-fort (éditables dans l'admin)
+    const v = cfg.vault || {};
+    document.getElementById('vault-eyebrow').textContent = v.eyebrow || 'Accès exclusif';
+    document.getElementById('vault-title').textContent = v.title || 'Le coffre-fort';
+    document.getElementById('vault-subtitle').textContent = v.subtitle || "Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.";
+    document.getElementById('vault-code-input').placeholder = v.codePlaceholder || 'Code secret';
+    document.getElementById('vault-submit-btn').textContent = v.submitText || 'Ouvrir le coffre';
+  }
+
+  applyChrome(getActive());
+
+  function setLanguage(lang){
+    if (!CONFIG.content[lang]) return;
+    currentLang = lang;
+    localStorage.setItem('nitrodrop_lang', lang);
+    document.documentElement.lang = lang;
+    applyChrome(getActive());
+    document.querySelectorAll('.lang-switch-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
+  document.querySelectorAll('.lang-switch-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+  });
+
+  // ---- Menu mobile ----
+  const burgerBtn = document.getElementById('burger-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+  burgerBtn.addEventListener('click', () => mobileNav.classList.toggle('open'));
+  mobileNav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => mobileNav.classList.remove('open'));
+  });
+
+  // ---------- Logique du coffre-fort ----------
+  const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
+  const soundFiles = CONFIG.vaultSounds || {};
+  function playSound(name){
+    const file = soundFiles[name];
+    if (!file) return;
+    try{
+      const audio = new Audio(file);
+      audio.volume = 0.6;
+      audio.play().catch(() => {});
+    }catch(e){}
+  }
+
+  const vaultForm = document.getElementById('vault-form');
+  const vaultSubmitBtn = document.getElementById('vault-submit-btn');
+  const vaultCodeInput = document.getElementById('vault-code-input');
+  const vaultMessage = document.getElementById('vault-message');
+  const vaultDoor = document.getElementById('vault-door');
+  const vaultDial = document.getElementById('vault-dial');
+  const vaultVisual = document.getElementById('vault-visual');
+  const vaultAmountEl = document.getElementById('vault-amount');
+
+  function showMessage(text, type){
+    vaultMessage.textContent = text;
+    vaultMessage.className = 'vault-message' + (type ? ' ' + type : '');
+  }
+
+  function lockFormOut(){
+    vaultCodeInput.disabled = true;
+    vaultSubmitBtn.disabled = true;
+  }
+
+  async function checkInitialStatus(){
+    if (!workerBase){
+      showMessage('Coffre non configuré.', 'info');
+      lockFormOut();
+      return;
+    }
+    try{
+      const resp = await fetch(`${workerBase}/vault/status`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      if (data.claimed){
+        const v = getActive().vault || {};
+        showMessage(v.alreadyClaimedMessage || 'Ce coffre a déjà été réclamé par quelqu\'un d\'autre.', 'info');
+        lockFormOut();
+      }
+    }catch(e){
+      console.error('Impossible de vérifier l\'état du coffre :', e);
+    }
+  }
+  checkInitialStatus();
+
+  vaultForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const code = vaultCodeInput.value.trim();
+    if (!code) return;
+
+    vaultSubmitBtn.disabled = true;
+    vaultDial.classList.add('spin');
+    playSound('attempt');
+    showMessage('', '');
+
+    try{
+      const resp = await fetch(`${workerBase}/vault/attempt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      const data = await resp.json();
+      const v = getActive().vault || {};
+
+      setTimeout(() => {
+        vaultDial.classList.remove('spin');
+
+        if (data.ok){
+          playSound('success');
+          vaultAmountEl.textContent = data.amount ? '$' + data.amount : '🎉';
+          vaultVisual.classList.add('opened');
+          const template = v.successMessage || 'Félicitations, tu remportes {amount} !';
+          showMessage(fillTemplate(template, { amount: data.amount ? '$' + data.amount : '' }), 'success');
+          lockFormOut();
+        } else if (data.reason === 'already_claimed'){
+          playSound('fail');
+          vaultDoor.classList.add('shake');
+          showMessage(v.alreadyClaimedMessage || 'Trop tard, ce coffre a déjà été réclamé.', 'error');
+          lockFormOut();
+          setTimeout(() => vaultDoor.classList.remove('shake'), 400);
+        } else if (data.reason === 'not_configured'){
+          showMessage(v.notConfiguredMessage || 'Aucun coffre actif pour le moment.', 'info');
+          lockFormOut();
+        } else {
+          playSound('fail');
+          vaultDoor.classList.add('shake');
+          showMessage(v.wrongCodeMessage || 'Code incorrect, le coffre reste verrouillé.', 'error');
+          vaultSubmitBtn.disabled = false;
+          setTimeout(() => vaultDoor.classList.remove('shake'), 400);
+        }
+      }, 650);
+    }catch(err){
+      vaultDial.classList.remove('spin');
+      showMessage('Erreur de connexion, réessaie.', 'error');
+      vaultSubmitBtn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
