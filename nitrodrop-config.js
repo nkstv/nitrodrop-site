@@ -166,6 +166,24 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false
+        },
+        {
+          "featured": false,
+          "badge": "",
+          "mark": "R",
+          "markClass": "mark-1",
+          "name": "Rollbit.com",
+          "sub": "Crypto Casino",
+          "bonusAmount": "$1.00",
+          "bonusSuffix": "$1.00/day × 1",
+          "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+          "code": "NksCasino",
+          "codeEnabled": true,
+          "signupHref": "https://rollbit.com/referral/NksCasino",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false
         }
       ],
       "tickerSettings": {
@@ -441,6 +459,24 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
+          "claimHighlighted": false
+        },
+        {
+          "featured": false,
+          "badge": "",
+          "mark": "R",
+          "markClass": "mark-1",
+          "name": "Rollbit.com",
+          "sub": "Crypto Casino",
+          "bonusAmount": "$1.00",
+          "bonusSuffix": "$1.50/jour × 1",
+          "desc": "Inscrivez-vous avec le code, indiquez votre nom d'utilisateur et recevez votre bonus. Aucun dépôt requis.",
+          "code": "NksCasino",
+          "codeEnabled": true,
+          "signupHref": "https://rollbit.com/referral/NksCasino",
+          "signupText": "1. Créer un compte",
+          "claimText": "2. Réclamer mon bonus",
+          "signupHighlighted": false,
           "claimHighlighted": false
         }
       ],
