@@ -260,7 +260,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordPlaceholder": "",
         "discordConnectText": "🎮 Log in with Discord",
         "discordJoinNote": "First, join our {link}, otherwise we won’t be able to send you the confirmation via DM.",
-        "discordJoinLinkText": "",
+        "discordJoinLinkText": "Discord server",
         "discordConnectedText": "✓ Logged in as {username}"
       },
       "brand": {
