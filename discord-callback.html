@@ -13,14 +13,27 @@
 </head>
 <body>
 <p id="msg">Connexion en cours…</p>
+<script src="nitrodrop-config.js"></script>
 <script>
 (async function(){
   const msgEl = document.getElementById('msg');
+
+  let modal = {};
+  try{
+    const CONFIG = nitrodropLoadConfig();
+    const lang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'fr';
+    const active = (CONFIG.content && (CONFIG.content[lang] || CONFIG.content[CONFIG.defaultLang])) || {};
+    modal = active.modal || {};
+    document.documentElement.lang = lang;
+  }catch(e){}
+
+  msgEl.textContent = modal.callbackConnectingText || 'Connexion en cours…';
+
   const hashParams = new URLSearchParams(location.hash.slice(1));
   const accessToken = hashParams.get('access_token');
 
   if (!accessToken){
-    msgEl.textContent = "Échec de la connexion Discord. Tu peux fermer cette fenêtre et réessayer.";
+    msgEl.textContent = modal.callbackFailedMessage || "Échec de la connexion Discord. Tu peux fermer cette fenêtre et réessayer.";
     return;
   }
 
@@ -38,9 +51,9 @@
         username: user.username
       }, '*');
     }
-    msgEl.textContent = "Connecté ! Cette fenêtre va se fermer…";
+    msgEl.textContent = modal.callbackSuccessMessage || "Connecté ! Cette fenêtre va se fermer…";
   }catch(err){
-    msgEl.textContent = "Erreur : " + err.message;
+    msgEl.textContent = (modal.callbackErrorPrefix || "Erreur : ") + err.message;
   }
 
   setTimeout(() => window.close(), 1200);

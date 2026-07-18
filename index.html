@@ -1031,6 +1031,9 @@
     const confirmTgBtn = document.getElementById('confirm-telegram-btn');
     confirmTgBtn.textContent = cfg.modal.confirmTelegramText || 'Rejoindre le canal Telegram';
     confirmTgBtn.href = cfg.modal.confirmTelegramHref || '#';
+    document.querySelectorAll('.modal-close').forEach(btn => {
+      btn.setAttribute('aria-label', cfg.modal.closeAriaLabel || 'Fermer');
+    });
   }
 
   // ---------- Génère les cartes d'offres depuis la config ----------
@@ -1297,7 +1300,7 @@
     discordConnectContext = context || 'claim';
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
     if (!clientId){
-      alert('Connexion Discord non configurée par l\'administrateur du site.');
+      alert(getActive().modal.discordNotConfiguredAlert || 'Connexion Discord non configurée par l\'administrateur du site.');
       return;
     }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
@@ -1307,7 +1310,7 @@
                 : discordConnectContext === 'slot' ? 'slot-discord-connect-btn'
                 : 'discord-connect-btn';
     const btn = document.getElementById(btnId);
-    btn.textContent = 'Connexion en cours…';
+    btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
     window.open(authUrl, 'discord-oauth', 'width=500,height=750');
   }
 
@@ -1329,7 +1332,7 @@
     const discordId = document.getElementById('claim-discord-input').value;
 
     if (!discordId){
-      alert('Connecte-toi avec Discord avant de valider ta demande.');
+      alert(getActive().modal.discordRequiredAlert || 'Connecte-toi avec Discord avant de valider ta demande.');
       return;
     }
 
@@ -1524,8 +1527,9 @@
     e.preventDefault();
     const pseudo = document.getElementById('scratch-username-input').value.trim();
     const discordId = document.getElementById('scratch-discord-input').value;
+    const st = getActive().scratchTicket || {};
     if (!discordId){
-      showScratchFormError('Connecte-toi avec Discord avant de continuer.');
+      showScratchFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
       return;
     }
 
@@ -1542,14 +1546,12 @@
       const data = await resp.json();
       submitBtn.disabled = false;
 
-      const st = getActive().scratchTicket || {};
-
       if (data.ok === false && data.reason === 'already_played_today'){
         showScratchFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
         return;
       }
       if (data.ok === false){
-        showScratchFormError('Une erreur est survenue, réessaie.');
+        showScratchFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
         return;
       }
 
@@ -1576,7 +1578,7 @@
       };
     }catch(err){
       submitBtn.disabled = false;
-      showScratchFormError('Erreur de connexion, réessaie.');
+      showScratchFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
     }
   }
 
@@ -1628,15 +1630,15 @@
     e.preventDefault();
     const pseudo = document.getElementById('slot-username-input').value.trim();
     const discordId = document.getElementById('slot-discord-input').value;
+    const st = getActive().slotMachine || {};
     if (!discordId){
-      showSlotFormError('Connecte-toi avec Discord avant de continuer.');
+      showSlotFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
       return;
     }
 
     const submitBtn = document.getElementById('slot-submit-btn');
     submitBtn.disabled = true;
     const workerBase = getWorkerBase();
-    const st = getActive().slotMachine || {};
 
     try{
       const resp = await fetch(`${workerBase}/slot/play`, {
@@ -1653,7 +1655,7 @@
       }
       if (data.ok === false){
         submitBtn.disabled = false;
-        showSlotFormError('Une erreur est survenue, réessaie.');
+        showSlotFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
         return;
       }
 
@@ -1697,7 +1699,7 @@
     }catch(err){
       submitBtn.disabled = false;
       submitBtn.textContent = st.spinText || 'Spin';
-      showSlotFormError('Erreur de connexion, réessaie.');
+      showSlotFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
     }
   }
 
