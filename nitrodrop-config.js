@@ -343,7 +343,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "winnersEmpty": ""
       },
       "scratchTicket": {
-        "navLabel": "",
+        "navLabel": "Ticket",
         "tag": "🎟️ Scratch Card",
         "title": "Try Your Luck",
         "subtitle": "One Free Try Per Day",
@@ -689,7 +689,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "winnersEmpty": ""
       },
       "scratchTicket": {
-        "navLabel": "",
+        "navLabel": "Ticket",
         "tag": "Ticket à gratter",
         "title": "Tente ta chance",
         "subtitle": "Un essai gratuit par jour.",
