@@ -157,8 +157,8 @@
   }
   .code-widget button{
     background:var(--green); color:#08130a; border:none; font-weight:700; font-size:13.5px;
-    padding:16px 20px; cursor:pointer; align-self:stretch;
-    display:flex; align-items:center; gap:6px;
+    padding:14px 18px; cursor:pointer; align-self:stretch;
+    display:flex; align-items:center; justify-content:center;
     transition:background .15s ease;
   }
   .code-widget button:hover{background:#c8ff6a;}
@@ -304,7 +304,8 @@
   .offer-code-row .code-right{display:flex; align-items:center; gap:10px;}
   .offer-copy-btn{
     background:var(--bg-raise); border:1px solid var(--line-strong); color:var(--text-dim);
-    font-size:11.5px; font-weight:700; padding:5px 10px; border-radius:7px; cursor:pointer;
+    font-size:11.5px; font-weight:700; padding:7px 9px; border-radius:7px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
     transition:background .15s ease, color .15s ease;
   }
   .offer-copy-btn:hover{color:var(--text); border-color:var(--green);}
@@ -520,7 +521,9 @@
       <div class="code-widget" id="hero-code-widget">
         <span class="label">Code</span>
         <span class="code code-font" id="promo-code">NITRO200</span>
-        <button id="copy-btn" onclick="copyCode()">Copier</button>
+        <button id="copy-btn" onclick="copyCode()" aria-label="Copier le code" title="Copier le code">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+        </button>
       </div>
 
       <div class="hero-actions">
@@ -929,7 +932,9 @@
           <span>Code</span>
           <div class="code-right">
             <span class="c code-font">${escapeHtml(offer.code)}</span>
-            <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}">Copier</button>
+            <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}" aria-label="Copier le code" title="Copier le code">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+            </button>
           </div>
         </div>
         `}
@@ -945,10 +950,10 @@
       btn.addEventListener('click', () => {
         const code = btn.dataset.copyCode;
         navigator.clipboard.writeText(code).then(() => {
-          const original = btn.textContent;
-          btn.textContent = 'Copié !';
+          const originalHtml = btn.innerHTML;
+          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M20 6 9 17l-5-5"></path></svg>';
           btn.classList.add('copied');
-          setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+          setTimeout(() => { btn.innerHTML = originalHtml; btn.classList.remove('copied'); }, 1600);
         });
       });
     });
@@ -971,14 +976,16 @@
     track.innerHTML = renderClaims() + renderClaims();
   }
 
+  const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>';
+  const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6 9 17l-5-5"></path></svg>';
+
   function copyCode(){
     const code = document.getElementById('promo-code').innerText;
     navigator.clipboard.writeText(code).then(() => {
       const btn = document.getElementById('copy-btn');
-      const original = btn.innerText;
-      btn.innerText = 'Copié !';
+      btn.innerHTML = CHECK_ICON;
       btn.classList.add('copied');
-      setTimeout(() => { btn.innerText = original; btn.classList.remove('copied'); }, 1600);
+      setTimeout(() => { btn.innerHTML = COPY_ICON; btn.classList.remove('copied'); }, 1600);
     });
   }
 
