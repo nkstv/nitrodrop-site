@@ -350,11 +350,14 @@ const NITRODROP_DEFAULT_CONFIG = {
         "usernameLabel": "Username",
         "usernamePlaceholder": "your username",
         "discordNote": "Connect your Discord account to participate (1 free try per day).",
+        "discordAccountLabel": "Your Discord account",
+        "discordConnectText": "🎮 Connect with Discord",
         "submitText": "Scratch the Card",
         "alreadyPlayedMessage": "You've already played today. Come back tomorrow!",
         "winMessage": "",
         "loseMessage": "No luck this time. Try again tomorrow!",
-        "discordButtonText": ""
+        "discordButtonText": "",
+        "resultTitle": "Your ticket"
       }
     },
     "fr": {
@@ -696,11 +699,14 @@ const NITRODROP_DEFAULT_CONFIG = {
         "usernameLabel": "Pseudo",
         "usernamePlaceholder": "votre Pseudo",
         "discordNote": "Connexion Discord requise pour participer (1 essai par jour).",
+        "discordAccountLabel": "Ton compte Discord",
+        "discordConnectText": "🎮 Se connecter avec Discord",
         "submitText": "Gratter le ticket",
         "alreadyPlayedMessage": "Tu as déjà joué aujourd'hui, reviens demain !",
         "winMessage": "",
         "loseMessage": "Pas de chance cette fois, reviens demain !",
-        "discordButtonText": "Réclamer sur Discord"
+        "discordButtonText": "Réclamer sur Discord",
+        "resultTitle": "Ton ticket"
       }
     }
   },
