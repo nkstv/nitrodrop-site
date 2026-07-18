@@ -196,19 +196,19 @@ const NITRODROP_DEFAULT_CONFIG = {
         },
         {
           "name": "dr0p_ghost",
-          "message": "$9.00 on Duel"
+          "message": "$8.00 on Duel"
         },
         {
           "name": "valen.tt",
-          "message": "$7.00 on Stake"
+          "message": "$5.00 on Rainbet"
         },
         {
           "name": "ryu_odds",
-          "message": "$9.00 on Duel"
+          "message": "$8.00 on Duel"
         },
         {
           "name": "noa.reef",
-          "message": "$9.00 on Duel"
+          "message": "$15.00 on Flush"
         },
         {
           "name": "mika_x",
@@ -514,19 +514,19 @@ const NITRODROP_DEFAULT_CONFIG = {
         },
         {
           "name": "dr0p_ghost",
-          "message": "$9.00 sur Duel"
+          "message": "$8.00 sur Duel"
         },
         {
           "name": "valen.tt",
-          "message": "$7.00 sur Stake"
+          "message": "$5.00 sur Rainbet"
         },
         {
           "name": "ryu_odds",
-          "message": "$9.00 sur Duel"
+          "message": "$8.00 sur Duel"
         },
         {
           "name": "noa.reef",
-          "message": "$9.00 sur Duel"
+          "message": "$15.00 sur Flush"
         },
         {
           "name": "mika_x",
