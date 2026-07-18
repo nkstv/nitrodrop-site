@@ -23,6 +23,13 @@
   .topbar h1 span{color:var(--green);}
   .wrap{max-width:1500px; margin:0 auto; padding:24px 32px;}
   .toolbar{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px;}
+  .dash-tabs{display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid var(--line);}
+  .dash-tab{
+    background:none; border:none; color:var(--text-dim); font-size:14px; font-weight:600;
+    padding:12px 6px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+  }
+  .dash-tab.active{color:var(--green); border-bottom-color:var(--green);}
+  .dash-tab:hover{color:var(--text);}
   select, input[type=text]{
     background:var(--bg-card); border:1px solid var(--line-strong); border-radius:9px;
     padding:10px 14px; color:var(--text); font-size:13.5px; font-family:'Inter';
@@ -82,6 +89,12 @@
   </div>
 
   <div class="wrap">
+    <div class="dash-tabs">
+      <button class="dash-tab active" id="tab-btn-bonus" onclick="switchDashTab('bonus')">Demandes de bonus</button>
+      <button class="dash-tab" id="tab-btn-scratch" onclick="switchDashTab('scratch')">🎫 Ticket à gratter</button>
+    </div>
+
+    <div id="tab-bonus">
     <div class="stats" id="stats"></div>
 
     <div class="toolbar">
@@ -129,6 +142,28 @@
 
     <div id="table-container"></div>
     <div class="pagination" id="pagination"></div>
+    </div>
+
+    <div id="tab-scratch" style="display:none;">
+      <div class="stats" id="scratch-stats"></div>
+
+      <div class="toolbar">
+        <input type="text" id="scratch-filter-search" placeholder="Rechercher pseudo / Discord ID..." oninput="applyScratchFilters()" style="min-width:220px;">
+        <select id="scratch-filter-result" onchange="applyScratchFilters()">
+          <option value="">Résultat : tous</option>
+          <option value="won">Gagné</option>
+          <option value="lost">Perdu</option>
+        </select>
+        <select id="scratch-filter-tipped" onchange="applyScratchFilters()">
+          <option value="">Tipsé : tous</option>
+          <option value="yes">Tipsé : oui</option>
+          <option value="no">Tipsé : non</option>
+        </select>
+        <button type="button" class="btn" onclick="loadScratchPlays()">Rafraîchir</button>
+      </div>
+
+      <div id="scratch-table-container"></div>
+    </div>
   </div>
 </div>
 
@@ -595,6 +630,114 @@
   function escapeHtml(str){
     return String(str)
       .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+  }
+
+  // ---------- Onglet Ticket à gratter ----------
+  let allScratchPlays = [];
+  let scratchLoaded = false;
+
+  function switchDashTab(tab){
+    document.getElementById('tab-bonus').style.display = tab === 'bonus' ? '' : 'none';
+    document.getElementById('tab-scratch').style.display = tab === 'scratch' ? '' : 'none';
+    document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
+    document.getElementById('tab-btn-scratch').classList.toggle('active', tab === 'scratch');
+    if (tab === 'scratch' && !scratchLoaded){
+      loadScratchPlays();
+    }
+  }
+
+  async function loadScratchPlays(){
+    const container = document.getElementById('scratch-table-container');
+    container.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/scratch/plays`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const data = await resp.json();
+      allScratchPlays = (data.plays || []).slice().reverse();
+      scratchLoaded = true;
+      renderScratchStats();
+      applyScratchFilters();
+    }catch(err){
+      container.innerHTML = `<div class="empty">Erreur : ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function renderScratchStats(){
+    const total = allScratchPlays.length;
+    const won = allScratchPlays.filter(p => p.won).length;
+    const tipped = allScratchPlays.filter(p => p.won && p.tipped).length;
+    document.getElementById('scratch-stats').innerHTML = `
+      <div class="stat"><div class="n">${total}</div><div class="l">Participations</div></div>
+      <div class="stat"><div class="n">${won}</div><div class="l">Gains</div></div>
+      <div class="stat"><div class="n">${tipped}</div><div class="l">Gains tipsés</div></div>
+    `;
+  }
+
+  function applyScratchFilters(){
+    const search = document.getElementById('scratch-filter-search').value.trim().toLowerCase();
+    const resultFilter = document.getElementById('scratch-filter-result').value;
+    const tippedFilter = document.getElementById('scratch-filter-tipped').value;
+
+    const filtered = allScratchPlays.filter(p => {
+      if (resultFilter === 'won' && !p.won) return false;
+      if (resultFilter === 'lost' && p.won) return false;
+      if (tippedFilter === 'yes' && !p.tipped) return false;
+      if (tippedFilter === 'no' && p.tipped) return false;
+      if (search){
+        const haystack = `${p.pseudo || ''} ${p.discordId || ''}`.toLowerCase();
+        if (!haystack.includes(search)) return false;
+      }
+      return true;
+    });
+
+    renderScratchTable(filtered);
+  }
+
+  function renderScratchTable(plays){
+    const container = document.getElementById('scratch-table-container');
+    if (plays.length === 0){
+      container.innerHTML = '<div class="empty">Aucune participation.</div>';
+      return;
+    }
+    const rows = plays.map(p => `
+      <tr>
+        <td class="mono">${escapeHtml(formatLocalDate(p))}</td>
+        <td>${escapeHtml(p.pseudo || '')}</td>
+        <td class="mono"><span class="cell-truncate" style="max-width:140px;" title="${escapeHtml(p.discordId || '')}">${escapeHtml(p.discordId || '')}</span></td>
+        <td>${p.won
+          ? `<span style="color:var(--green); font-weight:700;">Gagné — $${escapeHtml(String(p.amount || 0))}</span>`
+          : `<span style="color:var(--text-faint);">Perdu</span>`}</td>
+        <td>${p.won ? `<input type="checkbox" ${p.tipped ? 'checked' : ''} onchange="toggleScratchTip('${p.id}')">` : '—'}</td>
+      </tr>
+    `).join('');
+    container.innerHTML = `
+      <table>
+        <thead><tr><th>Date</th><th>Pseudo</th><th>Discord</th><th>Résultat</th><th>Tipsé</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  async function toggleScratchTip(id){
+    try{
+      const resp = await fetch(`${workerBaseUrl}/scratch/tip`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ id })
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const entry = allScratchPlays.find(p => p.id === id);
+      if (entry){
+        const data = await resp.json();
+        entry.tipped = data.tipped;
+      }
+      renderScratchStats();
+    }catch(err){
+      alert('Erreur lors de la mise à jour : ' + err.message);
+      loadScratchPlays();
+    }
   }
 </script>
 

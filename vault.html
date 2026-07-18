@@ -126,6 +126,68 @@
     .floating-widget-badge{width:24px; height:24px; font-size:12px;}
   }
 
+  .modal-overlay{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(4,4,8,0.72); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .2s ease;
+    padding:20px;
+  }
+  .modal-overlay.active{opacity:1; pointer-events:auto;}
+  .modal{
+    position:relative; width:100%; max-width:420px;
+    background:var(--bg-card); border:1px solid var(--line-strong); border-radius:20px;
+    padding:34px; box-shadow:0 40px 100px rgba(0,0,0,0.6);
+    transform:translateY(14px); transition:transform .2s ease;
+  }
+  .modal-overlay.active .modal{transform:translateY(0);}
+  .modal-close{
+    position:absolute; top:16px; right:16px; background:none; border:none; color:var(--text-dim);
+    font-size:22px; cursor:pointer; line-height:1; padding:4px;
+  }
+  .modal-close:hover{color:var(--text);}
+  .modal-tag{color:var(--green); font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
+  .modal h3{font-family:'Unbounded'; font-size:22px; color:#fff; margin-top:10px;}
+  .modal-sub{font-size:13.5px; color:var(--text-dim); margin-top:10px; line-height:1.6;}
+  #scratch-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
+  #scratch-form label{display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
+  #scratch-form input{
+    background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
+    padding:12px 14px; color:var(--text); font-size:14px; font-family:'Inter'; width:100%;
+  }
+  #scratch-form input:focus{border-color:var(--green);}
+  .modal-submit{
+    margin-top:6px; background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
+    padding:14px; border:none; border-radius:10px; cursor:pointer; width:100%;
+  }
+  .modal-submit:hover{background:#c8ff6a;}
+  .modal-ghost{
+    background:transparent; border:1px solid var(--line-strong); color:var(--text);
+    font-weight:600; font-size:14.5px; padding:14px; border-radius:10px; cursor:pointer; width:100%;
+  }
+  .modal-ghost:hover{border-color:var(--text-dim);}
+
+  .scratch-card-visual{
+    width:200px; height:200px; margin:20px auto 0; border-radius:16px; position:relative; overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .scratch-silver{
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(135deg,#9a99a8,#9a99a8 8px,#8685934a 8px,#8685934a 16px);
+    display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer;
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .scratch-silver.revealed{opacity:0; transform:scale(1.15); pointer-events:none;}
+  .scratch-result{
+    position:absolute; inset:0; background:var(--bg-card);
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-family:'Unbounded'; font-weight:900; font-size:28px; color:var(--green);
+  }
+  .tg-btn{
+    display:flex; align-items:center; gap:8px; background:#3FA9F5; color:#071018;
+    font-weight:700; font-size:13px; padding:12px; border-radius:9px; text-decoration:none;
+  }
+
   .disclaimer{
     margin-top:44px; padding-top:28px; border-top:1px solid var(--line);
     font-size:12px; color:var(--text-faint); line-height:1.7; max-width:820px;
@@ -294,6 +356,7 @@
       <a href="#" id="nav-link-1">Classement</a>
       <a href="#" id="nav-link-2">Comment ça marche</a>
       <a href="#" id="nav-link-3">Discord</a>
+      <a href="#" id="nav-scratch-btn">🎫 Ticket</a>
     </div>
     <div class="lang-switch">
       <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
@@ -314,6 +377,7 @@
     <a href="#" id="mobile-nav-link-1">Classement</a>
     <a href="#" id="mobile-nav-link-2">Comment ça marche</a>
     <a href="#" id="mobile-nav-link-3">Discord</a>
+    <a href="#" id="mobile-nav-scratch-btn">🎫 Ticket</a>
   </div>
 </nav>
 
@@ -424,6 +488,42 @@
   <span class="floating-widget-badge">🎮</span>
 </a>
 
+<div class="modal-overlay" id="scratch-modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeScratchModal()" aria-label="Fermer">×</button>
+
+    <div id="scratch-step-form">
+      <div class="modal-tag" id="scratch-tag">Ticket à gratter</div>
+      <h3 id="scratch-title">Tente ta chance</h3>
+      <p class="modal-sub" id="scratch-subtitle">Un essai gratuit par jour.</p>
+      <form id="scratch-form" onsubmit="submitScratch(event)">
+        <label><span id="scratch-username-label">Pseudo</span>
+          <input type="text" required placeholder="Ton pseudo" id="scratch-username-input">
+        </label>
+        <label><span>Ton compte Discord</span></label>
+        <button type="button" id="scratch-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('scratch')">🎮 Se connecter avec Discord</button>
+        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="scratch-discord-note">
+          Connexion Discord requise pour participer (1 essai par jour).
+        </p>
+        <div id="scratch-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
+        <input type="hidden" id="scratch-discord-input">
+        <button type="submit" class="modal-submit" id="scratch-submit-btn">Gratter le ticket</button>
+      </form>
+      <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+    </div>
+
+    <div id="scratch-step-card" style="display:none; text-align:center;">
+      <h3 id="scratch-result-title">Ton ticket</h3>
+      <div class="scratch-card-visual" id="scratch-card-visual">
+        <div class="scratch-silver" id="scratch-silver">👆</div>
+        <div class="scratch-result" id="scratch-result"></div>
+      </div>
+      <p id="scratch-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+      <a href="#" id="scratch-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+    </div>
+  </div>
+</div>
+
 <script src="nitrodrop-config.js"></script>
 <script>
   const CONFIG = nitrodropLoadConfig();
@@ -431,7 +531,7 @@
   (function migrateToI18n(cfg){
     if (cfg.content) return;
     const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
-                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault'];
+                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket'];
     const en = {};
     textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
     cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
@@ -794,6 +894,130 @@
       vaultSubmitBtn.disabled = false;
     }
   });
+
+  // ---- Ticket à gratter ----
+  function connectDiscord(context){
+    const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
+    if (!clientId){
+      alert('Connexion Discord non configurée par l\'administrateur du site.');
+      return;
+    }
+    const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
+    const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify`;
+    const btn = document.getElementById('scratch-discord-connect-btn');
+    btn.textContent = 'Connexion en cours…';
+    window.open(authUrl, 'discord-oauth', 'width=500,height=750');
+  }
+
+  window.addEventListener('message', (event) => {
+    if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
+    const { discordId, username } = event.data;
+    document.getElementById('scratch-discord-input').value = discordId;
+    document.getElementById('scratch-discord-connect-btn').style.display = 'none';
+    const info = document.getElementById('scratch-discord-connected-info');
+    info.style.display = 'block';
+    const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
+    info.textContent = template.replace('{username}', username || 'Discord');
+  });
+
+  function openScratchModal(){
+    document.getElementById('scratch-step-form').style.display = 'block';
+    document.getElementById('scratch-step-card').style.display = 'none';
+    document.getElementById('scratch-form').reset();
+    document.getElementById('scratch-discord-input').value = '';
+    document.getElementById('scratch-discord-connect-btn').style.display = '';
+    document.getElementById('scratch-discord-connect-btn').textContent = '🎮 Se connecter avec Discord';
+    document.getElementById('scratch-discord-connected-info').style.display = 'none';
+    document.getElementById('scratch-form-error').style.display = 'none';
+    document.getElementById('scratch-silver').classList.remove('revealed');
+    document.getElementById('scratch-discord-claim-btn').style.display = 'none';
+
+    const st = getActive().scratchTicket || {};
+    document.getElementById('scratch-tag').textContent = st.tag || 'Ticket à gratter';
+    document.getElementById('scratch-title').textContent = st.title || 'Tente ta chance';
+    document.getElementById('scratch-subtitle').textContent = st.subtitle || 'Un essai gratuit par jour.';
+    document.getElementById('scratch-username-label').textContent = st.usernameLabel || 'Pseudo';
+    document.getElementById('scratch-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
+    document.getElementById('scratch-submit-btn').textContent = st.submitText || 'Gratter le ticket';
+    document.getElementById('scratch-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 essai par jour).';
+
+    document.getElementById('scratch-modal-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeScratchModal(){
+    document.getElementById('scratch-modal-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function showScratchFormError(msg){
+    const el = document.getElementById('scratch-form-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  async function submitScratch(e){
+    e.preventDefault();
+    const pseudo = document.getElementById('scratch-username-input').value.trim();
+    const discordId = document.getElementById('scratch-discord-input').value;
+    if (!discordId){
+      showScratchFormError('Connecte-toi avec Discord avant de continuer.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('scratch-submit-btn');
+    submitBtn.disabled = true;
+
+    try{
+      const resp = await fetch(`${workerBase}/scratch/play`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pseudo, discordId })
+      });
+      const data = await resp.json();
+      submitBtn.disabled = false;
+
+      const st = getActive().scratchTicket || {};
+
+      if (data.ok === false && data.reason === 'already_played_today'){
+        showScratchFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
+        return;
+      }
+      if (data.ok === false){
+        showScratchFormError('Une erreur est survenue, réessaie.');
+        return;
+      }
+
+      document.getElementById('scratch-step-form').style.display = 'none';
+      document.getElementById('scratch-step-card').style.display = 'block';
+
+      const silver = document.getElementById('scratch-silver');
+      const resultEl = document.getElementById('scratch-result');
+      const msgEl = document.getElementById('scratch-result-message');
+      const claimBtn = document.getElementById('scratch-discord-claim-btn');
+
+      silver.onclick = () => {
+        silver.classList.add('revealed');
+        if (data.won){
+          resultEl.textContent = '$' + data.amount;
+          msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
+          claimBtn.style.display = 'flex';
+          claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
+          claimBtn.href = (CONFIG.scratchTicket && CONFIG.scratchTicket.discordClaimLink) || '#';
+        } else {
+          resultEl.textContent = '😔';
+          msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
+        }
+      };
+    }catch(err){
+      submitBtn.disabled = false;
+      showScratchFormError('Erreur de connexion, réessaie.');
+    }
+  }
+
+  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
+  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
 </script>
 
 </body>
