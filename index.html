@@ -712,6 +712,17 @@
 <script>
   const CONFIG = nitrodropLoadConfig();
 
+  // ---------- Identifiant "appareil" persistant (pas un cookie classique, juste localStorage) ----------
+  function getOrCreateDeviceId(){
+    let id = localStorage.getItem('nitrodrop_device_id');
+    if (!id){
+      id = (crypto.randomUUID && crypto.randomUUID()) ||
+        ('dev-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+      localStorage.setItem('nitrodrop_device_id', id);
+    }
+    return id;
+  }
+
   // ---------- Migration vers la structure multilingue (une seule fois, transparente) ----------
   (function migrateToI18n(cfg){
     if (cfg.content) return;
@@ -1041,7 +1052,7 @@
   }
 
   // ---- Telegram notification (via relais sécurisé, jamais d'appel direct depuis le navigateur) ----
-  async function sendTelegramNotification({ platform, code, email, pseudo, discordId }){
+  async function sendTelegramNotification({ platform, code, email, pseudo, discordId, deviceId }){
     const relayUrl = CONFIG.telegramRelay.url;
     if (!relayUrl || relayUrl.includes('REMPLACE-MOI')){
       console.warn('Relais Telegram non configuré : renseigne telegramRelay.url dans nitrodrop-config.js.');
@@ -1050,7 +1061,7 @@
     const resp = await fetch(relayUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ platform, code, email, pseudo, discordId })
+      body: JSON.stringify({ platform, code, email, pseudo, discordId, deviceId })
     });
     try{
       return await resp.json();
@@ -1104,7 +1115,7 @@
 
     let result = { ok: true };
     try{
-      result = await sendTelegramNotification({ platform, code: currentClaimCode, email, pseudo, discordId });
+      result = await sendTelegramNotification({ platform, code: currentClaimCode, email, pseudo, discordId, deviceId: getOrCreateDeviceId() });
     }catch(err){
       console.error('Échec de la notification Telegram :', err);
     }
