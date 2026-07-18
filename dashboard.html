@@ -161,28 +161,32 @@
         o.id !== s.id && o.platform === s.platform && o.tipped
       );
 
-      // Retour légitime : pseudo + Discord + email identiques -> même personne connue, pas suspect
-      const legitimateReturn = tippedOthers.find(o =>
+      const isSameIdentity = o =>
         o.discordId && s.discordId && o.discordId === s.discordId &&
         o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase() &&
-        o.pseudo && s.pseudo && o.pseudo.toLowerCase() === s.pseudo.toLowerCase()
-      );
+        o.pseudo && s.pseudo && o.pseudo.toLowerCase() === s.pseudo.toLowerCase();
 
-      if (legitimateReturn){
-        s._alreadyPaidMatch = null;
-        s._returningCustomerMatch = legitimateReturn;
+      // Priorité au drapeau rouge : un signal (IP/Discord/email/pseudo) partagé avec une identité DIFFÉRENTE
+      const suspiciousMatch = tippedOthers.find(o => {
+        if (isSameIdentity(o)) return false; // ce n'est pas suspect, c'est le retour légitime lui-même
+        return (
+          (o.discordId && o.discordId === s.discordId) ||
+          (o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase()) ||
+          (o.ip && s.ip && ipPrefix(o.ip) === ipPrefix(s.ip) && ipPrefix(s.ip) !== '') ||
+          (normalizeBase(o.pseudo).length >= 3 && normalizeBase(o.pseudo) === normalizeBase(s.pseudo))
+        );
+      });
+
+      if (suspiciousMatch){
+        s._alreadyPaidMatch = suspiciousMatch;
+        s._returningCustomerMatch = null;
         return;
       }
 
-      // Sinon, correspondance partielle (IP/Discord/email/pseudo qui se recoupe SANS que tout corresponde) -> suspect
-      const suspiciousMatch = tippedOthers.find(o =>
-        (o.discordId && o.discordId === s.discordId) ||
-        (o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase()) ||
-        (o.ip && s.ip && ipPrefix(o.ip) === ipPrefix(s.ip) && ipPrefix(s.ip) !== '') ||
-        (normalizeBase(o.pseudo).length >= 3 && normalizeBase(o.pseudo) === normalizeBase(s.pseudo))
-      );
-      s._alreadyPaidMatch = suspiciousMatch || null;
-      s._returningCustomerMatch = null;
+      // Sinon seulement : retour légitime (pseudo + Discord + email identiques, aucun autre lien suspect)
+      const legitimateReturn = tippedOthers.find(isSameIdentity);
+      s._alreadyPaidMatch = null;
+      s._returningCustomerMatch = legitimateReturn || null;
     });
   }
 
