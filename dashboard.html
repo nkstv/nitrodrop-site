@@ -92,6 +92,7 @@
     <div class="dash-tabs">
       <button class="dash-tab active" id="tab-btn-bonus" onclick="switchDashTab('bonus')">Demandes de bonus</button>
       <button class="dash-tab" id="tab-btn-scratch" onclick="switchDashTab('scratch')">🎫 Ticket à gratter</button>
+      <button class="dash-tab" id="tab-btn-slot" onclick="switchDashTab('slot')">🎰 Machine à sous</button>
     </div>
 
     <div id="tab-bonus">
@@ -163,6 +164,27 @@
       </div>
 
       <div id="scratch-table-container"></div>
+    </div>
+
+    <div id="tab-slot" style="display:none;">
+      <div class="stats" id="slot-stats"></div>
+
+      <div class="toolbar">
+        <input type="text" id="slot-filter-search" placeholder="Rechercher pseudo / Discord ID..." oninput="applySlotFilters()" style="min-width:220px;">
+        <select id="slot-filter-result" onchange="applySlotFilters()">
+          <option value="">Résultat : tous</option>
+          <option value="won">Gagné</option>
+          <option value="lost">Perdu</option>
+        </select>
+        <select id="slot-filter-tipped" onchange="applySlotFilters()">
+          <option value="">Tipsé : tous</option>
+          <option value="yes">Tipsé : oui</option>
+          <option value="no">Tipsé : non</option>
+        </select>
+        <button type="button" class="btn" onclick="loadSlotPlays()">Rafraîchir</button>
+      </div>
+
+      <div id="slot-table-container"></div>
     </div>
   </div>
 </div>
@@ -635,14 +657,21 @@
   // ---------- Onglet Ticket à gratter ----------
   let allScratchPlays = [];
   let scratchLoaded = false;
+  let allSlotPlays = [];
+  let slotLoaded = false;
 
   function switchDashTab(tab){
     document.getElementById('tab-bonus').style.display = tab === 'bonus' ? '' : 'none';
     document.getElementById('tab-scratch').style.display = tab === 'scratch' ? '' : 'none';
+    document.getElementById('tab-slot').style.display = tab === 'slot' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-scratch').classList.toggle('active', tab === 'scratch');
+    document.getElementById('tab-btn-slot').classList.toggle('active', tab === 'slot');
     if (tab === 'scratch' && !scratchLoaded){
       loadScratchPlays();
+    }
+    if (tab === 'slot' && !slotLoaded){
+      loadSlotPlays();
     }
   }
 
@@ -737,6 +766,101 @@
     }catch(err){
       alert('Erreur lors de la mise à jour : ' + err.message);
       loadScratchPlays();
+    }
+  }
+
+  // ---------- Onglet Machine à sous ----------
+  async function loadSlotPlays(){
+    const container = document.getElementById('slot-table-container');
+    container.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/slot/plays`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const data = await resp.json();
+      allSlotPlays = (data.plays || []).slice().reverse();
+      slotLoaded = true;
+      renderSlotStats();
+      applySlotFilters();
+    }catch(err){
+      container.innerHTML = `<div class="empty">Erreur : ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function renderSlotStats(){
+    const total = allSlotPlays.length;
+    const won = allSlotPlays.filter(p => p.won).length;
+    const tipped = allSlotPlays.filter(p => p.won && p.tipped).length;
+    document.getElementById('slot-stats').innerHTML = `
+      <div class="stat"><div class="n">${total}</div><div class="l">Participations</div></div>
+      <div class="stat"><div class="n">${won}</div><div class="l">Gains</div></div>
+      <div class="stat"><div class="n">${tipped}</div><div class="l">Gains tipsés</div></div>
+    `;
+  }
+
+  function applySlotFilters(){
+    const search = document.getElementById('slot-filter-search').value.trim().toLowerCase();
+    const resultFilter = document.getElementById('slot-filter-result').value;
+    const tippedFilter = document.getElementById('slot-filter-tipped').value;
+
+    const filtered = allSlotPlays.filter(p => {
+      if (resultFilter === 'won' && !p.won) return false;
+      if (resultFilter === 'lost' && p.won) return false;
+      if (tippedFilter === 'yes' && !p.tipped) return false;
+      if (tippedFilter === 'no' && p.tipped) return false;
+      if (search){
+        const haystack = `${p.pseudo || ''} ${p.discordId || ''}`.toLowerCase();
+        if (!haystack.includes(search)) return false;
+      }
+      return true;
+    });
+
+    renderSlotTable(filtered);
+  }
+
+  function renderSlotTable(plays){
+    const container = document.getElementById('slot-table-container');
+    if (plays.length === 0){
+      container.innerHTML = '<div class="empty">Aucune participation.</div>';
+      return;
+    }
+    const rows = plays.map(p => `
+      <tr>
+        <td class="mono">${escapeHtml(formatLocalDate(p))}</td>
+        <td>${escapeHtml(p.pseudo || '')}</td>
+        <td class="mono"><span class="cell-truncate" style="max-width:140px;" title="${escapeHtml(p.discordId || '')}">${escapeHtml(p.discordId || '')}</span></td>
+        <td>${p.won
+          ? `<span style="color:var(--green); font-weight:700;">Gagné — $${escapeHtml(String(p.amount || 0))}</span>`
+          : `<span style="color:var(--text-faint);">Perdu</span>`}</td>
+        <td>${p.won ? `<input type="checkbox" ${p.tipped ? 'checked' : ''} onchange="toggleSlotTip('${p.id}')">` : '—'}</td>
+      </tr>
+    `).join('');
+    container.innerHTML = `
+      <table>
+        <thead><tr><th>Date</th><th>Pseudo</th><th>Discord</th><th>Résultat</th><th>Tipsé</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  async function toggleSlotTip(id){
+    try{
+      const resp = await fetch(`${workerBaseUrl}/slot/tip`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ id })
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const entry = allSlotPlays.find(p => p.id === id);
+      if (entry){
+        const data = await resp.json();
+        entry.tipped = data.tipped;
+      }
+      renderSlotStats();
+    }catch(err){
+      alert('Erreur lors de la mise à jour : ' + err.message);
+      loadSlotPlays();
     }
   }
 </script>

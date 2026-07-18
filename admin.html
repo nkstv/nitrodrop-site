@@ -196,6 +196,48 @@
     <div class="field"><label>Texte du bouton de réclamation</label><input type="text" id="scratch-discordButtonText" placeholder="Réclamer sur Discord"></div>
   </div>
 
+  <!-- MACHINE À SOUS -->
+  <div class="panel" style="border-color:rgba(139,92,255,0.4);">
+    <h2>Machine à sous (bouton "🎰 Slot" dans le menu)</h2>
+    <div class="sub">Le tirage se fait uniquement sur le Worker (impossible à truquer côté visiteur). La chance de gain et le montant ne sont <strong>jamais</strong> publiés sur GitHub — ils sont envoyés directement au Worker, protégés par ta clé de dashboard.</div>
+
+    <div class="row">
+      <div class="field"><label>URL de ton Worker (sans /notify à la fin)</label><input type="text" id="slot-worker-url" placeholder="https://nitrodrop-relay.tonpseudo.workers.dev"></div>
+      <div class="field"><label>Clé du dashboard (X-Dashboard-Key)</label><input type="password" id="slot-dashboard-key" placeholder="Ta clé DASHBOARD_KEY"></div>
+    </div>
+
+    <button type="button" class="btn" onclick="loadSlotState()">Charger les réglages actuels</button>
+    <div id="slot-current-state" style="margin-top:10px; font-size:12.5px; color:var(--text-dim);"></div>
+
+    <div class="subheading">Réglages du tirage</div>
+    <div class="row">
+      <div class="field"><label>Chance de gagner (%)</label><input type="text" id="slot-win-chance" placeholder="0.5"></div>
+      <div class="field"><label>Montant gagné ($)</label><input type="text" id="slot-win-amount" placeholder="2"></div>
+    </div>
+    <button type="button" class="btn btn-save" onclick="setSlotConfig()">Enregistrer ces réglages</button>
+    <div id="slot-set-status" style="margin-top:10px; font-size:12.5px;"></div>
+
+    <div class="subheading">Lien de réclamation (partagé, pas besoin de le traduire)</div>
+    <div class="field"><label>Lien Discord pour réclamer un gain</label><input type="text" id="slot-discord-claim-link" placeholder="https://discord.gg/..."></div>
+
+    <div class="subheading">Textes (EN / FR séparément, comme le reste)</div>
+    <div class="field"><label>Texte du bouton dans le menu</label><input type="text" id="slot-navLabel" placeholder="🎰 Slot"></div>
+    <div class="field"><label>Étiquette</label><input type="text" id="slot-tag" placeholder="Machine à sous"></div>
+    <div class="field"><label>Titre</label><input type="text" id="slot-title" placeholder="Tente ta chance"></div>
+    <div class="field"><label>Sous-titre</label><input type="text" id="slot-subtitle" placeholder="Un spin gratuit par jour."></div>
+    <div class="row">
+      <div class="field"><label>Libellé du champ pseudo</label><input type="text" id="slot-usernameLabel" placeholder="Pseudo"></div>
+      <div class="field"><label>Placeholder du champ pseudo</label><input type="text" id="slot-usernamePlaceholder" placeholder="Ton pseudo"></div>
+    </div>
+    <div class="field"><label>Note sous le bouton Discord</label><input type="text" id="slot-discordNote" placeholder="Connexion Discord requise pour participer (1 spin par jour)."></div>
+    <div class="field"><label>Texte du bouton "Spin"</label><input type="text" id="slot-spinText" placeholder="Spin"></div>
+    <div class="field"><label>Texte pendant le tirage</label><input type="text" id="slot-spinningText" placeholder="Ça tourne..."></div>
+    <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="slot-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
+    <div class="field"><label>Message de victoire (utilise <code>{amount}</code>)</label><input type="text" id="slot-winMessage" placeholder="Félicitations, tu remportes {amount} !"></div>
+    <div class="field"><label>Message de défaite</label><input type="text" id="slot-loseMessage" placeholder="Pas de chance cette fois, reviens demain !"></div>
+    <div class="field"><label>Texte du bouton de réclamation</label><input type="text" id="slot-discordButtonText" placeholder="Réclamer sur Discord"></div>
+  </div>
+
   <!-- MENU / HEADER -->
   <div class="panel">
     <h2>Menu (nav)</h2>
@@ -515,7 +557,7 @@
   function migrateToI18n(cfg){
     if (cfg.content) return;
     const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
-                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket'];
+                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine'];
     const en = {};
     textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
     cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
@@ -853,6 +895,24 @@
 
     cfg.scratchTicket = cfg.scratchTicket || {};
     document.getElementById('scratch-discord-claim-link').value = cfg.scratchTicket.discordClaimLink || '';
+
+    content.slotMachine = content.slotMachine || {};
+    document.getElementById('slot-navLabel').value = content.slotMachine.navLabel || '';
+    document.getElementById('slot-tag').value = content.slotMachine.tag || '';
+    document.getElementById('slot-title').value = content.slotMachine.title || '';
+    document.getElementById('slot-subtitle').value = content.slotMachine.subtitle || '';
+    document.getElementById('slot-usernameLabel').value = content.slotMachine.usernameLabel || '';
+    document.getElementById('slot-usernamePlaceholder').value = content.slotMachine.usernamePlaceholder || '';
+    document.getElementById('slot-discordNote').value = content.slotMachine.discordNote || '';
+    document.getElementById('slot-spinText').value = content.slotMachine.spinText || '';
+    document.getElementById('slot-spinningText').value = content.slotMachine.spinningText || '';
+    document.getElementById('slot-alreadyPlayedMessage').value = content.slotMachine.alreadyPlayedMessage || '';
+    document.getElementById('slot-winMessage').value = content.slotMachine.winMessage || '';
+    document.getElementById('slot-loseMessage').value = content.slotMachine.loseMessage || '';
+    document.getElementById('slot-discordButtonText').value = content.slotMachine.discordButtonText || '';
+
+    cfg.slotMachine = cfg.slotMachine || {};
+    document.getElementById('slot-discord-claim-link').value = cfg.slotMachine.discordClaimLink || '';
     document.getElementById('vault-usernamePlaceholder').value = content.vault.usernamePlaceholder || '';
     document.getElementById('vault-historyTitle').value = content.vault.historyTitle || '';
     document.getElementById('vault-historyEmpty').value = content.vault.historyEmpty || '';
@@ -1035,6 +1095,24 @@
 
     cfg.scratchTicket = cfg.scratchTicket || {};
     cfg.scratchTicket.discordClaimLink = document.getElementById('scratch-discord-claim-link').value;
+
+    content.slotMachine = content.slotMachine || {};
+    content.slotMachine.navLabel = document.getElementById('slot-navLabel').value;
+    content.slotMachine.tag = document.getElementById('slot-tag').value;
+    content.slotMachine.title = document.getElementById('slot-title').value;
+    content.slotMachine.subtitle = document.getElementById('slot-subtitle').value;
+    content.slotMachine.usernameLabel = document.getElementById('slot-usernameLabel').value;
+    content.slotMachine.usernamePlaceholder = document.getElementById('slot-usernamePlaceholder').value;
+    content.slotMachine.discordNote = document.getElementById('slot-discordNote').value;
+    content.slotMachine.spinText = document.getElementById('slot-spinText').value;
+    content.slotMachine.spinningText = document.getElementById('slot-spinningText').value;
+    content.slotMachine.alreadyPlayedMessage = document.getElementById('slot-alreadyPlayedMessage').value;
+    content.slotMachine.winMessage = document.getElementById('slot-winMessage').value;
+    content.slotMachine.loseMessage = document.getElementById('slot-loseMessage').value;
+    content.slotMachine.discordButtonText = document.getElementById('slot-discordButtonText').value;
+
+    cfg.slotMachine = cfg.slotMachine || {};
+    cfg.slotMachine.discordClaimLink = document.getElementById('slot-discord-claim-link').value;
     content.vault.usernamePlaceholder = document.getElementById('vault-usernamePlaceholder').value;
     content.vault.historyTitle = document.getElementById('vault-historyTitle').value;
     content.vault.historyEmpty = document.getElementById('vault-historyEmpty').value;
@@ -1237,6 +1315,74 @@ function nitrodropResetConfig() {
       statusEl.textContent = 'Réglages enregistrés ✓';
       statusEl.style.color = 'var(--green)';
       loadScratchState();
+    }catch(err){
+      statusEl.textContent = 'Erreur : ' + err.message;
+      statusEl.style.color = '#FF7A90';
+    }
+  }
+
+  // ---------- Machine à sous : appels directs au Worker (jamais via GitHub) ----------
+  function getSlotWorkerBase(){
+    return document.getElementById('slot-worker-url').value.trim().replace(/\/$/, '');
+  }
+
+  async function loadSlotState(){
+    const base = getSlotWorkerBase();
+    const key = document.getElementById('slot-dashboard-key').value.trim();
+    const statusEl = document.getElementById('slot-current-state');
+    if (!base || !key){
+      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
+      statusEl.style.color = '#FF7A90';
+      return;
+    }
+    statusEl.textContent = 'Chargement…';
+    statusEl.style.color = 'var(--text-dim)';
+    try{
+      const resp = await fetch(`${base}/slot/admin-state`, {
+        headers: { 'X-Dashboard-Key': key }
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const data = await resp.json();
+      document.getElementById('slot-win-chance').value = data.winChancePercent != null ? data.winChancePercent : '';
+      document.getElementById('slot-win-amount').value = data.winAmount != null ? data.winAmount : '';
+      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'}`;
+      statusEl.style.color = 'var(--text-dim)';
+    }catch(err){
+      statusEl.textContent = 'Erreur : ' + err.message;
+      statusEl.style.color = '#FF7A90';
+    }
+  }
+
+  async function setSlotConfig(){
+    const base = getSlotWorkerBase();
+    const key = document.getElementById('slot-dashboard-key').value.trim();
+    const winChancePercent = document.getElementById('slot-win-chance').value.trim();
+    const winAmount = document.getElementById('slot-win-amount').value.trim();
+    const statusEl = document.getElementById('slot-set-status');
+
+    if (!base || !key){
+      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
+      statusEl.style.color = '#FF7A90';
+      return;
+    }
+    if (winChancePercent === '' || winAmount === ''){
+      statusEl.textContent = 'Renseigne la chance de gain et le montant.';
+      statusEl.style.color = '#FF7A90';
+      return;
+    }
+
+    statusEl.textContent = 'Envoi…';
+    statusEl.style.color = 'var(--text-dim)';
+    try{
+      const resp = await fetch(`${base}/slot/set`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': key },
+        body: JSON.stringify({ winChancePercent, winAmount })
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      statusEl.textContent = 'Réglages enregistrés ✓';
+      statusEl.style.color = 'var(--green)';
+      loadSlotState();
     }catch(err){
       statusEl.textContent = 'Erreur : ' + err.message;
       statusEl.style.color = '#FF7A90';

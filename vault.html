@@ -149,13 +149,13 @@
   .modal-tag{color:var(--green); font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
   .modal h3{font-family:'Unbounded'; font-size:22px; color:#fff; margin-top:10px;}
   .modal-sub{font-size:13.5px; color:var(--text-dim); margin-top:10px; line-height:1.6;}
-  #scratch-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
-  #scratch-form label{display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
-  #scratch-form input{
+  #scratch-form, #slot-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
+  #scratch-form label, #slot-form label{display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
+  #scratch-form input, #slot-form input{
     background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
     padding:12px 14px; color:var(--text); font-size:14px; font-family:'Inter'; width:100%;
   }
-  #scratch-form input:focus{border-color:var(--green);}
+  #scratch-form input:focus, #slot-form input:focus{border-color:var(--green);}
   .modal-submit{
     margin-top:6px; background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
     padding:14px; border:none; border-radius:10px; cursor:pointer; width:100%;
@@ -183,6 +183,17 @@
     display:flex; align-items:center; justify-content:center; text-align:center;
     font-family:'Unbounded'; font-weight:900; font-size:28px; color:var(--green);
   }
+
+  .slot-reels{
+    display:flex; gap:8px; justify-content:center; margin-top:20px;
+    background:var(--bg-raise); border:1px solid var(--line); border-radius:14px; padding:16px;
+  }
+  .slot-reel{
+    width:64px; height:74px; background:var(--bg-card); border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:30px; overflow:hidden;
+  }
+  .slot-reel.spinning .slot-sym{animation:slot-blur .07s linear infinite;}
+  @keyframes slot-blur{0%{transform:translateY(-4px);}50%{transform:translateY(4px);}100%{transform:translateY(-4px);}}
   .tg-btn{
     display:flex; align-items:center; gap:8px; background:#3FA9F5; color:#071018;
     font-weight:700; font-size:13px; padding:12px; border-radius:9px; text-decoration:none;
@@ -357,6 +368,7 @@
       <a href="#" id="nav-link-2">Comment ça marche</a>
       <a href="#" id="nav-link-3">Discord</a>
       <a href="#" id="nav-scratch-btn">🎫 Ticket</a>
+      <a href="#" id="nav-slot-btn">🎰 Slot</a>
     </div>
     <div class="lang-switch">
       <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
@@ -378,6 +390,7 @@
     <a href="#" id="mobile-nav-link-2">Comment ça marche</a>
     <a href="#" id="mobile-nav-link-3">Discord</a>
     <a href="#" id="mobile-nav-scratch-btn">🎫 Ticket</a>
+    <a href="#" id="mobile-nav-slot-btn">🎰 Slot</a>
   </div>
 </nav>
 
@@ -524,6 +537,43 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="slot-modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSlotModal()" aria-label="Fermer">×</button>
+
+    <div id="slot-step-form">
+      <div class="modal-tag" id="slot-tag">Machine à sous</div>
+      <h3 id="slot-title">Tente ta chance</h3>
+      <p class="modal-sub" id="slot-subtitle">Un spin gratuit par jour.</p>
+      <form id="slot-form" onsubmit="submitSlot(event)">
+        <label><span id="slot-username-label">Pseudo</span>
+          <input type="text" required placeholder="Ton pseudo" id="slot-username-input">
+        </label>
+        <label><span id="slot-discord-label-text">Ton compte Discord</span></label>
+        <button type="button" id="slot-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('slot')">🎮 Se connecter avec Discord</button>
+        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="slot-discord-note">
+          Connexion Discord requise pour participer (1 spin par jour).
+        </p>
+        <div id="slot-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
+        <input type="hidden" id="slot-discord-input">
+        <button type="submit" class="modal-submit" id="slot-submit-btn">Spin</button>
+      </form>
+      <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+    </div>
+
+    <div id="slot-step-card" style="display:none; text-align:center;">
+      <h3 id="slot-result-title">Résultat</h3>
+      <div class="slot-reels" id="slot-reels">
+        <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
+        <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
+        <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
+      </div>
+      <p id="slot-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+      <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+    </div>
+  </div>
+</div>
+
 <script src="nitrodrop-config.js"></script>
 <script>
   const CONFIG = nitrodropLoadConfig();
@@ -531,7 +581,7 @@
   (function migrateToI18n(cfg){
     if (cfg.content) return;
     const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
-                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket'];
+                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine'];
     const en = {};
     textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
     cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
@@ -895,7 +945,7 @@
     }
   });
 
-  // ---- Ticket à gratter ----
+  // ---- Ticket à gratter / Machine à sous ----
   function connectDiscord(context){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
     if (!clientId){
@@ -905,17 +955,21 @@
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify`;
-    const btn = document.getElementById('scratch-discord-connect-btn');
+    const btnId = context === 'slot' ? 'slot-discord-connect-btn' : 'scratch-discord-connect-btn';
+    const btn = document.getElementById(btnId);
     btn.textContent = 'Connexion en cours…';
+    window.discordConnectContext = context;
     window.open(authUrl, 'discord-oauth', 'width=500,height=750');
   }
 
   window.addEventListener('message', (event) => {
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
     const { discordId, username } = event.data;
-    document.getElementById('scratch-discord-input').value = discordId;
-    document.getElementById('scratch-discord-connect-btn').style.display = 'none';
-    const info = document.getElementById('scratch-discord-connected-info');
+    const context = window.discordConnectContext || 'scratch';
+    const prefix = context === 'slot' ? 'slot' : 'scratch';
+    document.getElementById(prefix + '-discord-input').value = discordId;
+    document.getElementById(prefix + '-discord-connect-btn').style.display = 'none';
+    const info = document.getElementById(prefix + '-discord-connected-info');
     info.style.display = 'block';
     const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
     info.textContent = template.replace('{username}', username || 'Discord');
@@ -1020,6 +1074,126 @@
 
   document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
   document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
+
+  const SLOT_SYMBOLS = ['7️⃣','🍒','💎','🔔','🍋','⭐'];
+
+  function openSlotModal(){
+    document.getElementById('slot-step-form').style.display = 'block';
+    document.getElementById('slot-step-card').style.display = 'none';
+    document.getElementById('slot-form').reset();
+    document.getElementById('slot-discord-input').value = '';
+    document.getElementById('slot-discord-connect-btn').style.display = '';
+    document.getElementById('slot-discord-connected-info').style.display = 'none';
+    document.getElementById('slot-form-error').style.display = 'none';
+    document.getElementById('slot-discord-claim-btn').style.display = 'none';
+    document.querySelectorAll('#slot-reels .slot-reel').forEach(r => r.classList.remove('spinning'));
+
+    const st = getActive().slotMachine || {};
+    document.getElementById('slot-tag').textContent = st.tag || 'Machine à sous';
+    document.getElementById('slot-title').textContent = st.title || 'Tente ta chance';
+    document.getElementById('slot-subtitle').textContent = st.subtitle || 'Un spin gratuit par jour.';
+    document.getElementById('slot-username-label').textContent = st.usernameLabel || 'Pseudo';
+    document.getElementById('slot-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
+    document.getElementById('slot-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
+    document.getElementById('slot-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
+    document.getElementById('slot-submit-btn').textContent = st.spinText || 'Spin';
+    document.getElementById('slot-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 spin par jour).';
+    document.getElementById('slot-result-title').textContent = st.resultTitle || 'Résultat';
+    document.getElementById('slot-result-message').textContent = '';
+
+    document.getElementById('slot-modal-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSlotModal(){
+    document.getElementById('slot-modal-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function showSlotFormError(msg){
+    const el = document.getElementById('slot-form-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  async function submitSlot(e){
+    e.preventDefault();
+    const pseudo = document.getElementById('slot-username-input').value.trim();
+    const discordId = document.getElementById('slot-discord-input').value;
+    if (!discordId){
+      showSlotFormError('Connecte-toi avec Discord avant de continuer.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('slot-submit-btn');
+    submitBtn.disabled = true;
+    const st = getActive().slotMachine || {};
+
+    try{
+      const resp = await fetch(`${workerBase}/slot/play`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pseudo, discordId })
+      });
+      const data = await resp.json();
+
+      if (data.ok === false && data.reason === 'already_played_today'){
+        submitBtn.disabled = false;
+        showSlotFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
+        return;
+      }
+      if (data.ok === false){
+        submitBtn.disabled = false;
+        showSlotFormError('Une erreur est survenue, réessaie.');
+        return;
+      }
+
+      document.getElementById('slot-step-form').style.display = 'none';
+      document.getElementById('slot-step-card').style.display = 'block';
+
+      const reels = document.querySelectorAll('#slot-reels .slot-reel');
+      const syms = [document.getElementById('slot-sym-0'), document.getElementById('slot-sym-1'), document.getElementById('slot-sym-2')];
+      const msgEl = document.getElementById('slot-result-message');
+      const claimBtn = document.getElementById('slot-discord-claim-btn');
+      submitBtn.textContent = st.spinningText || 'Ça tourne...';
+
+      reels.forEach(r => r.classList.add('spinning'));
+
+      syms.forEach((el, i) => {
+        let ticks = 0;
+        const maxTicks = 14 + i * 6;
+        const iv = setInterval(() => {
+          el.textContent = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+          ticks++;
+          if (ticks >= maxTicks){
+            clearInterval(iv);
+            reels[i].classList.remove('spinning');
+            if (i === syms.length - 1){
+              submitBtn.disabled = false;
+              submitBtn.textContent = st.spinText || 'Spin';
+              if (data.won){
+                const winSym = SLOT_SYMBOLS[0];
+                syms.forEach(s => s.textContent = winSym);
+                msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
+                claimBtn.style.display = 'flex';
+                claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
+                claimBtn.href = (CONFIG.slotMachine && CONFIG.slotMachine.discordClaimLink) || '#';
+              } else {
+                msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
+              }
+            }
+          }
+        }, 70);
+      });
+    }catch(err){
+      submitBtn.disabled = false;
+      submitBtn.textContent = st.spinText || 'Spin';
+      showSlotFormError('Erreur de connexion, réessaie.');
+    }
+  }
+
+  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
+  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
 </script>
 
 </body>
