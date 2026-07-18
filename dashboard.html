@@ -117,6 +117,10 @@
         <option value="yes">★ Qualifié : oui</option>
         <option value="no">Qualifié : non</option>
       </select>
+      <select id="filter-discord-age" onchange="applyFilters()">
+        <option value="">Compte Discord : tous</option>
+        <option value="recent">Compte récent (&lt; 30j)</option>
+      </select>
     </div>
 
     <div id="table-container"></div>
@@ -151,6 +155,43 @@
   function normalizeBase(str){
     // enlève les chiffres de fin + caractères spéciaux, pour comparer "karol0978" et "karol0976"
     return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '').replace(/[0-9]+$/, '');
+  }
+
+  // ---------- Ancienneté du compte Discord (juste informatif, n'influence pas la Suspicion) ----------
+  const DISCORD_EPOCH = 1420070400000n; // 1er janvier 2015, référence utilisée par Discord
+
+  function discordIdToDate(discordId){
+    if (!discordId) return null;
+    try{
+      const id = BigInt(discordId);
+      const timestampMs = (id >> 22n) + DISCORD_EPOCH;
+      const date = new Date(Number(timestampMs));
+      if (isNaN(date.getTime())) return null;
+      return date;
+    }catch(e){
+      return null;
+    }
+  }
+
+  function formatAccountAge(date){
+    const now = new Date();
+    const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+    if (diffDays < 1) return "Aujourd'hui";
+    if (diffDays < 30) return `${diffDays} j`;
+    const diffMonths = Math.floor(diffDays / 30);
+    if (diffMonths < 12) return `${diffMonths} mois`;
+    const diffYears = Math.floor(diffDays / 365);
+    return `${diffYears} an${diffYears > 1 ? 's' : ''}`;
+  }
+
+  function renderDiscordAgeBadge(s){
+    const date = discordIdToDate(s.discordId);
+    if (!date) return `<span style="color:var(--text-faint); font-size:11.5px;">—</span>`;
+    const diffDays = Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
+    const age = formatAccountAge(date);
+    const color = diffDays < 30 ? '#FF7A90' : (diffDays < 90 ? '#FFC759' : 'var(--text-dim)');
+    const exact = date.toLocaleDateString();
+    return `<span title="Créé le ${escapeHtml(exact)}" style="color:${color}; font-size:12px; cursor:help;">${escapeHtml(age)}</span>`;
   }
 
   function ipPrefix(ip){
@@ -303,6 +344,7 @@
     const suspicionFilter = document.getElementById('filter-suspicion').value;
     const alreadyPaidFilter = document.getElementById('filter-already-paid').value;
     const qualifiedFilter = document.getElementById('filter-qualified').value;
+    const discordAgeFilter = document.getElementById('filter-discord-age').value;
 
     filtered = allSubmissions.filter(s => {
       if (archivedFilter === 'active' && s.archived) return false;
@@ -316,6 +358,12 @@
       if (alreadyPaidFilter === 'no' && (s._alreadyPaidMatch || s._returningCustomerMatch)) return false;
       if (qualifiedFilter === 'yes' && !s._qualifiedMatch) return false;
       if (qualifiedFilter === 'no' && s._qualifiedMatch) return false;
+      if (discordAgeFilter === 'recent'){
+        const d = discordIdToDate(s.discordId);
+        if (!d) return false;
+        const diffDays = Math.floor((new Date() - d) / (1000 * 60 * 60 * 24));
+        if (diffDays >= 30) return false;
+      }
       if (casino && s.platform !== casino) return false;
       if (tippedFilter === 'yes' && !s.tipped) return false;
       if (tippedFilter === 'no' && s.tipped) return false;
@@ -390,6 +438,7 @@
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.email || '')}">${escapeHtml(s.email || '')}</span></td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}">${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}</span></td>
         <td class="mono"><span class="cell-truncate" style="max-width:110px;" title="${escapeHtml(s.discordId || '—')}">${escapeHtml(s.discordId || '—')}</span></td>
+        <td>${renderDiscordAgeBadge(s)}</td>
         <td>${renderSuspicionBadge(s)}</td>
         <td>${renderAlreadyPaidBadge(s)}</td>
         <td>${renderQualifiedBadge(s)}</td>
@@ -409,7 +458,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Suspicion</th><th>Déjà payé</th><th>Qualifié</th><th>Tipsé</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Compte Discord</th><th>Suspicion</th><th>Déjà payé</th><th>Qualifié</th><th>Tipsé</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
