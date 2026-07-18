@@ -55,8 +55,8 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "offersSection": {
         "tag": "Exclusive Offers",
-        "title": "No Deposit Bonuses",
-        "desc": "Sign up, verify your account, and click \"Claim My Bonus\" to unlock your no deposit bonus."
+        "title": "Discover Bonuses 🎁",
+        "desc": "Sign up, verify your account, and claim your bonus."
       },
       "offers": [
         {
@@ -373,8 +373,8 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "offersSection": {
         "tag": "Offres exclusives",
-        "title": "Bonus sans dépôt",
-        "desc": "Inscrivez-vous, vérifiez votre compte, puis cliquez sur « Réclamer mon bonus » pour débloquer votre bonus sans dépôt."
+        "title": "Découvrez les bonus 🎁",
+        "desc": "Inscrivez-vous, vérifiez votre compte et récupérez votre bonus."
       },
       "offers": [
         {
