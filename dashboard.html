@@ -187,10 +187,16 @@
         return;
       }
 
-      // Sinon seulement : retour légitime (pseudo + Discord + email identiques, aucun autre lien suspect)
+      // Sinon seulement : retour légitime (pseudo + Discord + email identiques, ET aucun signal
+      // suspect ailleurs dans le score de suspicion général — sinon on ne rassure pas à tort)
       const legitimateReturn = tippedOthers.find(isSameIdentity);
-      s._alreadyPaidMatch = null;
-      s._returningCustomerMatch = legitimateReturn || null;
+      if (legitimateReturn && (s._suspicionScore || 0) < 20){
+        s._alreadyPaidMatch = null;
+        s._returningCustomerMatch = legitimateReturn;
+      } else {
+        s._alreadyPaidMatch = null;
+        s._returningCustomerMatch = null;
+      }
     });
   }
 
