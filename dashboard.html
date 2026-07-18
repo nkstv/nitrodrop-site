@@ -276,7 +276,7 @@
 
     const rows = pageItems.map(s => `
       <tr style="${s.archived ? 'opacity:0.45;' : ''}">
-        <td class="mono">${escapeHtml(s.date || '')}</td>
+        <td class="mono">${escapeHtml(formatLocalDate(s))}</td>
         <td><span class="badge">${escapeHtml(s.platform || '')}</span></td>
         <td class="mono"><span class="cell-truncate" style="max-width:90px;" title="${escapeHtml(s.code || '')}">${escapeHtml(s.code || '')}</span></td>
         <td><span class="cell-truncate" style="max-width:100px;" title="${escapeHtml(s.pseudo || '')}">${escapeHtml(s.pseudo || '')}</span></td>
@@ -384,6 +384,21 @@
     }catch(err){
       alert('Erreur : ' + err.message);
     }
+  }
+
+  function formatLocalDate(s){
+    let d;
+    if (typeof s.dateMs === 'number'){
+      d = new Date(s.dateMs);
+    } else if (s.date){
+      // "2026-07-18 03:04:38 UTC" -> format ISO parsable de façon fiable
+      const iso = s.date.replace(' UTC', '').replace(' ', 'T') + 'Z';
+      d = new Date(iso);
+    }
+    if (!d || isNaN(d.getTime())) return s.date || '';
+
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   }
 
   function escapeHtml(str){
