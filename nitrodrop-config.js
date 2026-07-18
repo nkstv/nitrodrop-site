@@ -341,6 +341,20 @@ const NITRODROP_DEFAULT_CONFIG = {
         "statParticipantsLabel": "",
         "winnersTitle": "Latest winners",
         "winnersEmpty": ""
+      },
+      "scratchTicket": {
+        "navLabel": "",
+        "tag": "🎟️ Scratch Card",
+        "title": "Try Your Luck",
+        "subtitle": "One Free Try Per Day",
+        "usernameLabel": "Username",
+        "usernamePlaceholder": "your username",
+        "discordNote": "Connect your Discord account to participate (1 free try per day).",
+        "submitText": "Scratch the Card",
+        "alreadyPlayedMessage": "You've already played today. Come back tomorrow!",
+        "winMessage": "",
+        "loseMessage": "No luck this time. Try again tomorrow!",
+        "discordButtonText": ""
       }
     },
     "fr": {
@@ -673,6 +687,20 @@ const NITRODROP_DEFAULT_CONFIG = {
         "statParticipantsLabel": "Participants",
         "winnersTitle": "Derniers gagnants",
         "winnersEmpty": ""
+      },
+      "scratchTicket": {
+        "navLabel": "",
+        "tag": "Ticket à gratter",
+        "title": "Tente ta chance",
+        "subtitle": "Un essai gratuit par jour.",
+        "usernameLabel": "Pseudo",
+        "usernamePlaceholder": "votre Pseudo",
+        "discordNote": "Connexion Discord requise pour participer (1 essai par jour).",
+        "submitText": "Gratter le ticket",
+        "alreadyPlayedMessage": "Tu as déjà joué aujourd'hui, reviens demain !",
+        "winMessage": "",
+        "loseMessage": "Pas de chance cette fois, reviens demain !",
+        "discordButtonText": "Réclamer sur Discord"
       }
     }
   },
@@ -695,7 +723,10 @@ const NITRODROP_DEFAULT_CONFIG = {
     "imageUrl": "floating-icon.png",
     "linkUrl": "https://discord.gg/7h7QHXdZeK"
   },
-  "telegramPosition": "below"
+  "telegramPosition": "below",
+  "scratchTicket": {
+    "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
+  }
 };
 
 // ---------- Fonctions de stockage (partagées site + admin) ----------
