@@ -104,6 +104,10 @@
         <option value="high">Suspicion : élevée</option>
         <option value="medium">Suspicion : moyenne+</option>
       </select>
+      <select id="filter-already-paid" onchange="applyFilters()">
+        <option value="">Déjà payé : tous</option>
+        <option value="yes">Déjà payé : oui</option>
+      </select>
     </div>
 
     <div id="table-container"></div>
@@ -140,15 +144,45 @@
     return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '').replace(/[0-9]+$/, '');
   }
 
+  function ipPrefix(ip){
+    // Large volontairement (on préfère capter trop de cas que d'en rater) :
+    // IPv4 : les 2 premiers blocs (ex: "91.94.100.213" -> "91.94")
+    // IPv6 : les 3 premiers groupes (ex: "2a00:f41:1431:83da..." -> "2a00:f41:1431")
+    if (!ip) return '';
+    if (ip.includes(':')){
+      return ip.split(':').slice(0, 3).join(':').toLowerCase();
+    }
+    return ip.split('.').slice(0, 2).join('.');
+  }
+
+  function computeAlreadyPaidFlags(submissions){
+    submissions.forEach(s => {
+      const tippedOthers = submissions.filter(o =>
+        o.id !== s.id && o.platform === s.platform && o.tipped
+      );
+      const match = tippedOthers.find(o =>
+        (o.discordId && o.discordId === s.discordId) ||
+        (o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase()) ||
+        (o.ip && s.ip && ipPrefix(o.ip) === ipPrefix(s.ip) && ipPrefix(s.ip) !== '') ||
+        (normalizeBase(o.pseudo).length >= 3 && normalizeBase(o.pseudo) === normalizeBase(s.pseudo))
+      );
+      if (match){
+        s._alreadyPaidMatch = match;
+      } else {
+        s._alreadyPaidMatch = null;
+      }
+    });
+  }
+
   function computeSuspicionScores(submissions){
     submissions.forEach(s => {
       s._reasons = [];
       let score = 0;
 
-      const sameIp = submissions.filter(o => o.id !== s.id && o.platform === s.platform && o.ip && o.ip !== 'inconnue' && o.ip === s.ip);
+      const sameIp = submissions.filter(o => o.id !== s.id && o.platform === s.platform && o.ip && o.ip !== 'inconnue' && ipPrefix(o.ip) === ipPrefix(s.ip) && ipPrefix(s.ip) !== '');
       if (sameIp.length){
         score += Math.min(sameIp.length * 25, 50);
-        s._reasons.push(`Même IP que (même casino) : ${[...new Set(sameIp.map(o => o.pseudo))].join(', ')}`);
+        s._reasons.push(`IP du même bloc que (même casino) : ${[...new Set(sameIp.map(o => o.pseudo))].join(', ')}`);
       }
 
       const sameDiscord = submissions.filter(o => o.id !== s.id && o.platform === s.platform && o.discordId && o.discordId === s.discordId);
@@ -201,6 +235,7 @@
       const data = await resp.json();
       allSubmissions = (data.submissions || []).slice().reverse(); // plus récent en premier
       computeSuspicionScores(allSubmissions);
+      computeAlreadyPaidFlags(allSubmissions);
 
       const casinos = [...new Set(allSubmissions.map(s => s.platform))].sort();
       const sel = document.getElementById('filter-casino');
@@ -221,12 +256,14 @@
     const tippedFilter = document.getElementById('filter-tipped').value;
     const archivedFilter = document.getElementById('filter-archived').value;
     const suspicionFilter = document.getElementById('filter-suspicion').value;
+    const alreadyPaidFilter = document.getElementById('filter-already-paid').value;
 
     filtered = allSubmissions.filter(s => {
       if (archivedFilter === 'active' && s.archived) return false;
       if (archivedFilter === 'archived' && !s.archived) return false;
       if (suspicionFilter === 'high' && (s._suspicionScore || 0) < 50) return false;
       if (suspicionFilter === 'medium' && (s._suspicionScore || 0) < 20) return false;
+      if (alreadyPaidFilter === 'yes' && !s._alreadyPaidMatch) return false;
       if (casino && s.platform !== casino) return false;
       if (tippedFilter === 'yes' && !s.tipped) return false;
       if (tippedFilter === 'no' && s.tipped) return false;
@@ -265,6 +302,13 @@
     return `<span title="${escapeHtml(reasons)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:${color}22; color:${color}; cursor:help;">${score} · ${label}</span>`;
   }
 
+  function renderAlreadyPaidBadge(s){
+    const match = s._alreadyPaidMatch;
+    if (!match) return `<span style="color:var(--text-faint); font-size:11.5px;">—</span>`;
+    const detail = `Déjà tipsé : ${match.pseudo || '?'} le ${match.date || '?'}`;
+    return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:#FF7A9022; color:#FF7A90; cursor:help;">🚩 Déjà payé</span>`;
+  }
+
   function renderTable(){
     const container = document.getElementById('table-container');
     if (filtered.length === 0){
@@ -278,12 +322,12 @@
       <tr style="${s.archived ? 'opacity:0.45;' : ''}">
         <td class="mono">${escapeHtml(formatLocalDate(s))}</td>
         <td><span class="badge">${escapeHtml(s.platform || '')}</span></td>
-        <td class="mono"><span class="cell-truncate" style="max-width:90px;" title="${escapeHtml(s.code || '')}">${escapeHtml(s.code || '')}</span></td>
         <td><span class="cell-truncate" style="max-width:100px;" title="${escapeHtml(s.pseudo || '')}">${escapeHtml(s.pseudo || '')}</span></td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.email || '')}">${escapeHtml(s.email || '')}</span></td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}">${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}</span></td>
         <td class="mono"><span class="cell-truncate" style="max-width:110px;" title="${escapeHtml(s.discordId || '—')}">${escapeHtml(s.discordId || '—')}</span></td>
         <td>${renderSuspicionBadge(s)}</td>
+        <td>${renderAlreadyPaidBadge(s)}</td>
         <td style="text-align:center;">
           <input type="checkbox" ${s.tipped ? 'checked' : ''} onchange="toggleTipped('${s.id}', this.checked)">
         </td>
@@ -300,7 +344,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Code</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Suspicion</th><th>Tipsé</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Suspicion</th><th>Déjà payé</th><th>Tipsé</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
