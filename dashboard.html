@@ -103,10 +103,14 @@
         <option value="">Suspicion : tous</option>
         <option value="high">Suspicion : élevée</option>
         <option value="medium">Suspicion : moyenne+</option>
+        <option value="low">Suspicion : faible uniquement</option>
+        <option value="none">Suspicion : aucune</option>
       </select>
       <select id="filter-already-paid" onchange="applyFilters()">
         <option value="">Déjà payé : tous</option>
-        <option value="yes">Déjà payé : oui</option>
+        <option value="yes">🚩 Déjà payé (rouge)</option>
+        <option value="regular">✓ Client régulier (vert)</option>
+        <option value="no">Aucun signal</option>
       </select>
     </div>
 
@@ -279,7 +283,11 @@
       if (archivedFilter === 'archived' && !s.archived) return false;
       if (suspicionFilter === 'high' && (s._suspicionScore || 0) < 50) return false;
       if (suspicionFilter === 'medium' && (s._suspicionScore || 0) < 20) return false;
+      if (suspicionFilter === 'low' && ((s._suspicionScore || 0) === 0 || (s._suspicionScore || 0) >= 20)) return false;
+      if (suspicionFilter === 'none' && (s._suspicionScore || 0) !== 0) return false;
       if (alreadyPaidFilter === 'yes' && !s._alreadyPaidMatch) return false;
+      if (alreadyPaidFilter === 'regular' && !s._returningCustomerMatch) return false;
+      if (alreadyPaidFilter === 'no' && (s._alreadyPaidMatch || s._returningCustomerMatch)) return false;
       if (casino && s.platform !== casino) return false;
       if (tippedFilter === 'yes' && !s.tipped) return false;
       if (tippedFilter === 'no' && s.tipped) return false;
