@@ -400,14 +400,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Best Deals",
           "bonusAmount": "$8.00",
           "bonusSuffix": "$2.00/jour × 4",
-          "desc": "Inscrivez-vous avec le code, indiquez votre nom d'utilisateur et recevez votre bonus. Aucun dépôt requis. ",
+          "desc": "Inscrivez-vous avec le code, indiquez **votre nom d'utilisateur** et recevez votre bonus. **Aucun dépôt requis**. ",
           "code": "welcomebonus2026",
           "signupHref": "https://duel.com/r/welcomebonus2026",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "codeEnabled": true
+          "codeEnabled": true,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         },
         {
           "featured": false,
@@ -418,14 +420,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Instant Payouts",
           "bonusAmount": "$7.00",
           "bonusSuffix": "$1.00/jour × 7",
-          "desc": "Inscrivez-vous avec le code, renseignez votre Pseudo Stake et recevez votre bonus. Aucun dépôt n'est nécessaire. L'activation du bonus peut prendre de 24 à 48 heures.",
+          "desc": "Inscrivez-vous avec le code, renseignez **votre Pseudo Stake** et recevez votre bonus. **Aucun dépôt n'est nécessaire**. L'activation du bonus peut prendre de **24 à 48 heures**.",
           "code": "NKSCAS",
           "signupHref": "https://stake.bet/?c=3eccdsPf",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "codeEnabled": true
+          "codeEnabled": true,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         },
         {
           "featured": false,
@@ -436,14 +440,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Exclusive Offers",
           "bonusAmount": "$5.00",
           "bonusSuffix": "",
-          "desc": "Inscrivez-vous avec le code, déposez 5$ minimum et misez 30$ pour débloquer votre récompense. Réservé aux nouveaux utilisateurs. en anglais",
+          "desc": "Inscrivez-vous avec le code, **déposez 5$** minimum et **misez 30$** pour débloquer votre récompense. Réservé aux nouveaux utilisateurs. ",
           "code": "new",
           "signupHref": "https://rainbet.com/?r=new",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "codeEnabled": true
+          "codeEnabled": true,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         },
         {
           "featured": false,
@@ -454,14 +460,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "",
           "bonusAmount": "$30.00",
           "bonusSuffix": "& 500 FS",
-          "desc": "Inscrivez-vous avec le lien, faites un dépôt de 30$ minimum et recevez 30$ en retour.",
+          "desc": "Inscrivez-vous avec le lien, faites **un dépôt de 30$** minimum et recevez **30$ en retour**.",
           "code": "",
           "signupHref": "https://taap.it/30free",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": false,
           "claimHighlighted": false,
-          "codeEnabled": false
+          "codeEnabled": false,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         },
         {
           "featured": false,
@@ -472,14 +480,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Exclusive Offers",
           "bonusAmount": "$10.00",
           "bonusSuffix": "",
-          "desc": "Inscrivez-vous avec le code, déposez 10$ minimum et misez 50$ pour débloquer votre récompense. Réservé aux nouveaux utilisateurs.",
+          "desc": "Inscrivez-vous avec le code, **déposez 10$ minimum** et misez **50$** pour débloquer votre récompense. Réservé aux nouveaux utilisateurs.",
           "code": "casinofr",
           "codeEnabled": true,
           "signupHref": "https://gamdom.com/r/casinofr",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         },
         {
           "featured": true,
@@ -490,14 +500,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino",
           "bonusAmount": "$15.00",
           "bonusSuffix": "",
-          "desc": "Inscrivez-vous avec le code, déposez 20$ minimum et misez 70$ pour débloquer votre récompense. Réservé aux nouveaux utilisateurs.",
+          "desc": "Inscrivez-vous avec le code, **déposez 20$ minimum** et misez **70$** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
           "code": "",
           "codeEnabled": false,
           "signupHref": "https://flush.com/?LCG6LC",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         },
         {
           "featured": false,
@@ -508,14 +520,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino",
           "bonusAmount": "$1.00",
           "bonusSuffix": "$1.00 une fois",
-          "desc": "Inscrivez-vous avec le code, indiquez votre nom d'utilisateur et recevez votre bonus. Aucun dépôt requis.",
+          "desc": "Inscrivez-vous avec le code, indiquez **votre nom d'utilisateur** et recevez votre bonus. **Aucun dépôt requis**.",
           "code": "NksCasino",
           "codeEnabled": true,
           "signupHref": "https://rollbit.com/referral/NksCasino",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         }
       ],
       "tickerSettings": {
