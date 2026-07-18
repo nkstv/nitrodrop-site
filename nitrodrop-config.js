@@ -68,14 +68,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Best Deals",
           "bonusAmount": "$8.00",
           "bonusSuffix": "$2.00/day × 4",
-          "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+          "desc": "Register with the code, submit your username, and get your tip. **No deposit** needed.",
           "code": "welcomebonus2026",
           "signupHref": "https://duel.com/r/welcomebonus2026",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "codeEnabled": true
+          "codeEnabled": true,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         },
         {
           "featured": false,
@@ -86,14 +88,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Instant Payouts",
           "bonusAmount": "$7.00",
           "bonusSuffix": "$1.00/day × 7",
-          "desc": "Register with the code, submit your username, and claim your bonus. No deposit required. Bonus activation may take 24–48 hours.",
+          "desc": "Register with the code, submit your username, and claim your bonus. **No deposit required**. Bonus activation may take **24–48 hours**.",
           "code": "NKSCAS",
           "signupHref": "https://stake.bet/?c=3eccdsPf",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "codeEnabled": true
+          "codeEnabled": true,
+          "markColorStart": "#0f8a82",
+          "markColorEnd": "#0d7343"
         },
         {
           "featured": false,
@@ -104,14 +108,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Exclusive Offers",
           "bonusAmount": "$5.00",
           "bonusSuffix": "",
-          "desc": "Sign up with the code, deposit a minimum of $5, and wager $30 to claim your reward. New users only.",
+          "desc": "Sign up with the code, deposit a minimum of **$5**, and **wager $30** to claim your reward. New users only.",
           "code": "new",
           "signupHref": "https://rainbet.com/?r=new",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "codeEnabled": true
+          "codeEnabled": true,
+          "markColorStart": "#3748a0",
+          "markColorEnd": "#1d2863"
         },
         {
           "featured": false,
@@ -122,14 +128,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "",
           "bonusAmount": "$30.00",
           "bonusSuffix": "& 500 FS",
-          "desc": "Sign up via the link, make a deposit of at least $30 and receive $30 back. ",
+          "desc": "Sign up via the link, make a deposit of at least **$30** and receive $30 back. ",
           "code": "",
           "signupHref": "https://taap.it/30free",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": false,
           "claimHighlighted": false,
-          "codeEnabled": false
+          "codeEnabled": false,
+          "markColorStart": "#41a51d",
+          "markColorEnd": "#0d540e"
         },
         {
           "featured": false,
@@ -140,14 +148,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Exclusive Offers",
           "bonusAmount": "$10.00",
           "bonusSuffix": "",
-          "desc": "Sign up with the code, deposit a minimum of $10, and wager $50 to claim your reward. New users only.",
+          "desc": "Sign up with the code, deposit a **minimum of $10**, and wager $50 to claim your reward. New users only.",
           "code": "casinofr",
           "codeEnabled": true,
           "signupHref": "https://gamdom.com/r/casinofr",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "markColorStart": "#2c9108",
+          "markColorEnd": "#0e4d0a"
         },
         {
           "featured": true,
@@ -158,14 +168,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino",
           "bonusAmount": "$15.00",
           "bonusSuffix": "",
-          "desc": "Sign up with the code, deposit a minimum of $20, and wager $70 to claim your reward. New users only.",
+          "desc": "Sign up with the code, deposit a minimum of **$20**, and wager $70 to claim your reward. New users only.",
           "code": "",
           "codeEnabled": false,
           "signupHref": "https://flush.com/?LCG6LC",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66"
         },
         {
           "featured": false,
@@ -176,14 +188,16 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino",
           "bonusAmount": "$1.00",
           "bonusSuffix": "$1.00 one time",
-          "desc": "Register with the code, submit your username, and get your tip. No deposit needed.",
+          "desc": "Register with the code, submit your username, and **get your tip**. No deposit needed.",
           "code": "NksCasino",
           "codeEnabled": true,
           "signupHref": "https://rollbit.com/referral/NksCasino",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "markColorStart": "#ffe419",
+          "markColorEnd": "#675c13"
         }
       ],
       "tickerSettings": {
@@ -666,7 +680,8 @@ const NITRODROP_DEFAULT_CONFIG = {
     "enabled": true,
     "imageUrl": "floating-icon.png",
     "linkUrl": "https://discord.gg/7h7QHXdZeK"
-  }
+  },
+  "telegramPosition": "below"
 };
 
 // ---------- Fonctions de stockage (partagées site + admin) ----------
