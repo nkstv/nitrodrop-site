@@ -112,6 +112,11 @@
         <option value="regular">✓ Client régulier (vert)</option>
         <option value="no">Aucun signal</option>
       </select>
+      <select id="filter-qualified" onchange="applyFilters()">
+        <option value="">Qualifié : tous</option>
+        <option value="yes">★ Qualifié : oui</option>
+        <option value="no">Qualifié : non</option>
+      </select>
     </div>
 
     <div id="table-container"></div>
@@ -157,6 +162,19 @@
       return ip.split(':').slice(0, 3).join(':').toLowerCase();
     }
     return ip.split('.').slice(0, 2).join('.');
+  }
+
+  function computeQualifiedFlags(submissions){
+    submissions.forEach(s => {
+      const match = submissions.find(o =>
+        o.id !== s.id &&
+        o.platform !== s.platform &&
+        o.ip && s.ip && o.ip === s.ip && o.ip !== 'inconnue' &&
+        o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase() &&
+        o.discordId && s.discordId && o.discordId === s.discordId
+      );
+      s._qualifiedMatch = match || null;
+    });
   }
 
   function computeAlreadyPaidFlags(submissions){
@@ -262,6 +280,7 @@
       allSubmissions = (data.submissions || []).slice().reverse(); // plus récent en premier
       computeSuspicionScores(allSubmissions);
       computeAlreadyPaidFlags(allSubmissions);
+      computeQualifiedFlags(allSubmissions);
 
       const casinos = [...new Set(allSubmissions.map(s => s.platform))].sort();
       const sel = document.getElementById('filter-casino');
@@ -283,6 +302,7 @@
     const archivedFilter = document.getElementById('filter-archived').value;
     const suspicionFilter = document.getElementById('filter-suspicion').value;
     const alreadyPaidFilter = document.getElementById('filter-already-paid').value;
+    const qualifiedFilter = document.getElementById('filter-qualified').value;
 
     filtered = allSubmissions.filter(s => {
       if (archivedFilter === 'active' && s.archived) return false;
@@ -294,6 +314,8 @@
       if (alreadyPaidFilter === 'yes' && !s._alreadyPaidMatch) return false;
       if (alreadyPaidFilter === 'regular' && !s._returningCustomerMatch) return false;
       if (alreadyPaidFilter === 'no' && (s._alreadyPaidMatch || s._returningCustomerMatch)) return false;
+      if (qualifiedFilter === 'yes' && !s._qualifiedMatch) return false;
+      if (qualifiedFilter === 'no' && s._qualifiedMatch) return false;
       if (casino && s.platform !== casino) return false;
       if (tippedFilter === 'yes' && !s.tipped) return false;
       if (tippedFilter === 'no' && s.tipped) return false;
@@ -332,6 +354,13 @@
     return `<span title="${escapeHtml(reasons)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:${color}22; color:${color}; cursor:help;">${score} · ${label}</span>`;
   }
 
+  function renderQualifiedBadge(s){
+    const match = s._qualifiedMatch;
+    if (!match) return `<span style="color:var(--text-faint); font-size:11.5px;">—</span>`;
+    const detail = `Même IP/email/Discord aussi utilisés sur ${match.platform} (${match.pseudo || '?'}, ${match.date || '?'})`;
+    return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:var(--violet)22; color:var(--violet); cursor:help;">★ Qualifié</span>`;
+  }
+
   function renderAlreadyPaidBadge(s){
     if (s._returningCustomerMatch){
       const m = s._returningCustomerMatch;
@@ -363,6 +392,7 @@
         <td class="mono"><span class="cell-truncate" style="max-width:110px;" title="${escapeHtml(s.discordId || '—')}">${escapeHtml(s.discordId || '—')}</span></td>
         <td>${renderSuspicionBadge(s)}</td>
         <td>${renderAlreadyPaidBadge(s)}</td>
+        <td>${renderQualifiedBadge(s)}</td>
         <td style="text-align:center;">
           <input type="checkbox" ${s.tipped ? 'checked' : ''} onchange="toggleTipped('${s.id}', this.checked)">
         </td>
@@ -379,7 +409,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Suspicion</th><th>Déjà payé</th><th>Tipsé</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Suspicion</th><th>Déjà payé</th><th>Qualifié</th><th>Tipsé</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
