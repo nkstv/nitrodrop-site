@@ -160,17 +160,29 @@
       const tippedOthers = submissions.filter(o =>
         o.id !== s.id && o.platform === s.platform && o.tipped
       );
-      const match = tippedOthers.find(o =>
+
+      // Retour légitime : pseudo + Discord + email identiques -> même personne connue, pas suspect
+      const legitimateReturn = tippedOthers.find(o =>
+        o.discordId && s.discordId && o.discordId === s.discordId &&
+        o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase() &&
+        o.pseudo && s.pseudo && o.pseudo.toLowerCase() === s.pseudo.toLowerCase()
+      );
+
+      if (legitimateReturn){
+        s._alreadyPaidMatch = null;
+        s._returningCustomerMatch = legitimateReturn;
+        return;
+      }
+
+      // Sinon, correspondance partielle (IP/Discord/email/pseudo qui se recoupe SANS que tout corresponde) -> suspect
+      const suspiciousMatch = tippedOthers.find(o =>
         (o.discordId && o.discordId === s.discordId) ||
         (o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase()) ||
         (o.ip && s.ip && ipPrefix(o.ip) === ipPrefix(s.ip) && ipPrefix(s.ip) !== '') ||
         (normalizeBase(o.pseudo).length >= 3 && normalizeBase(o.pseudo) === normalizeBase(s.pseudo))
       );
-      if (match){
-        s._alreadyPaidMatch = match;
-      } else {
-        s._alreadyPaidMatch = null;
-      }
+      s._alreadyPaidMatch = suspiciousMatch || null;
+      s._returningCustomerMatch = null;
     });
   }
 
@@ -303,6 +315,11 @@
   }
 
   function renderAlreadyPaidBadge(s){
+    if (s._returningCustomerMatch){
+      const m = s._returningCustomerMatch;
+      const detail = `Client déjà tipsé le ${m.date || '?'} (même pseudo/Discord/email)`;
+      return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:var(--green)22; color:var(--green); cursor:help;">✓ Client régulier</span>`;
+    }
     const match = s._alreadyPaidMatch;
     if (!match) return `<span style="color:var(--text-faint); font-size:11.5px;">—</span>`;
     const detail = `Déjà tipsé : ${match.pseudo || '?'} le ${match.date || '?'}`;
