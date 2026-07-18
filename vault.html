@@ -946,6 +946,41 @@
   });
 
   // ---- Ticket à gratter / Machine à sous ----
+  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
+
+  function saveDiscordIdentity(discordId, username){
+    try{
+      localStorage.setItem(DISCORD_STORAGE_KEY, JSON.stringify({ discordId, username }));
+    }catch(e){}
+  }
+
+  function getSavedDiscordIdentity(){
+    try{
+      const raw = localStorage.getItem(DISCORD_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+
+  // Réutilise la connexion Discord déjà faite dans une autre popup (évite de se reconnecter à chaque fois)
+  function applyDiscordIdentityToForm(context){
+    const prefix = context === 'slot' ? 'slot' : 'scratch';
+    const saved = getSavedDiscordIdentity();
+    const input = document.getElementById(prefix + '-discord-input');
+    const btn = document.getElementById(prefix + '-discord-connect-btn');
+    const info = document.getElementById(prefix + '-discord-connected-info');
+    if (saved && saved.discordId){
+      input.value = saved.discordId;
+      btn.style.display = 'none';
+      info.style.display = 'block';
+      const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
+      info.textContent = template.replace('{username}', saved.username || 'Discord');
+    } else {
+      input.value = '';
+      btn.style.display = '';
+      info.style.display = 'none';
+    }
+  }
+
   function connectDiscord(context){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
     if (!clientId){
@@ -965,23 +1000,14 @@
   window.addEventListener('message', (event) => {
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
     const { discordId, username } = event.data;
-    const context = window.discordConnectContext || 'scratch';
-    const prefix = context === 'slot' ? 'slot' : 'scratch';
-    document.getElementById(prefix + '-discord-input').value = discordId;
-    document.getElementById(prefix + '-discord-connect-btn').style.display = 'none';
-    const info = document.getElementById(prefix + '-discord-connected-info');
-    info.style.display = 'block';
-    const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
-    info.textContent = template.replace('{username}', username || 'Discord');
+    saveDiscordIdentity(discordId, username);
+    applyDiscordIdentityToForm(window.discordConnectContext || 'scratch');
   });
 
   function openScratchModal(){
     document.getElementById('scratch-step-form').style.display = 'block';
     document.getElementById('scratch-step-card').style.display = 'none';
     document.getElementById('scratch-form').reset();
-    document.getElementById('scratch-discord-input').value = '';
-    document.getElementById('scratch-discord-connect-btn').style.display = '';
-    document.getElementById('scratch-discord-connected-info').style.display = 'none';
     document.getElementById('scratch-form-error').style.display = 'none';
     document.getElementById('scratch-silver').classList.remove('revealed');
     document.getElementById('scratch-discord-claim-btn').style.display = 'none';
@@ -997,6 +1023,7 @@
     document.getElementById('scratch-submit-btn').textContent = st.submitText || 'Gratter le ticket';
     document.getElementById('scratch-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 essai par jour).';
     document.getElementById('scratch-result-title').textContent = st.resultTitle || 'Ton ticket';
+    applyDiscordIdentityToForm('scratch');
 
     document.getElementById('scratch-modal-overlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1081,9 +1108,6 @@
     document.getElementById('slot-step-form').style.display = 'block';
     document.getElementById('slot-step-card').style.display = 'none';
     document.getElementById('slot-form').reset();
-    document.getElementById('slot-discord-input').value = '';
-    document.getElementById('slot-discord-connect-btn').style.display = '';
-    document.getElementById('slot-discord-connected-info').style.display = 'none';
     document.getElementById('slot-form-error').style.display = 'none';
     document.getElementById('slot-discord-claim-btn').style.display = 'none';
     document.querySelectorAll('#slot-reels .slot-reel').forEach(r => r.classList.remove('spinning'));
@@ -1100,6 +1124,7 @@
     document.getElementById('slot-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 spin par jour).';
     document.getElementById('slot-result-title').textContent = st.resultTitle || 'Résultat';
     document.getElementById('slot-result-message').textContent = '';
+    applyDiscordIdentityToForm('slot');
 
     document.getElementById('slot-modal-overlay').classList.add('active');
     document.body.style.overflow = 'hidden';
