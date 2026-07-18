@@ -134,6 +134,13 @@
       <input type="checkbox" id="foil-pack-enabled">
       <label for="foil-pack-enabled">Afficher le pack "foil" décoratif (visuel à droite du hero, sur PC et mobile)</label>
     </div>
+    <div class="field" style="margin-top:14px;">
+      <label>Position du bandeau Telegram</label>
+      <select id="telegram-position">
+        <option value="above">Au-dessus des offres</option>
+        <option value="below">En dessous des offres</option>
+      </select>
+    </div>
   </div>
 
   <!-- BOUTON FLOTTANT -->
@@ -523,6 +530,8 @@
       featured: false,
       badge: '',
       mark: 'N',
+      markColorStart: '#6C3FFF',
+      markColorEnd: '#2A1A66',
       markClass: markClasses[idx % markClasses.length],
       name: 'Nouvelle offre',
       sub: '',
@@ -581,6 +590,14 @@
       rowMark.appendChild(fMark);
       block.appendChild(rowMark);
 
+      const rowMarkColor = el('div', {class:'row'});
+      const fMarkColor1 = el('div', {class:'field'}); fMarkColor1.appendChild(el('label', {text:'Couleur du dégradé (début)'}));
+      const inMarkColor1 = el('input', {type:'color', id:`offer-markColorStart-${i}`, value: offer.markColorStart || '#6C3FFF'}); fMarkColor1.appendChild(inMarkColor1);
+      const fMarkColor2 = el('div', {class:'field'}); fMarkColor2.appendChild(el('label', {text:'Couleur du dégradé (fin)'}));
+      const inMarkColor2 = el('input', {type:'color', id:`offer-markColorEnd-${i}`, value: offer.markColorEnd || '#2A1A66'}); fMarkColor2.appendChild(inMarkColor2);
+      rowMarkColor.appendChild(fMarkColor1); rowMarkColor.appendChild(fMarkColor2);
+      block.appendChild(rowMarkColor);
+
       const row2 = el('div', {class:'row'});
       const f3 = el('div', {class:'field'}); f3.appendChild(el('label', {text:'Montant du bonus'}));
       const in3 = el('input', {type:'text', id:`offer-bonusAmount-${i}`, value: offer.bonusAmount}); f3.appendChild(in3);
@@ -589,7 +606,7 @@
       row2.appendChild(f3); row2.appendChild(f4);
       block.appendChild(row2);
 
-      const fDesc = el('div', {class:'field'}); fDesc.appendChild(el('label', {text:'Description'}));
+      const fDesc = el('div', {class:'field'}); fDesc.appendChild(el('label', {text:'Description (utilise **texte** pour du gras)'}));
       const taDesc = el('textarea', {id:`offer-desc-${i}`}); taDesc.value = offer.desc; fDesc.appendChild(taDesc);
       block.appendChild(fDesc);
 
@@ -686,6 +703,7 @@
     document.getElementById('hero-banner-enabled').checked = !!cfg.heroBanner.enabled;
     document.getElementById('hero-banner-url').value = cfg.heroBanner.imageUrl || 'hero-banner.jpg';
     document.getElementById('foil-pack-enabled').checked = cfg.foilPackEnabled !== false;
+    document.getElementById('telegram-position').value = cfg.telegramPosition || 'above';
     cfg.floatingWidget = cfg.floatingWidget || {};
     document.getElementById('floating-widget-enabled').checked = !!cfg.floatingWidget.enabled;
     document.getElementById('floating-widget-image').value = cfg.floatingWidget.imageUrl || '';
@@ -810,6 +828,7 @@
     cfg.heroBanner.enabled = document.getElementById('hero-banner-enabled').checked;
     cfg.heroBanner.imageUrl = document.getElementById('hero-banner-url').value;
     cfg.foilPackEnabled = document.getElementById('foil-pack-enabled').checked;
+    cfg.telegramPosition = document.getElementById('telegram-position').value;
     cfg.floatingWidget = cfg.floatingWidget || {};
     cfg.floatingWidget.enabled = document.getElementById('floating-widget-enabled').checked;
     cfg.floatingWidget.imageUrl = document.getElementById('floating-widget-image').value;
@@ -864,6 +883,8 @@
       name: document.getElementById(`offer-name-${i}`).value,
       sub: document.getElementById(`offer-sub-${i}`).value,
       mark: document.getElementById(`offer-mark-${i}`).value,
+      markColorStart: document.getElementById(`offer-markColorStart-${i}`).value,
+      markColorEnd: document.getElementById(`offer-markColorEnd-${i}`).value,
       bonusAmount: document.getElementById(`offer-bonusAmount-${i}`).value,
       bonusSuffix: document.getElementById(`offer-bonusSuffix-${i}`).value,
       desc: document.getElementById(`offer-desc-${i}`).value,

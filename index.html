@@ -753,6 +753,12 @@
       .replaceAll('"','&quot;');
   }
 
+  // Échappe d'abord tout le HTML (sécurité), PUIS convertit **texte** en gras.
+  // Comme l'échappement se fait en premier, aucune balise réelle ne peut être injectée.
+  function formatWithBold(str){
+    return escapeHtml(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+
   function fillTemplate(tpl, vars){
     return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
   }
@@ -930,14 +936,14 @@
       card.innerHTML = `
         ${offer.featured ? `<div class="featured-tag">${escapeHtml(offer.badge)}</div>` : ''}
         <div class="offer-top">
-          <div class="offer-mark ${offer.markClass}">${escapeHtml(offer.mark)}</div>
+          <div class="offer-mark ${offer.markClass}" ${offer.markColorStart && offer.markColorEnd ? `style="background:linear-gradient(135deg, ${escapeHtml(offer.markColorStart)}, ${escapeHtml(offer.markColorEnd)});"` : ''}>${escapeHtml(offer.mark)}</div>
           <div>
             <div class="offer-name">${escapeHtml(offer.name)}</div>
             <div class="offer-sub">${escapeHtml(offer.sub)}</div>
           </div>
         </div>
         <div class="offer-bonus">${escapeHtml(offer.bonusAmount)} <small>${escapeHtml(offer.bonusSuffix)}</small></div>
-        <div class="offer-desc">${escapeHtml(offer.desc)}</div>
+        <div class="offer-desc">${formatWithBold(offer.desc)}</div>
         ${offer.codeEnabled === false ? '' : `
         <div class="offer-code-row">
           <span>Code</span>
@@ -1197,6 +1203,18 @@
     const foilEl = document.getElementById('foil-stage');
     const enabled = CONFIG.foilPackEnabled !== false; // activé par défaut
     foilEl.style.display = enabled ? '' : 'none';
+  })();
+
+  // Position du bandeau Telegram (au-dessus ou en dessous des offres) — indépendant de la langue
+  (function applyTelegramPosition(){
+    const tgSection = document.querySelector('.tg-section');
+    const offresSection = document.getElementById('offres');
+    if (!tgSection || !offresSection) return;
+    if (CONFIG.telegramPosition === 'below'){
+      offresSection.parentNode.insertBefore(tgSection, offresSection.nextSibling);
+    } else {
+      offresSection.parentNode.insertBefore(tgSection, offresSection);
+    }
   })();
 
   // Bouton flottant (image + lien) — indépendant de la langue
