@@ -521,6 +521,7 @@
         <div id="scratch-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
         <input type="hidden" id="scratch-discord-input">
         <button type="submit" class="modal-submit" id="scratch-submit-btn">Gratter le ticket</button>
+        <p id="scratch-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
       </form>
       <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
     </div>
@@ -557,6 +558,7 @@
         <div id="slot-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
         <input type="hidden" id="slot-discord-input">
         <button type="submit" class="modal-submit" id="slot-submit-btn">Spin</button>
+        <p id="slot-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
       </form>
       <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
     </div>
@@ -981,6 +983,73 @@
     }
   }
 
+  // ---------- Compte à rebours "déjà joué aujourd'hui" (ticket + slot) ----------
+  const cooldownIntervals = {};
+
+  function msUntilNextUtcMidnight(){
+    const now = new Date();
+    const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
+    return next - now.getTime();
+  }
+
+  function formatCountdown(ms){
+    if (ms < 0) ms = 0;
+    const totalSec = Math.floor(ms / 1000);
+    const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+    const s = String(totalSec % 60).padStart(2, '0');
+    return `${h}:${m}:${s}`;
+  }
+
+  function clearCooldown(prefix){
+    if (cooldownIntervals[prefix]){
+      clearInterval(cooldownIntervals[prefix]);
+      cooldownIntervals[prefix] = null;
+    }
+  }
+
+  function showCooldown(prefix, template){
+    clearCooldown(prefix);
+    const submitBtn = document.getElementById(prefix + '-submit-btn');
+    const msgEl = document.getElementById(prefix + '-cooldown-message');
+    submitBtn.style.display = 'none';
+    msgEl.style.display = 'block';
+    const tick = () => {
+      const ms = msUntilNextUtcMidnight();
+      msgEl.textContent = fillTemplate(template || 'Reviens dans {time}', { time: formatCountdown(ms) });
+      if (ms <= 1000){
+        clearCooldown(prefix);
+        hideCooldown(prefix);
+      }
+    };
+    tick();
+    cooldownIntervals[prefix] = setInterval(tick, 1000);
+  }
+
+  function hideCooldown(prefix){
+    clearCooldown(prefix);
+    const submitBtn = document.getElementById(prefix + '-submit-btn');
+    const msgEl = document.getElementById(prefix + '-cooldown-message');
+    submitBtn.style.display = '';
+    msgEl.style.display = 'none';
+  }
+
+  async function checkAlreadyPlayed(prefix, discordId){
+    if (!discordId){ hideCooldown(prefix); return; }
+    const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : 'slotMachine'] || {};
+    try{
+      const resp = await fetch(`${workerBase}/${prefix}/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      if (data.alreadyPlayed){
+        showCooldown(prefix, st.cooldownMessage || 'Reviens dans {time}');
+      } else {
+        hideCooldown(prefix);
+      }
+    }catch(err){
+      hideCooldown(prefix);
+    }
+  }
+
   function connectDiscord(context){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
     if (!clientId){
@@ -1001,7 +1070,9 @@
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
     const { discordId, username } = event.data;
     saveDiscordIdentity(discordId, username);
-    applyDiscordIdentityToForm(window.discordConnectContext || 'scratch');
+    const ctx = window.discordConnectContext || 'scratch';
+    applyDiscordIdentityToForm(ctx);
+    checkAlreadyPlayed(ctx === 'slot' ? 'slot' : 'scratch', discordId);
   });
 
   function openScratchModal(){
@@ -1024,6 +1095,7 @@
     document.getElementById('scratch-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 essai par jour).';
     document.getElementById('scratch-result-title').textContent = st.resultTitle || 'Ton ticket';
     applyDiscordIdentityToForm('scratch');
+    checkAlreadyPlayed('scratch', document.getElementById('scratch-discord-input').value);
 
     document.getElementById('scratch-modal-overlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1032,6 +1104,7 @@
   function closeScratchModal(){
     document.getElementById('scratch-modal-overlay').classList.remove('active');
     document.body.style.overflow = '';
+    clearCooldown('scratch');
   }
 
   function showScratchFormError(msg){
@@ -1125,6 +1198,7 @@
     document.getElementById('slot-result-title').textContent = st.resultTitle || 'Résultat';
     document.getElementById('slot-result-message').textContent = '';
     applyDiscordIdentityToForm('slot');
+    checkAlreadyPlayed('slot', document.getElementById('slot-discord-input').value);
 
     document.getElementById('slot-modal-overlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1133,6 +1207,7 @@
   function closeSlotModal(){
     document.getElementById('slot-modal-overlay').classList.remove('active');
     document.body.style.overflow = '';
+    clearCooldown('slot');
   }
 
   function showSlotFormError(msg){
