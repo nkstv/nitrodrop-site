@@ -1690,6 +1690,13 @@
                 claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
                 claimBtn.href = (CONFIG.slotMachine && CONFIG.slotMachine.discordClaimLink) || '#';
               } else {
+                // On force un résultat qui ne ressemble pas à une victoire (pas les 3 symboles identiques)
+                const pick = () => SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+                let a = pick(), b = pick(), c = pick();
+                if (a === b && b === c){
+                  do { c = pick(); } while (c === a);
+                }
+                syms[0].textContent = a; syms[1].textContent = b; syms[2].textContent = c;
                 msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
               }
             }
