@@ -16,7 +16,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Bonus Codes & Offers",
-            "href": "#offres "
+            "href": "#offres"
           },
           {
             "label": "Discord",
@@ -444,7 +444,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Codes bonus et offres",
-            "href": "#offres "
+            "href": "#offres"
           },
           {
             "label": "Discord",
@@ -902,17 +902,32 @@ function nitrodropDeepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+function nitrodropDeepMerge(defaults, saved) {
+  // Les tableaux (offres, ticker, liens...) sont gérés entièrement par l'admin :
+  // si une version sauvegardée existe, elle remplace le tableau par défaut en entier.
+  if (Array.isArray(defaults) || Array.isArray(saved)) {
+    return saved !== undefined ? saved : defaults;
+  }
+  // Les objets simples sont fusionnés récursivement, clé par clé,
+  // pour qu'une nouvelle clé ajoutée aux valeurs par défaut ne soit jamais perdue.
+  if (typeof defaults === 'object' && defaults !== null && typeof saved === 'object' && saved !== null) {
+    const result = { ...defaults };
+    for (const key of Object.keys(saved)) {
+      if (saved[key] !== undefined) {
+        result[key] = nitrodropDeepMerge(defaults[key], saved[key]);
+      }
+    }
+    return result;
+  }
+  return saved !== undefined ? saved : defaults;
+}
+
 function nitrodropLoadConfig() {
   try {
     const raw = localStorage.getItem(NITRODROP_STORAGE_KEY);
     if (!raw) return nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
     const saved = JSON.parse(raw);
-    const merged = nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
-    const allKeys = new Set([...Object.keys(merged), ...Object.keys(saved)]);
-    for (const key of allKeys) {
-      if (saved[key] !== undefined) merged[key] = saved[key];
-    }
-    return merged;
+    return nitrodropDeepMerge(nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG), saved);
   } catch (e) {
     console.error('Config NitroDrop illisible, retour aux valeurs par défaut.', e);
     return nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
