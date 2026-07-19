@@ -954,10 +954,11 @@
       return '<span style="color:var(--text-faint);">—</span>';
     }
     const amount = entry.totalEarned || 0;
+    const wageredInfo = entry.wagered ? ` — misé $${entry.wagered.toFixed(2)}` : '';
     if (amount > 0){
-      return `<span style="color:var(--green); font-weight:700;">$${amount.toFixed(2)}</span>`;
+      return `<span style="color:var(--green); font-weight:700;" title="Inscrit le ${escapeHtml(entry.joined || '?')}${wageredInfo}">$${amount.toFixed(2)}</span>`;
     }
-    return `<span style="color:#FF7A90;" title="Inscrit le ${escapeHtml(entry.joined || '?')}, aucun gain enregistré">$0.00</span>`;
+    return `<span style="color:#FF7A90;" title="Inscrit le ${escapeHtml(entry.joined || '?')}, aucun gain enregistré${wageredInfo}">$0.00</span>`;
   }
 
   // Charge les données affiliés nécessaires pour croiser avec les demandes de bonus actuellement affichées
@@ -1062,17 +1063,21 @@
     const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
     if (lines.length < 2) return [];
     const header = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
-    const idxPlayer = header.findIndex(h => h.includes('player'));
-    const idxEarned = header.findIndex(h => h.includes('earned'));
-    const idxJoined = header.findIndex(h => h.includes('joined'));
+    const findCol = (candidates) => header.findIndex(h => candidates.some(c => h.includes(c)));
+    const idxPlayer = findCol(['player', 'user', 'username', 'pseudo']);
+    const idxEarned = findCol(['earned', 'income', 'commission', 'revenue']);
+    const idxJoined = findCol(['joined', 'referred', 'signup', 'registered', 'date']);
+    const idxWagered = findCol(['wager', 'misé', 'deposit']);
 
     return lines.slice(1).map(line => {
       const cols = parseCSVLine(line);
       const pseudo = (cols[idxPlayer] || '').trim();
       const earnedRaw = (cols[idxEarned] || '').trim();
       const joined = (cols[idxJoined] || '').trim();
+      const wageredRaw = idxWagered >= 0 ? (cols[idxWagered] || '').trim() : '';
       const totalEarned = parseFloat(earnedRaw.replace(/[^0-9.\-]/g, '')) || 0;
-      return { pseudo, totalEarned, joined };
+      const wagered = wageredRaw ? (parseFloat(wageredRaw.replace(/[^0-9.\-]/g, '')) || 0) : 0;
+      return { pseudo, totalEarned, joined, wagered };
     }).filter(p => p.pseudo);
   }
 
@@ -1110,11 +1115,11 @@
         `Aperçu des 5 premières lignes ci-dessous.`;
 
       const previewRows = players.slice(0, 5).map(p => `
-        <tr><td>${escapeHtml(p.pseudo)}</td><td>$${p.totalEarned.toFixed(2)}</td><td class="mono">${escapeHtml(p.joined)}</td></tr>
+        <tr><td>${escapeHtml(p.pseudo)}</td><td>$${p.totalEarned.toFixed(2)}</td><td>$${(p.wagered || 0).toFixed(2)}</td><td class="mono">${escapeHtml(p.joined)}</td></tr>
       `).join('');
       document.getElementById('affiliate-preview-table').innerHTML = `
         <table>
-          <thead><tr><th>Pseudo</th><th>Gains</th><th>Inscrit le</th></tr></thead>
+          <thead><tr><th>Pseudo</th><th>Gains</th><th>Misé</th><th>Inscrit le</th></tr></thead>
           <tbody>${previewRows}</tbody>
         </table>
       `;
@@ -1185,10 +1190,12 @@
   function renderAffiliateStats(players){
     const total = players.length;
     const totalEarned = players.reduce((sum, p) => sum + (p.totalEarned || 0), 0);
+    const totalWagered = players.reduce((sum, p) => sum + (p.wagered || 0), 0);
     const zeroCount = players.filter(p => (p.totalEarned || 0) === 0).length;
     document.getElementById('affiliate-stats').innerHTML = `
       <div class="stat"><div class="n">${total}</div><div class="l">Joueurs importés</div></div>
       <div class="stat"><div class="n">$${totalEarned.toFixed(2)}</div><div class="l">Gains cumulés</div></div>
+      <div class="stat"><div class="n">$${totalWagered.toFixed(2)}</div><div class="l">Total misé</div></div>
       <div class="stat"><div class="n">${zeroCount}</div><div class="l">À $0.00</div></div>
     `;
   }
@@ -1212,12 +1219,13 @@
       <tr>
         <td>${escapeHtml(p.pseudo)}</td>
         <td>$${(p.totalEarned || 0).toFixed(2)}</td>
+        <td>$${(p.wagered || 0).toFixed(2)}</td>
         <td class="mono">${escapeHtml(p.joined || '')}</td>
       </tr>
     `).join('');
     container.innerHTML = `
       <table>
-        <thead><tr><th>Pseudo</th><th>Gains</th><th>Inscrit le</th></tr></thead>
+        <thead><tr><th>Pseudo</th><th>Gains</th><th>Misé</th><th>Inscrit le</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     `;
