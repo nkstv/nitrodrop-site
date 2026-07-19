@@ -361,7 +361,7 @@
 
 <nav>
   <div class="wrap nav-inner">
-    <a class="logo" href="index.html"><div class="logo-mark">⚡</div><span id="brand-text1-nav">DROP</span><span id="brand-text2-nav" class="logo-accent">CASH</span></a>
+    <a class="logo" href="/"><div class="logo-mark">⚡</div><span id="brand-text1-nav">DROP</span><span id="brand-text2-nav" class="logo-accent">CASH</span></a>
     <div class="nav-links" id="nav-links">
       <a href="#" id="nav-link-0">Codes bonus</a>
       <a href="#" id="nav-link-1">Classement</a>
@@ -374,7 +374,7 @@
       <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
       <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
     </div>
-    <a href="index.html#offres" class="nav-cta" id="nav-cta">Voir les codes</a>
+    <a href="/#offres" class="nav-cta" id="nav-cta">Voir les codes</a>
     <button class="burger" aria-label="Menu" id="burger-btn"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-nav" id="mobile-nav">
@@ -383,7 +383,7 @@
       <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
     </div>
     <div style="padding:14px 32px; border-bottom:1px solid var(--line);">
-      <a href="index.html#offres" class="nav-cta" id="nav-cta-mobile" style="display:block; text-align:center;">Voir les codes</a>
+      <a href="/#offres" class="nav-cta" id="nav-cta-mobile" style="display:block; text-align:center;">Voir les codes</a>
     </div>
     <a href="#" id="mobile-nav-link-0">Codes bonus</a>
     <a href="#" id="mobile-nav-link-1">Classement</a>
@@ -474,7 +474,7 @@
 <footer>
   <div class="wrap">
     <div class="footer-top">
-      <a class="logo" href="index.html"><div class="logo-mark">⚡</div><span id="brand-text1-footer">DROP</span><span id="brand-text2-footer" class="logo-accent">CASH</span></a>
+      <a class="logo" href="/"><div class="logo-mark">⚡</div><span id="brand-text1-footer">DROP</span><span id="brand-text2-footer" class="logo-accent">CASH</span></a>
       <div class="footer-cols">
         <div class="footer-col">
           <h4 id="footer-nav-title">Navigation</h4>
@@ -656,20 +656,28 @@
 
     // Les liens du menu pointent vers les sections de la page d'accueil
     cfg.nav.links.forEach((link, i) => {
-      const href = link.href && link.href.startsWith('#') ? 'index.html' + link.href : link.href;
+      const href = link.href && link.href.startsWith('#') ? '/' + link.href : link.href;
       const el = document.getElementById('nav-link-' + i);
       if (el){
-        if (link.label && link.label.trim()){ el.textContent = link.label; el.href = href; el.style.display = ''; }
+        if (link.label && link.label.trim()){
+          el.textContent = link.label; el.href = href; el.style.display = '';
+          if (link.newTab){ el.target = '_blank'; el.rel = 'noopener'; }
+          else { el.removeAttribute('target'); el.removeAttribute('rel'); }
+        }
         else { el.style.display = 'none'; }
       }
       const mEl = document.getElementById('mobile-nav-link-' + i);
       if (mEl){
-        if (link.label && link.label.trim()){ mEl.textContent = link.label; mEl.href = href; mEl.style.display = ''; }
+        if (link.label && link.label.trim()){
+          mEl.textContent = link.label; mEl.href = href; mEl.style.display = '';
+          if (link.newTab){ mEl.target = '_blank'; mEl.rel = 'noopener'; }
+          else { mEl.removeAttribute('target'); mEl.removeAttribute('rel'); }
+        }
         else { mEl.style.display = 'none'; }
       }
     });
 
-    const ctaHref = cfg.nav.ctaHref && cfg.nav.ctaHref.startsWith('#') ? 'index.html' + cfg.nav.ctaHref : cfg.nav.ctaHref;
+    const ctaHref = cfg.nav.ctaHref && cfg.nav.ctaHref.startsWith('#') ? '/' + cfg.nav.ctaHref : cfg.nav.ctaHref;
     const navCta = document.getElementById('nav-cta');
     navCta.textContent = cfg.nav.ctaText;
     navCta.href = ctaHref;
@@ -679,14 +687,18 @@
 
     document.getElementById('footer-nav-title').textContent = cfg.footer.navTitle;
     cfg.footer.navLinks.forEach((link, i) => {
-      const href = link.href && link.href.startsWith('#') ? 'index.html' + link.href : link.href;
+      const href = link.href && link.href.startsWith('#') ? '/' + link.href : link.href;
       const el = document.getElementById('footer-nav-link-' + i);
       if (el){ el.textContent = link.label; el.href = href; }
     });
     document.getElementById('footer-community-title').textContent = cfg.footer.communityTitle;
     cfg.footer.communityLinks.forEach((link, i) => {
       const el = document.getElementById('footer-community-link-' + i);
-      if (el){ el.textContent = link.label; el.href = link.href; }
+      if (el){
+        el.textContent = link.label; el.href = link.href;
+        if (link.newTab){ el.target = '_blank'; el.rel = 'noopener'; }
+        else { el.removeAttribute('target'); el.removeAttribute('rel'); }
+      }
     });
     document.getElementById('footer-disclaimer').textContent = cfg.footer.disclaimer;
     document.querySelectorAll('.modal-close').forEach(btn => {

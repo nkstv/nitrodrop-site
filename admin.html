@@ -81,7 +81,7 @@
   <h1>NITRO<span>DROP</span> — Panel admin</h1>
   <div class="topbar-actions">
     <button class="btn btn-reset" onclick="doReset()">Réinitialiser</button>
-    <a href="index.html" target="_blank"><button class="btn btn-open" type="button">Ouvrir le site</button></a>
+    <a href="/" target="_blank"><button class="btn btn-open" type="button">Ouvrir le site</button></a>
     <button class="btn btn-save" onclick="doSave()">Enregistrer</button>
   </div>
 </div>
@@ -625,7 +625,14 @@
       f2.appendChild(el('label', {text:`Lien ${i+1} — url`}));
       const in2 = el('input', {type:'text', id:`nav-link-href-${i}`, value: link.href});
       f2.appendChild(in2);
-      row.appendChild(f1); row.appendChild(f2);
+      const f3 = el('div', {class:'field', style:'display:flex; align-items:flex-end; padding-bottom:10px;'});
+      const chkWrap = el('div', {style:'display:flex; align-items:center; gap:8px;'});
+      const chk = el('input', {type:'checkbox', id:`nav-link-newtab-${i}`});
+      chk.checked = link.newTab === true;
+      chkWrap.appendChild(chk);
+      chkWrap.appendChild(el('label', {for:`nav-link-newtab-${i}`, text:'Nouvel onglet', style:'margin:0; text-transform:none; font-weight:400;'}));
+      f3.appendChild(chkWrap);
+      row.appendChild(f1); row.appendChild(f2); row.appendChild(f3);
       container.appendChild(row);
     });
   }
@@ -791,10 +798,13 @@
     content.footer.communityLinks.forEach((link, i) => {
       const f = el('div', {class:'field'});
       f.appendChild(el('label', {text:`Colonne 2 — lien ${i+1}`}));
-      const wrap = el('div', {style:'display:flex; gap:6px;'});
+      const wrap = el('div', {style:'display:flex; gap:6px; align-items:center;'});
       const in1 = el('input', {type:'text', id:`footer-community-label-${i}`, value: link.label, style:'flex:1;'});
       const in2 = el('input', {type:'text', id:`footer-community-href-${i}`, value: link.href, style:'flex:1;'});
-      wrap.appendChild(in1); wrap.appendChild(in2);
+      const chk = el('input', {type:'checkbox', id:`footer-community-newtab-${i}`});
+      chk.checked = link.newTab === true;
+      const chkLabel = el('label', {for:`footer-community-newtab-${i}`, text:'Nouvel onglet', style:'margin:0; text-transform:none; font-weight:400; white-space:nowrap;'});
+      wrap.appendChild(in1); wrap.appendChild(in2); wrap.appendChild(chk); wrap.appendChild(chkLabel);
       f.appendChild(wrap);
       rowCom.appendChild(f);
     });
@@ -1002,7 +1012,8 @@
 
     content.nav.links = content.nav.links.map((link, i) => ({
       label: document.getElementById(`nav-link-label-${i}`).value,
-      href: document.getElementById(`nav-link-href-${i}`).value
+      href: document.getElementById(`nav-link-href-${i}`).value,
+      newTab: document.getElementById(`nav-link-newtab-${i}`).checked
     }));
     content.nav.ctaText = document.getElementById('nav-ctaText').value;
     content.nav.ctaHref = document.getElementById('nav-ctaHref').value;
@@ -1079,7 +1090,8 @@
     content.footer.communityTitle = document.getElementById('footer-communityTitle').value;
     content.footer.communityLinks = content.footer.communityLinks.map((link, i) => ({
       label: document.getElementById(`footer-community-label-${i}`).value,
-      href: document.getElementById(`footer-community-href-${i}`).value
+      href: document.getElementById(`footer-community-href-${i}`).value,
+      newTab: document.getElementById(`footer-community-newtab-${i}`).checked
     }));
     content.footer.disclaimer = document.getElementById('footer-disclaimer').value;
 
