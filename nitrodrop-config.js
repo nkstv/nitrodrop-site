@@ -311,6 +311,7 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "modal": {
         "gateSubTemplate": "Have you already signed up to {platform} using the code {code}?",
+        "gateSubTemplateNoCode": "Have you already signed up to {platform} using the link?",
         "gateYesText": "Yes, I'm registered",
         "gateNoText": "No, I’ll sign up first",
         "formTag": "Claim the bonus",
@@ -714,6 +715,7 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "modal": {
         "gateSubTemplate": "Vous êtes-vous déjà inscrit sur {platform} en utilisant le code {code} ?",
+        "gateSubTemplateNoCode": "Vous êtes-vous déjà inscrit sur {platform} en utilisant le lien ?",
         "gateYesText": "Oui, je suis inscrit(e)",
         "gateNoText": "Non, je vais d'abord m'inscrire",
         "formTag": "Réclamez le bonus",

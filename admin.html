@@ -389,7 +389,8 @@
 
     <div class="subheading">Étape 1 — Es-tu déjà inscrit ?</div>
     <div class="field"><label>Étiquette</label><input type="text" id="modal-gateTag"></div>
-    <div class="field"><label>Texte de la question</label><textarea id="modal-gateSubTemplate"></textarea></div>
+    <div class="field"><label>Texte de la question (offre AVEC code promo)</label><textarea id="modal-gateSubTemplate"></textarea></div>
+    <div class="field"><label>Texte de la question (offre SANS code promo — quand "Afficher un code promo" est décoché)</label><textarea id="modal-gateSubTemplateNoCode" placeholder="Have you already signed up to {platform} using the link?"></textarea></div>
     <div class="row">
       <div class="field"><label>Bouton "Oui"</label><input type="text" id="modal-gateYesText"></div>
       <div class="field"><label>Bouton "Non"</label><input type="text" id="modal-gateNoText"></div>
@@ -861,6 +862,7 @@
 
     document.getElementById('modal-gateTag').value = content.modal.gateTag || '';
     document.getElementById('modal-gateSubTemplate').value = content.modal.gateSubTemplate;
+    document.getElementById('modal-gateSubTemplateNoCode').value = content.modal.gateSubTemplateNoCode || '';
     document.getElementById('modal-gateYesText').value = content.modal.gateYesText;
     document.getElementById('modal-gateNoText').value = content.modal.gateNoText;
     document.getElementById('modal-formTag').value = content.modal.formTag;
@@ -1083,6 +1085,7 @@
 
     content.modal.gateTag = document.getElementById('modal-gateTag').value;
     content.modal.gateSubTemplate = document.getElementById('modal-gateSubTemplate').value;
+    content.modal.gateSubTemplateNoCode = document.getElementById('modal-gateSubTemplateNoCode').value;
     content.modal.gateYesText = document.getElementById('modal-gateYesText').value;
     content.modal.gateNoText = document.getElementById('modal-gateNoText').value;
     content.modal.formTag = document.getElementById('modal-formTag').value;

@@ -1096,7 +1096,7 @@
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const offer = cfg.offers[parseInt(btn.dataset.claimIdx, 10)];
-        openModal(offer.name, offer.code, offer.signupHref);
+        openModal(offer.name, offer.code, offer.signupHref, offer.codeEnabled !== false);
       });
     });
   }
@@ -1132,11 +1132,14 @@
   let countdownInterval = null;
   let currentSignupUrl = '#';
 
-  function openModal(platform, code, signupUrl){
+  function openModal(platform, code, signupUrl, codeEnabled){
     currentSignupUrl = signupUrl || '#';
     document.getElementById('gate-platform-name').innerText = platform;
+    const gateTemplate = (codeEnabled !== false && code)
+      ? getActive().modal.gateSubTemplate
+      : (getActive().modal.gateSubTemplateNoCode || getActive().modal.gateSubTemplate);
     document.getElementById('gate-sub').innerHTML =
-      fillTemplate(escapeHtml(getActive().modal.gateSubTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
+      fillTemplate(escapeHtml(gateTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
     document.getElementById('modal-platform-name').innerText = platform;
     document.getElementById('form-sub').innerHTML =
       fillTemplate(escapeHtml(getActive().modal.formSubTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
