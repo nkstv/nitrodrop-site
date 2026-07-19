@@ -93,6 +93,7 @@
       <button class="dash-tab active" id="tab-btn-bonus" onclick="switchDashTab('bonus')">Demandes de bonus</button>
       <button class="dash-tab" id="tab-btn-scratch" onclick="switchDashTab('scratch')">🎫 Ticket à gratter</button>
       <button class="dash-tab" id="tab-btn-slot" onclick="switchDashTab('slot')">🎰 Machine à sous</button>
+      <button class="dash-tab" id="tab-btn-affiliates" onclick="switchDashTab('affiliates')">📊 Affiliés</button>
     </div>
 
     <div id="tab-bonus">
@@ -183,6 +184,53 @@
       </div>
 
       <div id="slot-table-container"></div>
+    </div>
+
+    <div id="tab-affiliates" style="display:none;">
+      <div class="sub" style="margin-bottom:16px;">
+        Importe l'export CSV de ton panel affilié (colonnes attendues : <code>Player</code>, <code>Total Earned</code>, <code>Joined</code>).
+        Chaque import remplace les données du casino concerné — c'est une photo au moment de l'import, pas du temps réel.
+      </div>
+
+      <div class="toolbar" style="align-items:flex-end;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase;">Casino</label>
+          <select id="affiliate-casino-select" style="min-width:220px;" onchange="onAffiliateCasinoSelectChange()">
+            <option value="">Choisir un casino existant...</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;" id="affiliate-casino-custom-wrap">
+          <label style="font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase;">Ou nouveau casino (nom exact utilisé dans les offres)</label>
+          <input type="text" id="affiliate-casino-custom" placeholder="Ex: Duel.com" style="min-width:220px;">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase;">Fichier CSV</label>
+          <input type="file" id="affiliate-csv-input" accept=".csv" onchange="handleAffiliateCsvSelected(event)">
+        </div>
+      </div>
+
+      <div id="affiliate-preview" style="display:none; margin-top:16px;">
+        <div class="sub" id="affiliate-preview-summary"></div>
+        <div id="affiliate-preview-table"></div>
+        <div style="margin-top:12px; display:flex; gap:10px;">
+          <button type="button" class="btn btn-save" onclick="confirmAffiliateImport()">Confirmer l'import</button>
+          <button type="button" class="btn" onclick="cancelAffiliateImport()">Annuler</button>
+        </div>
+        <div id="affiliate-import-status" style="margin-top:10px; font-size:12.5px;"></div>
+      </div>
+
+      <div class="subheading" style="margin-top:26px;">Casinos importés</div>
+      <div id="affiliate-casinos-list" style="margin-bottom:20px;"></div>
+
+      <div class="subheading">Détail par casino</div>
+      <div class="toolbar">
+        <select id="affiliate-view-select" onchange="loadAffiliateCasinoData()">
+          <option value="">Choisir un casino à afficher...</option>
+        </select>
+        <input type="text" id="affiliate-filter-search" placeholder="Rechercher un pseudo..." oninput="applyAffiliateFilters()" style="min-width:220px;">
+      </div>
+      <div class="stats" id="affiliate-stats"></div>
+      <div id="affiliate-table-container"></div>
     </div>
   </div>
 </div>
@@ -407,6 +455,7 @@
         casinos.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
 
       applyFilters();
+      loadAffiliateLookupForSubmissions();
     }catch(err){
       console.error(err);
       document.getElementById('table-container').innerHTML =
@@ -530,6 +579,7 @@
         <td>${renderSuspicionBadge(s)}</td>
         <td>${renderAlreadyPaidBadge(s)}</td>
         <td>${renderQualifiedBadge(s)}</td>
+        <td>${renderAffiliateBadge(s)}</td>
         <td style="text-align:center;">
           <input type="checkbox" ${s.tipped ? 'checked' : ''} onchange="toggleTipped('${s.id}', this.checked)">
         </td>
@@ -546,7 +596,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Compte Discord</th><th>Appareil</th><th>Suspicion</th><th>Déjà payé</th><th>Qualifié</th><th>Tipsé</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Compte Discord</th><th>Appareil</th><th>Suspicion</th><th>Déjà payé</th><th>Qualifié</th><th>Gains réels</th><th>Tipsé</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -657,6 +707,7 @@
   let scratchLoaded = false;
   let allSlotPlays = [];
   let slotLoaded = false;
+  let affiliatesLoaded = false;
   let activeDashTab = 'bonus';
 
   function switchDashTab(tab){
@@ -664,14 +715,20 @@
     document.getElementById('tab-bonus').style.display = tab === 'bonus' ? '' : 'none';
     document.getElementById('tab-scratch').style.display = tab === 'scratch' ? '' : 'none';
     document.getElementById('tab-slot').style.display = tab === 'slot' ? '' : 'none';
+    document.getElementById('tab-affiliates').style.display = tab === 'affiliates' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-scratch').classList.toggle('active', tab === 'scratch');
     document.getElementById('tab-btn-slot').classList.toggle('active', tab === 'slot');
+    document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
     if (tab === 'scratch' && !scratchLoaded){
       loadScratchPlays();
     }
     if (tab === 'slot' && !slotLoaded){
       loadSlotPlays();
+    }
+    if (tab === 'affiliates' && !affiliatesLoaded){
+      affiliatesLoaded = true;
+      refreshAffiliateCasinosList();
     }
   }
 
@@ -873,6 +930,297 @@
       alert('Erreur lors de la mise à jour : ' + err.message);
       loadSlotPlays();
     }
+  }
+
+  // ---------- Onglet Affiliés ----------
+  function slugifyCasino(name){
+    return String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+  }
+
+  let affiliateLookup = {};          // clé: `${slug}::${pseudoLower}` -> {totalEarned, joined}
+  let affiliateLoadedSlugs = new Set();
+  let affiliateCasinosMeta = [];
+  let affiliateParsedPlayers = null; // en attente de confirmation d'import
+  let affiliateParsedCasinoName = '';
+  let currentAffiliateViewSlug = '';
+  let currentAffiliateViewPlayers = [];
+
+  // Cherche si le pseudo d'une demande de bonus a un gain réel importé pour son casino
+  function renderAffiliateBadge(s){
+    const slug = slugifyCasino(s.platform || '');
+    const key = slug + '::' + String(s.pseudo || '').toLowerCase();
+    const entry = affiliateLookup[key];
+    if (!entry){
+      return '<span style="color:var(--text-faint);">—</span>';
+    }
+    const amount = entry.totalEarned || 0;
+    if (amount > 0){
+      return `<span style="color:var(--green); font-weight:700;">$${amount.toFixed(2)}</span>`;
+    }
+    return `<span style="color:#FF7A90;" title="Inscrit le ${escapeHtml(entry.joined || '?')}, aucun gain enregistré">$0.00</span>`;
+  }
+
+  // Charge les données affiliés nécessaires pour croiser avec les demandes de bonus actuellement affichées
+  async function loadAffiliateLookupForSubmissions(){
+    const platforms = [...new Set(allSubmissions.map(s => s.platform).filter(Boolean))];
+    const slugsToLoad = platforms
+      .map(p => ({ platform: p, slug: slugifyCasino(p) }))
+      .filter(({ slug }) => slug && !affiliateLoadedSlugs.has(slug));
+
+    if (slugsToLoad.length === 0) return;
+
+    await Promise.all(slugsToLoad.map(async ({ slug }) => {
+      affiliateLoadedSlugs.add(slug);
+      try{
+        const resp = await fetch(`${workerBaseUrl}/affiliates/data?casino=${encodeURIComponent(slug)}`, {
+          headers: { 'X-Dashboard-Key': dashboardKey }
+        });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        (data.players || []).forEach(p => {
+          const key = slug + '::' + String(p.pseudo || '').toLowerCase();
+          affiliateLookup[key] = p;
+        });
+      }catch(e){
+        // Pas grave : ce casino n'a simplement pas encore de données importées
+      }
+    }));
+
+    renderTable();
+  }
+
+  async function refreshAffiliateCasinosList(){
+    const listEl = document.getElementById('affiliate-casinos-list');
+    listEl.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/affiliates/casinos`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const data = await resp.json();
+      affiliateCasinosMeta = data.casinos || [];
+
+      if (affiliateCasinosMeta.length === 0){
+        listEl.innerHTML = '<div class="empty">Aucun casino importé pour le moment.</div>';
+      } else {
+        listEl.innerHTML = `
+          <table>
+            <thead><tr><th>Casino</th><th>Joueurs</th><th>Total gains</th><th>Dernier import</th></tr></thead>
+            <tbody>${affiliateCasinosMeta.map(c => `
+              <tr>
+                <td>${escapeHtml(c.displayName)}</td>
+                <td>${c.count}</td>
+                <td>$${(c.totalEarned || 0).toFixed(2)}</td>
+                <td class="mono">${escapeHtml(new Date(c.importedAt).toLocaleString('fr-FR'))}</td>
+              </tr>
+            `).join('')}</tbody>
+          </table>
+        `;
+      }
+
+      const importSelect = document.getElementById('affiliate-casino-select');
+      const viewSelect = document.getElementById('affiliate-view-select');
+      const optionsHtml = affiliateCasinosMeta.map(c => `<option value="${escapeHtml(c.slug)}">${escapeHtml(c.displayName)}</option>`).join('');
+      importSelect.innerHTML = '<option value="">+ Nouveau casino (saisir à droite)</option>' + optionsHtml;
+      viewSelect.innerHTML = '<option value="">Choisir un casino à afficher...</option>' + optionsHtml;
+    }catch(err){
+      listEl.innerHTML = `<div class="empty">Erreur : ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function onAffiliateCasinoSelectChange(){
+    const select = document.getElementById('affiliate-casino-select');
+    const customWrap = document.getElementById('affiliate-casino-custom-wrap');
+    customWrap.style.display = select.value ? 'none' : '';
+  }
+
+  // Parseur CSV tolérant aux champs entre guillemets contenant des virgules (ex: "Jul 19, 2026")
+  function parseCSVLine(line){
+    const result = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++){
+      const c = line[i];
+      if (inQuotes){
+        if (c === '"'){
+          if (line[i + 1] === '"'){ cur += '"'; i++; }
+          else { inQuotes = false; }
+        } else {
+          cur += c;
+        }
+      } else {
+        if (c === '"'){ inQuotes = true; }
+        else if (c === ','){ result.push(cur); cur = ''; }
+        else { cur += c; }
+      }
+    }
+    result.push(cur);
+    return result;
+  }
+
+  function parseAffiliateCSV(text){
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 2) return [];
+    const header = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+    const idxPlayer = header.findIndex(h => h.includes('player'));
+    const idxEarned = header.findIndex(h => h.includes('earned'));
+    const idxJoined = header.findIndex(h => h.includes('joined'));
+
+    return lines.slice(1).map(line => {
+      const cols = parseCSVLine(line);
+      const pseudo = (cols[idxPlayer] || '').trim();
+      const earnedRaw = (cols[idxEarned] || '').trim();
+      const joined = (cols[idxJoined] || '').trim();
+      const totalEarned = parseFloat(earnedRaw.replace(/[^0-9.\-]/g, '')) || 0;
+      return { pseudo, totalEarned, joined };
+    }).filter(p => p.pseudo);
+  }
+
+  function handleAffiliateCsvSelected(event){
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const players = parseAffiliateCSV(reader.result);
+      if (players.length === 0){
+        alert('Aucune ligne valide trouvée dans ce fichier. Vérifie les colonnes (Player, Total Earned, Joined).');
+        event.target.value = '';
+        return;
+      }
+      const select = document.getElementById('affiliate-casino-select');
+      const customInput = document.getElementById('affiliate-casino-custom');
+      const casinoName = select.value
+        ? (affiliateCasinosMeta.find(c => c.slug === select.value) || {}).displayName
+        : customInput.value.trim();
+
+      if (!casinoName){
+        alert('Choisis un casino existant ou saisis le nom exact du nouveau casino avant d\'importer.');
+        event.target.value = '';
+        return;
+      }
+
+      affiliateParsedPlayers = players;
+      affiliateParsedCasinoName = casinoName;
+
+      const totalEarned = players.reduce((sum, p) => sum + p.totalEarned, 0);
+      const zeroCount = players.filter(p => p.totalEarned === 0).length;
+      document.getElementById('affiliate-preview-summary').innerHTML =
+        `<strong>${players.length}</strong> joueur(s) trouvé(s) pour <strong>${escapeHtml(casinoName)}</strong> — ` +
+        `total : $${totalEarned.toFixed(2)} — <strong>${zeroCount}</strong> à $0.00. ` +
+        `Aperçu des 5 premières lignes ci-dessous.`;
+
+      const previewRows = players.slice(0, 5).map(p => `
+        <tr><td>${escapeHtml(p.pseudo)}</td><td>$${p.totalEarned.toFixed(2)}</td><td class="mono">${escapeHtml(p.joined)}</td></tr>
+      `).join('');
+      document.getElementById('affiliate-preview-table').innerHTML = `
+        <table>
+          <thead><tr><th>Pseudo</th><th>Gains</th><th>Inscrit le</th></tr></thead>
+          <tbody>${previewRows}</tbody>
+        </table>
+      `;
+      document.getElementById('affiliate-preview').style.display = 'block';
+      document.getElementById('affiliate-import-status').textContent = '';
+    };
+    reader.readAsText(file);
+  }
+
+  function cancelAffiliateImport(){
+    affiliateParsedPlayers = null;
+    affiliateParsedCasinoName = '';
+    document.getElementById('affiliate-preview').style.display = 'none';
+    document.getElementById('affiliate-csv-input').value = '';
+  }
+
+  async function confirmAffiliateImport(){
+    if (!affiliateParsedPlayers || !affiliateParsedCasinoName) return;
+    const statusEl = document.getElementById('affiliate-import-status');
+    statusEl.textContent = 'Import en cours…';
+    statusEl.style.color = 'var(--text-dim)';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/affiliates/import`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ casino: affiliateParsedCasinoName, players: affiliateParsedPlayers })
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const data = await resp.json();
+      statusEl.textContent = `Import réussi ✓ — ${data.count} joueur(s) enregistré(s).`;
+      statusEl.style.color = 'var(--green)';
+
+      // Invalide le cache de correspondance pour ce casino et recharge tout
+      affiliateLoadedSlugs.delete(data.slug);
+      cancelAffiliateImport();
+      await refreshAffiliateCasinosList();
+      await loadAffiliateLookupForSubmissions();
+    }catch(err){
+      statusEl.textContent = 'Erreur : ' + err.message;
+      statusEl.style.color = '#FF7A90';
+    }
+  }
+
+  async function loadAffiliateCasinoData(){
+    const slug = document.getElementById('affiliate-view-select').value;
+    currentAffiliateViewSlug = slug;
+    const container = document.getElementById('affiliate-table-container');
+    if (!slug){
+      container.innerHTML = '';
+      document.getElementById('affiliate-stats').innerHTML = '';
+      return;
+    }
+    container.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/affiliates/data?casino=${encodeURIComponent(slug)}`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const data = await resp.json();
+      currentAffiliateViewPlayers = data.players || [];
+      renderAffiliateStats(currentAffiliateViewPlayers);
+      applyAffiliateFilters();
+    }catch(err){
+      container.innerHTML = `<div class="empty">Erreur : ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function renderAffiliateStats(players){
+    const total = players.length;
+    const totalEarned = players.reduce((sum, p) => sum + (p.totalEarned || 0), 0);
+    const zeroCount = players.filter(p => (p.totalEarned || 0) === 0).length;
+    document.getElementById('affiliate-stats').innerHTML = `
+      <div class="stat"><div class="n">${total}</div><div class="l">Joueurs importés</div></div>
+      <div class="stat"><div class="n">$${totalEarned.toFixed(2)}</div><div class="l">Gains cumulés</div></div>
+      <div class="stat"><div class="n">${zeroCount}</div><div class="l">À $0.00</div></div>
+    `;
+  }
+
+  function applyAffiliateFilters(){
+    const search = document.getElementById('affiliate-filter-search').value.trim().toLowerCase();
+    const filtered = search
+      ? currentAffiliateViewPlayers.filter(p => p.pseudo.toLowerCase().includes(search))
+      : currentAffiliateViewPlayers;
+    renderAffiliateTable(filtered);
+  }
+
+  function renderAffiliateTable(players){
+    const container = document.getElementById('affiliate-table-container');
+    if (players.length === 0){
+      container.innerHTML = '<div class="empty">Aucun joueur trouvé.</div>';
+      return;
+    }
+    const sorted = players.slice().sort((a, b) => (b.totalEarned || 0) - (a.totalEarned || 0));
+    const rows = sorted.map(p => `
+      <tr>
+        <td>${escapeHtml(p.pseudo)}</td>
+        <td>$${(p.totalEarned || 0).toFixed(2)}</td>
+        <td class="mono">${escapeHtml(p.joined || '')}</td>
+      </tr>
+    `).join('');
+    container.innerHTML = `
+      <table>
+        <thead><tr><th>Pseudo</th><th>Gains</th><th>Inscrit le</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
   }
 </script>
 
