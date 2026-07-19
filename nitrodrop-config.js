@@ -16,7 +16,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Bonus Codes & Offers",
-            "href": "#offres"
+            "href": "#offres",
+            "newTab": false
           },
           {
             "label": "Discord",
@@ -30,7 +31,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Vault",
-            "href": "https://drop-cash.com/vault"
+            "href": "https://drop-cash.com/vault",
+            "newTab": false
           }
         ],
         "ctaText": "View Offers",
@@ -215,7 +217,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Sign up with the link, deposit a minimum of $10 and claim your reward. New users only.\n",
           "code": "",
           "codeEnabled": false,
-          "signupHref": "https://go.affiliatemystake.com/visit/?bta=3139221&brand=mystake",
+          "signupHref": "https://duel-casino-home.com/mystake/",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -235,7 +237,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Register with the code, **submit your username**, and get your tip. **Deposit required** (no minimum).",
           "code": "mrrvsu0g",
           "codeEnabled": true,
-          "signupHref": "https://bc.game/i-mrrvsu0g-n/",
+          "signupHref": "https://duel-casino-home.com/bcgame/",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -328,7 +330,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Contact",
-            "href": "#"
+            "href": "#",
+            "newTab": false
           }
         ],
         "disclaimer": "Gambling carries risks: debt, social isolation and addiction. "
@@ -412,9 +415,9 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordRequiredMessage": "Connect to Discord before continuing.",
         "genericErrorMessage": "An error has occurred, please try again.",
         "networkErrorMessage": "Connection error, please try again.",
-        "discordAccountLabel": "",
-        "discordConnectText": "",
-        "resultTitle": ""
+        "discordAccountLabel": "DISCORD*",
+        "discordConnectText": "🎮 Log in with Discord",
+        "resultTitle": "Ticket"
       },
       "slotMachine": {
         "navLabel": "🎰 Slot",
@@ -444,7 +447,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Codes bonus et offres",
-            "href": "#offres"
+            "href": "#offres",
+            "newTab": false
           },
           {
             "label": "Discord",
@@ -458,7 +462,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Vault",
-            "href": "https://drop-cash.com/vault"
+            "href": "https://drop-cash.com/vault",
+            "newTab": false
           }
         ],
         "ctaText": "Voir les offres",
@@ -643,7 +648,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le lien, **déposez 10$ minimum** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
           "code": "",
           "codeEnabled": false,
-          "signupHref": "https://go.affiliatemystake.com/visit/?bta=3139221&brand=mystake",
+          "signupHref": "https://duel-casino-home.com/mystake/",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -663,7 +668,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le code, indiquez **votre nom d'utilisateur** et recevez votre bonus. **Dépôt requis** (aucun minimum).",
           "code": "mrrvsu0g",
           "codeEnabled": true,
-          "signupHref": "https://bc.game/i-mrrvsu0g-n/",
+          "signupHref": "https://duel-casino-home.com/bcgame/",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -756,7 +761,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Contact",
-            "href": "#"
+            "href": "#",
+            "newTab": false
           }
         ],
         "disclaimer": "Les jeux d'argent comportent des risques : endettement, isolement social et dépendance. "
