@@ -20,11 +20,13 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Discord",
-            "href": "https://discord.gg/7h7QHXdZeK"
+            "href": "https://discord.gg/7h7QHXdZeK",
+            "newTab": true
           },
           {
             "label": "Telegram",
-            "href": "https://t.me/+BZyC9HHN3LljODM0"
+            "href": "https://t.me/+BZyC9HHN3LljODM0",
+            "newTab": true
           },
           {
             "label": "Vault",
@@ -316,11 +318,13 @@ const NITRODROP_DEFAULT_CONFIG = {
         "communityLinks": [
           {
             "label": "Discord",
-            "href": "https://discord.gg/7h7QHXdZeK"
+            "href": "https://discord.gg/7h7QHXdZeK",
+            "newTab": true
           },
           {
             "label": "Telegram",
-            "href": "https://t.me/+BZyC9HHN3LljODM0"
+            "href": "https://t.me/+BZyC9HHN3LljODM0",
+            "newTab": true
           },
           {
             "label": "Contact",
@@ -444,11 +448,13 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Discord",
-            "href": "https://discord.gg/7h7QHXdZeK"
+            "href": "https://discord.gg/7h7QHXdZeK",
+            "newTab": true
           },
           {
             "label": "Telegram",
-            "href": "https://t.me/+BZyC9HHN3LljODM0"
+            "href": "https://t.me/+BZyC9HHN3LljODM0",
+            "newTab": true
           },
           {
             "label": "Vault",
@@ -740,11 +746,13 @@ const NITRODROP_DEFAULT_CONFIG = {
         "communityLinks": [
           {
             "label": "Discord",
-            "href": "https://discord.gg/7h7QHXdZeK"
+            "href": "https://discord.gg/7h7QHXdZeK",
+            "newTab": true
           },
           {
             "label": "Telegram",
-            "href": "https://t.me/+BZyC9HHN3LljODM0"
+            "href": "https://t.me/+BZyC9HHN3LljODM0",
+            "newTab": true
           },
           {
             "label": "Contact",
