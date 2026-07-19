@@ -311,7 +311,6 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "modal": {
         "gateSubTemplate": "Have you already signed up to {platform} using the code {code}?",
-        "gateSubTemplateNoCode": "Have you already signed up to {platform} using the link?",
         "gateYesText": "Yes, I'm registered",
         "gateNoText": "No, I’ll sign up first",
         "formTag": "Claim the bonus",
@@ -341,7 +340,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "callbackConnectingText": "Connection in progress…",
         "callbackSuccessMessage": "Connected! This window will close…",
         "callbackFailedMessage": "Discord connection failed. You can close this window and try again.",
-        "callbackErrorPrefix": "Error :"
+        "callbackErrorPrefix": "Error :",
+        "gateSubTemplateNoCode": "Have you already signed up to {platform} using the link?"
       },
       "brand": {
         "text1": "DROP",
@@ -715,7 +715,6 @@ const NITRODROP_DEFAULT_CONFIG = {
       },
       "modal": {
         "gateSubTemplate": "Vous êtes-vous déjà inscrit sur {platform} en utilisant le code {code} ?",
-        "gateSubTemplateNoCode": "Vous êtes-vous déjà inscrit sur {platform} en utilisant le lien ?",
         "gateYesText": "Oui, je suis inscrit(e)",
         "gateNoText": "Non, je vais d'abord m'inscrire",
         "formTag": "Réclamez le bonus",
@@ -745,7 +744,8 @@ const NITRODROP_DEFAULT_CONFIG = {
         "callbackConnectingText": "Connexion en cours…",
         "callbackSuccessMessage": "Connecté ! Cette fenêtre va se fermer…",
         "callbackFailedMessage": "Échec de la connexion Discord. Tu peux fermer cette fenêtre et réessayer.",
-        "callbackErrorPrefix": "Erreur : "
+        "callbackErrorPrefix": "Erreur : ",
+        "gateSubTemplateNoCode": "Vous êtes-vous déjà inscrit sur {platform} en utilisant le lien ?"
       },
       "brand": {
         "text1": "DROP",
