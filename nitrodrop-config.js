@@ -186,9 +186,9 @@ const NITRODROP_DEFAULT_CONFIG = {
           "markClass": "mark-1",
           "name": "Rollbit.com",
           "sub": "Crypto Casino",
-          "bonusAmount": "$1.00",
-          "bonusSuffix": "$1.00 one time",
-          "desc": "Register with the code, submit your username, and **get your tip**. No deposit needed.",
+          "bonusAmount": "$8.00",
+          "bonusSuffix": "$8.00 one time",
+          "desc": "Sign up with the code, deposit a minimum of **$10**, and wager $40 to claim your reward. New users only.",
           "code": "NksCasino",
           "codeEnabled": true,
           "signupHref": "https://rollbit.com/referral/NksCasino",
@@ -307,7 +307,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "emailPlaceholder": "your email",
         "pseudoPlaceholder": "your username",
         "discordLabel": "Discord*",
-        "discordPlaceholder": "",
+        "discordPlaceholder": "Discord*",
         "discordConnectText": "🎮 Log in with Discord",
         "discordJoinNote": "First, join our {link}, otherwise we won’t be able to send you the confirmation via DM.",
         "discordJoinLinkText": "Discord server",
@@ -358,9 +358,6 @@ const NITRODROP_DEFAULT_CONFIG = {
         "usernameLabel": "Username*",
         "usernamePlaceholder": "your username",
         "discordNote": "Connect your Discord account to participate (1 free try per day).",
-        "discordAccountLabel": "Your Discord account",
-        "discordConnectText": "🎮 Connect with Discord",
-        "resultTitle": "Your ticket",
         "submitText": "Scratch the Card",
         "alreadyPlayedMessage": "You've already played today. Come back tomorrow!",
         "winMessage": "🎉 Congratulations! You won {amount}!",
@@ -369,7 +366,10 @@ const NITRODROP_DEFAULT_CONFIG = {
         "cooldownMessage": "Come back in {time} ⏳",
         "discordRequiredMessage": "Connect to Discord before continuing.",
         "genericErrorMessage": "An error has occurred, please try again.",
-        "networkErrorMessage": "Connection error, please try again."
+        "networkErrorMessage": "Connection error, please try again.",
+        "discordAccountLabel": "",
+        "discordConnectText": "",
+        "resultTitle": ""
       },
       "slotMachine": {
         "navLabel": "🎰 Slot",
@@ -379,9 +379,6 @@ const NITRODROP_DEFAULT_CONFIG = {
         "usernameLabel": "Username*",
         "usernamePlaceholder": "your username",
         "discordNote": "Connect your Discord account to participate (1 free spin per day).",
-        "discordAccountLabel": "Your Discord account",
-        "discordConnectText": "🎮 Connect with Discord",
-        "resultTitle": "Result",
         "spinText": "Spin",
         "spinningText": "It's rolling...",
         "alreadyPlayedMessage": "You've already played today, come back tomorrow!",
@@ -391,7 +388,10 @@ const NITRODROP_DEFAULT_CONFIG = {
         "networkErrorMessage": "Connection error, please try again.",
         "winMessage": "🎉 Congratulations! You won {amount}!",
         "loseMessage": "No luck. Try again tomorrow!",
-        "discordButtonText": "Claim on Discord"
+        "discordButtonText": "Claim on Discord",
+        "discordAccountLabel": "",
+        "discordConnectText": "",
+        "resultTitle": ""
       }
     },
     "fr": {
@@ -569,9 +569,9 @@ const NITRODROP_DEFAULT_CONFIG = {
           "markClass": "mark-1",
           "name": "Rollbit.com",
           "sub": "Crypto Casino",
-          "bonusAmount": "$1.00",
-          "bonusSuffix": "$1.00 une fois",
-          "desc": "Inscrivez-vous avec le code, indiquez **votre nom d'utilisateur** et recevez votre bonus. **Aucun dépôt requis**.",
+          "bonusAmount": "$8.00",
+          "bonusSuffix": "$8.00 une fois",
+          "desc": "Inscrivez-vous avec le code, **déposez 10$ minimum** et misez **40$** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
           "code": "NksCasino",
           "codeEnabled": true,
           "signupHref": "https://rollbit.com/referral/NksCasino",
@@ -741,9 +741,6 @@ const NITRODROP_DEFAULT_CONFIG = {
         "usernameLabel": "Pseudo*",
         "usernamePlaceholder": "votre Pseudo",
         "discordNote": "Connexion Discord requise pour participer (1 essai par jour).",
-        "discordAccountLabel": "Ton compte Discord",
-        "discordConnectText": "🎮 Se connecter avec Discord",
-        "resultTitle": "Ton ticket",
         "submitText": "Gratter le ticket",
         "alreadyPlayedMessage": "Tu as déjà joué aujourd'hui, reviens demain !",
         "winMessage": "🎉 Félicitations, tu remportes {amount} !",
@@ -752,7 +749,10 @@ const NITRODROP_DEFAULT_CONFIG = {
         "cooldownMessage": "Reviens dans {time} ⏳",
         "discordRequiredMessage": "Connecte-toi avec Discord avant de continuer.",
         "genericErrorMessage": "Une erreur est survenue, réessaie.",
-        "networkErrorMessage": "Erreur de connexion, réessaie."
+        "networkErrorMessage": "Erreur de connexion, réessaie.",
+        "discordAccountLabel": "",
+        "discordConnectText": "",
+        "resultTitle": ""
       },
       "slotMachine": {
         "navLabel": "🎰 Slot",
@@ -762,9 +762,6 @@ const NITRODROP_DEFAULT_CONFIG = {
         "usernameLabel": "Pseudo*",
         "usernamePlaceholder": "votre Pseudo",
         "discordNote": "Connexion Discord requise pour participer (1 spin par jour).",
-        "discordAccountLabel": "Ton compte Discord",
-        "discordConnectText": "🎮 Se connecter avec Discord",
-        "resultTitle": "Résultat",
         "spinText": "Spin",
         "spinningText": "Ça tourne...",
         "alreadyPlayedMessage": "Tu as déjà joué aujourd'hui, reviens demain !",
@@ -774,7 +771,10 @@ const NITRODROP_DEFAULT_CONFIG = {
         "networkErrorMessage": "Erreur de connexion, réessaie.",
         "winMessage": "🎉 Félicitations, tu remportes {amount} !",
         "loseMessage": "Pas de chance cette fois, reviens demain !",
-        "discordButtonText": "Réclamer sur Discord"
+        "discordButtonText": "Réclamer sur Discord",
+        "discordAccountLabel": "",
+        "discordConnectText": "",
+        "resultTitle": ""
       }
     }
   },
