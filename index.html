@@ -1034,6 +1034,13 @@
     document.querySelectorAll('.modal-close').forEach(btn => {
       btn.setAttribute('aria-label', cfg.modal.closeAriaLabel || 'Fermer');
     });
+
+    const scratchNavLabel = (cfg.scratchTicket && cfg.scratchTicket.navLabel) || '🎫 Ticket';
+    document.getElementById('nav-scratch-btn').textContent = scratchNavLabel;
+    document.getElementById('mobile-nav-scratch-btn').textContent = scratchNavLabel;
+    const slotNavLabel = (cfg.slotMachine && cfg.slotMachine.navLabel) || '🎰 Slot';
+    document.getElementById('nav-slot-btn').textContent = slotNavLabel;
+    document.getElementById('mobile-nav-slot-btn').textContent = slotNavLabel;
   }
 
   // ---------- Génère les cartes d'offres depuis la config ----------

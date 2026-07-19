@@ -189,6 +189,9 @@
       <div class="field"><label>Placeholder du champ pseudo</label><input type="text" id="scratch-usernamePlaceholder" placeholder="Ton pseudo"></div>
     </div>
     <div class="field"><label>Note sous le bouton Discord</label><input type="text" id="scratch-discordNote" placeholder="Connexion Discord requise pour participer (1 essai par jour)."></div>
+    <div class="field"><label>Libellé "Ton compte Discord"</label><input type="text" id="scratch-discordAccountLabel" placeholder="Ton compte Discord"></div>
+    <div class="field"><label>Texte du bouton "Se connecter avec Discord"</label><input type="text" id="scratch-discordConnectText" placeholder="🎮 Se connecter avec Discord"></div>
+    <div class="field"><label>Titre de l'écran de résultat</label><input type="text" id="scratch-resultTitle" placeholder="Ton ticket"></div>
     <div class="field"><label>Texte du bouton "Gratter"</label><input type="text" id="scratch-submitText" placeholder="Gratter le ticket"></div>
     <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="scratch-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
     <div class="field"><label>Message du compte à rebours (utilise <code>{time}</code>, affiché avant même de cliquer)</label><input type="text" id="scratch-cooldownMessage" placeholder="Reviens dans {time}"></div>
@@ -234,6 +237,9 @@
       <div class="field"><label>Placeholder du champ pseudo</label><input type="text" id="slot-usernamePlaceholder" placeholder="Ton pseudo"></div>
     </div>
     <div class="field"><label>Note sous le bouton Discord</label><input type="text" id="slot-discordNote" placeholder="Connexion Discord requise pour participer (1 spin par jour)."></div>
+    <div class="field"><label>Libellé "Ton compte Discord"</label><input type="text" id="slot-discordAccountLabel" placeholder="Ton compte Discord"></div>
+    <div class="field"><label>Texte du bouton "Se connecter avec Discord"</label><input type="text" id="slot-discordConnectText" placeholder="🎮 Se connecter avec Discord"></div>
+    <div class="field"><label>Titre de l'écran de résultat</label><input type="text" id="slot-resultTitle" placeholder="Résultat"></div>
     <div class="field"><label>Texte du bouton "Spin"</label><input type="text" id="slot-spinText" placeholder="Spin"></div>
     <div class="field"><label>Texte pendant le tirage</label><input type="text" id="slot-spinningText" placeholder="Ça tourne..."></div>
     <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="slot-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
@@ -913,6 +919,9 @@
     document.getElementById('scratch-usernameLabel').value = content.scratchTicket.usernameLabel || '';
     document.getElementById('scratch-usernamePlaceholder').value = content.scratchTicket.usernamePlaceholder || '';
     document.getElementById('scratch-discordNote').value = content.scratchTicket.discordNote || '';
+    document.getElementById('scratch-discordAccountLabel').value = content.scratchTicket.discordAccountLabel || '';
+    document.getElementById('scratch-discordConnectText').value = content.scratchTicket.discordConnectText || '';
+    document.getElementById('scratch-resultTitle').value = content.scratchTicket.resultTitle || '';
     document.getElementById('scratch-submitText').value = content.scratchTicket.submitText || '';
     document.getElementById('scratch-alreadyPlayedMessage').value = content.scratchTicket.alreadyPlayedMessage || '';
     document.getElementById('scratch-cooldownMessage').value = content.scratchTicket.cooldownMessage || '';
@@ -934,6 +943,9 @@
     document.getElementById('slot-usernameLabel').value = content.slotMachine.usernameLabel || '';
     document.getElementById('slot-usernamePlaceholder').value = content.slotMachine.usernamePlaceholder || '';
     document.getElementById('slot-discordNote').value = content.slotMachine.discordNote || '';
+    document.getElementById('slot-discordAccountLabel').value = content.slotMachine.discordAccountLabel || '';
+    document.getElementById('slot-discordConnectText').value = content.slotMachine.discordConnectText || '';
+    document.getElementById('slot-resultTitle').value = content.slotMachine.resultTitle || '';
     document.getElementById('slot-spinText').value = content.slotMachine.spinText || '';
     document.getElementById('slot-spinningText').value = content.slotMachine.spinningText || '';
     document.getElementById('slot-alreadyPlayedMessage').value = content.slotMachine.alreadyPlayedMessage || '';
@@ -1129,6 +1141,9 @@
     content.scratchTicket.usernameLabel = document.getElementById('scratch-usernameLabel').value;
     content.scratchTicket.usernamePlaceholder = document.getElementById('scratch-usernamePlaceholder').value;
     content.scratchTicket.discordNote = document.getElementById('scratch-discordNote').value;
+    content.scratchTicket.discordAccountLabel = document.getElementById('scratch-discordAccountLabel').value;
+    content.scratchTicket.discordConnectText = document.getElementById('scratch-discordConnectText').value;
+    content.scratchTicket.resultTitle = document.getElementById('scratch-resultTitle').value;
     content.scratchTicket.submitText = document.getElementById('scratch-submitText').value;
     content.scratchTicket.alreadyPlayedMessage = document.getElementById('scratch-alreadyPlayedMessage').value;
     content.scratchTicket.cooldownMessage = document.getElementById('scratch-cooldownMessage').value;
@@ -1150,6 +1165,9 @@
     content.slotMachine.usernameLabel = document.getElementById('slot-usernameLabel').value;
     content.slotMachine.usernamePlaceholder = document.getElementById('slot-usernamePlaceholder').value;
     content.slotMachine.discordNote = document.getElementById('slot-discordNote').value;
+    content.slotMachine.discordAccountLabel = document.getElementById('slot-discordAccountLabel').value;
+    content.slotMachine.discordConnectText = document.getElementById('slot-discordConnectText').value;
+    content.slotMachine.resultTitle = document.getElementById('slot-resultTitle').value;
     content.slotMachine.spinText = document.getElementById('slot-spinText').value;
     content.slotMachine.spinningText = document.getElementById('slot-spinningText').value;
     content.slotMachine.alreadyPlayedMessage = document.getElementById('slot-alreadyPlayedMessage').value;
