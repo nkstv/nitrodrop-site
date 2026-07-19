@@ -656,7 +656,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "bonusSuffix": "$2.00 une fois",
           "desc": "Inscrivez-vous avec le code, indiquez **votre nom d'utilisateur** et recevez votre bonus. **Dépôt requis** (aucun minimum).",
           "code": "mrrvsu0g",
-          "codeEnabled": false,
+          "codeEnabled": true,
           "signupHref": "https://bc.game/i-mrrvsu0g-n/",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
