@@ -85,7 +85,7 @@
 <div id="app" style="display:none;">
   <div class="topbar">
     <h1>NITRO<span>DROP</span> — Historique des demandes</h1>
-    <button class="btn" onclick="loadSubmissions()">Rafraîchir</button>
+    <button class="btn" onclick="refreshActiveTab()">Rafraîchir</button>
   </div>
 
   <div class="wrap">
@@ -659,8 +659,10 @@
   let scratchLoaded = false;
   let allSlotPlays = [];
   let slotLoaded = false;
+  let activeDashTab = 'bonus';
 
   function switchDashTab(tab){
+    activeDashTab = tab;
     document.getElementById('tab-bonus').style.display = tab === 'bonus' ? '' : 'none';
     document.getElementById('tab-scratch').style.display = tab === 'scratch' ? '' : 'none';
     document.getElementById('tab-slot').style.display = tab === 'slot' ? '' : 'none';
@@ -672,6 +674,17 @@
     }
     if (tab === 'slot' && !slotLoaded){
       loadSlotPlays();
+    }
+  }
+
+  // Le bouton "Rafraîchir" de la barre du haut rafraîchit l'onglet actuellement affiché
+  function refreshActiveTab(){
+    if (activeDashTab === 'scratch'){
+      loadScratchPlays();
+    } else if (activeDashTab === 'slot'){
+      loadSlotPlays();
+    } else {
+      loadSubmissions();
     }
   }
 
