@@ -409,9 +409,9 @@ const NITRODROP_DEFAULT_CONFIG = {
         "winMessage": "🎉 Congratulations! You won {amount}!",
         "loseMessage": "No luck. Try again tomorrow!",
         "discordButtonText": "Claim on Discord",
-        "discordAccountLabel": "",
-        "discordConnectText": "",
-        "resultTitle": ""
+        "discordAccountLabel": "Discord*",
+        "discordConnectText": "🎮 Log in with Discord",
+        "resultTitle": "Result"
       }
     },
     "fr": {
@@ -790,9 +790,9 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordRequiredMessage": "Connecte-toi avec Discord avant de continuer.",
         "genericErrorMessage": "Une erreur est survenue, réessaie.",
         "networkErrorMessage": "Erreur de connexion, réessaie.",
-        "discordAccountLabel": "",
-        "discordConnectText": "",
-        "resultTitle": ""
+        "discordAccountLabel": "Ton compte Discord",
+        "discordConnectText": "🎮 Se connecter avec Discord",
+        "resultTitle": "Ton ticket"
       },
       "slotMachine": {
         "navLabel": "🎰 Slot",
