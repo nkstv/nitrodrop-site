@@ -20,7 +20,7 @@
 
   let modal = {};
   try{
-    const CONFIG = nitrodropLoadConfig();
+    const CONFIG = nitrodropLoadPublishedConfig();
     const lang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'fr';
     const active = (CONFIG.content && (CONFIG.content[lang] || CONFIG.content[CONFIG.defaultLang])) || {};
     modal = active.modal || {};

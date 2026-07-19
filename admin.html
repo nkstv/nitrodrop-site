@@ -1294,6 +1294,15 @@ function nitrodropDeepMerge(defaults, saved) {
   return saved !== undefined ? saved : defaults;
 }
 
+// Utilisée par le site PUBLIC (index.html, vault.html, discord-callback.html) :
+// ignore volontairement le localStorage pour que tous les visiteurs voient
+// toujours la même version, celle réellement publiée sur GitHub.
+function nitrodropLoadPublishedConfig() {
+  return nitrodropDeepClone(NITRODROP_DEFAULT_CONFIG);
+}
+
+// Utilisée UNIQUEMENT par admin.html : reprend le brouillon en cours dans ce navigateur,
+// fusionné avec les valeurs par défaut publiées.
 function nitrodropLoadConfig() {
   try {
     const raw = localStorage.getItem(NITRODROP_STORAGE_KEY);
