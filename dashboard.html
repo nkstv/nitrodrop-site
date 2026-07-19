@@ -1006,13 +1006,14 @@
       } else {
         listEl.innerHTML = `
           <table>
-            <thead><tr><th>Casino</th><th>Joueurs</th><th>Total gains</th><th>Dernier import</th></tr></thead>
+            <thead><tr><th>Casino</th><th>Joueurs</th><th>Total gains</th><th>Dernier import</th><th>Action</th></tr></thead>
             <tbody>${affiliateCasinosMeta.map(c => `
               <tr>
                 <td>${escapeHtml(c.displayName)}</td>
                 <td>${c.count}</td>
                 <td>$${(c.totalEarned || 0).toFixed(2)}</td>
                 <td class="mono">${escapeHtml(new Date(c.importedAt).toLocaleString('fr-FR'))}</td>
+                <td><button type="button" class="btn" style="padding:5px 10px; font-size:11.5px; color:#FF7A90;" onclick="deleteAffiliateCasino('${escapeHtml(c.slug)}', '${escapeHtml(c.displayName)}')">Supprimer</button></td>
               </tr>
             `).join('')}</tbody>
           </table>
@@ -1033,6 +1034,35 @@
     const select = document.getElementById('affiliate-casino-select');
     const customWrap = document.getElementById('affiliate-casino-custom-wrap');
     customWrap.style.display = select.value ? 'none' : '';
+  }
+
+  async function deleteAffiliateCasino(slug, displayName){
+    if (!confirm(`Supprimer toutes les données importées pour "${displayName}" ? Cette action est irréversible.`)) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/affiliates/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ slug })
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+
+      // Purge le cache local pour ce casino (sinon les anciennes données resteraient affichées)
+      affiliateLoadedSlugs.delete(slug);
+      Object.keys(affiliateLookup).forEach(key => {
+        if (key.startsWith(slug + '::')) delete affiliateLookup[key];
+      });
+      if (currentAffiliateViewSlug === slug){
+        currentAffiliateViewPlayers = [];
+        document.getElementById('affiliate-table-container').innerHTML = '';
+        document.getElementById('affiliate-stats').innerHTML = '';
+        document.getElementById('affiliate-view-select').value = '';
+      }
+
+      await refreshAffiliateCasinosList();
+      renderTable();
+    }catch(err){
+      alert('Erreur lors de la suppression : ' + err.message);
+    }
   }
 
   // Parseur CSV tolérant aux champs entre guillemets contenant des virgules (ex: "Jul 19, 2026")
