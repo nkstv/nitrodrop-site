@@ -198,6 +198,26 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#ffe419",
           "markColorEnd": "#675c13"
+        },
+        {
+          "featured": false,
+          "badge": "",
+          "mark": "M",
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66",
+          "markClass": "mark-2",
+          "name": "MyStake",
+          "sub": "Crypto Casino",
+          "bonusAmount": "$10.00",
+          "bonusSuffix": "$10.00 one time",
+          "desc": "Sign up with the link, deposit a minimum of $10 and claim your reward. New users only.\n",
+          "code": "",
+          "codeEnabled": false,
+          "signupHref": "https://go.affiliatemystake.com/visit/?bta=3139221&brand=mystake",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false
         }
       ],
       "tickerSettings": {
@@ -581,6 +601,26 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#6c3fff",
           "markColorEnd": "#2a1a66"
+        },
+        {
+          "featured": false,
+          "badge": "",
+          "mark": "M",
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66",
+          "markClass": "mark-2",
+          "name": "MyStake",
+          "sub": "Crypto Casino",
+          "bonusAmount": "$10.00",
+          "bonusSuffix": "$10.00 one time",
+          "desc": "Inscrivez-vous avec le lien, **déposez 10$ minimum** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
+          "code": "",
+          "codeEnabled": false,
+          "signupHref": "https://go.affiliatemystake.com/visit/?bta=3139221&brand=mystake",
+          "signupText": "1. Créer un compte",
+          "claimText": "2. Réclamer mon bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false
         }
       ],
       "tickerSettings": {
