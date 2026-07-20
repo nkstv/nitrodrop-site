@@ -480,6 +480,13 @@
     <button type="button" class="btn btn-save" onclick="setVaultRound()">Définir ce code et lancer un nouveau round</button>
     <div id="vault-set-status" style="margin-top:10px; font-size:12.5px;"></div>
 
+    <div class="subheading">Message Discord automatique (facultatif)</div>
+    <div class="sub">Envoyé sur un salon de ton Discord à chaque nouveau round, via un webhook Discord. Utilise <code>{code}</code> et <code>{amount}</code> comme variables — elles seront remplacées automatiquement. Laisse vide pour ne rien envoyer.</div>
+    <div class="field"><label>Message à envoyer</label><textarea id="vault-discord-message" placeholder="🔐 Nouveau code disponible : **{code}** — tente ta chance pour gagner **${amount}** !"></textarea></div>
+    <div class="sub" style="margin-top:-6px;">
+      <strong>Configuration à faire une seule fois côté Cloudflare :</strong> crée un webhook dans le salon Discord voulu (Paramètres du salon → Intégrations → Webhooks → Nouveau webhook → Copier l'URL), puis ajoute-le comme secret <code>DISCORD_VAULT_WEBHOOK_URL</code> sur ton Worker (Settings → Variables and Secrets). L'URL du webhook ne doit <strong>jamais</strong> être collée ici ni publiée sur GitHub — seul le Worker doit la connaître.
+    </div>
+
     <div class="subheading">Sons (facultatif)</div>
     <div class="sub">Noms des fichiers audio à uploader à la racine de ton repo GitHub (formats mp3/ogg). Laisse vide pour désactiver un son.</div>
     <div class="row">
@@ -947,6 +954,9 @@
     cfg.scratchTicket = cfg.scratchTicket || {};
     document.getElementById('scratch-discord-claim-link').value = cfg.scratchTicket.discordClaimLink || '';
 
+    cfg.vault = cfg.vault || {};
+    document.getElementById('vault-discord-message').value = cfg.vault.discordNewRoundMessage || '';
+
     content.slotMachine = content.slotMachine || {};
     document.getElementById('slot-navLabel').value = content.slotMachine.navLabel || '';
     document.getElementById('slot-tag').value = content.slotMachine.tag || '';
@@ -1171,6 +1181,9 @@
 
     cfg.scratchTicket = cfg.scratchTicket || {};
     cfg.scratchTicket.discordClaimLink = document.getElementById('scratch-discord-claim-link').value;
+
+    cfg.vault = cfg.vault || {};
+    cfg.vault.discordNewRoundMessage = document.getElementById('vault-discord-message').value;
 
     content.slotMachine = content.slotMachine || {};
     content.slotMachine.navLabel = document.getElementById('slot-navLabel').value;
@@ -1534,6 +1547,7 @@ function nitrodropResetConfig() {
     const key = document.getElementById('vault-dashboard-key').value.trim();
     const code = document.getElementById('vault-new-code').value.trim();
     const amount = document.getElementById('vault-new-amount').value.trim();
+    const discordMessage = document.getElementById('vault-discord-message').value.trim();
     const statusEl = document.getElementById('vault-set-status');
 
     if (!base || !key){
@@ -1554,10 +1568,17 @@ function nitrodropResetConfig() {
       const resp = await fetch(`${base}/vault/set`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': key },
-        body: JSON.stringify({ code, amount })
+        body: JSON.stringify({ code, amount, discordMessage })
       });
       if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      statusEl.textContent = 'Nouveau round lancé ✓';
+      const data = await resp.json();
+      let msg = 'Nouveau round lancé ✓';
+      if (discordMessage){
+        if (data.discord && data.discord.ok) msg += ' — message Discord envoyé ✓';
+        else if (data.discord && data.discord.attempted) msg += ` — ⚠️ message Discord échoué (${data.discord.error})`;
+        else msg += ' — ⚠️ webhook Discord non configuré sur le Worker (DISCORD_VAULT_WEBHOOK_URL manquant)';
+      }
+      statusEl.textContent = msg;
       statusEl.style.color = 'var(--green)';
       loadVaultState();
     }catch(err){

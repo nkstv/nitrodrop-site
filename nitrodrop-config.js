@@ -899,6 +899,9 @@ const NITRODROP_DEFAULT_CONFIG = {
   },
   "slotMachine": {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
+  },
+  "vault": {
+    "discordNewRoundMessage": "🔐 Nouveau code disponible : **{code}** — tente ta chance pour gagner **${amount}** !"
   }
 };
 
