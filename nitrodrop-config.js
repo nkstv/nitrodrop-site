@@ -901,7 +901,7 @@ const NITRODROP_DEFAULT_CONFIG = {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   },
   "vault": {
-    "discordNewRoundMessage": "🔐 Nouveau code disponible : **{code}** — tente ta chance pour gagner **${amount}** !"
+    "discordNewRoundMessage": "🔐 New Lucky Vault 🚨 **{code}** — try your luck to win **${amount}**! 👉 Here: https://drop-cash.com/vault "
   }
 };
 
