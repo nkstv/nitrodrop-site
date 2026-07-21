@@ -679,6 +679,11 @@
   // pour éviter une erreur de zone morte temporelle (TDZ) sur ce const.
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
 
+  // Idem : referencée par checkAlreadyPlayed(), appelée dès le premier
+  // applySharedIdentity() ci-dessous — doit donc être déclarée avant.
+  const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
   (function migrateToI18n(cfg){
     if (cfg.content) return;
     const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
@@ -855,9 +860,6 @@
   });
 
   // ---------- Base commune pour les appels au Worker (mini-jeux) ----------
-  const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
-  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
-
   function saveDiscordIdentity(discordId, username){
     const payload = JSON.stringify({ discordId, username });
     try{
