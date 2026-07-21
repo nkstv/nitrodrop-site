@@ -600,6 +600,8 @@
       </button>
     </div>
 
+    <button type="button" id="games-back-btn" class="modal-ghost" style="display:none; margin-bottom:20px; max-width:220px;" onclick="showGameTiles()">← Retour aux jeux</button>
+
     <div class="originals-grid games-grid" id="games-grid" style="display:none;">
 
       <div class="game-card c-ticket" id="scratch-game-card">
@@ -1327,19 +1329,42 @@
     initScratchGame();
   }
 
-  function revealAndScrollTo(cardId){
+  function showSingleGame(cardId){
+    const tilesGrid = document.getElementById('game-tiles-grid');
     const grid = document.getElementById('games-grid');
+    const backBtn = document.getElementById('games-back-btn');
+    if (tilesGrid) tilesGrid.style.display = 'none';
+    if (grid){
+      grid.style.display = 'grid';
+      grid.style.gridTemplateColumns = '1fr';
+      grid.style.maxWidth = '440px';
+      grid.style.marginLeft = 'auto';
+      grid.style.marginRight = 'auto';
+      grid.querySelectorAll('.game-card').forEach(card => {
+        card.style.display = (card.id === cardId) ? '' : 'none';
+      });
+    }
+    if (backBtn) backBtn.style.display = 'inline-flex';
     const target = document.getElementById(cardId);
-    if (grid) grid.style.display = 'grid';
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showGameTiles(){
+    const tilesGrid = document.getElementById('game-tiles-grid');
+    const grid = document.getElementById('games-grid');
+    const backBtn = document.getElementById('games-back-btn');
+    if (tilesGrid) tilesGrid.style.display = 'grid';
+    if (grid) grid.style.display = 'none';
+    if (backBtn) backBtn.style.display = 'none';
+    if (tilesGrid) tilesGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   document.querySelectorAll('.game-tile').forEach(tile => {
-    tile.addEventListener('click', () => revealAndScrollTo(tile.dataset.target));
+    tile.addEventListener('click', () => showSingleGame(tile.dataset.target));
   });
 
-  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('scratch-game-card'); });
-  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('scratch-game-card'); });
+  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('scratch-game-card'); });
+  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('scratch-game-card'); });
 
   const SLOT_SYMBOLS = ['7️⃣','🍒','💎','🔔','🍋','⭐'];
 
@@ -1465,8 +1490,8 @@
     initSlotGame();
   }
 
-  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('slot-game-card'); });
-  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('slot-game-card'); });
+  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('slot-game-card'); });
+  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('slot-game-card'); });
 
   // ---------- Roue de la fortune ----------
   function initWheelGame(){
@@ -1588,8 +1613,8 @@
     initWheelGame();
   }
 
-  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('wheel-game-card'); });
-  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('wheel-game-card'); });
+  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('wheel-game-card'); });
+  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('wheel-game-card'); });
 </script>
 
 </body>
