@@ -808,6 +808,8 @@
   }
 
   applyChrome(getActive());
+  console.log('[DropCash diag] Identité trouvée au chargement de la page :', getSavedDiscordIdentity());
+  console.log('[DropCash diag] Origine actuelle :', location.origin, '| URL complète :', location.href);
   applySharedIdentity();
 
   // Bouton flottant (image + lien) — indépendant de la langue
@@ -997,6 +999,7 @@
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
     const { discordId, username } = event.data;
     saveDiscordIdentity(discordId, username);
+    console.log('[DropCash diag] Vient de sauvegarder :', discordId, username, '| relecture immédiate :', getSavedDiscordIdentity());
     applySharedIdentity();
     // Les 3 jeux sont visibles en même temps sur cette page : la connexion
     // doit s'appliquer partout d'un coup, pas seulement au jeu qui l'a déclenchée.
