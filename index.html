@@ -1438,6 +1438,10 @@
 
   let discordConnectContext = 'claim';
 
+  function isMobileDevice(){
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+  }
+
   function connectDiscord(context){
     discordConnectContext = context || 'claim';
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
@@ -1454,6 +1458,14 @@
                 : 'discord-connect-btn';
     const btn = document.getElementById(btnId);
     btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
+
+    if (isMobileDevice()){
+      // Sur mobile, les popups ne sont pas fiables : on part en pleine page, et
+      // discord-callback.html nous ramène ici une fois la connexion terminée.
+      try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
+      window.location.href = authUrl;
+      return;
+    }
     window.open(authUrl, 'discord-oauth', 'width=500,height=750');
   }
 

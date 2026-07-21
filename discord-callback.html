@@ -17,6 +17,7 @@
 <script>
 (async function(){
   const msgEl = document.getElementById('msg');
+  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
 
   let modal = {};
   try{
@@ -44,19 +45,38 @@
     if (!resp.ok) throw new Error('Réponse Discord invalide (' + resp.status + ')');
     const user = await resp.json();
 
+    // Sauvegarde directe ici (localStorage + cookie), qu'il y ait un window.opener ou non.
+    // Sur mobile, la connexion se fait en pleine page (pas de popup fiable), donc on ne peut
+    // pas compter uniquement sur postMessage vers un window.opener qui n'existe pas.
+    try{
+      const payload = JSON.stringify({ discordId: user.id, username: user.username });
+      try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
+      try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
+    }catch(e){}
+
     if (window.opener){
-      window.opener.postMessage({
-        type: 'nitrodrop-discord-auth',
-        discordId: user.id,
-        username: user.username
-      }, '*');
+      // Flux popup (desktop) : on prévient l'onglet d'origine, puis on ferme celui-ci.
+      try{
+        window.opener.postMessage({
+          type: 'nitrodrop-discord-auth',
+          discordId: user.id,
+          username: user.username
+        }, '*');
+      }catch(e){}
+      msgEl.textContent = modal.callbackSuccessMessage || "Connecté ! Cette fenêtre va se fermer…";
+      setTimeout(() => window.close(), 1200);
+    } else {
+      // Flux pleine page (mobile, ou popup bloquée/perdue) : identité déjà sauvegardée
+      // ci-dessus, on retourne directement sur la page d'où venait la personne.
+      msgEl.textContent = modal.callbackSuccessMessage || "Connecté ! Redirection…";
+      let returnUrl = '/';
+      try{ returnUrl = sessionStorage.getItem('nitrodrop_oauth_return') || '/'; }catch(e){}
+      try{ sessionStorage.removeItem('nitrodrop_oauth_return'); }catch(e){}
+      setTimeout(() => { location.replace(returnUrl); }, 700);
     }
-    msgEl.textContent = modal.callbackSuccessMessage || "Connecté ! Cette fenêtre va se fermer…";
   }catch(err){
     msgEl.textContent = (modal.callbackErrorPrefix || "Erreur : ") + err.message;
   }
-
-  setTimeout(() => window.close(), 1200);
 })();
 </script>
 </body>

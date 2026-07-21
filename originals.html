@@ -1068,6 +1068,10 @@
     }
   }
 
+  function isMobileDevice(){
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+  }
+
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
     if (!clientId){
@@ -1079,6 +1083,15 @@
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify`;
     const btn = document.getElementById('shared-discord-connect-btn');
     btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
+
+    if (isMobileDevice()){
+      // Sur mobile, les popups ne sont pas fiables (fenêtre séparée non supportée par les
+      // navigateurs mobiles, lien avec l'onglet d'origine parfois perdu) : on part en pleine
+      // page, et discord-callback.html se charge de nous ramener ici une fois connecté.
+      try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
+      window.location.href = authUrl;
+      return;
+    }
     window.open(authUrl, 'discord-oauth', 'width=500,height=750');
   }
 
