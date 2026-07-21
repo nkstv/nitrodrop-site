@@ -173,8 +173,7 @@
   }
   .scratch-silver{
     position:absolute; inset:0; z-index:2;
-    background:repeating-linear-gradient(135deg,#9a99a8,#9a99a8 8px,#8685934a 8px,#8685934a 16px);
-    display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer;
+    cursor:pointer; touch-action:none;
     transition:opacity .4s ease, transform .4s ease;
   }
   .scratch-silver.revealed{opacity:0; transform:scale(1.15); pointer-events:none;}
@@ -559,7 +558,7 @@
       <div class="game-card c-ticket" id="scratch-game-card">
         <div class="game-preview">
           <div class="scratch-card-visual" id="scratch-card-visual">
-            <div class="scratch-silver" id="scratch-silver">👆</div>
+            <canvas class="scratch-silver" id="scratch-silver-canvas" width="200" height="200"></canvas>
             <div class="scratch-result" id="scratch-result"></div>
           </div>
         </div>
@@ -683,6 +682,14 @@
   // applySharedIdentity() ci-dessous — doit donc être déclarée avant.
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
+  // Idem : l'état du canvas de grattage est réinitialisé par initScratchGame(),
+  // elle aussi appelée dès le premier applySharedIdentity() ci-dessous.
+  let scratchCtx = null;
+  let scratchRevealed = false;
+  let scratchIsDrawing = false;
+  let scratchCheckScheduled = false;
+  let scratchOnRevealCallback = null;
 
   (function migrateToI18n(cfg){
     if (cfg.content) return;
@@ -1063,11 +1070,129 @@
     });
   });
 
+  // ---------- Ticket à gratter : vrai geste de grattage (canvas), pas juste un clic ----------
+  function drawScratchCoating(){
+    const canvas = document.getElementById('scratch-silver-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    scratchCtx = ctx;
+    const w = canvas.width, h = canvas.height;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0, 0, w, h);
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, '#b3b2c2');
+    grad.addColorStop(0.5, '#87869c');
+    grad.addColorStop(1, '#b3b2c2');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+    ctx.lineWidth = 8;
+    for (let x = -h; x < w + h; x += 16){
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + h, h);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(20,20,30,0.6)';
+    ctx.font = '700 14px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('✋ GRATTE ICI', w / 2, h / 2);
+  }
+
+  function resetScratchCanvas(){
+    scratchRevealed = false;
+    scratchOnRevealCallback = null;
+    const canvas = document.getElementById('scratch-silver-canvas');
+    if (!canvas) return;
+    canvas.classList.remove('revealed');
+    canvas.style.opacity = '';
+    canvas.style.transform = '';
+    canvas.style.pointerEvents = '';
+    drawScratchCoating();
+  }
+
+  function scratchAt(x, y){
+    if (!scratchCtx) return;
+    scratchCtx.globalCompositeOperation = 'destination-out';
+    scratchCtx.beginPath();
+    scratchCtx.arc(x, y, 18, 0, Math.PI * 2);
+    scratchCtx.fill();
+  }
+
+  function getCanvasPos(canvas, clientX, clientY){
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  function checkScratchProgress(){
+    if (scratchRevealed || scratchCheckScheduled) return;
+    scratchCheckScheduled = true;
+    requestAnimationFrame(() => {
+      scratchCheckScheduled = false;
+      const canvas = document.getElementById('scratch-silver-canvas');
+      if (!canvas || !scratchCtx || scratchRevealed) return;
+      const w = canvas.width, h = canvas.height;
+      const step = 6; // échantillonnage : reste léger même sur mobile
+      const data = scratchCtx.getImageData(0, 0, w, h).data;
+      let cleared = 0, total = 0;
+      for (let y = 0; y < h; y += step){
+        for (let x = 0; x < w; x += step){
+          total++;
+          if (data[(y * w + x) * 4 + 3] < 80) cleared++;
+        }
+      }
+      if (total > 0 && (cleared / total) > 0.45) revealScratchFully();
+    });
+  }
+
+  function revealScratchFully(){
+    if (scratchRevealed) return;
+    scratchRevealed = true;
+    const canvas = document.getElementById('scratch-silver-canvas');
+    if (canvas){
+      canvas.classList.add('revealed');
+      canvas.style.pointerEvents = 'none';
+    }
+    if (typeof scratchOnRevealCallback === 'function') scratchOnRevealCallback();
+  }
+
+  (function setupScratchCanvasEvents(){
+    const canvas = document.getElementById('scratch-silver-canvas');
+    if (!canvas) return;
+
+    function startDraw(clientX, clientY){
+      if (scratchRevealed) return;
+      scratchIsDrawing = true;
+      const pos = getCanvasPos(canvas, clientX, clientY);
+      scratchAt(pos.x, pos.y);
+      checkScratchProgress();
+    }
+    function moveDraw(clientX, clientY){
+      if (!scratchIsDrawing || scratchRevealed) return;
+      const pos = getCanvasPos(canvas, clientX, clientY);
+      scratchAt(pos.x, pos.y);
+      checkScratchProgress();
+    }
+    function endDraw(){ scratchIsDrawing = false; }
+
+    canvas.addEventListener('mousedown', (e) => startDraw(e.clientX, e.clientY));
+    canvas.addEventListener('mousemove', (e) => moveDraw(e.clientX, e.clientY));
+    window.addEventListener('mouseup', endDraw);
+
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); const t = e.touches[0]; startDraw(t.clientX, t.clientY); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); const t = e.touches[0]; moveDraw(t.clientX, t.clientY); }, { passive: false });
+    canvas.addEventListener('touchend', endDraw);
+  })();
+
   function initScratchGame(){
     document.getElementById('scratch-form-error').style.display = 'none';
     document.getElementById('scratch-result-message').style.display = 'none';
     document.getElementById('scratch-play-again-btn').style.display = 'none';
-    document.getElementById('scratch-silver').classList.remove('revealed');
+    resetScratchCanvas();
     document.getElementById('scratch-discord-claim-btn').style.display = 'none';
     document.getElementById('scratch-submit-btn').style.display = '';
 
@@ -1118,15 +1243,13 @@
 
       submitBtn.style.display = 'none';
 
-      const silver = document.getElementById('scratch-silver');
       const resultEl = document.getElementById('scratch-result');
       const msgEl = document.getElementById('scratch-result-message');
       const claimBtn = document.getElementById('scratch-discord-claim-btn');
       const playAgainBtn = document.getElementById('scratch-play-again-btn');
       playAgainBtn.style.display = 'none';
 
-      silver.onclick = () => {
-        silver.classList.add('revealed');
+      scratchOnRevealCallback = () => {
         msgEl.style.display = 'block';
         if (data.won){
           resultEl.textContent = '$' + data.amount;
