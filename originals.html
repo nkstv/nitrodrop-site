@@ -304,6 +304,29 @@
   .game-card.c-slot::before{background:var(--violet);}
   .game-card.c-wheel::before{background:var(--green);}
 
+  .game-tiles-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:32px;}
+  .game-tile{
+    display:block; padding:0; border:1px solid var(--line); border-radius:16px; overflow:hidden;
+    background:var(--bg-card); cursor:pointer; text-align:center; font-family:inherit;
+    transition:transform .2s ease, border-color .2s ease;
+  }
+  .game-tile:hover{transform:translateY(-4px); border-color:var(--line-strong);}
+  .game-tile-visual{
+    height:110px; display:flex; align-items:center; justify-content:center; font-size:44px;
+  }
+  .game-tile.c-ticket .game-tile-visual{background:linear-gradient(160deg, #FF5C7A, #ff8fa8);}
+  .game-tile.c-slot .game-tile-visual{background:linear-gradient(160deg, var(--violet), #b79bff);}
+  .game-tile.c-wheel .game-tile-visual{background:linear-gradient(160deg, var(--green), #ddffb0);}
+  .game-tile-info{padding:14px 10px 16px;}
+  .game-tile-title{font-family:'Unbounded', sans-serif; font-weight:800; font-size:14.5px; color:var(--text); margin-bottom:4px; line-height:1.3;}
+  .game-tile-brand{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); font-weight:600;}
+  @media (max-width: 720px){
+    .game-tiles-grid{grid-template-columns:repeat(3, 1fr); gap:10px;}
+    .game-tile-visual{height:80px; font-size:32px;}
+    .game-tile-title{font-size:12px;}
+    .game-tile-brand{display:none;}
+  }
+
   .game-preview{
     min-height:150px; display:flex; align-items:center; justify-content:center; padding:24px;
   }
@@ -553,6 +576,30 @@
     <pre id="visible-debug-status" style="background:#000; color:#0ff; padding:16px; font-size:12px; white-space:pre-wrap; word-break:break-all; border:2px solid orange; margin-bottom:20px;"></pre>
 
     <div id="games-container" style="display:none;">
+    <div class="game-tiles-grid" id="game-tiles-grid">
+      <button type="button" class="game-tile c-ticket" data-target="scratch-game-card">
+        <div class="game-tile-visual">🎫</div>
+        <div class="game-tile-info">
+          <div class="game-tile-title" id="tile-scratch-title">Ticket à gratter</div>
+          <div class="game-tile-brand">Drop Cash</div>
+        </div>
+      </button>
+      <button type="button" class="game-tile c-slot" data-target="slot-game-card">
+        <div class="game-tile-visual">🎰</div>
+        <div class="game-tile-info">
+          <div class="game-tile-title" id="tile-slot-title">Machine à sous</div>
+          <div class="game-tile-brand">Drop Cash</div>
+        </div>
+      </button>
+      <button type="button" class="game-tile c-wheel" data-target="wheel-game-card">
+        <div class="game-tile-visual">🎡</div>
+        <div class="game-tile-info">
+          <div class="game-tile-title" id="tile-wheel-title">Roue de la fortune</div>
+          <div class="game-tile-brand">Drop Cash</div>
+        </div>
+      </button>
+    </div>
+
     <div class="originals-grid games-grid">
 
       <div class="game-card c-ticket" id="scratch-game-card">
@@ -824,6 +871,10 @@
     const wheelNavLabel = (cfg.wheelGame && cfg.wheelGame.navLabel) || '🎡 Roue';
     document.getElementById('nav-wheel-btn').textContent = wheelNavLabel;
     document.getElementById('mobile-nav-wheel-btn').textContent = wheelNavLabel;
+
+    document.getElementById('tile-scratch-title').textContent = (cfg.scratchTicket && cfg.scratchTicket.tag) || 'Ticket à gratter';
+    document.getElementById('tile-slot-title').textContent = (cfg.slotMachine && cfg.slotMachine.tag) || 'Machine à sous';
+    document.getElementById('tile-wheel-title').textContent = (cfg.wheelGame && cfg.wheelGame.tag) || 'Roue de la fortune';
   }
 
   applyChrome(getActive());
@@ -1275,6 +1326,13 @@
   function replayScratch(){
     initScratchGame();
   }
+
+  document.querySelectorAll('.game-tile').forEach(tile => {
+    tile.addEventListener('click', () => {
+      const target = document.getElementById(tile.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
 
   document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('scratch-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
   document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('scratch-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
