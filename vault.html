@@ -544,9 +544,6 @@
       <h3 id="scratch-title">Tente ta chance</h3>
       <p class="modal-sub" id="scratch-subtitle">Un essai gratuit par jour.</p>
       <form id="scratch-form" onsubmit="submitScratch(event)">
-        <label><span id="scratch-username-label">Pseudo</span>
-          <input type="text" required placeholder="Ton pseudo" id="scratch-username-input">
-        </label>
         <label><span id="scratch-discord-label-text">Ton compte Discord</span></label>
         <button type="button" id="scratch-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('scratch')">🎮 Se connecter avec Discord</button>
         <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="scratch-discord-note">
@@ -583,9 +580,6 @@
       <h3 id="slot-title">Tente ta chance</h3>
       <p class="modal-sub" id="slot-subtitle">Un spin gratuit par jour.</p>
       <form id="slot-form" onsubmit="submitSlot(event)">
-        <label><span id="slot-username-label">Pseudo</span>
-          <input type="text" required placeholder="Ton pseudo" id="slot-username-input">
-        </label>
         <label><span id="slot-discord-label-text">Ton compte Discord</span></label>
         <button type="button" id="slot-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('slot')">🎮 Se connecter avec Discord</button>
         <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="slot-discord-note">
@@ -623,9 +617,6 @@
       <h3 id="wheel-title">Fais tourner la roue</h3>
       <p class="modal-sub" id="wheel-subtitle">Tente ta chance chaque jour.</p>
       <form id="wheel-form" onsubmit="submitWheel(event)">
-        <label><span id="wheel-username-label">Pseudo</span>
-          <input type="text" required placeholder="Ton pseudo" id="wheel-username-input">
-        </label>
         <label><span id="wheel-discord-label-text">Ton compte Discord</span></label>
         <button type="button" id="wheel-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('wheel')">🎮 Se connecter avec Discord</button>
         <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="wheel-discord-note">
@@ -663,7 +654,7 @@
   </div>
 </div>
 
-<script src="nitrodrop-config.js?v=20260721a"></script>
+<script src="nitrodrop-config.js?v=20260719a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
 
@@ -1093,6 +1084,13 @@
     return null;
   }
 
+  // Pseudo utilisé pour les 3 mini-jeux (Ticket/Slot/Roue) : plus de champ manuel,
+  // on prend directement le pseudo Discord (comme sur la page Originals).
+  function getConnectedUsername(){
+    const saved = getSavedDiscordIdentity();
+    return (saved && saved.username) || '';
+  }
+
   // Réutilise la connexion Discord déjà faite dans une autre popup (évite de se reconnecter à chaque fois)
   function applyDiscordIdentityToForm(context){
     const prefix = context === 'slot' ? 'slot' : context === 'wheel' ? 'wheel' : 'scratch';
@@ -1231,8 +1229,6 @@
     document.getElementById('scratch-tag').textContent = st.tag || 'Ticket à gratter';
     document.getElementById('scratch-title').textContent = st.title || 'Tente ta chance';
     document.getElementById('scratch-subtitle').textContent = st.subtitle || 'Un essai gratuit par jour.';
-    document.getElementById('scratch-username-label').textContent = st.usernameLabel || 'Pseudo';
-    document.getElementById('scratch-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
     document.getElementById('scratch-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
     document.getElementById('scratch-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
     document.getElementById('scratch-submit-btn').textContent = st.submitText || 'Gratter le ticket';
@@ -1259,7 +1255,7 @@
 
   async function submitScratch(e){
     e.preventDefault();
-    const pseudo = document.getElementById('scratch-username-input').value.trim();
+    const pseudo = getConnectedUsername();
     const discordId = document.getElementById('scratch-discord-input').value;
     const st = getActive().scratchTicket || {};
     if (!discordId){
@@ -1347,8 +1343,6 @@
     document.getElementById('slot-tag').textContent = st.tag || 'Machine à sous';
     document.getElementById('slot-title').textContent = st.title || 'Tente ta chance';
     document.getElementById('slot-subtitle').textContent = st.subtitle || 'Un spin gratuit par jour.';
-    document.getElementById('slot-username-label').textContent = st.usernameLabel || 'Pseudo';
-    document.getElementById('slot-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
     document.getElementById('slot-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
     document.getElementById('slot-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
     document.getElementById('slot-submit-btn').textContent = st.spinText || 'Spin';
@@ -1376,7 +1370,7 @@
 
   async function submitSlot(e){
     e.preventDefault();
-    const pseudo = document.getElementById('slot-username-input').value.trim();
+    const pseudo = getConnectedUsername();
     const discordId = document.getElementById('slot-discord-input').value;
     const st = getActive().slotMachine || {};
     if (!discordId){
@@ -1497,8 +1491,6 @@
     document.getElementById('wheel-tag').textContent = st.tag || 'Roue de la fortune';
     document.getElementById('wheel-title').textContent = st.title || 'Fais tourner la roue';
     document.getElementById('wheel-subtitle').textContent = st.subtitle || 'Tente ta chance chaque jour.';
-    document.getElementById('wheel-username-label').textContent = st.usernameLabel || 'Pseudo';
-    document.getElementById('wheel-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
     document.getElementById('wheel-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
     document.getElementById('wheel-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
     document.getElementById('wheel-submit-btn').textContent = st.spinText || 'Faire tourner la roue';
@@ -1554,7 +1546,7 @@
 
   async function submitWheel(e){
     e.preventDefault();
-    const pseudo = document.getElementById('wheel-username-input').value.trim();
+    const pseudo = getConnectedUsername();
     const discordId = document.getElementById('wheel-discord-input').value;
     const st = getActive().wheelGame || {};
     if (!discordId){
