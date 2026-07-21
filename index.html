@@ -413,13 +413,13 @@
   #modal-step-form h3{font-family:'Unbounded'; font-size:22px; color:#fff; margin-top:10px;}
   .modal-sub{font-size:13.5px; color:var(--text-dim); margin-top:10px; line-height:1.6;}
   .modal-sub strong{color:var(--green);}
-  #claim-form, #scratch-form, #slot-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
-  #claim-form label, #scratch-form label, #slot-form label{display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
-  #claim-form input, #scratch-form input, #slot-form input{
+  #claim-form, #scratch-form, #slot-form, #wheel-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
+  #claim-form label, #scratch-form label, #slot-form label, #wheel-form label{display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
+  #claim-form input, #scratch-form input, #slot-form input, #wheel-form input{
     background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
     padding:12px 14px; color:var(--text); font-size:14px; font-family:'Inter'; width:100%;
   }
-  #claim-form input:focus, #scratch-form input:focus, #slot-form input:focus{border-color:var(--green);}
+  #claim-form input:focus, #scratch-form input:focus, #slot-form input:focus, #wheel-form input:focus{border-color:var(--green);}
   .modal-submit{
     margin-top:6px; background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
     padding:14px; border:none; border-radius:10px; cursor:pointer; width:100%;
@@ -474,6 +474,29 @@
   .slot-reel.spinning .slot-sym{animation:slot-blur .07s linear infinite;}
   @keyframes slot-blur{0%{transform:translateY(-4px);}50%{transform:translateY(4px);}100%{transform:translateY(-4px);}}
 
+  .wheel-wrap{position:relative; width:220px; height:220px; margin:20px auto 0;}
+  .wheel-pointer{
+    position:absolute; top:-4px; left:50%; transform:translateX(-50%); z-index:3;
+    width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent;
+    border-top:18px solid var(--green);
+  }
+  .wheel-disc{
+    width:220px; height:220px; border-radius:50%; position:relative;
+    background: conic-gradient(
+      var(--bg-card) 0deg 45deg, var(--green) 45deg 90deg,
+      var(--bg-card) 90deg 135deg, var(--green) 135deg 180deg,
+      var(--bg-card) 180deg 225deg, var(--green) 225deg 270deg,
+      var(--bg-card) 270deg 315deg, var(--green) 315deg 360deg
+    );
+    border:3px solid var(--line-strong); box-shadow:0 0 0 6px var(--bg-raise);
+  }
+  .wheel-label-pos{position:absolute; top:50%; left:50%; width:0; height:0;}
+  .wheel-label-content{position:absolute; display:block; font-size:22px; transform-origin:center; margin-left:-12px; margin-top:-12px;}
+  .wheel-center-dot{
+    position:absolute; top:50%; left:50%; width:22px; height:22px; margin:-11px 0 0 -11px;
+    background:var(--bg-raise); border:2px solid var(--line-strong); border-radius:50%; z-index:2;
+  }
+
   /* ---------- ADMIN BAR ---------- */
   .admin-bar{
     position:fixed; bottom:18px; right:18px; z-index:200;
@@ -518,6 +541,7 @@
       <a href="#" id="nav-link-3">Discord</a>
       <a href="#" id="nav-scratch-btn">🎫 Ticket</a>
       <a href="#" id="nav-slot-btn">🎰 Slot</a>
+      <a href="#" id="nav-wheel-btn">🎡 Roue</a>
     </div>
     <div class="lang-switch">
       <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
@@ -540,6 +564,7 @@
     <a href="#" id="mobile-nav-link-3">Discord</a>
     <a href="#" id="mobile-nav-scratch-btn">🎫 Ticket</a>
     <a href="#" id="mobile-nav-slot-btn">🎰 Slot</a>
+    <a href="#" id="mobile-nav-wheel-btn">🎡 Roue</a>
   </div>
 </nav>
 
@@ -819,6 +844,55 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="wheel-modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeWheelModal()" aria-label="Fermer">×</button>
+
+    <div id="wheel-step-form">
+      <div class="modal-tag" id="wheel-tag">Roue de la fortune</div>
+      <h3 id="wheel-title">Fais tourner la roue</h3>
+      <p class="modal-sub" id="wheel-subtitle">Tente ta chance chaque jour.</p>
+      <form id="wheel-form" onsubmit="submitWheel(event)">
+        <label><span id="wheel-username-label">Pseudo</span>
+          <input type="text" required placeholder="Ton pseudo" id="wheel-username-input">
+        </label>
+        <label><span id="wheel-discord-label-text">Ton compte Discord</span></label>
+        <button type="button" id="wheel-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('wheel')">🎮 Se connecter avec Discord</button>
+        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="wheel-discord-note">
+          Connexion Discord requise pour participer.
+        </p>
+        <div id="wheel-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
+        <input type="hidden" id="wheel-discord-input">
+        <button type="submit" class="modal-submit" id="wheel-submit-btn">Faire tourner la roue</button>
+        <p id="wheel-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
+        <p id="wheel-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
+      </form>
+      <p id="wheel-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+    </div>
+
+    <div id="wheel-step-card" style="display:none; text-align:center;">
+      <h3 id="wheel-result-title">Résultat</h3>
+      <div class="wheel-wrap">
+        <div class="wheel-pointer"></div>
+        <div class="wheel-disc" id="wheel-disc">
+          <div class="wheel-label-pos" style="transform:rotate(22.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-22.5deg);">😔</span></div>
+          <div class="wheel-label-pos" style="transform:rotate(67.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-67.5deg);">🎉</span></div>
+          <div class="wheel-label-pos" style="transform:rotate(112.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-112.5deg);">😔</span></div>
+          <div class="wheel-label-pos" style="transform:rotate(157.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-157.5deg);">🎉</span></div>
+          <div class="wheel-label-pos" style="transform:rotate(202.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-202.5deg);">😔</span></div>
+          <div class="wheel-label-pos" style="transform:rotate(247.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-247.5deg);">🎉</span></div>
+          <div class="wheel-label-pos" style="transform:rotate(292.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-292.5deg);">😔</span></div>
+          <div class="wheel-label-pos" style="transform:rotate(337.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-337.5deg);">🎉</span></div>
+        </div>
+        <div class="wheel-center-dot"></div>
+      </div>
+      <p id="wheel-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+      <a href="#" id="wheel-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+      <button type="button" id="wheel-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayWheel()">Rejouer</button>
+    </div>
+  </div>
+</div>
+
 <script src="nitrodrop-config.js?v=20260719a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
@@ -838,7 +912,7 @@
   (function migrateToI18n(cfg){
     if (cfg.content) return;
     const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
-                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine'];
+                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine','wheelGame'];
     const en = {};
     textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
     cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
@@ -1053,6 +1127,9 @@
     const slotNavLabel = (cfg.slotMachine && cfg.slotMachine.navLabel) || '🎰 Slot';
     document.getElementById('nav-slot-btn').textContent = slotNavLabel;
     document.getElementById('mobile-nav-slot-btn').textContent = slotNavLabel;
+    const wheelNavLabel = (cfg.wheelGame && cfg.wheelGame.navLabel) || '🎡 Roue';
+    document.getElementById('nav-wheel-btn').textContent = wheelNavLabel;
+    document.getElementById('mobile-nav-wheel-btn').textContent = wheelNavLabel;
   }
 
   // ---------- Génère les cartes d'offres depuis la config ----------
@@ -1225,7 +1302,8 @@
   const DISCORD_FORM_IDS = {
     claim: { input: 'claim-discord-input', btn: 'discord-connect-btn', info: 'discord-connected-info' },
     scratch: { input: 'scratch-discord-input', btn: 'scratch-discord-connect-btn', info: 'scratch-discord-connected-info' },
-    slot: { input: 'slot-discord-input', btn: 'slot-discord-connect-btn', info: 'slot-discord-connected-info' }
+    slot: { input: 'slot-discord-input', btn: 'slot-discord-connect-btn', info: 'slot-discord-connected-info' },
+    wheel: { input: 'wheel-discord-input', btn: 'wheel-discord-connect-btn', info: 'wheel-discord-connected-info' }
   };
 
   // Réutilise la connexion Discord déjà faite dans une autre popup (évite de se reconnecter à chaque fois)
@@ -1303,7 +1381,7 @@
     msgEl.style.display = 'none';
     if (triesEl){
       if (typeof remaining === 'number'){
-        const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : 'slotMachine'] || {};
+        const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
         triesEl.textContent = fillTemplate(st.triesRemainingText || '{remaining} essai(s) restant(s) aujourd\'hui', { remaining });
         triesEl.style.display = 'block';
       } else {
@@ -1314,7 +1392,7 @@
 
   async function checkAlreadyPlayed(prefix, discordId){
     if (!discordId){ hideCooldown(prefix); return; }
-    const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : 'slotMachine'] || {};
+    const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
     try{
       const resp = await fetch(`${getWorkerBase()}/${prefix}/status?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
@@ -1342,6 +1420,7 @@
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify`;
     const btnId = discordConnectContext === 'scratch' ? 'scratch-discord-connect-btn'
                 : discordConnectContext === 'slot' ? 'slot-discord-connect-btn'
+                : discordConnectContext === 'wheel' ? 'wheel-discord-connect-btn'
                 : 'discord-connect-btn';
     const btn = document.getElementById(btnId);
     btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
@@ -1353,7 +1432,7 @@
     const { discordId, username } = event.data;
     saveDiscordIdentity(discordId, username);
     applyDiscordIdentityToForm(discordConnectContext);
-    if (discordConnectContext === 'scratch' || discordConnectContext === 'slot'){
+    if (discordConnectContext === 'scratch' || discordConnectContext === 'slot' || discordConnectContext === 'wheel'){
       checkAlreadyPlayed(discordConnectContext, discordId);
     }
   });
@@ -1785,6 +1864,155 @@
 
   document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
   document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
+
+  // ---------- Roue de la fortune ----------
+  function openWheelModal(){
+    document.getElementById('wheel-step-form').style.display = 'block';
+    document.getElementById('wheel-step-card').style.display = 'none';
+    document.getElementById('wheel-form').reset();
+    document.getElementById('wheel-form-error').style.display = 'none';
+    document.getElementById('wheel-discord-claim-btn').style.display = 'none';
+    document.getElementById('wheel-disc').style.transition = 'none';
+    document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
+
+    const st = getActive().wheelGame || {};
+    document.getElementById('wheel-tag').textContent = st.tag || 'Roue de la fortune';
+    document.getElementById('wheel-title').textContent = st.title || 'Fais tourner la roue';
+    document.getElementById('wheel-subtitle').textContent = st.subtitle || 'Tente ta chance chaque jour.';
+    document.getElementById('wheel-username-label').textContent = st.usernameLabel || 'Pseudo';
+    document.getElementById('wheel-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
+    document.getElementById('wheel-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
+    document.getElementById('wheel-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
+    document.getElementById('wheel-submit-btn').textContent = st.spinText || 'Faire tourner la roue';
+    document.getElementById('wheel-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer.';
+    document.getElementById('wheel-result-title').textContent = st.resultTitle || 'Résultat';
+    document.getElementById('wheel-result-message').textContent = '';
+    applyDiscordIdentityToForm('wheel');
+    checkAlreadyPlayed('wheel', document.getElementById('wheel-discord-input').value);
+
+    document.getElementById('wheel-modal-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeWheelModal(){
+    document.getElementById('wheel-modal-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+    clearCooldown('wheel');
+  }
+
+  function showWheelFormError(msg){
+    const el = document.getElementById('wheel-form-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  // Fait tourner la roue jusqu'au centre d'un secteur du bon type (gagné/perdu),
+  // choisi au hasard parmi les 4 secteurs de ce type, avec plusieurs tours complets.
+  function spinWheelTo(discEl, won, onDone){
+    const winIndexes = [1, 3, 5, 7];
+    const loseIndexes = [0, 2, 4, 6];
+    const pool = won ? winIndexes : loseIndexes;
+    const idx = pool[Math.floor(Math.random() * pool.length)];
+    const segmentCenter = idx * 45 + 22.5;
+    const rest = (360 - segmentCenter) % 360;
+    const spins = 6;
+    const target = spins * 360 + rest;
+
+    discEl.style.transition = 'none';
+    discEl.style.transform = 'rotate(0deg)';
+    void discEl.offsetWidth; // force reflow pour repartir de 0 sans transition visible
+    discEl.style.transition = 'transform 4.5s cubic-bezier(0.12,0.67,0.1,0.99)';
+
+    const handleEnd = () => {
+      discEl.removeEventListener('transitionend', handleEnd);
+      onDone();
+    };
+    discEl.addEventListener('transitionend', handleEnd);
+
+    requestAnimationFrame(() => {
+      discEl.style.transform = `rotate(${target}deg)`;
+    });
+  }
+
+  async function submitWheel(e){
+    e.preventDefault();
+    const pseudo = document.getElementById('wheel-username-input').value.trim();
+    const discordId = document.getElementById('wheel-discord-input').value;
+    const st = getActive().wheelGame || {};
+    if (!discordId){
+      showWheelFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('wheel-submit-btn');
+    submitBtn.disabled = true;
+    const workerBase = getWorkerBase();
+
+    try{
+      const resp = await fetch(`${workerBase}/wheel/play`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pseudo, discordId })
+      });
+      const data = await resp.json();
+
+      if (data.ok === false && data.reason === 'already_played_today'){
+        submitBtn.disabled = false;
+        showWheelFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
+        return;
+      }
+      if (data.ok === false){
+        submitBtn.disabled = false;
+        showWheelFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
+        return;
+      }
+
+      document.getElementById('wheel-step-form').style.display = 'none';
+      document.getElementById('wheel-step-card').style.display = 'block';
+
+      const msgEl = document.getElementById('wheel-result-message');
+      const claimBtn = document.getElementById('wheel-discord-claim-btn');
+      const playAgainBtn = document.getElementById('wheel-play-again-btn');
+      playAgainBtn.style.display = 'none';
+      submitBtn.textContent = st.spinningText || 'Ça tourne...';
+
+      const disc = document.getElementById('wheel-disc');
+      spinWheelTo(disc, data.won, () => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = st.spinText || 'Faire tourner la roue';
+        if (data.won){
+          msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
+          claimBtn.style.display = 'flex';
+          claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
+          claimBtn.href = (CONFIG.wheelGame && CONFIG.wheelGame.discordClaimLink) || '#';
+        } else {
+          msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
+        }
+        if (data.remaining > 0){
+          playAgainBtn.textContent = st.playAgainText || 'Rejouer';
+          playAgainBtn.style.display = 'block';
+        }
+      });
+    }catch(err){
+      submitBtn.disabled = false;
+      submitBtn.textContent = st.spinText || 'Faire tourner la roue';
+      showWheelFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
+    }
+  }
+
+  function replayWheel(){
+    document.getElementById('wheel-step-card').style.display = 'none';
+    document.getElementById('wheel-play-again-btn').style.display = 'none';
+    document.getElementById('wheel-step-form').style.display = 'block';
+    document.getElementById('wheel-discord-claim-btn').style.display = 'none';
+    document.getElementById('wheel-disc').style.transition = 'none';
+    document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
+    const discordId = document.getElementById('wheel-discord-input').value;
+    checkAlreadyPlayed('wheel', discordId);
+  }
+
+  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
+  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
 </script>
 
 </body>

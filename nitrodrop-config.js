@@ -441,6 +441,30 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordAccountLabel": "Discord*",
         "discordConnectText": "🎮 Log in with Discord",
         "resultTitle": "Result"
+      },
+      "wheelGame": {
+        "navLabel": "🎡 Wheel",
+        "tag": "🎡 Wheel of Fortune",
+        "title": "Spin to win",
+        "subtitle": "Try your luck every day.",
+        "usernameLabel": "Username*",
+        "usernamePlaceholder": "your username",
+        "discordNote": "Connect your Discord account to participate.",
+        "triesRemainingText": "{remaining} spin(s) left today",
+        "playAgainText": "Play again",
+        "spinText": "Spin the wheel",
+        "spinningText": "Spinning...",
+        "alreadyPlayedMessage": "You've already played today, come back tomorrow!",
+        "cooldownMessage": "Come back in {time} ⏳",
+        "discordRequiredMessage": "Connect to Discord before continuing.",
+        "genericErrorMessage": "An error has occurred, please try again.",
+        "networkErrorMessage": "Connection error, please try again.",
+        "winMessage": "🎉 Congratulations! You won {amount}!",
+        "loseMessage": "No luck. Try again tomorrow!",
+        "discordButtonText": "Claim on Discord",
+        "discordAccountLabel": "Discord*",
+        "discordConnectText": "🎮 Log in with Discord",
+        "resultTitle": "Result"
       }
     },
     "fr": {
@@ -873,6 +897,30 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordAccountLabel": "",
         "discordConnectText": "",
         "resultTitle": ""
+      },
+      "wheelGame": {
+        "navLabel": "🎡 Roue",
+        "tag": "🎡 Roue de la fortune",
+        "title": "Fais tourner la roue",
+        "subtitle": "Tente ta chance chaque jour.",
+        "usernameLabel": "Pseudo*",
+        "usernamePlaceholder": "votre Pseudo",
+        "discordNote": "Connexion Discord requise pour participer.",
+        "triesRemainingText": "{remaining} tour(s) restant(s) aujourd'hui",
+        "playAgainText": "Rejouer",
+        "spinText": "Faire tourner la roue",
+        "spinningText": "Ça tourne...",
+        "alreadyPlayedMessage": "Tu as déjà joué aujourd'hui, reviens demain !",
+        "cooldownMessage": "Reviens dans {time} ⏳",
+        "discordRequiredMessage": "Connecte-toi avec Discord avant de continuer.",
+        "genericErrorMessage": "Une erreur est survenue, réessaie.",
+        "networkErrorMessage": "Erreur de connexion, réessaie.",
+        "winMessage": "🎉 Félicitations, tu remportes {amount} !",
+        "loseMessage": "Pas de chance cette fois, reviens demain !",
+        "discordButtonText": "Réclamer sur Discord",
+        "discordAccountLabel": "",
+        "discordConnectText": "",
+        "resultTitle": ""
       }
     }
   },
@@ -900,6 +948,9 @@ const NITRODROP_DEFAULT_CONFIG = {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   },
   "slotMachine": {
+    "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
+  },
+  "wheelGame": {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   },
   "vault": {

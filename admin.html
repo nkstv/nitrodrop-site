@@ -258,6 +258,58 @@
     <div class="field"><label>Texte du bouton de réclamation</label><input type="text" id="slot-discordButtonText" placeholder="Réclamer sur Discord"></div>
   </div>
 
+  <!-- ROUE DE LA FORTUNE -->
+  <div class="panel" style="border-color:rgba(139,92,255,0.4);">
+    <h2>Roue de la fortune (bouton "🎡 Roue" dans le menu)</h2>
+    <div class="sub">Le tirage se fait uniquement sur le Worker (impossible à truquer côté visiteur). La chance de gain et le montant ne sont <strong>jamais</strong> publiés sur GitHub — ils sont envoyés directement au Worker, protégés par ta clé de dashboard.</div>
+
+    <div class="row">
+      <div class="field"><label>URL de ton Worker (sans /notify à la fin)</label><input type="text" id="wheel-worker-url" placeholder="https://nitrodrop-relay.tonpseudo.workers.dev"></div>
+      <div class="field"><label>Clé du dashboard (X-Dashboard-Key)</label><input type="password" id="wheel-dashboard-key" placeholder="Ta clé DASHBOARD_KEY"></div>
+    </div>
+
+    <button type="button" class="btn" onclick="loadWheelState()">Charger les réglages actuels</button>
+    <div id="wheel-current-state" style="margin-top:10px; font-size:12.5px; color:var(--text-dim);"></div>
+
+    <div class="subheading">Réglages du tirage</div>
+    <div class="row">
+      <div class="field"><label>Chance de gagner (%)</label><input type="text" id="wheel-win-chance" placeholder="0.5"></div>
+      <div class="field"><label>Montant gagné ($)</label><input type="text" id="wheel-win-amount" placeholder="2"></div>
+      <div class="field"><label>Essais autorisés par jour</label><input type="text" id="wheel-max-plays" placeholder="2"></div>
+    </div>
+    <button type="button" class="btn btn-save" onclick="setWheelConfig()">Enregistrer ces réglages</button>
+    <div id="wheel-set-status" style="margin-top:10px; font-size:12.5px;"></div>
+
+    <div class="subheading">Lien de réclamation (partagé, pas besoin de le traduire)</div>
+    <div class="field"><label>Lien Discord pour réclamer un gain</label><input type="text" id="wheel-discord-claim-link" placeholder="https://discord.gg/..."></div>
+
+    <div class="subheading">Textes (EN / FR séparément, comme le reste)</div>
+    <div class="field"><label>Texte du bouton dans le menu</label><input type="text" id="wheel-navLabel" placeholder="🎡 Roue"></div>
+    <div class="field"><label>Étiquette</label><input type="text" id="wheel-tag" placeholder="Roue de la fortune"></div>
+    <div class="field"><label>Titre</label><input type="text" id="wheel-title" placeholder="Fais tourner la roue"></div>
+    <div class="field"><label>Sous-titre</label><input type="text" id="wheel-subtitle" placeholder="Tente ta chance chaque jour."></div>
+    <div class="row">
+      <div class="field"><label>Libellé du champ pseudo</label><input type="text" id="wheel-usernameLabel" placeholder="Pseudo"></div>
+      <div class="field"><label>Placeholder du champ pseudo</label><input type="text" id="wheel-usernamePlaceholder" placeholder="Ton pseudo"></div>
+    </div>
+    <div class="field"><label>Note sous le bouton Discord</label><input type="text" id="wheel-discordNote" placeholder="Connexion Discord requise pour participer."></div>
+    <div class="field"><label>Libellé "Ton compte Discord"</label><input type="text" id="wheel-discordAccountLabel" placeholder="Ton compte Discord"></div>
+    <div class="field"><label>Texte du bouton "Se connecter avec Discord"</label><input type="text" id="wheel-discordConnectText" placeholder="🎮 Se connecter avec Discord"></div>
+    <div class="field"><label>Titre de l'écran de résultat</label><input type="text" id="wheel-resultTitle" placeholder="Résultat"></div>
+    <div class="field"><label>Texte du bouton "Faire tourner la roue"</label><input type="text" id="wheel-spinText" placeholder="Faire tourner la roue"></div>
+    <div class="field"><label>Texte pendant le tirage</label><input type="text" id="wheel-spinningText" placeholder="Ça tourne..."></div>
+    <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="wheel-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
+    <div class="field"><label>Message du compte à rebours (utilise <code>{time}</code>, affiché avant même de cliquer)</label><input type="text" id="wheel-cooldownMessage" placeholder="Reviens dans {time}"></div>
+    <div class="field"><label>Texte "essais restants" (utilise <code>{remaining}</code>)</label><input type="text" id="wheel-triesRemainingText" placeholder="{remaining} essai(s) restant(s) aujourd'hui"></div>
+    <div class="field"><label>Texte du bouton "Rejouer"</label><input type="text" id="wheel-playAgainText" placeholder="Rejouer"></div>
+    <div class="field"><label>Message si on essaie de jouer sans être connecté à Discord</label><input type="text" id="wheel-discordRequiredMessage" placeholder="Connecte-toi avec Discord avant de continuer."></div>
+    <div class="field"><label>Message d'erreur générique (réponse inattendue du serveur)</label><input type="text" id="wheel-genericErrorMessage" placeholder="Une erreur est survenue, réessaie."></div>
+    <div class="field"><label>Message d'erreur réseau (connexion au serveur impossible)</label><input type="text" id="wheel-networkErrorMessage" placeholder="Erreur de connexion, réessaie."></div>
+    <div class="field"><label>Message de victoire (utilise <code>{amount}</code>)</label><input type="text" id="wheel-winMessage" placeholder="Félicitations, tu remportes {amount} !"></div>
+    <div class="field"><label>Message de défaite</label><input type="text" id="wheel-loseMessage" placeholder="Pas de chance cette fois, reviens demain !"></div>
+    <div class="field"><label>Texte du bouton de réclamation</label><input type="text" id="wheel-discordButtonText" placeholder="Réclamer sur Discord"></div>
+  </div>
+
   <!-- MENU / HEADER -->
   <div class="panel">
     <h2>Menu (nav)</h2>
@@ -595,7 +647,7 @@
   function migrateToI18n(cfg){
     if (cfg.content) return;
     const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
-                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine'];
+                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine','wheelGame'];
     const en = {};
     textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
     cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
@@ -991,6 +1043,33 @@
 
     cfg.slotMachine = cfg.slotMachine || {};
     document.getElementById('slot-discord-claim-link').value = cfg.slotMachine.discordClaimLink || '';
+
+    content.wheelGame = content.wheelGame || {};
+    document.getElementById('wheel-navLabel').value = content.wheelGame.navLabel || '';
+    document.getElementById('wheel-tag').value = content.wheelGame.tag || '';
+    document.getElementById('wheel-title').value = content.wheelGame.title || '';
+    document.getElementById('wheel-subtitle').value = content.wheelGame.subtitle || '';
+    document.getElementById('wheel-usernameLabel').value = content.wheelGame.usernameLabel || '';
+    document.getElementById('wheel-usernamePlaceholder').value = content.wheelGame.usernamePlaceholder || '';
+    document.getElementById('wheel-discordNote').value = content.wheelGame.discordNote || '';
+    document.getElementById('wheel-discordAccountLabel').value = content.wheelGame.discordAccountLabel || '';
+    document.getElementById('wheel-discordConnectText').value = content.wheelGame.discordConnectText || '';
+    document.getElementById('wheel-resultTitle').value = content.wheelGame.resultTitle || '';
+    document.getElementById('wheel-spinText').value = content.wheelGame.spinText || '';
+    document.getElementById('wheel-spinningText').value = content.wheelGame.spinningText || '';
+    document.getElementById('wheel-alreadyPlayedMessage').value = content.wheelGame.alreadyPlayedMessage || '';
+    document.getElementById('wheel-cooldownMessage').value = content.wheelGame.cooldownMessage || '';
+    document.getElementById('wheel-triesRemainingText').value = content.wheelGame.triesRemainingText || '';
+    document.getElementById('wheel-playAgainText').value = content.wheelGame.playAgainText || '';
+    document.getElementById('wheel-discordRequiredMessage').value = content.wheelGame.discordRequiredMessage || '';
+    document.getElementById('wheel-genericErrorMessage').value = content.wheelGame.genericErrorMessage || '';
+    document.getElementById('wheel-networkErrorMessage').value = content.wheelGame.networkErrorMessage || '';
+    document.getElementById('wheel-winMessage').value = content.wheelGame.winMessage || '';
+    document.getElementById('wheel-loseMessage').value = content.wheelGame.loseMessage || '';
+    document.getElementById('wheel-discordButtonText').value = content.wheelGame.discordButtonText || '';
+
+    cfg.wheelGame = cfg.wheelGame || {};
+    document.getElementById('wheel-discord-claim-link').value = cfg.wheelGame.discordClaimLink || '';
     document.getElementById('vault-usernamePlaceholder').value = content.vault.usernamePlaceholder || '';
     document.getElementById('vault-historyTitle').value = content.vault.historyTitle || '';
     document.getElementById('vault-historyEmpty').value = content.vault.historyEmpty || '';
@@ -1223,6 +1302,32 @@
 
     cfg.slotMachine = cfg.slotMachine || {};
     cfg.slotMachine.discordClaimLink = document.getElementById('slot-discord-claim-link').value;
+
+    content.wheelGame.navLabel = document.getElementById('wheel-navLabel').value;
+    content.wheelGame.tag = document.getElementById('wheel-tag').value;
+    content.wheelGame.title = document.getElementById('wheel-title').value;
+    content.wheelGame.subtitle = document.getElementById('wheel-subtitle').value;
+    content.wheelGame.usernameLabel = document.getElementById('wheel-usernameLabel').value;
+    content.wheelGame.usernamePlaceholder = document.getElementById('wheel-usernamePlaceholder').value;
+    content.wheelGame.discordNote = document.getElementById('wheel-discordNote').value;
+    content.wheelGame.discordAccountLabel = document.getElementById('wheel-discordAccountLabel').value;
+    content.wheelGame.discordConnectText = document.getElementById('wheel-discordConnectText').value;
+    content.wheelGame.resultTitle = document.getElementById('wheel-resultTitle').value;
+    content.wheelGame.spinText = document.getElementById('wheel-spinText').value;
+    content.wheelGame.spinningText = document.getElementById('wheel-spinningText').value;
+    content.wheelGame.alreadyPlayedMessage = document.getElementById('wheel-alreadyPlayedMessage').value;
+    content.wheelGame.cooldownMessage = document.getElementById('wheel-cooldownMessage').value;
+    content.wheelGame.triesRemainingText = document.getElementById('wheel-triesRemainingText').value;
+    content.wheelGame.playAgainText = document.getElementById('wheel-playAgainText').value;
+    content.wheelGame.discordRequiredMessage = document.getElementById('wheel-discordRequiredMessage').value;
+    content.wheelGame.genericErrorMessage = document.getElementById('wheel-genericErrorMessage').value;
+    content.wheelGame.networkErrorMessage = document.getElementById('wheel-networkErrorMessage').value;
+    content.wheelGame.winMessage = document.getElementById('wheel-winMessage').value;
+    content.wheelGame.loseMessage = document.getElementById('wheel-loseMessage').value;
+    content.wheelGame.discordButtonText = document.getElementById('wheel-discordButtonText').value;
+
+    cfg.wheelGame = cfg.wheelGame || {};
+    cfg.wheelGame.discordClaimLink = document.getElementById('wheel-discord-claim-link').value;
     content.vault.usernamePlaceholder = document.getElementById('vault-usernamePlaceholder').value;
     content.vault.historyTitle = document.getElementById('vault-historyTitle').value;
     content.vault.historyEmpty = document.getElementById('vault-historyEmpty').value;
@@ -1521,6 +1626,75 @@ function nitrodropResetConfig() {
       statusEl.textContent = 'Réglages enregistrés ✓';
       statusEl.style.color = 'var(--green)';
       loadSlotState();
+    }catch(err){
+      statusEl.textContent = 'Erreur : ' + err.message;
+      statusEl.style.color = '#FF7A90';
+    }
+  }
+
+  function getWheelWorkerBase(){
+    return document.getElementById('wheel-worker-url').value.trim().replace(/\/$/, '');
+  }
+
+  async function loadWheelState(){
+    const base = getWheelWorkerBase();
+    const key = document.getElementById('wheel-dashboard-key').value.trim();
+    const statusEl = document.getElementById('wheel-current-state');
+    if (!base || !key){
+      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
+      statusEl.style.color = '#FF7A90';
+      return;
+    }
+    statusEl.textContent = 'Chargement…';
+    statusEl.style.color = 'var(--text-dim)';
+    try{
+      const resp = await fetch(`${base}/wheel/admin-state`, {
+        headers: { 'X-Dashboard-Key': key }
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const data = await resp.json();
+      document.getElementById('wheel-win-chance').value = data.winChancePercent != null ? data.winChancePercent : '';
+      document.getElementById('wheel-win-amount').value = data.winAmount != null ? data.winAmount : '';
+      document.getElementById('wheel-max-plays').value = data.maxPlaysPerDay != null ? data.maxPlaysPerDay : 2;
+      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'} — ${data.maxPlaysPerDay ?? 2} essai(s)/jour`;
+      statusEl.style.color = 'var(--text-dim)';
+    }catch(err){
+      statusEl.textContent = 'Erreur : ' + err.message;
+      statusEl.style.color = '#FF7A90';
+    }
+  }
+
+  async function setWheelConfig(){
+    const base = getWheelWorkerBase();
+    const key = document.getElementById('wheel-dashboard-key').value.trim();
+    const winChancePercent = document.getElementById('wheel-win-chance').value.trim();
+    const winAmount = document.getElementById('wheel-win-amount').value.trim();
+    const maxPlaysPerDay = document.getElementById('wheel-max-plays').value.trim();
+    const statusEl = document.getElementById('wheel-set-status');
+
+    if (!base || !key){
+      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
+      statusEl.style.color = '#FF7A90';
+      return;
+    }
+    if (winChancePercent === '' || winAmount === ''){
+      statusEl.textContent = 'Renseigne la chance de gain et le montant.';
+      statusEl.style.color = '#FF7A90';
+      return;
+    }
+
+    statusEl.textContent = 'Envoi…';
+    statusEl.style.color = 'var(--text-dim)';
+    try{
+      const resp = await fetch(`${base}/wheel/set`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': key },
+        body: JSON.stringify({ winChancePercent, winAmount, maxPlaysPerDay: maxPlaysPerDay || 2 })
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      statusEl.textContent = 'Réglages enregistrés ✓';
+      statusEl.style.color = 'var(--green)';
+      loadWheelState();
     }catch(err){
       statusEl.textContent = 'Erreur : ' + err.message;
       statusEl.style.color = '#FF7A90';

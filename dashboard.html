@@ -93,6 +93,7 @@
       <button class="dash-tab active" id="tab-btn-bonus" onclick="switchDashTab('bonus')">Demandes de bonus</button>
       <button class="dash-tab" id="tab-btn-scratch" onclick="switchDashTab('scratch')">🎫 Ticket à gratter</button>
       <button class="dash-tab" id="tab-btn-slot" onclick="switchDashTab('slot')">🎰 Machine à sous</button>
+      <button class="dash-tab" id="tab-btn-wheel" onclick="switchDashTab('wheel')">🎡 Roue</button>
       <button class="dash-tab" id="tab-btn-affiliates" onclick="switchDashTab('affiliates')">📊 Affiliés</button>
     </div>
 
@@ -184,6 +185,26 @@
       </div>
 
       <div id="slot-table-container"></div>
+    </div>
+
+    <div id="tab-wheel" style="display:none;">
+      <div class="stats" id="wheel-stats"></div>
+
+      <div class="toolbar">
+        <input type="text" id="wheel-filter-search" placeholder="Rechercher pseudo / Discord ID..." oninput="applyWheelFilters()" style="min-width:220px;">
+        <select id="wheel-filter-result" onchange="applyWheelFilters()">
+          <option value="">Résultat : tous</option>
+          <option value="won">Gagné</option>
+          <option value="lost">Perdu</option>
+        </select>
+        <select id="wheel-filter-tipped" onchange="applyWheelFilters()">
+          <option value="">Tipsé : tous</option>
+          <option value="yes">Tipsé : oui</option>
+          <option value="no">Tipsé : non</option>
+        </select>
+      </div>
+
+      <div id="wheel-table-container"></div>
     </div>
 
     <div id="tab-affiliates" style="display:none;">
@@ -707,6 +728,8 @@
   let scratchLoaded = false;
   let allSlotPlays = [];
   let slotLoaded = false;
+  let allWheelPlays = [];
+  let wheelLoaded = false;
   let affiliatesLoaded = false;
   let activeDashTab = 'bonus';
 
@@ -715,16 +738,21 @@
     document.getElementById('tab-bonus').style.display = tab === 'bonus' ? '' : 'none';
     document.getElementById('tab-scratch').style.display = tab === 'scratch' ? '' : 'none';
     document.getElementById('tab-slot').style.display = tab === 'slot' ? '' : 'none';
+    document.getElementById('tab-wheel').style.display = tab === 'wheel' ? '' : 'none';
     document.getElementById('tab-affiliates').style.display = tab === 'affiliates' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-scratch').classList.toggle('active', tab === 'scratch');
     document.getElementById('tab-btn-slot').classList.toggle('active', tab === 'slot');
+    document.getElementById('tab-btn-wheel').classList.toggle('active', tab === 'wheel');
     document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
     if (tab === 'scratch' && !scratchLoaded){
       loadScratchPlays();
     }
     if (tab === 'slot' && !slotLoaded){
       loadSlotPlays();
+    }
+    if (tab === 'wheel' && !wheelLoaded){
+      loadWheelPlays();
     }
     if (tab === 'affiliates' && !affiliatesLoaded){
       affiliatesLoaded = true;
@@ -738,6 +766,8 @@
       loadScratchPlays();
     } else if (activeDashTab === 'slot'){
       loadSlotPlays();
+    } else if (activeDashTab === 'wheel'){
+      loadWheelPlays();
     } else {
       loadSubmissions();
     }
@@ -929,6 +959,100 @@
     }catch(err){
       alert('Erreur lors de la mise à jour : ' + err.message);
       loadSlotPlays();
+    }
+  }
+
+  async function loadWheelPlays(){
+    const container = document.getElementById('wheel-table-container');
+    container.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/wheel/plays`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const data = await resp.json();
+      allWheelPlays = (data.plays || []).slice().reverse();
+      wheelLoaded = true;
+      renderWheelStats();
+      applyWheelFilters();
+    }catch(err){
+      container.innerHTML = `<div class="empty">Erreur : ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function renderWheelStats(){
+    const total = allWheelPlays.length;
+    const won = allWheelPlays.filter(p => p.won).length;
+    const tipped = allWheelPlays.filter(p => p.won && p.tipped).length;
+    document.getElementById('wheel-stats').innerHTML = `
+      <div class="stat"><div class="n">${total}</div><div class="l">Participations</div></div>
+      <div class="stat"><div class="n">${won}</div><div class="l">Gains</div></div>
+      <div class="stat"><div class="n">${tipped}</div><div class="l">Gains tipsés</div></div>
+    `;
+  }
+
+  function applyWheelFilters(){
+    const search = document.getElementById('wheel-filter-search').value.trim().toLowerCase();
+    const resultFilter = document.getElementById('wheel-filter-result').value;
+    const tippedFilter = document.getElementById('wheel-filter-tipped').value;
+
+    const filtered = allWheelPlays.filter(p => {
+      if (resultFilter === 'won' && !p.won) return false;
+      if (resultFilter === 'lost' && p.won) return false;
+      if (tippedFilter === 'yes' && !p.tipped) return false;
+      if (tippedFilter === 'no' && p.tipped) return false;
+      if (search){
+        const haystack = `${p.pseudo || ''} ${p.discordId || ''}`.toLowerCase();
+        if (!haystack.includes(search)) return false;
+      }
+      return true;
+    });
+
+    renderWheelTable(filtered);
+  }
+
+  function renderWheelTable(plays){
+    const container = document.getElementById('wheel-table-container');
+    if (plays.length === 0){
+      container.innerHTML = '<div class="empty">Aucune participation.</div>';
+      return;
+    }
+    const rows = plays.map(p => `
+      <tr>
+        <td class="mono">${escapeHtml(formatLocalDate(p))}</td>
+        <td>${escapeHtml(p.pseudo || '')}</td>
+        <td class="mono"><span class="cell-truncate" style="max-width:140px;" title="${escapeHtml(p.discordId || '')}">${escapeHtml(p.discordId || '')}</span></td>
+        <td>${p.won
+          ? `<span style="color:var(--green); font-weight:700;">Gagné — $${escapeHtml(String(p.amount || 0))}</span>`
+          : `<span style="color:var(--text-faint);">Perdu</span>`}</td>
+        <td>${p.won ? `<input type="checkbox" ${p.tipped ? 'checked' : ''} onchange="toggleWheelTip('${p.id}')">` : '—'}</td>
+      </tr>
+    `).join('');
+    container.innerHTML = `
+      <table>
+        <thead><tr><th>Date</th><th>Pseudo</th><th>Discord</th><th>Résultat</th><th>Tipsé</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  async function toggleWheelTip(id){
+    try{
+      const resp = await fetch(`${workerBaseUrl}/wheel/tip`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ id })
+      });
+      if (!resp.ok) throw new Error('Réponse ' + resp.status);
+      const entry = allWheelPlays.find(p => p.id === id);
+      if (entry){
+        const data = await resp.json();
+        entry.tipped = data.tipped;
+      }
+      renderWheelStats();
+    }catch(err){
+      alert('Erreur lors de la mise à jour : ' + err.message);
+      loadWheelPlays();
     }
   }
 
