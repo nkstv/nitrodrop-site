@@ -761,6 +761,7 @@
         <input type="hidden" id="scratch-discord-input">
         <button type="submit" class="modal-submit" id="scratch-submit-btn">Gratter le ticket</button>
         <p id="scratch-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
+        <p id="scratch-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
       </form>
       <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
     </div>
@@ -773,6 +774,7 @@
       </div>
       <p id="scratch-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
       <a href="#" id="scratch-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+      <button type="button" id="scratch-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayScratch()">Rejouer</button>
     </div>
   </div>
 </div>
@@ -798,6 +800,7 @@
         <input type="hidden" id="slot-discord-input">
         <button type="submit" class="modal-submit" id="slot-submit-btn">Spin</button>
         <p id="slot-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
+        <p id="slot-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
       </form>
       <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
     </div>
@@ -811,6 +814,7 @@
       </div>
       <p id="slot-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
       <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+      <button type="button" id="slot-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replaySlot()">Rejouer</button>
     </div>
   </div>
 </div>
@@ -1274,8 +1278,10 @@
     clearCooldown(prefix);
     const submitBtn = document.getElementById(prefix + '-submit-btn');
     const msgEl = document.getElementById(prefix + '-cooldown-message');
+    const triesEl = document.getElementById(prefix + '-tries-remaining');
     submitBtn.style.display = 'none';
     msgEl.style.display = 'block';
+    if (triesEl) triesEl.style.display = 'none';
     const tick = () => {
       const ms = msUntilNextUtcMidnight();
       msgEl.textContent = fillTemplate(template || 'Reviens dans {time}', { time: formatCountdown(ms) });
@@ -1288,12 +1294,22 @@
     cooldownIntervals[prefix] = setInterval(tick, 1000);
   }
 
-  function hideCooldown(prefix){
+  function hideCooldown(prefix, remaining){
     clearCooldown(prefix);
     const submitBtn = document.getElementById(prefix + '-submit-btn');
     const msgEl = document.getElementById(prefix + '-cooldown-message');
+    const triesEl = document.getElementById(prefix + '-tries-remaining');
     submitBtn.style.display = '';
     msgEl.style.display = 'none';
+    if (triesEl){
+      if (typeof remaining === 'number'){
+        const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : 'slotMachine'] || {};
+        triesEl.textContent = fillTemplate(st.triesRemainingText || '{remaining} essai(s) restant(s) aujourd\'hui', { remaining });
+        triesEl.style.display = 'block';
+      } else {
+        triesEl.style.display = 'none';
+      }
+    }
   }
 
   async function checkAlreadyPlayed(prefix, discordId){
@@ -1305,7 +1321,7 @@
       if (data.alreadyPlayed){
         showCooldown(prefix, st.cooldownMessage || 'Reviens dans {time}');
       } else {
-        hideCooldown(prefix);
+        hideCooldown(prefix, data.remaining);
       }
     }catch(err){
       hideCooldown(prefix);
@@ -1580,6 +1596,8 @@
       const resultEl = document.getElementById('scratch-result');
       const msgEl = document.getElementById('scratch-result-message');
       const claimBtn = document.getElementById('scratch-discord-claim-btn');
+      const playAgainBtn = document.getElementById('scratch-play-again-btn');
+      playAgainBtn.style.display = 'none';
 
       silver.onclick = () => {
         silver.classList.add('revealed');
@@ -1593,11 +1611,24 @@
           resultEl.textContent = '😔';
           msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
         }
+        if (data.remaining > 0){
+          playAgainBtn.textContent = st.playAgainText || 'Rejouer';
+          playAgainBtn.style.display = 'block';
+        }
       };
     }catch(err){
       submitBtn.disabled = false;
       showScratchFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
     }
+  }
+
+  function replayScratch(){
+    document.getElementById('scratch-step-card').style.display = 'none';
+    document.getElementById('scratch-play-again-btn').style.display = 'none';
+    document.getElementById('scratch-step-form').style.display = 'block';
+    document.getElementById('scratch-discord-claim-btn').style.display = 'none';
+    const discordId = document.getElementById('scratch-discord-input').value;
+    checkAlreadyPlayed('scratch', discordId);
   }
 
   document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
@@ -1684,40 +1715,55 @@
       const syms = [document.getElementById('slot-sym-0'), document.getElementById('slot-sym-1'), document.getElementById('slot-sym-2')];
       const msgEl = document.getElementById('slot-result-message');
       const claimBtn = document.getElementById('slot-discord-claim-btn');
+      const playAgainBtn = document.getElementById('slot-play-again-btn');
+      playAgainBtn.style.display = 'none';
       submitBtn.textContent = st.spinningText || 'Ça tourne...';
 
       reels.forEach(r => r.classList.add('spinning'));
+
+      // Le résultat final est déterminé AVANT le lancement de l'animation, pour que chaque
+      // rouleau s'arrête directement sur son symbole définitif (pas de changement après coup,
+      // ce qui donnait l'impression d'un résultat "truqué" à la fin du spin).
+      const pick = () => SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+      let finalSyms;
+      if (data.won){
+        const winSym = SLOT_SYMBOLS[0];
+        finalSyms = [winSym, winSym, winSym];
+      } else {
+        let a = pick(), b = pick(), c = pick();
+        if (a === b && b === c){
+          do { c = pick(); } while (c === a);
+        }
+        finalSyms = [a, b, c];
+      }
 
       syms.forEach((el, i) => {
         let ticks = 0;
         const maxTicks = 14 + i * 6;
         const iv = setInterval(() => {
-          el.textContent = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
           ticks++;
           if (ticks >= maxTicks){
+            el.textContent = finalSyms[i];
             clearInterval(iv);
             reels[i].classList.remove('spinning');
             if (i === syms.length - 1){
               submitBtn.disabled = false;
               submitBtn.textContent = st.spinText || 'Spin';
               if (data.won){
-                const winSym = SLOT_SYMBOLS[0];
-                syms.forEach(s => s.textContent = winSym);
                 msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
                 claimBtn.style.display = 'flex';
                 claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
                 claimBtn.href = (CONFIG.slotMachine && CONFIG.slotMachine.discordClaimLink) || '#';
               } else {
-                // On force un résultat qui ne ressemble pas à une victoire (pas les 3 symboles identiques)
-                const pick = () => SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
-                let a = pick(), b = pick(), c = pick();
-                if (a === b && b === c){
-                  do { c = pick(); } while (c === a);
-                }
-                syms[0].textContent = a; syms[1].textContent = b; syms[2].textContent = c;
                 msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
               }
+              if (data.remaining > 0){
+                playAgainBtn.textContent = st.playAgainText || 'Rejouer';
+                playAgainBtn.style.display = 'block';
+              }
             }
+          } else {
+            el.textContent = pick();
           }
         }, 70);
       });
@@ -1726,6 +1772,15 @@
       submitBtn.textContent = st.spinText || 'Spin';
       showSlotFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
     }
+  }
+
+  function replaySlot(){
+    document.getElementById('slot-step-card').style.display = 'none';
+    document.getElementById('slot-play-again-btn').style.display = 'none';
+    document.getElementById('slot-step-form').style.display = 'block';
+    document.getElementById('slot-discord-claim-btn').style.display = 'none';
+    const discordId = document.getElementById('slot-discord-input').value;
+    checkAlreadyPlayed('slot', discordId);
   }
 
   document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });

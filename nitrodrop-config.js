@@ -16,8 +16,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Bonus Codes & Offers",
-            "href": "#offres",
-            "newTab": false
+            "href": "#offres"
           },
           {
             "label": "Discord",
@@ -31,8 +30,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Vault",
-            "href": "https://drop-cash.com/vault",
-            "newTab": false
+            "href": "https://drop-cash.com/vault"
           }
         ],
         "ctaText": "View Offers",
@@ -74,7 +72,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "bonusSuffix": "$2.00/day × 4",
           "desc": "Register with the code, submit your username, and get your tip. **No deposit** needed.",
           "code": "welcomebonus2026",
-          "signupHref": "https://duel-casino-home.com/welcomebonus/",
+          "signupHref": "https://duel.com/r/welcomebonus2026",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -94,7 +92,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "bonusSuffix": "$1.00/day × 7",
           "desc": "Register with the code, submit your username, and claim your bonus. **No deposit required**. Bonus activation may take **24–48 hours**.",
           "code": "NKSCAS",
-          "signupHref": "https://duel-casino-home.com/stake/",
+          "signupHref": "https://stake.bet/?c=3eccdsPf",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -114,7 +112,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "bonusSuffix": "$5.00 one time",
           "desc": "Sign up with the code, deposit a minimum of **$5**, and **wager $30** to claim your reward. New users only.",
           "code": "new",
-          "signupHref": "https://duel-casino-home.com/rainbet/",
+          "signupHref": "https://rainbet.com/?r=new",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -155,7 +153,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Sign up with the code, deposit a **minimum of $10**, and wager $50 to claim your reward. New users only.",
           "code": "casinofr",
           "codeEnabled": true,
-          "signupHref": "https://duel-casino-home.com/gamdom/",
+          "signupHref": "https://gamdom.com/r/casinofr",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -175,7 +173,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Sign up with the code, deposit a minimum of **$20**, and wager $70 to claim your reward. New users only.",
           "code": "",
           "codeEnabled": false,
-          "signupHref": "https://duel-casino-home.com/flush/",
+          "signupHref": "https://flush.com/?LCG6LC",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -217,7 +215,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Sign up with the link, deposit a minimum of $10 and claim your reward. New users only.\n",
           "code": "",
           "codeEnabled": false,
-          "signupHref": "https://duel-casino-home.com/mystake/",
+          "signupHref": "https://go.affiliatemystake.com/visit/?bta=3139221&brand=mystake",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -237,7 +235,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Register with the code, **submit your username**, and get your tip. **Deposit required** (no minimum).",
           "code": "mrrvsu0g",
           "codeEnabled": true,
-          "signupHref": "https://duel-casino-home.com/bcgame/",
+          "signupHref": "https://bc.game/i-mrrvsu0g-n/",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
@@ -330,8 +328,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Contact",
-            "href": "#",
-            "newTab": false
+            "href": "#"
           }
         ],
         "disclaimer": "Gambling carries risks: debt, social isolation and addiction. "
@@ -402,10 +399,12 @@ const NITRODROP_DEFAULT_CONFIG = {
         "navLabel": "🎟️ Ticket",
         "tag": "🎟️ Scratch Card",
         "title": "Try Your Luck",
-        "subtitle": "One Free Try Per Day",
+        "subtitle": "Try your luck every day.",
         "usernameLabel": "Username*",
         "usernamePlaceholder": "your username",
-        "discordNote": "Connect your Discord account to participate (1 free try per day).",
+        "discordNote": "Connect your Discord account to participate.",
+        "triesRemainingText": "{remaining} try(ies) left today",
+        "playAgainText": "Play again",
         "submitText": "Scratch the Card",
         "alreadyPlayedMessage": "You've already played today. Come back tomorrow!",
         "winMessage": "🎉 Congratulations! You won {amount}!",
@@ -415,18 +414,20 @@ const NITRODROP_DEFAULT_CONFIG = {
         "discordRequiredMessage": "Connect to Discord before continuing.",
         "genericErrorMessage": "An error has occurred, please try again.",
         "networkErrorMessage": "Connection error, please try again.",
-        "discordAccountLabel": "DISCORD*",
-        "discordConnectText": "🎮 Log in with Discord",
-        "resultTitle": "Ticket"
+        "discordAccountLabel": "",
+        "discordConnectText": "",
+        "resultTitle": ""
       },
       "slotMachine": {
         "navLabel": "🎰 Slot",
         "tag": "🎰 Slot Machine",
         "title": "Try your luck",
-        "subtitle": "One free spin per day.",
+        "subtitle": "Try your luck every day.",
         "usernameLabel": "Username*",
         "usernamePlaceholder": "your username",
-        "discordNote": "Connect your Discord account to participate (1 free spin per day).",
+        "discordNote": "Connect your Discord account to participate.",
+        "triesRemainingText": "{remaining} spin(s) left today",
+        "playAgainText": "Play again",
         "spinText": "Spin",
         "spinningText": "It's rolling...",
         "alreadyPlayedMessage": "You've already played today, come back tomorrow!",
@@ -447,8 +448,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "links": [
           {
             "label": "Codes bonus et offres",
-            "href": "#offres",
-            "newTab": false
+            "href": "#offres"
           },
           {
             "label": "Discord",
@@ -462,8 +462,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Vault",
-            "href": "https://drop-cash.com/vault",
-            "newTab": false
+            "href": "https://drop-cash.com/vault"
           }
         ],
         "ctaText": "Voir les offres",
@@ -505,7 +504,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "bonusSuffix": "$2.00/jour × 4",
           "desc": "Inscrivez-vous avec le code, indiquez **votre nom d'utilisateur** et recevez votre bonus. **Aucun dépôt requis**. ",
           "code": "welcomebonus2026",
-          "signupHref": "https://duel-casino-home.com/welcomebonus/",
+          "signupHref": "https://duel.com/r/welcomebonus2026",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -525,7 +524,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "bonusSuffix": "$1.00/jour × 7",
           "desc": "Inscrivez-vous avec le code, renseignez **votre Pseudo Stake** et recevez votre bonus. **Aucun dépôt n'est nécessaire**. L'activation du bonus peut prendre de **24 à 48 heures**.",
           "code": "NKSCAS",
-          "signupHref": "https://duel-casino-home.com/stake/",
+          "signupHref": "https://stake.bet/?c=3eccdsPf",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -545,7 +544,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "bonusSuffix": "$5.00 une fois",
           "desc": "Inscrivez-vous avec le code, **déposez 5$** minimum et **misez 30$** pour débloquer votre récompense. Réservé aux nouveaux utilisateurs. ",
           "code": "new",
-          "signupHref": "https://duel-casino-home.com/rainbet/",
+          "signupHref": "https://rainbet.com/?r=new",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -586,7 +585,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le code, **déposez 10$ minimum** et misez **50$** pour débloquer votre récompense. Réservé aux nouveaux utilisateurs.",
           "code": "casinofr",
           "codeEnabled": true,
-          "signupHref": "https://duel-casino-home.com/gamdom/",
+          "signupHref": "https://gamdom.com/r/casinofr",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -606,7 +605,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le code, **déposez 20$ minimum** et misez **70$** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
           "code": "",
           "codeEnabled": false,
-          "signupHref": "https://duel-casino-home.com/flush/",
+          "signupHref": "https://flush.com/?LCG6LC",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -648,7 +647,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le lien, **déposez 10$ minimum** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
           "code": "",
           "codeEnabled": false,
-          "signupHref": "https://duel-casino-home.com/mystake/",
+          "signupHref": "https://go.affiliatemystake.com/visit/?bta=3139221&brand=mystake",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -668,7 +667,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le code, indiquez **votre nom d'utilisateur** et recevez votre bonus. **Dépôt requis** (aucun minimum).",
           "code": "mrrvsu0g",
           "codeEnabled": true,
-          "signupHref": "https://duel-casino-home.com/bcgame/",
+          "signupHref": "https://bc.game/i-mrrvsu0g-n/",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
           "signupHighlighted": true,
@@ -761,8 +760,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           },
           {
             "label": "Contact",
-            "href": "#",
-            "newTab": false
+            "href": "#"
           }
         ],
         "disclaimer": "Les jeux d'argent comportent des risques : endettement, isolement social et dépendance. "
@@ -833,10 +831,12 @@ const NITRODROP_DEFAULT_CONFIG = {
         "navLabel": "🎟️ Ticket",
         "tag": "🎟️ Ticket à gratter",
         "title": "Tente ta chance",
-        "subtitle": "Un essai gratuit par jour.",
+        "subtitle": "Tente ta chance chaque jour.",
         "usernameLabel": "Pseudo*",
         "usernamePlaceholder": "votre Pseudo",
-        "discordNote": "Connexion Discord requise pour participer (1 essai par jour).",
+        "discordNote": "Connexion Discord requise pour participer.",
+        "triesRemainingText": "{remaining} essai(s) restant(s) aujourd'hui",
+        "playAgainText": "Rejouer",
         "submitText": "Gratter le ticket",
         "alreadyPlayedMessage": "Tu as déjà joué aujourd'hui, reviens demain !",
         "winMessage": "🎉 Félicitations, tu remportes {amount} !",
@@ -854,10 +854,12 @@ const NITRODROP_DEFAULT_CONFIG = {
         "navLabel": "🎰 Slot",
         "tag": "🎰 Machine à sous",
         "title": "Tente ta chance",
-        "subtitle": "Un spin gratuit par jour.",
+        "subtitle": "Tente ta chance chaque jour.",
         "usernameLabel": "Pseudo*",
         "usernamePlaceholder": "votre Pseudo",
-        "discordNote": "Connexion Discord requise pour participer (1 spin par jour).",
+        "discordNote": "Connexion Discord requise pour participer.",
+        "triesRemainingText": "{remaining} spin(s) restant(s) aujourd'hui",
+        "playAgainText": "Rejouer",
         "spinText": "Spin",
         "spinningText": "Ça tourne...",
         "alreadyPlayedMessage": "Tu as déjà joué aujourd'hui, reviens demain !",
@@ -901,7 +903,7 @@ const NITRODROP_DEFAULT_CONFIG = {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   },
   "vault": {
-    "discordNewRoundMessage": "🔐 New Lucky Vault 🚨 **{code}** — try your luck to win **${amount}**! \n\n--------\n\n👉 Here: https://drop-cash.com/vault "
+    "discordNewRoundMessage": "🔐 Nouveau code disponible : **{code}** — tente ta chance pour gagner **${amount}** !"
   }
 };
 

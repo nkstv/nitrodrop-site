@@ -172,6 +172,7 @@
     <div class="row">
       <div class="field"><label>Chance de gagner (%)</label><input type="text" id="scratch-win-chance" placeholder="0.5"></div>
       <div class="field"><label>Montant gagné ($)</label><input type="text" id="scratch-win-amount" placeholder="2"></div>
+      <div class="field"><label>Essais autorisés par jour</label><input type="text" id="scratch-max-plays" placeholder="2"></div>
     </div>
     <button type="button" class="btn btn-save" onclick="setScratchConfig()">Enregistrer ces réglages</button>
     <div id="scratch-set-status" style="margin-top:10px; font-size:12.5px;"></div>
@@ -195,6 +196,8 @@
     <div class="field"><label>Texte du bouton "Gratter"</label><input type="text" id="scratch-submitText" placeholder="Gratter le ticket"></div>
     <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="scratch-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
     <div class="field"><label>Message du compte à rebours (utilise <code>{time}</code>, affiché avant même de cliquer)</label><input type="text" id="scratch-cooldownMessage" placeholder="Reviens dans {time}"></div>
+    <div class="field"><label>Texte "essais restants" (utilise <code>{remaining}</code>)</label><input type="text" id="scratch-triesRemainingText" placeholder="{remaining} essai(s) restant(s) aujourd'hui"></div>
+    <div class="field"><label>Texte du bouton "Rejouer"</label><input type="text" id="scratch-playAgainText" placeholder="Rejouer"></div>
     <div class="field"><label>Message si on essaie de gratter sans être connecté à Discord</label><input type="text" id="scratch-discordRequiredMessage" placeholder="Connecte-toi avec Discord avant de continuer."></div>
     <div class="field"><label>Message d'erreur générique (réponse inattendue du serveur)</label><input type="text" id="scratch-genericErrorMessage" placeholder="Une erreur est survenue, réessaie."></div>
     <div class="field"><label>Message d'erreur réseau (connexion au serveur impossible)</label><input type="text" id="scratch-networkErrorMessage" placeholder="Erreur de connexion, réessaie."></div>
@@ -220,6 +223,7 @@
     <div class="row">
       <div class="field"><label>Chance de gagner (%)</label><input type="text" id="slot-win-chance" placeholder="0.5"></div>
       <div class="field"><label>Montant gagné ($)</label><input type="text" id="slot-win-amount" placeholder="2"></div>
+      <div class="field"><label>Essais autorisés par jour</label><input type="text" id="slot-max-plays" placeholder="2"></div>
     </div>
     <button type="button" class="btn btn-save" onclick="setSlotConfig()">Enregistrer ces réglages</button>
     <div id="slot-set-status" style="margin-top:10px; font-size:12.5px;"></div>
@@ -244,6 +248,8 @@
     <div class="field"><label>Texte pendant le tirage</label><input type="text" id="slot-spinningText" placeholder="Ça tourne..."></div>
     <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="slot-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
     <div class="field"><label>Message du compte à rebours (utilise <code>{time}</code>, affiché avant même de cliquer)</label><input type="text" id="slot-cooldownMessage" placeholder="Reviens dans {time}"></div>
+    <div class="field"><label>Texte "essais restants" (utilise <code>{remaining}</code>)</label><input type="text" id="slot-triesRemainingText" placeholder="{remaining} essai(s) restant(s) aujourd'hui"></div>
+    <div class="field"><label>Texte du bouton "Rejouer"</label><input type="text" id="slot-playAgainText" placeholder="Rejouer"></div>
     <div class="field"><label>Message si on essaie de jouer sans être connecté à Discord</label><input type="text" id="slot-discordRequiredMessage" placeholder="Connecte-toi avec Discord avant de continuer."></div>
     <div class="field"><label>Message d'erreur générique (réponse inattendue du serveur)</label><input type="text" id="slot-genericErrorMessage" placeholder="Une erreur est survenue, réessaie."></div>
     <div class="field"><label>Message d'erreur réseau (connexion au serveur impossible)</label><input type="text" id="slot-networkErrorMessage" placeholder="Erreur de connexion, réessaie."></div>
@@ -944,6 +950,8 @@
     document.getElementById('scratch-submitText').value = content.scratchTicket.submitText || '';
     document.getElementById('scratch-alreadyPlayedMessage').value = content.scratchTicket.alreadyPlayedMessage || '';
     document.getElementById('scratch-cooldownMessage').value = content.scratchTicket.cooldownMessage || '';
+    document.getElementById('scratch-triesRemainingText').value = content.scratchTicket.triesRemainingText || '';
+    document.getElementById('scratch-playAgainText').value = content.scratchTicket.playAgainText || '';
     document.getElementById('scratch-discordRequiredMessage').value = content.scratchTicket.discordRequiredMessage || '';
     document.getElementById('scratch-genericErrorMessage').value = content.scratchTicket.genericErrorMessage || '';
     document.getElementById('scratch-networkErrorMessage').value = content.scratchTicket.networkErrorMessage || '';
@@ -972,6 +980,8 @@
     document.getElementById('slot-spinningText').value = content.slotMachine.spinningText || '';
     document.getElementById('slot-alreadyPlayedMessage').value = content.slotMachine.alreadyPlayedMessage || '';
     document.getElementById('slot-cooldownMessage').value = content.slotMachine.cooldownMessage || '';
+    document.getElementById('slot-triesRemainingText').value = content.slotMachine.triesRemainingText || '';
+    document.getElementById('slot-playAgainText').value = content.slotMachine.playAgainText || '';
     document.getElementById('slot-discordRequiredMessage').value = content.slotMachine.discordRequiredMessage || '';
     document.getElementById('slot-genericErrorMessage').value = content.slotMachine.genericErrorMessage || '';
     document.getElementById('slot-networkErrorMessage').value = content.slotMachine.networkErrorMessage || '';
@@ -1172,6 +1182,8 @@
     content.scratchTicket.submitText = document.getElementById('scratch-submitText').value;
     content.scratchTicket.alreadyPlayedMessage = document.getElementById('scratch-alreadyPlayedMessage').value;
     content.scratchTicket.cooldownMessage = document.getElementById('scratch-cooldownMessage').value;
+    content.scratchTicket.triesRemainingText = document.getElementById('scratch-triesRemainingText').value;
+    content.scratchTicket.playAgainText = document.getElementById('scratch-playAgainText').value;
     content.scratchTicket.discordRequiredMessage = document.getElementById('scratch-discordRequiredMessage').value;
     content.scratchTicket.genericErrorMessage = document.getElementById('scratch-genericErrorMessage').value;
     content.scratchTicket.networkErrorMessage = document.getElementById('scratch-networkErrorMessage').value;
@@ -1200,6 +1212,8 @@
     content.slotMachine.spinningText = document.getElementById('slot-spinningText').value;
     content.slotMachine.alreadyPlayedMessage = document.getElementById('slot-alreadyPlayedMessage').value;
     content.slotMachine.cooldownMessage = document.getElementById('slot-cooldownMessage').value;
+    content.slotMachine.triesRemainingText = document.getElementById('slot-triesRemainingText').value;
+    content.slotMachine.playAgainText = document.getElementById('slot-playAgainText').value;
     content.slotMachine.discordRequiredMessage = document.getElementById('slot-discordRequiredMessage').value;
     content.slotMachine.genericErrorMessage = document.getElementById('slot-genericErrorMessage').value;
     content.slotMachine.networkErrorMessage = document.getElementById('slot-networkErrorMessage').value;
@@ -1397,7 +1411,8 @@ function nitrodropResetConfig() {
       const data = await resp.json();
       document.getElementById('scratch-win-chance').value = data.winChancePercent != null ? data.winChancePercent : '';
       document.getElementById('scratch-win-amount').value = data.winAmount != null ? data.winAmount : '';
-      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'}`;
+      document.getElementById('scratch-max-plays').value = data.maxPlaysPerDay != null ? data.maxPlaysPerDay : 2;
+      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'} — ${data.maxPlaysPerDay ?? 2} essai(s)/jour`;
       statusEl.style.color = 'var(--text-dim)';
     }catch(err){
       statusEl.textContent = 'Erreur : ' + err.message;
@@ -1410,6 +1425,7 @@ function nitrodropResetConfig() {
     const key = document.getElementById('scratch-dashboard-key').value.trim();
     const winChancePercent = document.getElementById('scratch-win-chance').value.trim();
     const winAmount = document.getElementById('scratch-win-amount').value.trim();
+    const maxPlaysPerDay = document.getElementById('scratch-max-plays').value.trim();
     const statusEl = document.getElementById('scratch-set-status');
 
     if (!base || !key){
@@ -1429,7 +1445,7 @@ function nitrodropResetConfig() {
       const resp = await fetch(`${base}/scratch/set`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': key },
-        body: JSON.stringify({ winChancePercent, winAmount })
+        body: JSON.stringify({ winChancePercent, winAmount, maxPlaysPerDay: maxPlaysPerDay || 2 })
       });
       if (!resp.ok) throw new Error('Réponse ' + resp.status);
       statusEl.textContent = 'Réglages enregistrés ✓';
@@ -1465,7 +1481,8 @@ function nitrodropResetConfig() {
       const data = await resp.json();
       document.getElementById('slot-win-chance').value = data.winChancePercent != null ? data.winChancePercent : '';
       document.getElementById('slot-win-amount').value = data.winAmount != null ? data.winAmount : '';
-      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'}`;
+      document.getElementById('slot-max-plays').value = data.maxPlaysPerDay != null ? data.maxPlaysPerDay : 2;
+      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'} — ${data.maxPlaysPerDay ?? 2} essai(s)/jour`;
       statusEl.style.color = 'var(--text-dim)';
     }catch(err){
       statusEl.textContent = 'Erreur : ' + err.message;
@@ -1478,6 +1495,7 @@ function nitrodropResetConfig() {
     const key = document.getElementById('slot-dashboard-key').value.trim();
     const winChancePercent = document.getElementById('slot-win-chance').value.trim();
     const winAmount = document.getElementById('slot-win-amount').value.trim();
+    const maxPlaysPerDay = document.getElementById('slot-max-plays').value.trim();
     const statusEl = document.getElementById('slot-set-status');
 
     if (!base || !key){
@@ -1497,7 +1515,7 @@ function nitrodropResetConfig() {
       const resp = await fetch(`${base}/slot/set`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': key },
-        body: JSON.stringify({ winChancePercent, winAmount })
+        body: JSON.stringify({ winChancePercent, winAmount, maxPlaysPerDay: maxPlaysPerDay || 2 })
       });
       if (!resp.ok) throw new Error('Réponse ' + resp.status);
       statusEl.textContent = 'Réglages enregistrés ✓';
