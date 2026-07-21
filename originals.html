@@ -551,6 +551,7 @@
     </div>
 
     <pre id="visible-debug" style="background:#000; color:#0f0; padding:16px; font-size:12px; white-space:pre-wrap; word-break:break-all; border:2px solid red; margin-bottom:20px;">Diagnostic en attente…</pre>
+    <pre id="visible-debug-status" style="background:#000; color:#0ff; padding:16px; font-size:12px; white-space:pre-wrap; word-break:break-all; border:2px solid orange; margin-bottom:20px;"></pre>
 
     <div id="games-container" style="display:none;">
     <div class="originals-grid games-grid">
@@ -670,7 +671,7 @@
   <span class="floating-widget-badge">🎮</span>
 </a>
 
-<script src="nitrodrop-config.js?v=20260719a"></script>
+<script src="nitrodrop-config.js?v=20260721a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
 
@@ -1002,18 +1003,34 @@
     }
   }
 
+  // Diagnostic temporaire visible sur la page pour voir ce que /status renvoie réellement
+  function logStatusDebug(prefix, text){
+    const el = document.getElementById('visible-debug-status');
+    if (!el) return;
+    el.textContent = (el.textContent ? el.textContent + '\n\n' : '') + '[' + prefix + '] ' + text;
+  }
+
   async function checkAlreadyPlayed(prefix, discordId){
-    if (!discordId){ hideCooldown(prefix); return; }
+    if (!discordId){ hideCooldown(prefix); logStatusDebug(prefix, 'discordId vide, appel /status non effectué'); return; }
     const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
+    const url = `${workerBase}/${prefix}/status?discordId=${encodeURIComponent(discordId)}`;
     try{
-      const resp = await fetch(`${workerBase}/${prefix}/status?discordId=${encodeURIComponent(discordId)}`);
-      const data = await resp.json();
+      const resp = await fetch(url);
+      const rawText = await resp.text();
+      let data;
+      try{ data = JSON.parse(rawText); }catch(parseErr){
+        logStatusDebug(prefix, 'URL: ' + url + ' | HTTP ' + resp.status + ' | Réponse non-JSON: ' + rawText.slice(0, 300));
+        hideCooldown(prefix);
+        return;
+      }
+      logStatusDebug(prefix, 'URL: ' + url + ' | HTTP ' + resp.status + ' | JSON: ' + JSON.stringify(data));
       if (data.alreadyPlayed){
         showCooldown(prefix, st.cooldownMessage || 'Reviens dans {time}');
       } else {
         hideCooldown(prefix, data.remaining);
       }
     }catch(err){
+      logStatusDebug(prefix, 'URL: ' + url + ' | Erreur fetch (probable CORS/réseau): ' + err.message);
       hideCooldown(prefix);
     }
   }

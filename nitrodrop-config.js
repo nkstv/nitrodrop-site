@@ -908,7 +908,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "navLabel": "🎡 Roue",
         "tag": "Roue de la fortune",
         "title": "Fais tourner la roue",
-        "subtitle": "Tente ta chance chaque jour. Libellé",
+        "subtitle": "Tente ta chance chaque jour.",
         "usernameLabel": "Pseudo*",
         "usernamePlaceholder": "votre Pseudo",
         "discordNote": "Connexion Discord requise pour participer.",
