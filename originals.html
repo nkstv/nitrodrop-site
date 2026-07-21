@@ -235,6 +235,27 @@
   /* ---------- VAULT ---------- */
   .vault-section{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:64px 20px;}
 
+  .originals-section{padding:56px 20px 80px;}
+  .originals-intro{text-align:center; max-width:640px; margin:0 auto 44px;}
+  .originals-intro .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:100px;
+    border:1px solid var(--line-strong); color:var(--green); font-size:12px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:20px;
+  }
+  .originals-intro h1{font-size:38px; font-weight:900; color:#fff; margin-bottom:12px;}
+  .originals-intro .lede{font-size:15px; color:var(--text-dim); line-height:1.6;}
+  .originals-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; align-items:start;
+  }
+  .game-card{
+    background:var(--bg-card); border:1px solid var(--line-strong); border-radius:20px;
+    padding:30px; box-shadow:0 20px 60px rgba(0,0,0,0.35);
+  }
+  @media (max-width:960px){
+    .originals-grid{grid-template-columns:1fr; max-width:440px; margin-left:auto; margin-right:auto;}
+    .originals-intro h1{font-size:30px;}
+  }
+
   .vault-stats-bar{display:flex; gap:12px; justify-content:center; margin-bottom:24px; flex-wrap:wrap;}
   .vault-stat-card{
     background:var(--bg-card); border:1px solid var(--line); border-radius:12px;
@@ -393,7 +414,6 @@
       <a href="#" id="nav-scratch-btn">🎫 Ticket</a>
       <a href="#" id="nav-slot-btn">🎰 Slot</a>
       <a href="#" id="nav-wheel-btn">🎡 Roue</a>
-      <a href="/originals.html" id="nav-originals-btn">🎮 Originals</a>
     </div>
     <div class="lang-switch">
       <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
@@ -417,84 +437,137 @@
     <a href="#" id="mobile-nav-scratch-btn">🎫 Ticket</a>
     <a href="#" id="mobile-nav-slot-btn">🎰 Slot</a>
     <a href="#" id="mobile-nav-wheel-btn">🎡 Roue</a>
-    <a href="/originals.html" id="mobile-nav-originals-btn">🎮 Originals</a>
   </div>
 </nav>
 
-<section class="vault-section">
-  <div class="wrap" style="padding:0; max-width:1240px;">
+<section class="originals-section">
+  <div class="wrap" style="max-width:1240px;">
 
-    <div class="vault-stats-bar" id="vault-stats-bar">
-      <div class="vault-stat-card">
-        <div class="n" id="vault-stat-total">$0</div>
-        <div class="l" id="vault-stat-total-label">Total distribué</div>
-      </div>
-      <div class="vault-stat-card">
-        <div class="n" id="vault-stat-rounds" style="color:var(--violet);">0</div>
-        <div class="l" id="vault-stat-rounds-label">Coffres ouverts</div>
-      </div>
-      <div class="vault-stat-card">
-        <div class="n" id="vault-stat-participants" style="color:#fff;">0</div>
-        <div class="l" id="vault-stat-participants-label">Participants</div>
-      </div>
+    <div class="originals-intro">
+      <div class="eyebrow" id="originals-eyebrow">Drop Cash Originals</div>
+      <h1 id="originals-title">Nos mini-jeux exclusifs</h1>
+      <p class="lede" id="originals-subtitle">Connecte ton Discord et tente ta chance directement ici — aucune popup, tout est intégré sur cette page.</p>
     </div>
 
-    <div class="vault-columns">
+    <div class="originals-grid">
 
-      <div>
-        <div class="steps-strip">
-          <div class="step-chip"><b>1.</b> <span id="vault-step1">Rejoins le Discord</span></div>
-          <div class="step-chip"><b>2.</b> <span id="vault-step2">Repère le code du jour</span></div>
-          <div class="step-chip"><b>3.</b> <span id="vault-step3">Sois le premier à l'entrer</span></div>
+      <div class="game-card" id="scratch-game-card">
+        <div id="scratch-step-form">
+          <div class="modal-tag" id="scratch-tag">Ticket à gratter</div>
+          <h3 id="scratch-title">Tente ta chance</h3>
+          <p class="modal-sub" id="scratch-subtitle">Un essai gratuit par jour.</p>
+          <form id="scratch-form" onsubmit="submitScratch(event)">
+            <label><span id="scratch-username-label">Pseudo</span>
+              <input type="text" required placeholder="Ton pseudo" id="scratch-username-input">
+            </label>
+            <label><span id="scratch-discord-label-text">Ton compte Discord</span></label>
+            <button type="button" id="scratch-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('scratch')">🎮 Se connecter avec Discord</button>
+            <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="scratch-discord-note">
+              Connexion Discord requise pour participer.
+            </p>
+            <div id="scratch-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
+            <input type="hidden" id="scratch-discord-input">
+            <button type="submit" class="modal-submit" id="scratch-submit-btn">Gratter le ticket</button>
+            <p id="scratch-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
+            <p id="scratch-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
+          </form>
+          <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
         </div>
-        <div class="telegram-panel">
-          <div class="icon">✈</div>
-          <div class="tag" id="vault-tg-tag">Récompenses quotidiennes</div>
-          <h4 id="vault-tg-title">Rejoins le Telegram</h4>
-          <p id="vault-tg-desc">Cadeaux quotidiens, bonus exclusifs et nouvelles opportunités.</p>
-          <a href="#" id="vault-tg-btn" target="_blank">Rejoindre →</a>
-        </div>
-      </div>
 
-      <div class="vault-card">
-        <div class="vault-eyebrow" id="vault-eyebrow">Accès exclusif</div>
-        <h1 class="vault-title" id="vault-title">Le coffre-fort</h1>
-        <p class="vault-subtitle" id="vault-subtitle">Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.</p>
-
-        <div class="vault-visual" id="vault-visual">
-          <div class="vault-door" id="vault-door">
-            <div class="vault-dial" id="vault-dial"></div>
+        <div id="scratch-step-card" style="display:none; text-align:center;">
+          <h3 id="scratch-result-title">Ton ticket</h3>
+          <div class="scratch-card-visual" id="scratch-card-visual">
+            <div class="scratch-silver" id="scratch-silver">👆</div>
+            <div class="scratch-result" id="scratch-result"></div>
           </div>
-          <div class="vault-half vault-half-left"></div>
-          <div class="vault-half vault-half-right"></div>
-          <div class="vault-amount" id="vault-amount"></div>
+          <p id="scratch-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+          <a href="#" id="scratch-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+          <button type="button" id="scratch-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayScratch()">Rejouer</button>
         </div>
-
-        <form class="vault-form" id="vault-form">
-          <input type="text" id="vault-username-input" placeholder="Ton pseudo" autocomplete="off">
-          <input type="text" id="vault-code-input" placeholder="Code secret" autocomplete="off">
-          <button type="submit" class="vault-submit" id="vault-submit-btn">Ouvrir le coffre</button>
-        </form>
-
-        <p class="vault-message" id="vault-message"></p>
       </div>
 
-      <div>
-        <div class="winners-panel">
-          <h4 id="vault-winners-title">🏆 Derniers gagnants</h4>
-          <div id="vault-winners-list"></div>
-          <p id="vault-winners-empty" style="font-size:11.5px; color:var(--text-faint); text-align:center; display:none;">Personne pour l'instant.</p>
+      <div class="game-card" id="slot-game-card">
+        <div id="slot-step-form">
+          <div class="modal-tag" id="slot-tag">Machine à sous</div>
+          <h3 id="slot-title">Tente ta chance</h3>
+          <p class="modal-sub" id="slot-subtitle">Un spin gratuit par jour.</p>
+          <form id="slot-form" onsubmit="submitSlot(event)">
+            <label><span id="slot-username-label">Pseudo</span>
+              <input type="text" required placeholder="Ton pseudo" id="slot-username-input">
+            </label>
+            <label><span id="slot-discord-label-text">Ton compte Discord</span></label>
+            <button type="button" id="slot-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('slot')">🎮 Se connecter avec Discord</button>
+            <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="slot-discord-note">
+              Connexion Discord requise pour participer.
+            </p>
+            <div id="slot-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
+            <input type="hidden" id="slot-discord-input">
+            <button type="submit" class="modal-submit" id="slot-submit-btn">Spin</button>
+            <p id="slot-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
+            <p id="slot-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
+          </form>
+          <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
         </div>
 
-        <div class="vault-card" style="margin-top:16px; max-width:none;">
-          <h3 id="vault-history-title" style="font-size:16px; color:#fff; margin-bottom:16px; text-align:left;">Historique des gains</h3>
-          <div id="vault-history-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-          <p id="vault-history-empty" style="font-size:13px; color:var(--text-faint); display:none;">Aucun gain pour l'instant.</p>
+        <div id="slot-step-card" style="display:none; text-align:center;">
+          <h3 id="slot-result-title">Résultat</h3>
+          <div class="slot-reels" id="slot-reels">
+            <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
+            <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
+            <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
+          </div>
+          <p id="slot-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+          <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+          <button type="button" id="slot-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replaySlot()">Rejouer</button>
+        </div>
+      </div>
+
+      <div class="game-card" id="wheel-game-card">
+        <div id="wheel-step-form">
+          <div class="modal-tag" id="wheel-tag">Roue de la fortune</div>
+          <h3 id="wheel-title">Fais tourner la roue</h3>
+          <p class="modal-sub" id="wheel-subtitle">Tente ta chance chaque jour.</p>
+          <form id="wheel-form" onsubmit="submitWheel(event)">
+            <label><span id="wheel-username-label">Pseudo</span>
+              <input type="text" required placeholder="Ton pseudo" id="wheel-username-input">
+            </label>
+            <label><span id="wheel-discord-label-text">Ton compte Discord</span></label>
+            <button type="button" id="wheel-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('wheel')">🎮 Se connecter avec Discord</button>
+            <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="wheel-discord-note">
+              Connexion Discord requise pour participer.
+            </p>
+            <div id="wheel-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
+            <input type="hidden" id="wheel-discord-input">
+            <button type="submit" class="modal-submit" id="wheel-submit-btn">Faire tourner la roue</button>
+            <p id="wheel-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
+            <p id="wheel-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
+          </form>
+          <p id="wheel-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+        </div>
+
+        <div id="wheel-step-card" style="display:none; text-align:center;">
+          <h3 id="wheel-result-title">Résultat</h3>
+          <div class="wheel-wrap">
+            <div class="wheel-pointer"></div>
+            <div class="wheel-disc" id="wheel-disc">
+              <div class="wheel-label-pos" style="transform:rotate(22.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-22.5deg);">😔</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(67.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-67.5deg);">🎉</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(112.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-112.5deg);">😔</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(157.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-157.5deg);">🎉</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(202.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-202.5deg);">😔</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(247.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-247.5deg);">🎉</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(292.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-292.5deg);">😔</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(337.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-337.5deg);">🎉</span></div>
+            </div>
+            <div class="wheel-center-dot"></div>
+          </div>
+          <p id="wheel-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+          <a href="#" id="wheel-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+          <button type="button" id="wheel-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayWheel()">Rejouer</button>
         </div>
       </div>
 
     </div>
-
   </div>
 </section>
 
@@ -527,134 +600,6 @@
   <img id="floating-widget-img" src="" alt="">
   <span class="floating-widget-badge">🎮</span>
 </a>
-
-<div class="modal-overlay" id="scratch-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeScratchModal()" aria-label="Fermer">×</button>
-
-    <div id="scratch-step-form">
-      <div class="modal-tag" id="scratch-tag">Ticket à gratter</div>
-      <h3 id="scratch-title">Tente ta chance</h3>
-      <p class="modal-sub" id="scratch-subtitle">Un essai gratuit par jour.</p>
-      <form id="scratch-form" onsubmit="submitScratch(event)">
-        <label><span id="scratch-username-label">Pseudo</span>
-          <input type="text" required placeholder="Ton pseudo" id="scratch-username-input">
-        </label>
-        <label><span id="scratch-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="scratch-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('scratch')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="scratch-discord-note">
-          Connexion Discord requise pour participer (1 essai par jour).
-        </p>
-        <div id="scratch-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="scratch-discord-input">
-        <button type="submit" class="modal-submit" id="scratch-submit-btn">Gratter le ticket</button>
-        <p id="scratch-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="scratch-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="scratch-step-card" style="display:none; text-align:center;">
-      <h3 id="scratch-result-title">Ton ticket</h3>
-      <div class="scratch-card-visual" id="scratch-card-visual">
-        <div class="scratch-silver" id="scratch-silver">👆</div>
-        <div class="scratch-result" id="scratch-result"></div>
-      </div>
-      <p id="scratch-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="scratch-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="scratch-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayScratch()">Rejouer</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="slot-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeSlotModal()" aria-label="Fermer">×</button>
-
-    <div id="slot-step-form">
-      <div class="modal-tag" id="slot-tag">Machine à sous</div>
-      <h3 id="slot-title">Tente ta chance</h3>
-      <p class="modal-sub" id="slot-subtitle">Un spin gratuit par jour.</p>
-      <form id="slot-form" onsubmit="submitSlot(event)">
-        <label><span id="slot-username-label">Pseudo</span>
-          <input type="text" required placeholder="Ton pseudo" id="slot-username-input">
-        </label>
-        <label><span id="slot-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="slot-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('slot')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="slot-discord-note">
-          Connexion Discord requise pour participer (1 spin par jour).
-        </p>
-        <div id="slot-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="slot-discord-input">
-        <button type="submit" class="modal-submit" id="slot-submit-btn">Spin</button>
-        <p id="slot-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="slot-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="slot-step-card" style="display:none; text-align:center;">
-      <h3 id="slot-result-title">Résultat</h3>
-      <div class="slot-reels" id="slot-reels">
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
-      </div>
-      <p id="slot-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="slot-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replaySlot()">Rejouer</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="wheel-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeWheelModal()" aria-label="Fermer">×</button>
-
-    <div id="wheel-step-form">
-      <div class="modal-tag" id="wheel-tag">Roue de la fortune</div>
-      <h3 id="wheel-title">Fais tourner la roue</h3>
-      <p class="modal-sub" id="wheel-subtitle">Tente ta chance chaque jour.</p>
-      <form id="wheel-form" onsubmit="submitWheel(event)">
-        <label><span id="wheel-username-label">Pseudo</span>
-          <input type="text" required placeholder="Ton pseudo" id="wheel-username-input">
-        </label>
-        <label><span id="wheel-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="wheel-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('wheel')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="wheel-discord-note">
-          Connexion Discord requise pour participer.
-        </p>
-        <div id="wheel-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="wheel-discord-input">
-        <button type="submit" class="modal-submit" id="wheel-submit-btn">Faire tourner la roue</button>
-        <p id="wheel-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="wheel-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="wheel-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="wheel-step-card" style="display:none; text-align:center;">
-      <h3 id="wheel-result-title">Résultat</h3>
-      <div class="wheel-wrap">
-        <div class="wheel-pointer"></div>
-        <div class="wheel-disc" id="wheel-disc">
-          <div class="wheel-label-pos" style="transform:rotate(22.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-22.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(67.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-67.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(112.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-112.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(157.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-157.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(202.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-202.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(247.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-247.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(292.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-292.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(337.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-337.5deg);">🎉</span></div>
-        </div>
-        <div class="wheel-center-dot"></div>
-      </div>
-      <p id="wheel-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="wheel-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="wheel-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayWheel()">Rejouer</button>
-    </div>
-  </div>
-</div>
 
 <script src="nitrodrop-config.js?v=20260719a"></script>
 <script>
@@ -732,7 +677,7 @@
     slotSpinText(document.getElementById('brand-text2-nav'), brandText2);
     document.getElementById('brand-text1-footer').textContent = brandText1;
     slotSpinText(document.getElementById('brand-text2-footer'), brandText2);
-    document.getElementById('page-title').textContent = (cfg.pageTitle || 'Drop-Cash.com') + ' — Vault';
+    document.getElementById('page-title').textContent = (cfg.pageTitle || 'Drop-Cash.com') + ' — Originals';
 
     // Les liens du menu pointent vers les sections de la page d'accueil
     cfg.nav.links.forEach((link, i) => {
@@ -793,40 +738,12 @@
     const wheelNavLabel = (cfg.wheelGame && cfg.wheelGame.navLabel) || '🎡 Roue';
     document.getElementById('nav-wheel-btn').textContent = wheelNavLabel;
     document.getElementById('mobile-nav-wheel-btn').textContent = wheelNavLabel;
-
-    // Textes du coffre-fort (éditables dans l'admin)
-    const v = cfg.vault || {};
-    document.getElementById('vault-eyebrow').textContent = v.eyebrow || 'Accès exclusif';
-    document.getElementById('vault-title').textContent = v.title || 'Le coffre-fort';
-    document.getElementById('vault-subtitle').textContent = v.subtitle || "Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.";
-    document.getElementById('vault-code-input').placeholder = v.codePlaceholder || 'Code secret';
-    document.getElementById('vault-submit-btn').textContent = v.submitText || 'Ouvrir le coffre';
-
-    // Bandeau Telegram (réutilise le texte déjà configuré pour le site)
-    document.getElementById('vault-tg-tag').textContent = cfg.telegram.tag;
-    document.getElementById('vault-tg-title').textContent = cfg.telegram.title;
-    document.getElementById('vault-tg-desc').textContent = cfg.telegram.desc;
-    const tgBtn = document.getElementById('vault-tg-btn');
-    tgBtn.textContent = cfg.telegram.btnText;
-    tgBtn.href = cfg.telegram.btnHref;
-
-    // Étapes "comment participer"
-    document.getElementById('vault-step1').textContent = v.step1 || 'Rejoins le Discord';
-    document.getElementById('vault-step2').textContent = v.step2 || 'Repère le code du jour';
-    document.getElementById('vault-step3').textContent = v.step3 || "Sois le premier à l'entrer";
-
-    // Textes des stats et du panneau gagnants
-    document.getElementById('vault-stat-total-label').textContent = v.statTotalLabel || 'Total distribué';
-    document.getElementById('vault-stat-rounds-label').textContent = v.statRoundsLabel || 'Coffres ouverts';
-    document.getElementById('vault-stat-participants-label').textContent = v.statParticipantsLabel || 'Participants';
-    document.getElementById('vault-winners-title').textContent = '🏆 ' + (v.winnersTitle || 'Derniers gagnants');
-    document.getElementById('vault-winners-empty').textContent = v.winnersEmpty || "Personne pour l'instant.";
-    document.getElementById('vault-username-input').placeholder = v.usernamePlaceholder || 'Ton pseudo';
-    document.getElementById('vault-history-title').textContent = v.historyTitle || 'Historique des gains';
-    document.getElementById('vault-history-empty').textContent = v.historyEmpty || 'Aucun gain pour l\'instant.';
   }
 
   applyChrome(getActive());
+  initScratchGame();
+  initSlotGame();
+  initWheelGame();
 
   // Bouton flottant (image + lien) — indépendant de la langue
   (function applyFloatingWidget(){
@@ -847,11 +764,9 @@
     localStorage.setItem('nitrodrop_lang', lang);
     document.documentElement.lang = lang;
     applyChrome(getActive());
-    if (vaultAlreadyClaimed){
-      const v = getActive().vault || {};
-      showMessage(v.alreadyClaimedMessage || 'Ce coffre a déjà été réclamé par quelqu\u0027un d\u0027autre.', 'info');
-    }
-    loadHistory();
+    initScratchGame();
+    initSlotGame();
+    initWheelGame();
     document.querySelectorAll('.lang-switch-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.lang === lang);
     });
@@ -869,189 +784,10 @@
     a.addEventListener('click', () => mobileNav.classList.remove('open'));
   });
 
-  // ---------- Logique du coffre-fort ----------
+  // ---------- Base commune pour les appels au Worker (mini-jeux) ----------
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
-  const soundFiles = CONFIG.vaultSounds || {};
-  function playSound(name){
-    const file = soundFiles[name];
-    if (!file) return;
-    try{
-      const audio = new Audio(file);
-      audio.volume = 0.6;
-      audio.play().catch(() => {});
-    }catch(e){}
-  }
-
-  const vaultForm = document.getElementById('vault-form');
-  const vaultSubmitBtn = document.getElementById('vault-submit-btn');
-  const vaultCodeInput = document.getElementById('vault-code-input');
-  const vaultMessage = document.getElementById('vault-message');
-  const vaultDoor = document.getElementById('vault-door');
-  const vaultDial = document.getElementById('vault-dial');
-  const vaultVisual = document.getElementById('vault-visual');
-  const vaultAmountEl = document.getElementById('vault-amount');
-
-  function showMessage(text, type){
-    vaultMessage.textContent = text;
-    vaultMessage.className = 'vault-message' + (type ? ' ' + type : '');
-  }
-
-  function lockFormOut(){
-    vaultCodeInput.disabled = true;
-    vaultSubmitBtn.disabled = true;
-    document.getElementById('vault-username-input').disabled = true;
-  }
-
-  let vaultAlreadyClaimed = false;
-
-  async function checkInitialStatus(){
-    if (!workerBase){
-      showMessage('Coffre non configuré.', 'info');
-      lockFormOut();
-      return;
-    }
-    try{
-      const resp = await fetch(`${workerBase}/vault/status`);
-      if (!resp.ok) return;
-      const data = await resp.json();
-      if (data.claimed){
-        vaultAlreadyClaimed = true;
-        const v = getActive().vault || {};
-        showMessage(v.alreadyClaimedMessage || 'Ce coffre a déjà été réclamé par quelqu\'un d\'autre.', 'info');
-        lockFormOut();
-      }
-    }catch(e){
-      console.error('Impossible de vérifier l\'état du coffre :', e);
-    }
-  }
-  checkInitialStatus();
-
-  async function loadHistory(){
-    const listEl = document.getElementById('vault-history-list');
-    const emptyEl = document.getElementById('vault-history-empty');
-    if (!workerBase) return;
-    try{
-      const resp = await fetch(`${workerBase}/vault/history`);
-      if (!resp.ok) return;
-      const data = await resp.json();
-      const history = data.history || [];
-
-      // ---- Stats globales ----
-      const totalAmount = history.reduce((sum, h) => sum + (parseFloat(h.amount) || 0), 0);
-      const totalParticipants = history.reduce((sum, h) => sum + (h.participants || 0), 0);
-      document.getElementById('vault-stat-total').textContent = '$' + (Number.isInteger(totalAmount) ? totalAmount : totalAmount.toFixed(2));
-      document.getElementById('vault-stat-rounds').textContent = String(history.length);
-      document.getElementById('vault-stat-participants').textContent = String(totalParticipants);
-
-      // ---- Derniers gagnants (panneau latéral, 3 max) ----
-      const winnersListEl = document.getElementById('vault-winners-list');
-      const winnersEmptyEl = document.getElementById('vault-winners-empty');
-      if (history.length === 0){
-        winnersEmptyEl.style.display = 'block';
-        winnersListEl.innerHTML = '';
-      } else {
-        winnersEmptyEl.style.display = 'none';
-        winnersListEl.innerHTML = history.slice(0, 3).map(h => {
-          const initial = (h.username || '?').trim().charAt(0).toUpperCase() || '?';
-          return `<div class="winner-row">
-            <div class="winner-avatar">${escapeHtml(initial)}</div>
-            <span class="winner-name">${escapeHtml(h.username || '?')}</span>
-            <span class="winner-amount">$${escapeHtml(h.amount || '?')}</span>
-          </div>`;
-        }).join('');
-      }
-
-      // ---- Historique complet (en bas de page) ----
-      if (history.length === 0){
-        emptyEl.style.display = 'block';
-        listEl.innerHTML = '';
-        return;
-      }
-      emptyEl.style.display = 'none';
-      const participantsLabel = (getActive().vault && getActive().vault.participantsLabel) || 'Participants';
-      listEl.innerHTML = history.map(h => {
-        const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString() : '';
-        return `<div class="vault-history-row">
-          <span class="name">${escapeHtml(h.username || '?')}</span>
-          <span class="amount">$${escapeHtml(h.amount || '?')}</span>
-          <span class="code-used code-font">${escapeHtml(h.code || '?')}</span>
-          <span class="participants">${escapeHtml(participantsLabel)} : ${escapeHtml(String(h.participants != null ? h.participants : '?'))}</span>
-          <span class="date">${escapeHtml(date)}</span>
-        </div>`;
-      }).join('');
-    }catch(e){
-      console.error('Impossible de charger l\'historique du coffre :', e);
-    }
-  }
-  loadHistory();
-
-  const vaultUsernameInput = document.getElementById('vault-username-input');
-
-  vaultForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const code = vaultCodeInput.value.trim();
-    const username = vaultUsernameInput.value.trim();
-    if (!username){
-      showMessage('Indique ton pseudo avant de tenter ta chance.', 'error');
-      return;
-    }
-    if (!code) return;
-
-    vaultSubmitBtn.disabled = true;
-    vaultDial.classList.add('spin');
-    playSound('attempt');
-    showMessage('', '');
-
-    try{
-      const resp = await fetch(`${workerBase}/vault/attempt`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, username })
-      });
-      const data = await resp.json();
-      const v = getActive().vault || {};
-
-      setTimeout(() => {
-        vaultDial.classList.remove('spin');
-
-        if (data.ok){
-          playSound('success');
-          vaultAmountEl.textContent = data.amount ? '$' + data.amount : '🎉';
-          vaultVisual.classList.add('opened');
-          const template = v.successMessage || 'Félicitations, tu remportes {amount} !';
-          showMessage(fillTemplate(template, { amount: data.amount ? '$' + data.amount : '' }), 'success');
-          lockFormOut();
-          loadHistory();
-        } else if (data.reason === 'already_claimed'){
-          playSound('fail');
-          vaultDoor.classList.add('shake');
-          showMessage(v.alreadyClaimedMessage || 'Trop tard, ce coffre a déjà été réclamé.', 'error');
-          lockFormOut();
-          setTimeout(() => vaultDoor.classList.remove('shake'), 400);
-        } else if (data.reason === 'not_configured'){
-          showMessage(v.notConfiguredMessage || 'Aucun coffre actif pour le moment.', 'info');
-          lockFormOut();
-        } else if (data.reason === 'missing_username'){
-          showMessage('Indique ton pseudo avant de tenter ta chance.', 'error');
-          vaultSubmitBtn.disabled = false;
-        } else {
-          playSound('fail');
-          vaultDoor.classList.add('shake');
-          showMessage(v.wrongCodeMessage || 'Code incorrect, le coffre reste verrouillé.', 'error');
-          vaultSubmitBtn.disabled = false;
-          setTimeout(() => vaultDoor.classList.remove('shake'), 400);
-        }
-      }, 650);
-    }catch(err){
-      vaultDial.classList.remove('spin');
-      showMessage('Erreur de connexion, réessaie.', 'error');
-      vaultSubmitBtn.disabled = false;
-    }
-  });
-
-  // ---- Ticket à gratter / Machine à sous ----
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
 
   function saveDiscordIdentity(discordId, username){
@@ -1193,10 +929,9 @@
     checkAlreadyPlayed(ctx, discordId);
   });
 
-  function openScratchModal(){
+  function initScratchGame(){
     document.getElementById('scratch-step-form').style.display = 'block';
     document.getElementById('scratch-step-card').style.display = 'none';
-    document.getElementById('scratch-form').reset();
     document.getElementById('scratch-form-error').style.display = 'none';
     document.getElementById('scratch-silver').classList.remove('revealed');
     document.getElementById('scratch-discord-claim-btn').style.display = 'none';
@@ -1214,15 +949,6 @@
     document.getElementById('scratch-result-title').textContent = st.resultTitle || 'Ton ticket';
     applyDiscordIdentityToForm('scratch');
     checkAlreadyPlayed('scratch', document.getElementById('scratch-discord-input').value);
-
-    document.getElementById('scratch-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeScratchModal(){
-    document.getElementById('scratch-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('scratch');
   }
 
   function showScratchFormError(msg){
@@ -1304,15 +1030,14 @@
     checkAlreadyPlayed('scratch', discordId);
   }
 
-  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
-  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
+  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('scratch-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('scratch-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
 
   const SLOT_SYMBOLS = ['7️⃣','🍒','💎','🔔','🍋','⭐'];
 
-  function openSlotModal(){
+  function initSlotGame(){
     document.getElementById('slot-step-form').style.display = 'block';
     document.getElementById('slot-step-card').style.display = 'none';
-    document.getElementById('slot-form').reset();
     document.getElementById('slot-form-error').style.display = 'none';
     document.getElementById('slot-discord-claim-btn').style.display = 'none';
     document.querySelectorAll('#slot-reels .slot-reel').forEach(r => r.classList.remove('spinning'));
@@ -1331,15 +1056,6 @@
     document.getElementById('slot-result-message').textContent = '';
     applyDiscordIdentityToForm('slot');
     checkAlreadyPlayed('slot', document.getElementById('slot-discord-input').value);
-
-    document.getElementById('slot-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeSlotModal(){
-    document.getElementById('slot-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('slot');
   }
 
   function showSlotFormError(msg){
@@ -1454,14 +1170,13 @@
     checkAlreadyPlayed('slot', discordId);
   }
 
-  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
-  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
+  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('slot-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('slot-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
 
   // ---------- Roue de la fortune ----------
-  function openWheelModal(){
+  function initWheelGame(){
     document.getElementById('wheel-step-form').style.display = 'block';
     document.getElementById('wheel-step-card').style.display = 'none';
-    document.getElementById('wheel-form').reset();
     document.getElementById('wheel-form-error').style.display = 'none';
     document.getElementById('wheel-discord-claim-btn').style.display = 'none';
     document.getElementById('wheel-disc').style.transition = 'none';
@@ -1481,15 +1196,6 @@
     document.getElementById('wheel-result-message').textContent = '';
     applyDiscordIdentityToForm('wheel');
     checkAlreadyPlayed('wheel', document.getElementById('wheel-discord-input').value);
-
-    document.getElementById('wheel-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeWheelModal(){
-    document.getElementById('wheel-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('wheel');
   }
 
   function showWheelFormError(msg){
@@ -1602,8 +1308,8 @@
     checkAlreadyPlayed('wheel', discordId);
   }
 
-  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
-  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
+  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('wheel-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('wheel-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
 </script>
 
 </body>
