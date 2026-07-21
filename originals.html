@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="page-title">Coffre-fort — Drop-Cash.com</title>
+<title id="page-title">Drop Cash Originals — Drop-Cash.com</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -856,16 +856,32 @@
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
 
   function saveDiscordIdentity(discordId, username){
+    const payload = JSON.stringify({ discordId, username });
     try{
-      localStorage.setItem(DISCORD_STORAGE_KEY, JSON.stringify({ discordId, username }));
+      localStorage.setItem(DISCORD_STORAGE_KEY, payload);
+    }catch(e){}
+    // Filet de sécurité : certains navigateurs/réglages peuvent restreindre le localStorage
+    // sur certaines pages. Le cookie sert de repli pour ne jamais perdre la connexion.
+    try{
+      document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax';
     }catch(e){}
   }
 
   function getSavedDiscordIdentity(){
     try{
       const raw = localStorage.getItem(DISCORD_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    }catch(e){ return null; }
+      if (raw) return JSON.parse(raw);
+    }catch(e){}
+    try{
+      const match = document.cookie.match(new RegExp('(?:^|; )' + DISCORD_STORAGE_KEY + '=([^;]*)'));
+      if (match){
+        const raw = decodeURIComponent(match[1]);
+        const parsed = JSON.parse(raw);
+        try{ localStorage.setItem(DISCORD_STORAGE_KEY, raw); }catch(e){}
+        return parsed;
+      }
+    }catch(e){}
+    return null;
   }
 
   // Un seul bloc "identité" partagé par les 3 jeux (au lieu d'un par jeu)
