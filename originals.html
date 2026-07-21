@@ -737,6 +737,10 @@
   let scratchCheckScheduled = false;
   let scratchOnRevealCallback = null;
 
+  // Idem : hideCooldown()/showCooldown() peuvent être atteintes de façon synchrone
+  // dès le premier applySharedIdentity() (via checkAlreadyPlayed), par précaution.
+  const cooldownIntervals = {};
+
   (function migrateToI18n(cfg){
     if (cfg.content) return;
     const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
@@ -987,8 +991,6 @@
   }
 
   // ---------- Compte à rebours "déjà joué aujourd'hui" (ticket + slot) ----------
-  const cooldownIntervals = {};
-
   function msUntilNextUtcMidnight(){
     const now = new Date();
     const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
