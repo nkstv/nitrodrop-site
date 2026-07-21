@@ -236,7 +236,7 @@
   .vault-section{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:64px 20px;}
 
   .originals-section{padding:56px 20px 80px;}
-  .originals-intro{text-align:center; max-width:640px; margin:0 auto 44px;}
+  .originals-intro{text-align:center; max-width:640px; margin:0 auto 36px;}
   .originals-intro .eyebrow{
     display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:100px;
     border:1px solid var(--line-strong); color:var(--green); font-size:12px; font-weight:700;
@@ -244,16 +244,87 @@
   }
   .originals-intro h1{font-size:38px; font-weight:900; color:#fff; margin-bottom:12px;}
   .originals-intro .lede{font-size:15px; color:var(--text-dim); line-height:1.6;}
+
+  /* ---- Barre d'identité partagée (une seule fois pour les 3 jeux) ---- */
+  .identity-bar{
+    display:flex; align-items:center; gap:20px; background:var(--bg-card);
+    border:1px solid var(--line-strong); border-radius:20px; padding:20px 26px;
+    margin:0 auto 40px; max-width:720px; box-shadow:0 20px 50px rgba(0,0,0,0.35);
+  }
+  .identity-avatar{
+    width:52px; height:52px; border-radius:50%; flex-shrink:0;
+    background:var(--bg-raise); border:2px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; font-size:22px; transition:border-color .2s, box-shadow .2s;
+  }
+  .identity-avatar.connected{border-color:var(--green); box-shadow:0 0 0 4px rgba(182,255,60,0.12);}
+  .identity-body{flex:1; min-width:0;}
+  .identity-label{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-faint); font-weight:700; margin-bottom:8px;}
+  .identity-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .identity-row input{
+    flex:1; min-width:140px; background:var(--bg-raise); border:1px solid var(--line-strong);
+    border-radius:10px; padding:11px 14px; color:var(--text); font-size:14px; font-family:'Inter';
+  }
+  .identity-row input:focus{border-color:var(--green); outline:none;}
+  .identity-connected{
+    display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:var(--green);
+  }
+  .identity-connected small{display:block; font-size:11.5px; font-weight:400; color:var(--text-dim); margin-top:2px;}
+  .btn-discord{
+    background:transparent; border:1px solid var(--line-strong); color:var(--text);
+    padding:11px 18px; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  .btn-discord:hover{border-color:var(--green);}
+
+  /* ---- Grille de jeux ---- */
   .originals-grid{
     display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; align-items:start;
   }
   .game-card{
     background:var(--bg-card); border:1px solid var(--line-strong); border-radius:20px;
-    padding:30px; box-shadow:0 20px 60px rgba(0,0,0,0.35);
+    box-shadow:0 20px 60px rgba(0,0,0,0.35); position:relative; overflow:hidden;
   }
+  .game-card::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; z-index:1;}
+  .game-card.c-ticket::before{background:#FF5C7A;}
+  .game-card.c-slot::before{background:var(--violet);}
+  .game-card.c-wheel::before{background:var(--green);}
+
+  .game-preview{
+    min-height:150px; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .game-card.c-ticket .game-preview{background:radial-gradient(circle at 50% 30%, rgba(255,92,122,0.14), transparent 70%);}
+  .game-card.c-slot .game-preview{background:radial-gradient(circle at 50% 30%, rgba(139,92,255,0.16), transparent 70%);}
+  .game-card.c-wheel .game-preview{background:radial-gradient(circle at 50% 30%, rgba(182,255,60,0.14), transparent 70%);}
+
+  .game-body{padding:8px 24px 26px;}
+  .game-tag{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;}
+  .game-card.c-ticket .game-tag{color:#FF5C7A;}
+  .game-card.c-slot .game-tag{color:var(--violet);}
+  .game-card.c-wheel .game-tag{color:var(--green);}
+  .game-title{font-size:19px; font-weight:700; margin-bottom:6px; color:#fff;}
+  .game-desc{font-size:13px; color:var(--text-dim); line-height:1.5; margin-bottom:14px;}
+  .game-meta{margin-bottom:14px; min-height:1px;}
+  .tries-badge{
+    font-size:11.5px; color:var(--text-faint); background:var(--bg-raise); border:1px solid var(--line);
+    padding:4px 10px; border-radius:100px;
+  }
+  .btn-play{
+    width:100%; padding:13px; border:none; border-radius:10px; font-weight:700; font-size:14px;
+    cursor:pointer; font-family:'Inter';
+  }
+  .game-card.c-ticket .btn-play{background:#FF5C7A; color:#2a0510;}
+  .game-card.c-slot .btn-play{background:var(--violet); color:#0d0620;}
+  .game-card.c-wheel .btn-play{background:var(--green); color:#08130a;}
+  .btn-play:disabled{opacity:0.55; cursor:default;}
+  .locked-note{
+    background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:13px;
+    border-radius:10px; font-weight:700; font-size:13.5px; margin-top:0;
+  }
+
   @media (max-width:960px){
     .originals-grid{grid-template-columns:1fr; max-width:440px; margin-left:auto; margin-right:auto;}
     .originals-intro h1{font-size:30px;}
+    .identity-bar{flex-direction:column; align-items:stretch; text-align:center;}
+    .identity-row{flex-direction:column;}
   }
 
   .vault-stats-bar{display:flex; gap:12px; justify-content:center; margin-bottom:24px; flex-wrap:wrap;}
@@ -446,107 +517,79 @@
     <div class="originals-intro">
       <div class="eyebrow" id="originals-eyebrow">Drop Cash Originals</div>
       <h1 id="originals-title">Nos mini-jeux exclusifs</h1>
-      <p class="lede" id="originals-subtitle">Connecte ton Discord et tente ta chance directement ici — aucune popup, tout est intégré sur cette page.</p>
+      <p class="lede" id="originals-subtitle">Connecte-toi une seule fois, puis tente ta chance sur les 3 jeux ci-dessous.</p>
     </div>
 
-    <div class="originals-grid">
+    <div class="identity-bar" id="identity-bar">
+      <div class="identity-avatar" id="identity-avatar">🎮</div>
+      <div class="identity-body">
+        <div class="identity-label" id="identity-label">Ton profil</div>
 
-      <div class="game-card" id="scratch-game-card">
-        <div id="scratch-step-form">
-          <div class="modal-tag" id="scratch-tag">Ticket à gratter</div>
-          <h3 id="scratch-title">Tente ta chance</h3>
-          <p class="modal-sub" id="scratch-subtitle">Un essai gratuit par jour.</p>
-          <form id="scratch-form" onsubmit="submitScratch(event)">
-            <label><span id="scratch-username-label">Pseudo</span>
-              <input type="text" required placeholder="Ton pseudo" id="scratch-username-input">
-            </label>
-            <label><span id="scratch-discord-label-text">Ton compte Discord</span></label>
-            <button type="button" id="scratch-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('scratch')">🎮 Se connecter avec Discord</button>
-            <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="scratch-discord-note">
-              Connexion Discord requise pour participer.
-            </p>
-            <div id="scratch-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-            <input type="hidden" id="scratch-discord-input">
-            <button type="submit" class="modal-submit" id="scratch-submit-btn">Gratter le ticket</button>
-            <p id="scratch-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-            <p id="scratch-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-          </form>
-          <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+        <div id="identity-form-state">
+          <div class="identity-row">
+            <input type="text" id="shared-username-input" placeholder="Ton pseudo">
+            <button type="button" id="shared-discord-connect-btn" class="btn-discord" onclick="connectDiscord('shared')">🎮 Se connecter avec Discord</button>
+          </div>
+          <p id="shared-discord-note" style="font-size:11.5px; color:var(--text-faint); margin-top:8px; line-height:1.5;">
+            Connexion Discord requise pour participer.
+          </p>
         </div>
 
-        <div id="scratch-step-card" style="display:none; text-align:center;">
-          <h3 id="scratch-result-title">Ton ticket</h3>
+        <div id="shared-discord-connected-info" style="display:none;" class="identity-connected"></div>
+      </div>
+    </div>
+
+    <div class="originals-grid games-grid">
+
+      <div class="game-card c-ticket" id="scratch-game-card">
+        <div class="game-preview">
           <div class="scratch-card-visual" id="scratch-card-visual">
             <div class="scratch-silver" id="scratch-silver">👆</div>
             <div class="scratch-result" id="scratch-result"></div>
           </div>
-          <p id="scratch-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+        </div>
+        <div class="game-body">
+          <div class="game-tag" id="scratch-tag">Ticket à gratter</div>
+          <h3 class="game-title" id="scratch-title">Tente ta chance</h3>
+          <p class="game-desc" id="scratch-subtitle">Un essai gratuit par jour.</p>
+          <div class="game-meta">
+            <span class="tries-badge" id="scratch-tries-remaining" style="display:none;"></span>
+          </div>
+          <button type="button" class="btn-play" id="scratch-submit-btn" onclick="submitScratch()">Gratter le ticket</button>
+          <p id="scratch-cooldown-message" class="locked-note" style="display:none;"></p>
+          <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+          <p id="scratch-result-message" style="margin-top:14px; font-size:13.5px; color:var(--text-dim); line-height:1.6; display:none;"></p>
           <a href="#" id="scratch-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-          <button type="button" id="scratch-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayScratch()">Rejouer</button>
+          <button type="button" id="scratch-play-again-btn" class="btn-play" style="display:none; margin-top:10px;" onclick="replayScratch()">Rejouer</button>
         </div>
       </div>
 
-      <div class="game-card" id="slot-game-card">
-        <div id="slot-step-form">
-          <div class="modal-tag" id="slot-tag">Machine à sous</div>
-          <h3 id="slot-title">Tente ta chance</h3>
-          <p class="modal-sub" id="slot-subtitle">Un spin gratuit par jour.</p>
-          <form id="slot-form" onsubmit="submitSlot(event)">
-            <label><span id="slot-username-label">Pseudo</span>
-              <input type="text" required placeholder="Ton pseudo" id="slot-username-input">
-            </label>
-            <label><span id="slot-discord-label-text">Ton compte Discord</span></label>
-            <button type="button" id="slot-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('slot')">🎮 Se connecter avec Discord</button>
-            <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="slot-discord-note">
-              Connexion Discord requise pour participer.
-            </p>
-            <div id="slot-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-            <input type="hidden" id="slot-discord-input">
-            <button type="submit" class="modal-submit" id="slot-submit-btn">Spin</button>
-            <p id="slot-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-            <p id="slot-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-          </form>
-          <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-        </div>
-
-        <div id="slot-step-card" style="display:none; text-align:center;">
-          <h3 id="slot-result-title">Résultat</h3>
+      <div class="game-card c-slot" id="slot-game-card">
+        <div class="game-preview">
           <div class="slot-reels" id="slot-reels">
             <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
             <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
             <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
           </div>
-          <p id="slot-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+        </div>
+        <div class="game-body">
+          <div class="game-tag" id="slot-tag">Machine à sous</div>
+          <h3 class="game-title" id="slot-title">Tente ta chance</h3>
+          <p class="game-desc" id="slot-subtitle">Un spin gratuit par jour.</p>
+          <div class="game-meta">
+            <span class="tries-badge" id="slot-tries-remaining" style="display:none;"></span>
+          </div>
+          <button type="button" class="btn-play" id="slot-submit-btn" onclick="submitSlot()">Spin</button>
+          <p id="slot-cooldown-message" class="locked-note" style="display:none;"></p>
+          <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+          <p id="slot-result-message" style="margin-top:14px; font-size:13.5px; color:var(--text-dim); line-height:1.6; display:none;"></p>
           <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-          <button type="button" id="slot-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replaySlot()">Rejouer</button>
+          <button type="button" id="slot-play-again-btn" class="btn-play" style="display:none; margin-top:10px;" onclick="replaySlot()">Rejouer</button>
         </div>
       </div>
 
-      <div class="game-card" id="wheel-game-card">
-        <div id="wheel-step-form">
-          <div class="modal-tag" id="wheel-tag">Roue de la fortune</div>
-          <h3 id="wheel-title">Fais tourner la roue</h3>
-          <p class="modal-sub" id="wheel-subtitle">Tente ta chance chaque jour.</p>
-          <form id="wheel-form" onsubmit="submitWheel(event)">
-            <label><span id="wheel-username-label">Pseudo</span>
-              <input type="text" required placeholder="Ton pseudo" id="wheel-username-input">
-            </label>
-            <label><span id="wheel-discord-label-text">Ton compte Discord</span></label>
-            <button type="button" id="wheel-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('wheel')">🎮 Se connecter avec Discord</button>
-            <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="wheel-discord-note">
-              Connexion Discord requise pour participer.
-            </p>
-            <div id="wheel-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-            <input type="hidden" id="wheel-discord-input">
-            <button type="submit" class="modal-submit" id="wheel-submit-btn">Faire tourner la roue</button>
-            <p id="wheel-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-            <p id="wheel-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-          </form>
-          <p id="wheel-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-        </div>
-
-        <div id="wheel-step-card" style="display:none; text-align:center;">
-          <h3 id="wheel-result-title">Résultat</h3>
+      <div class="game-card c-wheel" id="wheel-game-card">
+        <div class="game-preview">
           <div class="wheel-wrap">
             <div class="wheel-pointer"></div>
             <div class="wheel-disc" id="wheel-disc">
@@ -561,9 +604,20 @@
             </div>
             <div class="wheel-center-dot"></div>
           </div>
-          <p id="wheel-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
+        </div>
+        <div class="game-body">
+          <div class="game-tag" id="wheel-tag">Roue de la fortune</div>
+          <h3 class="game-title" id="wheel-title">Fais tourner la roue</h3>
+          <p class="game-desc" id="wheel-subtitle">Tente ta chance chaque jour.</p>
+          <div class="game-meta">
+            <span class="tries-badge" id="wheel-tries-remaining" style="display:none;"></span>
+          </div>
+          <button type="button" class="btn-play" id="wheel-submit-btn" onclick="submitWheel()">Faire tourner la roue</button>
+          <p id="wheel-cooldown-message" class="locked-note" style="display:none;"></p>
+          <p id="wheel-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+          <p id="wheel-result-message" style="margin-top:14px; font-size:13.5px; color:var(--text-dim); line-height:1.6; display:none;"></p>
           <a href="#" id="wheel-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-          <button type="button" id="wheel-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayWheel()">Rejouer</button>
+          <button type="button" id="wheel-play-again-btn" class="btn-play" style="display:none; margin-top:10px;" onclick="replayWheel()">Rejouer</button>
         </div>
       </div>
 
@@ -741,6 +795,7 @@
   }
 
   applyChrome(getActive());
+  applySharedIdentity();
   initScratchGame();
   initSlotGame();
   initWheelGame();
@@ -764,6 +819,7 @@
     localStorage.setItem('nitrodrop_lang', lang);
     document.documentElement.lang = lang;
     applyChrome(getActive());
+    applySharedIdentity();
     initScratchGame();
     initSlotGame();
     initWheelGame();
@@ -803,24 +859,31 @@
     }catch(e){ return null; }
   }
 
-  // Réutilise la connexion Discord déjà faite dans une autre popup (évite de se reconnecter à chaque fois)
-  function applyDiscordIdentityToForm(context){
-    const prefix = context === 'slot' ? 'slot' : context === 'wheel' ? 'wheel' : 'scratch';
+  // Un seul bloc "identité" partagé par les 3 jeux (au lieu d'un par jeu)
+  function applySharedIdentity(){
     const saved = getSavedDiscordIdentity();
-    const input = document.getElementById(prefix + '-discord-input');
-    const btn = document.getElementById(prefix + '-discord-connect-btn');
-    const info = document.getElementById(prefix + '-discord-connected-info');
+    const avatar = document.getElementById('identity-avatar');
+    const formState = document.getElementById('identity-form-state');
+    const connectedInfo = document.getElementById('shared-discord-connected-info');
     if (saved && saved.discordId){
-      input.value = saved.discordId;
-      btn.style.display = 'none';
-      info.style.display = 'block';
+      avatar.classList.add('connected');
+      formState.style.display = 'none';
+      connectedInfo.style.display = 'block';
       const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
-      info.textContent = template.replace('{username}', saved.username || 'Discord');
+      connectedInfo.innerHTML = template.replace('{username}', escapeHtml(saved.username || 'Discord'));
+      // Le pseudo de jeu reste modifiable même une fois connecté à Discord
+      const usernameInput = document.getElementById('shared-username-input');
+      if (!usernameInput.value && saved.username) usernameInput.value = saved.username;
     } else {
-      input.value = '';
-      btn.style.display = '';
-      info.style.display = 'none';
+      avatar.classList.remove('connected');
+      formState.style.display = 'block';
+      connectedInfo.style.display = 'none';
     }
+  }
+
+  function getSharedDiscordId(){
+    const saved = getSavedDiscordIdentity();
+    return (saved && saved.discordId) || '';
   }
 
   // ---------- Compte à rebours "déjà joué aujourd'hui" (ticket + slot) ----------
@@ -902,7 +965,7 @@
     }
   }
 
-  function connectDiscord(context){
+  function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
     if (!clientId){
       alert(getActive().modal.discordNotConfiguredAlert || 'Connexion Discord non configurée par l\'administrateur du site.');
@@ -911,12 +974,8 @@
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify`;
-    const btnId = context === 'slot' ? 'slot-discord-connect-btn'
-                : context === 'wheel' ? 'wheel-discord-connect-btn'
-                : 'scratch-discord-connect-btn';
-    const btn = document.getElementById(btnId);
+    const btn = document.getElementById('shared-discord-connect-btn');
     btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
-    window.discordConnectContext = context;
     window.open(authUrl, 'discord-oauth', 'width=500,height=750');
   }
 
@@ -924,34 +983,28 @@
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
     const { discordId, username } = event.data;
     saveDiscordIdentity(discordId, username);
-    // Sur cette page, les 3 jeux sont visibles en même temps : la connexion doit
-    // s'appliquer partout d'un coup, pas seulement au jeu depuis lequel on s'est connecté.
+    applySharedIdentity();
+    // Les 3 jeux sont visibles en même temps sur cette page : la connexion
+    // doit s'appliquer partout d'un coup, pas seulement au jeu qui l'a déclenchée.
     ['scratch', 'slot', 'wheel'].forEach(ctx => {
-      applyDiscordIdentityToForm(ctx);
       checkAlreadyPlayed(ctx, discordId);
     });
   });
 
   function initScratchGame(){
-    document.getElementById('scratch-step-form').style.display = 'block';
-    document.getElementById('scratch-step-card').style.display = 'none';
     document.getElementById('scratch-form-error').style.display = 'none';
+    document.getElementById('scratch-result-message').style.display = 'none';
+    document.getElementById('scratch-play-again-btn').style.display = 'none';
     document.getElementById('scratch-silver').classList.remove('revealed');
     document.getElementById('scratch-discord-claim-btn').style.display = 'none';
+    document.getElementById('scratch-submit-btn').style.display = '';
 
     const st = getActive().scratchTicket || {};
     document.getElementById('scratch-tag').textContent = st.tag || 'Ticket à gratter';
     document.getElementById('scratch-title').textContent = st.title || 'Tente ta chance';
     document.getElementById('scratch-subtitle').textContent = st.subtitle || 'Un essai gratuit par jour.';
-    document.getElementById('scratch-username-label').textContent = st.usernameLabel || 'Pseudo';
-    document.getElementById('scratch-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
-    document.getElementById('scratch-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('scratch-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
     document.getElementById('scratch-submit-btn').textContent = st.submitText || 'Gratter le ticket';
-    document.getElementById('scratch-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 essai par jour).';
-    document.getElementById('scratch-result-title').textContent = st.resultTitle || 'Ton ticket';
-    applyDiscordIdentityToForm('scratch');
-    checkAlreadyPlayed('scratch', document.getElementById('scratch-discord-input').value);
+    checkAlreadyPlayed('scratch', getSharedDiscordId());
   }
 
   function showScratchFormError(msg){
@@ -960,15 +1013,19 @@
     el.style.display = 'block';
   }
 
-  async function submitScratch(e){
-    e.preventDefault();
-    const pseudo = document.getElementById('scratch-username-input').value.trim();
-    const discordId = document.getElementById('scratch-discord-input').value;
+  async function submitScratch(){
+    const pseudo = document.getElementById('shared-username-input').value.trim();
+    const discordId = getSharedDiscordId();
     const st = getActive().scratchTicket || {};
+    if (!pseudo){
+      showScratchFormError(st.missingUsernameMessage || 'Renseigne ton pseudo avant de jouer.');
+      return;
+    }
     if (!discordId){
       showScratchFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
       return;
     }
+    document.getElementById('scratch-form-error').style.display = 'none';
 
     const submitBtn = document.getElementById('scratch-submit-btn');
     submitBtn.disabled = true;
@@ -991,8 +1048,7 @@
         return;
       }
 
-      document.getElementById('scratch-step-form').style.display = 'none';
-      document.getElementById('scratch-step-card').style.display = 'block';
+      submitBtn.style.display = 'none';
 
       const silver = document.getElementById('scratch-silver');
       const resultEl = document.getElementById('scratch-result');
@@ -1003,6 +1059,7 @@
 
       silver.onclick = () => {
         silver.classList.add('revealed');
+        msgEl.style.display = 'block';
         if (data.won){
           resultEl.textContent = '$' + data.amount;
           msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
@@ -1025,12 +1082,7 @@
   }
 
   function replayScratch(){
-    document.getElementById('scratch-step-card').style.display = 'none';
-    document.getElementById('scratch-play-again-btn').style.display = 'none';
-    document.getElementById('scratch-step-form').style.display = 'block';
-    document.getElementById('scratch-discord-claim-btn').style.display = 'none';
-    const discordId = document.getElementById('scratch-discord-input').value;
-    checkAlreadyPlayed('scratch', discordId);
+    initScratchGame();
   }
 
   document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('scratch-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
@@ -1039,26 +1091,20 @@
   const SLOT_SYMBOLS = ['7️⃣','🍒','💎','🔔','🍋','⭐'];
 
   function initSlotGame(){
-    document.getElementById('slot-step-form').style.display = 'block';
-    document.getElementById('slot-step-card').style.display = 'none';
     document.getElementById('slot-form-error').style.display = 'none';
+    document.getElementById('slot-result-message').style.display = 'none';
+    document.getElementById('slot-play-again-btn').style.display = 'none';
     document.getElementById('slot-discord-claim-btn').style.display = 'none';
+    document.getElementById('slot-submit-btn').style.display = '';
     document.querySelectorAll('#slot-reels .slot-reel').forEach(r => r.classList.remove('spinning'));
 
     const st = getActive().slotMachine || {};
     document.getElementById('slot-tag').textContent = st.tag || 'Machine à sous';
     document.getElementById('slot-title').textContent = st.title || 'Tente ta chance';
     document.getElementById('slot-subtitle').textContent = st.subtitle || 'Un spin gratuit par jour.';
-    document.getElementById('slot-username-label').textContent = st.usernameLabel || 'Pseudo';
-    document.getElementById('slot-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
-    document.getElementById('slot-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('slot-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
     document.getElementById('slot-submit-btn').textContent = st.spinText || 'Spin';
-    document.getElementById('slot-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 spin par jour).';
-    document.getElementById('slot-result-title').textContent = st.resultTitle || 'Résultat';
     document.getElementById('slot-result-message').textContent = '';
-    applyDiscordIdentityToForm('slot');
-    checkAlreadyPlayed('slot', document.getElementById('slot-discord-input').value);
+    checkAlreadyPlayed('slot', getSharedDiscordId());
   }
 
   function showSlotFormError(msg){
@@ -1067,15 +1113,19 @@
     el.style.display = 'block';
   }
 
-  async function submitSlot(e){
-    e.preventDefault();
-    const pseudo = document.getElementById('slot-username-input').value.trim();
-    const discordId = document.getElementById('slot-discord-input').value;
+  async function submitSlot(){
+    const pseudo = document.getElementById('shared-username-input').value.trim();
+    const discordId = getSharedDiscordId();
     const st = getActive().slotMachine || {};
+    if (!pseudo){
+      showSlotFormError(st.missingUsernameMessage || 'Renseigne ton pseudo avant de jouer.');
+      return;
+    }
     if (!discordId){
       showSlotFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
       return;
     }
+    document.getElementById('slot-form-error').style.display = 'none';
 
     const submitBtn = document.getElementById('slot-submit-btn');
     submitBtn.disabled = true;
@@ -1098,9 +1148,6 @@
         showSlotFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
         return;
       }
-
-      document.getElementById('slot-step-form').style.display = 'none';
-      document.getElementById('slot-step-card').style.display = 'block';
 
       const reels = document.querySelectorAll('#slot-reels .slot-reel');
       const syms = [document.getElementById('slot-sym-0'), document.getElementById('slot-sym-1'), document.getElementById('slot-sym-2')];
@@ -1138,7 +1185,8 @@
             reels[i].classList.remove('spinning');
             if (i === syms.length - 1){
               submitBtn.disabled = false;
-              submitBtn.textContent = st.spinText || 'Spin';
+              submitBtn.style.display = 'none';
+              msgEl.style.display = 'block';
               if (data.won){
                 msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
                 claimBtn.style.display = 'flex';
@@ -1165,12 +1213,7 @@
   }
 
   function replaySlot(){
-    document.getElementById('slot-step-card').style.display = 'none';
-    document.getElementById('slot-play-again-btn').style.display = 'none';
-    document.getElementById('slot-step-form').style.display = 'block';
-    document.getElementById('slot-discord-claim-btn').style.display = 'none';
-    const discordId = document.getElementById('slot-discord-input').value;
-    checkAlreadyPlayed('slot', discordId);
+    initSlotGame();
   }
 
   document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('slot-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
@@ -1178,10 +1221,11 @@
 
   // ---------- Roue de la fortune ----------
   function initWheelGame(){
-    document.getElementById('wheel-step-form').style.display = 'block';
-    document.getElementById('wheel-step-card').style.display = 'none';
     document.getElementById('wheel-form-error').style.display = 'none';
+    document.getElementById('wheel-result-message').style.display = 'none';
+    document.getElementById('wheel-play-again-btn').style.display = 'none';
     document.getElementById('wheel-discord-claim-btn').style.display = 'none';
+    document.getElementById('wheel-submit-btn').style.display = '';
     document.getElementById('wheel-disc').style.transition = 'none';
     document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
 
@@ -1189,16 +1233,9 @@
     document.getElementById('wheel-tag').textContent = st.tag || 'Roue de la fortune';
     document.getElementById('wheel-title').textContent = st.title || 'Fais tourner la roue';
     document.getElementById('wheel-subtitle').textContent = st.subtitle || 'Tente ta chance chaque jour.';
-    document.getElementById('wheel-username-label').textContent = st.usernameLabel || 'Pseudo';
-    document.getElementById('wheel-username-input').placeholder = st.usernamePlaceholder || 'Ton pseudo';
-    document.getElementById('wheel-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('wheel-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
     document.getElementById('wheel-submit-btn').textContent = st.spinText || 'Faire tourner la roue';
-    document.getElementById('wheel-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer.';
-    document.getElementById('wheel-result-title').textContent = st.resultTitle || 'Résultat';
     document.getElementById('wheel-result-message').textContent = '';
-    applyDiscordIdentityToForm('wheel');
-    checkAlreadyPlayed('wheel', document.getElementById('wheel-discord-input').value);
+    checkAlreadyPlayed('wheel', getSharedDiscordId());
   }
 
   function showWheelFormError(msg){
@@ -1235,15 +1272,19 @@
     });
   }
 
-  async function submitWheel(e){
-    e.preventDefault();
-    const pseudo = document.getElementById('wheel-username-input').value.trim();
-    const discordId = document.getElementById('wheel-discord-input').value;
+  async function submitWheel(){
+    const pseudo = document.getElementById('shared-username-input').value.trim();
+    const discordId = getSharedDiscordId();
     const st = getActive().wheelGame || {};
+    if (!pseudo){
+      showWheelFormError(st.missingUsernameMessage || 'Renseigne ton pseudo avant de jouer.');
+      return;
+    }
     if (!discordId){
       showWheelFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
       return;
     }
+    document.getElementById('wheel-form-error').style.display = 'none';
 
     const submitBtn = document.getElementById('wheel-submit-btn');
     submitBtn.disabled = true;
@@ -1267,9 +1308,6 @@
         return;
       }
 
-      document.getElementById('wheel-step-form').style.display = 'none';
-      document.getElementById('wheel-step-card').style.display = 'block';
-
       const msgEl = document.getElementById('wheel-result-message');
       const claimBtn = document.getElementById('wheel-discord-claim-btn');
       const playAgainBtn = document.getElementById('wheel-play-again-btn');
@@ -1279,7 +1317,8 @@
       const disc = document.getElementById('wheel-disc');
       spinWheelTo(disc, data.won, () => {
         submitBtn.disabled = false;
-        submitBtn.textContent = st.spinText || 'Faire tourner la roue';
+        submitBtn.style.display = 'none';
+        msgEl.style.display = 'block';
         if (data.won){
           msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
           claimBtn.style.display = 'flex';
@@ -1301,14 +1340,7 @@
   }
 
   function replayWheel(){
-    document.getElementById('wheel-step-card').style.display = 'none';
-    document.getElementById('wheel-play-again-btn').style.display = 'none';
-    document.getElementById('wheel-step-form').style.display = 'block';
-    document.getElementById('wheel-discord-claim-btn').style.display = 'none';
-    document.getElementById('wheel-disc').style.transition = 'none';
-    document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
-    const discordId = document.getElementById('wheel-discord-input').value;
-    checkAlreadyPlayed('wheel', discordId);
+    initWheelGame();
   }
 
   document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('wheel-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
