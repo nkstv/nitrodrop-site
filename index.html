@@ -103,11 +103,22 @@
   .mobile-nav a:active{color:var(--text); background:var(--bg-card);}
 
   /* ---------- HERO ---------- */
+  @keyframes fadeInUp{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .reveal-on-scroll{opacity:0; transform:translateY(24px); transition:opacity 0.6s ease, transform 0.6s ease;}
+  .reveal-on-scroll.revealed{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal-on-scroll{opacity:1; transform:none; transition:none;}
+  }
+
   .hero{
     padding:96px 0 80px;
     position:relative;
     background-size:cover; background-position:center 30%; background-repeat:no-repeat;
     transition:background-image .2s ease;
+    animation:fadeInUp 0.6s ease both;
   }
   .hero::after{
     content:"";
@@ -631,7 +642,7 @@
   </div>
 </section>
 
-<section class="section" id="offres">
+<section class="section reveal-on-scroll" id="offres">
   <div class="wrap">
     <div class="section-head">
       <div class="section-tag" id="offers-tag">Offres du moment</div>
@@ -645,7 +656,7 @@
   </div>
 </section>
 
-<section class="section" id="classement" style="padding-top:0;">
+<section class="section reveal-on-scroll" id="classement" style="padding-top:0;">
   <div class="wrap">
     <div class="leaderboard">
       <div>
@@ -664,7 +675,7 @@
   </div>
 </section>
 
-<section class="section" id="etapes">
+<section class="section reveal-on-scroll" id="etapes">
   <div class="wrap">
     <div class="section-head">
       <div class="section-tag" id="steps-tag">Trois étapes</div>
@@ -2015,6 +2026,22 @@
 
   document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
   document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
+
+  // ---------- Révélation en douceur au défilement ----------
+  const revealEls = document.querySelectorAll('.reveal-on-scroll');
+  if (revealEls.length && 'IntersectionObserver' in window){
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObserver.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('revealed'));
+  }
 </script>
 
 </body>

@@ -235,7 +235,22 @@
   /* ---------- VAULT ---------- */
   .vault-section{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:64px 20px;}
 
+  @keyframes fadeInUp{
+    from{opacity:0; transform:translateY(16px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .fade-in-up{animation:fadeInUp 0.55s ease both;}
+
   .originals-section{padding:56px 20px 80px;}
+  .originals-intro{animation:fadeInUp 0.5s ease both;}
+  #identity-bar{animation:fadeInUp 0.5s ease 0.08s both;}
+  #games-container .game-card{animation:fadeInUp 0.5s ease both;}
+  #games-container .game-card:nth-child(1){animation-delay:0.05s;}
+  #games-container .game-card:nth-child(2){animation-delay:0.14s;}
+  #games-container .game-card:nth-child(3){animation-delay:0.23s;}
+  @media (prefers-reduced-motion: reduce){
+    .fade-in-up, .originals-intro, #identity-bar, #games-container .game-card{animation:none;}
+  }
   .originals-intro{text-align:center; max-width:640px; margin:0 auto 36px;}
   .originals-intro .eyebrow{
     display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:100px;
@@ -257,6 +272,8 @@
     display:flex; align-items:center; justify-content:center; font-size:22px; transition:border-color .2s, box-shadow .2s;
   }
   .identity-avatar.connected{border-color:var(--green); box-shadow:0 0 0 4px rgba(182,255,60,0.12);}
+  .identity-gate-title{font-size:16px; font-weight:600; color:var(--text); margin-bottom:18px;}
+  .btn-discord-big{padding:14px 26px; font-size:14.5px; border-radius:12px;}
   .identity-body{flex:1; min-width:0;}
   .identity-label{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-faint); font-weight:700; margin-bottom:8px;}
   .identity-row{display:flex; gap:10px; flex-wrap:wrap;}
@@ -521,24 +538,19 @@
     </div>
 
     <div class="identity-bar" id="identity-bar">
-      <div class="identity-avatar" id="identity-avatar">🎮</div>
-      <div class="identity-body">
-        <div class="identity-label" id="identity-label">Ton profil</div>
+      <div id="identity-gate" style="text-align:center; width:100%;">
+        <div class="identity-avatar" id="identity-avatar-gate" style="margin:0 auto 16px;">🎮</div>
+        <div class="identity-gate-title">Connecte-toi avec Discord pour débloquer les 3 jeux</div>
+        <button type="button" id="shared-discord-connect-btn" class="btn-discord btn-discord-big" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
+      </div>
 
-        <div id="identity-form-state">
-          <div class="identity-row">
-            <input type="text" id="shared-username-input" placeholder="Ton pseudo">
-            <button type="button" id="shared-discord-connect-btn" class="btn-discord" onclick="connectDiscord('shared')">🎮 Se connecter avec Discord</button>
-          </div>
-          <p id="shared-discord-note" style="font-size:11.5px; color:var(--text-faint); margin-top:8px; line-height:1.5;">
-            Connexion Discord requise pour participer.
-          </p>
-        </div>
-
-        <div id="shared-discord-connected-info" style="display:none;" class="identity-connected"></div>
+      <div id="identity-connected-row" style="display:none; align-items:center; gap:16px; width:100%;">
+        <div class="identity-avatar connected" id="identity-avatar-connected">🎮</div>
+        <div id="shared-discord-connected-info" class="identity-connected"></div>
       </div>
     </div>
 
+    <div id="games-container" style="display:none;">
     <div class="originals-grid games-grid">
 
       <div class="game-card c-ticket" id="scratch-game-card">
@@ -621,6 +633,7 @@
         </div>
       </div>
 
+    </div>
     </div>
   </div>
 </section>
@@ -796,9 +809,6 @@
 
   applyChrome(getActive());
   applySharedIdentity();
-  initScratchGame();
-  initSlotGame();
-  initWheelGame();
 
   // Bouton flottant (image + lien) — indépendant de la langue
   (function applyFloatingWidget(){
@@ -820,9 +830,6 @@
     document.documentElement.lang = lang;
     applyChrome(getActive());
     applySharedIdentity();
-    initScratchGame();
-    initSlotGame();
-    initWheelGame();
     document.querySelectorAll('.lang-switch-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.lang === lang);
     });
@@ -862,28 +869,35 @@
   // Un seul bloc "identité" partagé par les 3 jeux (au lieu d'un par jeu)
   function applySharedIdentity(){
     const saved = getSavedDiscordIdentity();
-    const avatar = document.getElementById('identity-avatar');
-    const formState = document.getElementById('identity-form-state');
+    const gate = document.getElementById('identity-gate');
+    const connectedRow = document.getElementById('identity-connected-row');
     const connectedInfo = document.getElementById('shared-discord-connected-info');
+    const gamesContainer = document.getElementById('games-container');
     if (saved && saved.discordId){
-      avatar.classList.add('connected');
-      formState.style.display = 'none';
-      connectedInfo.style.display = 'block';
+      gate.style.display = 'none';
+      connectedRow.style.display = 'flex';
+      document.getElementById('identity-avatar-connected').classList.add('connected');
       const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
       connectedInfo.innerHTML = template.replace('{username}', escapeHtml(saved.username || 'Discord'));
-      // Le pseudo de jeu reste modifiable même une fois connecté à Discord
-      const usernameInput = document.getElementById('shared-username-input');
-      if (!usernameInput.value && saved.username) usernameInput.value = saved.username;
+      gamesContainer.style.display = 'block';
+      initScratchGame();
+      initSlotGame();
+      initWheelGame();
     } else {
-      avatar.classList.remove('connected');
-      formState.style.display = 'block';
-      connectedInfo.style.display = 'none';
+      gate.style.display = 'block';
+      connectedRow.style.display = 'none';
+      gamesContainer.style.display = 'none';
     }
   }
 
   function getSharedDiscordId(){
     const saved = getSavedDiscordIdentity();
     return (saved && saved.discordId) || '';
+  }
+
+  function getSharedUsername(){
+    const saved = getSavedDiscordIdentity();
+    return (saved && saved.username) || '';
   }
 
   // ---------- Compte à rebours "déjà joué aujourd'hui" (ticket + slot) ----------
@@ -1014,13 +1028,9 @@
   }
 
   async function submitScratch(){
-    const pseudo = document.getElementById('shared-username-input').value.trim();
+    const pseudo = getSharedUsername();
     const discordId = getSharedDiscordId();
     const st = getActive().scratchTicket || {};
-    if (!pseudo){
-      showScratchFormError(st.missingUsernameMessage || 'Renseigne ton pseudo avant de jouer.');
-      return;
-    }
     if (!discordId){
       showScratchFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
       return;
@@ -1114,13 +1124,9 @@
   }
 
   async function submitSlot(){
-    const pseudo = document.getElementById('shared-username-input').value.trim();
+    const pseudo = getSharedUsername();
     const discordId = getSharedDiscordId();
     const st = getActive().slotMachine || {};
-    if (!pseudo){
-      showSlotFormError(st.missingUsernameMessage || 'Renseigne ton pseudo avant de jouer.');
-      return;
-    }
     if (!discordId){
       showSlotFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
       return;
@@ -1273,13 +1279,9 @@
   }
 
   async function submitWheel(){
-    const pseudo = document.getElementById('shared-username-input').value.trim();
+    const pseudo = getSharedUsername();
     const discordId = getSharedDiscordId();
     const st = getActive().wheelGame || {};
-    if (!pseudo){
-      showWheelFormError(st.missingUsernameMessage || 'Renseigne ton pseudo avant de jouer.');
-      return;
-    }
     if (!discordId){
       showWheelFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
       return;
