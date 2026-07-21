@@ -600,7 +600,7 @@
       </button>
     </div>
 
-    <div class="originals-grid games-grid">
+    <div class="originals-grid games-grid" id="games-grid" style="display:none;">
 
       <div class="game-card c-ticket" id="scratch-game-card">
         <div class="game-preview">
@@ -1327,15 +1327,19 @@
     initScratchGame();
   }
 
+  function revealAndScrollTo(cardId){
+    const grid = document.getElementById('games-grid');
+    const target = document.getElementById(cardId);
+    if (grid) grid.style.display = 'grid';
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
   document.querySelectorAll('.game-tile').forEach(tile => {
-    tile.addEventListener('click', () => {
-      const target = document.getElementById(tile.dataset.target);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
+    tile.addEventListener('click', () => revealAndScrollTo(tile.dataset.target));
   });
 
-  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('scratch-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
-  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('scratch-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('scratch-game-card'); });
+  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('scratch-game-card'); });
 
   const SLOT_SYMBOLS = ['7️⃣','🍒','💎','🔔','🍋','⭐'];
 
@@ -1461,8 +1465,8 @@
     initSlotGame();
   }
 
-  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('slot-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
-  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('slot-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('slot-game-card'); });
+  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('slot-game-card'); });
 
   // ---------- Roue de la fortune ----------
   function initWheelGame(){
@@ -1584,8 +1588,8 @@
     initWheelGame();
   }
 
-  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('wheel-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
-  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('wheel-game-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('wheel-game-card'); });
+  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); revealAndScrollTo('wheel-game-card'); });
 </script>
 
 </body>
