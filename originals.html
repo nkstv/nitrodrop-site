@@ -550,6 +550,8 @@
       </div>
     </div>
 
+    <pre id="visible-debug" style="background:#000; color:#0f0; padding:16px; font-size:12px; white-space:pre-wrap; word-break:break-all; border:2px solid red; margin-bottom:20px;">Diagnostic en attente…</pre>
+
     <div id="games-container" style="display:none;">
     <div class="originals-grid games-grid">
 
@@ -890,6 +892,20 @@
   // Un seul bloc "identité" partagé par les 3 jeux (au lieu d'un par jeu)
   function applySharedIdentity(){
     const saved = getSavedDiscordIdentity();
+
+    // Diagnostic visible directement sur la page, sans passer par la console
+    try{
+      const rawLS = localStorage.getItem(DISCORD_STORAGE_KEY);
+      const rawCookie = document.cookie;
+      document.getElementById('visible-debug').textContent =
+        'getSavedDiscordIdentity() a renvoyé : ' + JSON.stringify(saved) + '\n\n' +
+        'localStorage brut (' + DISCORD_STORAGE_KEY + ') : ' + rawLS + '\n\n' +
+        'document.cookie (complet) : ' + rawCookie + '\n\n' +
+        'URL actuelle : ' + location.href;
+    }catch(e){
+      document.getElementById('visible-debug').textContent = 'Erreur pendant le diagnostic : ' + e.message;
+    }
+
     const gate = document.getElementById('identity-gate');
     const connectedRow = document.getElementById('identity-connected-row');
     const connectedInfo = document.getElementById('shared-discord-connected-info');
