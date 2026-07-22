@@ -373,6 +373,8 @@
   .vault-history-row .participants{color:var(--text-dim); font-size:11.5px;}
   .vault-history-row .code-used{color:var(--violet); font-size:12px; font-weight:700;}
   .vault-history-row .date{color:var(--text-faint); font-size:11.5px;}
+  #vault-history-prev-btn:hover:not(:disabled), #vault-history-next-btn:hover:not(:disabled){border-color:var(--line-strong);}
+  #vault-history-prev-btn:disabled, #vault-history-next-btn:disabled{opacity:.3; cursor:not-allowed;}
 
   @media (max-width:960px){
     .nav-links{display:none;}
@@ -497,6 +499,10 @@
           <h3 id="vault-history-title" style="font-size:16px; color:#fff; margin-bottom:16px; text-align:left;">Historique des gains</h3>
           <div id="vault-history-list" style="display:flex; flex-direction:column; gap:8px;"></div>
           <p id="vault-history-empty" style="font-size:13px; color:var(--text-faint); display:none;">Aucun gain pour l'instant.</p>
+          <div id="vault-history-pagination" style="display:none; justify-content:center; align-items:center; gap:10px; margin-top:16px;">
+            <button type="button" id="vault-history-prev-btn" aria-label="précédent" style="width:36px; height:36px; border-radius:8px; border:1px solid var(--line); background:var(--bg-raise); color:var(--text); cursor:pointer; font-size:14px; line-height:1;">◀</button>
+            <button type="button" id="vault-history-next-btn" aria-label="suivant" style="width:36px; height:36px; border-radius:8px; border:1px solid var(--line); background:var(--bg-raise); color:var(--text); cursor:pointer; font-size:14px; line-height:1;">▶</button>
+          </div>
         </div>
       </div>
 
@@ -871,6 +877,11 @@
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
+  // État de pagination de l'historique des gains (5 par page)
+  const VAULT_HISTORY_PAGE_SIZE = 5;
+  let vaultHistoryFull = [];
+  let vaultHistoryPageIndex = 0;
+
   const soundFiles = CONFIG.vaultSounds || {};
   function playSound(name){
     const file = soundFiles[name];
@@ -927,8 +938,6 @@
   checkInitialStatus();
 
   async function loadHistory(){
-    const listEl = document.getElementById('vault-history-list');
-    const emptyEl = document.getElementById('vault-history-empty');
     if (!workerBase) return;
     try{
       const resp = await fetch(`${workerBase}/vault/history`);
@@ -961,28 +970,70 @@
         }).join('');
       }
 
-      // ---- Historique complet (en bas de page) ----
-      if (history.length === 0){
-        emptyEl.style.display = 'block';
-        listEl.innerHTML = '';
-        return;
-      }
-      emptyEl.style.display = 'none';
-      const participantsLabel = (getActive().vault && getActive().vault.participantsLabel) || 'Participants';
-      listEl.innerHTML = history.map(h => {
-        const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString() : '';
-        return `<div class="vault-history-row">
-          <span class="name">${escapeHtml(h.username || '?')}</span>
-          <span class="amount">$${escapeHtml(h.amount || '?')}</span>
-          <span class="code-used code-font">${escapeHtml(h.code || '?')}</span>
-          <span class="participants">${escapeHtml(participantsLabel)} : ${escapeHtml(String(h.participants != null ? h.participants : '?'))}</span>
-          <span class="date">${escapeHtml(date)}</span>
-        </div>`;
-      }).join('');
+      // ---- Historique complet (en bas de page), paginé 5 par 5 ----
+      vaultHistoryFull = history;
+      vaultHistoryPageIndex = 0;
+      renderVaultHistoryPage();
     }catch(e){
       console.error('Impossible de charger l\'historique du coffre :', e);
     }
   }
+
+  function renderVaultHistoryPage(){
+    const listEl = document.getElementById('vault-history-list');
+    const emptyEl = document.getElementById('vault-history-empty');
+    const paginationEl = document.getElementById('vault-history-pagination');
+    const prevBtn = document.getElementById('vault-history-prev-btn');
+    const nextBtn = document.getElementById('vault-history-next-btn');
+
+    if (vaultHistoryFull.length === 0){
+      emptyEl.style.display = 'block';
+      listEl.innerHTML = '';
+      paginationEl.style.display = 'none';
+      return;
+    }
+    emptyEl.style.display = 'none';
+
+    const participantsLabel = (getActive().vault && getActive().vault.participantsLabel) || 'Participants';
+    const start = vaultHistoryPageIndex * VAULT_HISTORY_PAGE_SIZE;
+    const pageItems = vaultHistoryFull.slice(start, start + VAULT_HISTORY_PAGE_SIZE);
+
+    listEl.innerHTML = pageItems.map(h => {
+      const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString() : '';
+      return `<div class="vault-history-row">
+        <span class="name">${escapeHtml(h.username || '?')}</span>
+        <span class="amount">$${escapeHtml(h.amount || '?')}</span>
+        <span class="code-used code-font">${escapeHtml(h.code || '?')}</span>
+        <span class="participants">${escapeHtml(participantsLabel)} : ${escapeHtml(String(h.participants != null ? h.participants : '?'))}</span>
+        <span class="date">${escapeHtml(date)}</span>
+      </div>`;
+    }).join('');
+
+    const totalPages = Math.ceil(vaultHistoryFull.length / VAULT_HISTORY_PAGE_SIZE);
+    if (totalPages > 1){
+      paginationEl.style.display = 'flex';
+      prevBtn.disabled = vaultHistoryPageIndex === 0;
+      nextBtn.disabled = vaultHistoryPageIndex >= totalPages - 1;
+    } else {
+      paginationEl.style.display = 'none';
+    }
+  }
+
+  document.getElementById('vault-history-prev-btn').addEventListener('click', () => {
+    if (vaultHistoryPageIndex > 0){
+      vaultHistoryPageIndex--;
+      renderVaultHistoryPage();
+      document.getElementById('vault-history-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+  document.getElementById('vault-history-next-btn').addEventListener('click', () => {
+    const totalPages = Math.ceil(vaultHistoryFull.length / VAULT_HISTORY_PAGE_SIZE);
+    if (vaultHistoryPageIndex < totalPages - 1){
+      vaultHistoryPageIndex++;
+      renderVaultHistoryPage();
+      document.getElementById('vault-history-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
   loadHistory();
 
   const vaultUsernameInput = document.getElementById('vault-username-input');
