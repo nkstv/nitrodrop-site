@@ -240,7 +240,7 @@
   }
   .fade-in-up{animation:fadeInUp 0.55s ease both;}
 
-  .originals-section{padding:56px 20px 80px;}
+  .originals-section{padding:28px 20px 80px;}
   .originals-intro{animation:fadeInUp 0.5s ease both;}
   #identity-bar{animation:fadeInUp 0.5s ease 0.08s both;}
   #games-container .game-card{animation:fadeInUp 0.5s ease both;}
@@ -309,7 +309,11 @@
     min-height:150px; display:flex; align-items:center; justify-content:center; padding:24px;
   }
   .game-card.c-ticket .game-preview{background:radial-gradient(circle at 50% 30%, rgba(255,92,122,0.14), transparent 70%);}
-  .game-card.c-slot .game-preview{background:radial-gradient(circle at 50% 30%, rgba(139,92,255,0.16), transparent 70%);}
+  .game-card.c-slot .game-preview{
+    background:
+      radial-gradient(circle at 50% 30%, rgba(139,92,255,0.22), transparent 70%),
+      repeating-linear-gradient(135deg, rgba(139,92,255,0.05) 0 10px, transparent 10px 20px);
+  }
   .game-card.c-wheel .game-preview{background:radial-gradient(circle at 50% 30%, rgba(182,255,60,0.14), transparent 70%);}
 
   .game-body{padding:8px 24px 26px;}
@@ -332,6 +336,8 @@
   .slot-prize-name{font-size:12px; color:var(--text-dim); margin-bottom:4px;}
   .slot-prize-mystery{font-family:'Unbounded'; font-weight:700; font-size:13px; color:var(--green);}
   .slot-divider{height:1px; background:var(--line); margin:14px 0;}
+  .slot-rules-list{margin:0; padding:0 0 0 16px; font-size:12px; color:var(--text-dim); line-height:1.7;}
+  .slot-rules-list li{margin-bottom:6px;}
 
   .slot-history-section{margin-top:20px; text-align:left;}
   .slot-history-title{font-family:'Unbounded'; font-size:13.5px; font-weight:700; color:var(--text); margin:0 0 10px;}
@@ -598,7 +604,8 @@
               </div>
             </div>
             <div class="slot-divider"></div>
-            <div class="game-meta" style="margin:0;">
+            <ul class="slot-rules-list" id="slot-rules-list"></ul>
+            <div class="game-meta" style="margin:14px 0 0;">
               <span class="tries-badge" id="slot-tries-remaining" style="display:none;"></span>
             </div>
           </div>
@@ -823,16 +830,27 @@
     const slotExtraText = currentLang === 'fr' ? {
       eyebrow: 'Machine à sous', prizesTitle: 'Ce que tu peux gagner', prizeName: 'Combinaison gagnante',
       mystery: '🎁 Montant surprise',
+      rulesPoints: [
+        '1 essai gratuit par jour, par compte Discord.',
+        'Aligne 3× 7️⃣ pour remporter le gain surprise.',
+        'Le résultat est déterminé côté serveur, pas dans ton navigateur.',
+      ],
       historyTitle: '📜 Historique des mises', historyEmpty: 'Aucune mise pour l\'instant.',
     } : {
       eyebrow: 'Slot machine', prizesTitle: 'What you can win', prizeName: 'Winning combination',
       mystery: '🎁 Surprise amount',
+      rulesPoints: [
+        '1 free try per day, per Discord account.',
+        'Line up 3× 7️⃣ to win the surprise amount.',
+        'The outcome is determined server-side, not in your browser.',
+      ],
       historyTitle: '📜 Bet history', historyEmpty: 'No bets yet.',
     };
     document.getElementById('slot-prizes-eyebrow').textContent = slotExtraText.eyebrow;
     document.getElementById('slot-prizes-title').textContent = slotExtraText.prizesTitle;
     document.getElementById('slot-prize-name').textContent = slotExtraText.prizeName;
     document.getElementById('slot-prize-mystery').textContent = slotExtraText.mystery;
+    document.getElementById('slot-rules-list').innerHTML = slotExtraText.rulesPoints.map(p => `<li>${escapeHtml(p)}</li>`).join('');
     document.getElementById('slot-history-title').textContent = slotExtraText.historyTitle;
     document.getElementById('slot-history-empty').textContent = slotExtraText.historyEmpty;
   }
