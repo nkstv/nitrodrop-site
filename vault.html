@@ -186,6 +186,22 @@
   .vault-visual.opened .vault-amount{opacity:1;}
 
   .vault-form{display:flex; flex-direction:column; gap:12px; max-width:340px; margin:0 auto;}
+  .vault-identity{
+    display:flex; align-items:center; gap:10px; text-align:left;
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--r-m); padding:10px 13px;
+  }
+  .vault-identity-pfp{width:34px; height:34px; border-radius:50%; object-fit:cover; flex:none;
+    background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);}
+  .vault-identity-text{min-width:0;}
+  .vault-identity-text .n{font-weight:800; font-size:14px; color:var(--cream);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .vault-identity-text .s{font-size:11px; color:var(--muted-2); margin-top:1px;}
+  .vault-connect-btn{
+    background:var(--panel-3); border:1px solid var(--line); color:var(--cream);
+    font-family:"Baloo 2"; font-weight:800; font-size:14.5px; padding:13px; border-radius:var(--r-m);
+    transition:.15s; width:100%;
+  }
+  .vault-connect-btn:hover{border-color:rgba(232,193,104,.4); color:var(--gold);}
   .vault-form input{
     background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--r-m);
     padding:13px 15px; color:var(--cream); font-family:"Nunito Sans"; font-weight:700; font-size:14.5px;
@@ -193,6 +209,15 @@
   }
   .vault-form input:focus{border-color:rgba(232,193,104,.5);}
   .vault-form input:disabled{opacity:.5;}
+  .bet-btn{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:19px; padding:14px; border-radius:var(--r-m);
+    box-shadow:0 5px 14px rgba(232,193,104,.22), inset 0 1px 0 rgba(255,255,255,.35); transition:.15s;
+    width:100%;
+  }
+  .bet-btn:hover{filter:brightness(1.06); transform:translateY(-1px);}
+  .bet-btn:active{transform:translateY(1px);}
+  .bet-btn:disabled{opacity:.55; filter:none; cursor:default; transform:none; box-shadow:none;}
   .vault-form .bet-btn{margin-top:2px;}
 
   .vault-message{margin-top:16px; font-size:13.5px; font-weight:700; line-height:1.55; min-height:20px;}
@@ -208,9 +233,8 @@
   .winner-row{display:flex; align-items:center; gap:9px; padding:8px 0; border-top:1px solid var(--line);}
   .winner-row:first-of-type{border-top:none;}
   .winner-avatar{
-    width:28px; height:28px; border-radius:50%; flex:none; display:grid; place-items:center;
-    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
-    font-family:"Baloo 2"; font-weight:800; font-size:13px;
+    width:28px; height:28px; border-radius:50%; flex:none; object-fit:cover;
+    background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);
   }
   .winner-name{flex:1; font-weight:800; font-size:13px; color:var(--cream);
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
@@ -402,7 +426,7 @@
 
       <aside class="vault-side">
         <div class="vault-stat">
-          <div class="n" id="vault-stat-total">$0</div>
+          <div class="n" id="vault-stat-total">🔑 0</div>
           <div class="l" id="vault-stat-total-label">Total distribué</div>
         </div>
         <div class="vault-steps">
@@ -434,7 +458,14 @@
         </div>
 
         <form class="vault-form" id="vault-form">
-          <input type="text" id="vault-username-input" placeholder="Ton pseudo" autocomplete="off">
+          <div class="vault-identity" id="vault-identity-connected" style="display:none;">
+            <img class="vault-identity-pfp" id="vault-identity-pfp" alt="" referrerpolicy="no-referrer">
+            <div class="vault-identity-text">
+              <div class="n" id="vault-identity-name">—</div>
+              <div class="s">via Discord</div>
+            </div>
+          </div>
+          <button type="button" class="vault-connect-btn" id="vault-connect-btn" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
           <input type="text" id="vault-code-input" placeholder="Code secret" autocomplete="off">
           <button type="submit" class="bet-btn" id="vault-submit-btn">Ouvrir le coffre</button>
         </form>
@@ -460,7 +491,7 @@
       <h3 class="vault-history-title" id="vault-history-title">Historique des gains</h3>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Gagnant</th><th>Montant</th><th>Code</th><th>Date</th></tr></thead>
+          <thead><tr><th>Gagnant</th><th>Gain</th><th>Code</th><th>Date</th></tr></thead>
           <tbody id="vault-history-list"></tbody>
         </table>
       </div>
@@ -631,8 +662,6 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     set('vault-history-empty', v.historyEmpty);
     if (v.winnersEmpty) set('vault-winners-empty', v.winnersEmpty);
     set('vault-submit-btn', v.submitText);
-    const userInput = document.getElementById('vault-username-input');
-    if (v.usernamePlaceholder) userInput.placeholder = v.usernamePlaceholder;
     const codeInput = document.getElementById('vault-code-input');
     if (v.codePlaceholder) codeInput.placeholder = v.codePlaceholder;
     const tgBtn = document.getElementById('vault-tg-btn');
@@ -656,7 +685,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const vaultForm = document.getElementById('vault-form');
   const vaultSubmitBtn = document.getElementById('vault-submit-btn');
   const vaultCodeInput = document.getElementById('vault-code-input');
-  const vaultUsernameInput = document.getElementById('vault-username-input');
+  const vaultConnectBtn = document.getElementById('vault-connect-btn');
+  const vaultIdentityBox = document.getElementById('vault-identity-connected');
+  const vaultIdentityPfp = document.getElementById('vault-identity-pfp');
+  const vaultIdentityName = document.getElementById('vault-identity-name');
   const vaultMessage = document.getElementById('vault-message');
   const vaultDoor = document.getElementById('vault-door');
   const vaultDial = document.getElementById('vault-dial');
@@ -674,8 +706,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   function lockFormOut(){
     vaultCodeInput.disabled = true;
-    vaultUsernameInput.disabled = true;
     vaultSubmitBtn.disabled = true;
+    vaultConnectBtn.disabled = true;
   }
 
   async function checkInitialStatus(){
@@ -709,7 +741,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       // Stats globales
       const totalAmount = history.reduce((sum, h) => sum + (parseFloat(h.amount) || 0), 0);
       document.getElementById('vault-stat-total').textContent =
-        '$' + (Number.isInteger(totalAmount) ? totalAmount : totalAmount.toFixed(2));
+        '🔑 ' + (Number.isInteger(totalAmount) ? totalAmount : totalAmount.toFixed(2));
       document.getElementById('vault-stat-rounds').textContent = String(history.length);
 
       // Derniers gagnants (3 max)
@@ -721,11 +753,11 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       } else {
         winnersEmptyEl.style.display = 'none';
         winnersListEl.innerHTML = history.slice(0, 3).map(h => {
-          const initial = (h.username || '?').trim().charAt(0).toUpperCase() || '?';
+          const avatarSrc = h.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png';
           return `<div class="winner-row">
-            <div class="winner-avatar">${escapeHtml(initial)}</div>
+            <img class="winner-avatar" src="${escapeHtml(avatarSrc)}" alt="" referrerpolicy="no-referrer">
             <span class="winner-name">${escapeHtml(h.username || '?')}</span>
-            <span class="winner-amount">$${escapeHtml(h.amount || '?')}</span>
+            <span class="winner-amount">🔑 ${escapeHtml(String(h.amount ?? '?'))}</span>
           </div>`;
         }).join('');
       }
@@ -758,9 +790,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
     listEl.innerHTML = pageItems.map(h => {
       const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString('fr-FR') : '';
+      const avatarSrc = h.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png';
       return `<tr>
-        <td><span class="p">${escapeHtml(h.username || '?')}</span></td>
-        <td class="win">$${escapeHtml(h.amount || '?')}</td>
+        <td><span class="p"><img class="pfp" src="${escapeHtml(avatarSrc)}" alt="" referrerpolicy="no-referrer">${escapeHtml(h.username || '?')}</span></td>
+        <td class="win"><span class="key">🔑</span> ${escapeHtml(String(h.amount ?? '?'))}</td>
         <td class="mono">${escapeHtml(h.code || '?')}</td>
         <td class="time">${escapeHtml(date)}</td>
       </tr>`;
@@ -793,11 +826,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   vaultForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const code = vaultCodeInput.value.trim();
-    const username = vaultUsernameInput.value.trim();
-    if (!username){
-      showMessage('Indique ton pseudo avant de tenter ta chance.', 'error');
+    const saved = getSavedDiscordIdentity();
+    if (!saved || !saved.discordId){
+      showMessage('Connecte-toi avec Discord pour pouvoir recevoir tes clés.', 'error');
       return;
     }
+    const username = saved.username || '';
     if (!code) return;
 
     vaultSubmitBtn.disabled = true;
@@ -809,7 +843,11 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       const resp = await fetch(`${workerBase}/vault/attempt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, username })
+        body: JSON.stringify({
+          code, username,
+          discordId: saved.discordId,
+          avatarUrl: saved.avatarUrl || ''
+        })
       });
       const data = await resp.json();
       const v = getActive().vault || {};
@@ -819,12 +857,20 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
         if (data.ok){
           playSound('success');
-          vaultAmountEl.textContent = data.amount ? '$' + data.amount : '🎉';
+          vaultAmountEl.textContent = data.amount ? '🔑 ' + data.amount : '🎉';
           vaultVisual.classList.add('opened');
           const template = v.successMessage || 'Félicitations, tu remportes {amount} !';
-          showMessage(fillTemplate(template, { amount: data.amount ? '$' + data.amount : '' }), 'success');
+          showMessage(fillTemplate(template, { amount: data.amount ? data.amount + ' clés' : '' }), 'success');
+          // Le solde vient d'être crédité côté serveur : on le reflète tout de suite
+          if (data.keys != null) setBalance(data.keys);
           lockFormOut();
           loadVaultHistory();
+        } else if (data.reason === 'missing_discord'){
+          showMessage('Connecte-toi avec Discord pour pouvoir recevoir tes clés.', 'error');
+          vaultSubmitBtn.disabled = false;
+        } else if (data.reason === 'banned'){
+          showMessage('Ton compte a été banni des mini-jeux.', 'error');
+          lockFormOut();
         } else if (data.reason === 'already_claimed'){
           playSound('fail');
           vaultDoor.classList.add('shake');
@@ -834,9 +880,6 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         } else if (data.reason === 'not_configured'){
           showMessage(v.notConfiguredMessage || 'Aucun coffre actif pour le moment.', 'info');
           lockFormOut();
-        } else if (data.reason === 'missing_username'){
-          showMessage('Indique ton pseudo avant de tenter ta chance.', 'error');
-          vaultSubmitBtn.disabled = false;
         } else {
           playSound('fail');
           vaultDoor.classList.add('shake');
@@ -891,10 +934,11 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       drawerPseudo.textContent = saved.username;
       drawerPfp.src = saved.avatarUrl || fallbackAvatar;
       drawerLogoutBtn.style.display = 'grid';
-      // Pré-remplit le pseudo du coffre avec le pseudo Discord (pratique, mais modifiable)
-      if (!vaultUsernameInput.value && !vaultUsernameInput.disabled){
-        vaultUsernameInput.value = saved.username || '';
-      }
+      // Formulaire du coffre : on montre l'identité connectée à la place du bouton
+      vaultConnectBtn.style.display = 'none';
+      vaultIdentityBox.style.display = 'flex';
+      vaultIdentityName.textContent = saved.username || '';
+      vaultIdentityPfp.src = saved.avatarUrl || fallbackAvatar;
       const keys = await getKeysStatus(saved.discordId);
       setBalance(keys);
     } else {
@@ -902,6 +946,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       sideUser.style.display = 'none';
       drawerPseudo.textContent = 'Non connecté';
       drawerLogoutBtn.style.display = 'none';
+      // Formulaire du coffre : connexion Discord requise pour recevoir les clés
+      vaultConnectBtn.style.display = '';
+      vaultIdentityBox.style.display = 'none';
       setBalance('0');
     }
   }
