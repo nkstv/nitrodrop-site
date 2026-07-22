@@ -14,79 +14,104 @@
     --cream:#F2E9D8; --muted:#9a8b6d; --muted-2:#6f6350;
     --red:#F26D6D; --green:#5FD68B;
     --r-l:20px; --r-m:14px;
-    --gap:12px;
-    --chrome:200px; /* header + titre + barre basse + paddings */
+    --gap:14px; --chrome:300px; --side:238px;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
     background:radial-gradient(1000px 500px at 70% -10%, rgba(232,193,104,.055), transparent 60%), var(--bg);
     color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif;
-    padding:12px clamp(12px,2vw,26px) 24px;
   }
   h1{font-family:"Baloo 2",sans-serif}
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
 
-  .screen{display:flex;flex-direction:column;gap:var(--gap)}
+  .app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
 
-  /* ---------- Header ---------- */
-  header{
-    display:flex;align-items:center;gap:20px;flex-wrap:nowrap;
-    background:linear-gradient(180deg,var(--panel-2),var(--panel));
-    border:1px solid var(--line);border-radius:44px;padding:7px 10px 7px 8px;
-    box-shadow:0 8px 22px rgba(0,0,0,.35);flex:none;
+  /* ================= SIDEBAR ================= */
+  .side{
+    position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel) 60%,var(--bg-soft));
+    border-right:1px solid var(--line);padding:16px 12px;gap:14px;overflow-y:auto;
   }
-  .logo{display:flex;align-items:center;gap:9px;flex:none}
-  .logo .avatar{width:34px;height:34px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
-    display:grid;place-items:center;font-size:17px;border:2px solid rgba(0,0,0,.4)}
-  .logo .name{font-family:"Baloo 2";font-weight:800;font-size:19px;letter-spacing:.3px;
-    display:flex;align-items:center;gap:7px;white-space:nowrap}
-  .beta{font-family:"Nunito Sans";font-size:9px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
-    color:var(--gold);background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.32);
-    padding:2px 7px;border-radius:20px}
-  nav{display:flex;gap:2px;flex:1;min-width:0;overflow:hidden}
-  nav a{color:var(--muted);text-decoration:none;font-weight:800;font-size:13.5px;
-    padding:8px 11px;border-radius:30px;transition:.18s;white-space:nowrap}
-  nav a:hover{color:var(--cream);background:rgba(232,193,104,.06)}
-  nav a.active{color:var(--gold)}
-  .header-right{display:flex;align-items:center;gap:8px;flex:none}
-  .bell{width:34px;height:34px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
-    display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.18s}
-  .bell:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
-  .user{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel-2);
-    padding:4px 12px 4px 5px;border-radius:30px;font-weight:800;font-size:13.5px;white-space:nowrap}
-  .user .pfp{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57)}
-  .user i{color:var(--muted);font-style:normal;font-size:10px}
-  .burger{display:none;width:38px;height:38px;border-radius:50%;background:var(--panel-3);
-    border:1px solid var(--line);flex-direction:column;gap:3.5px;align-items:center;justify-content:center}
-  .burger span{display:block;width:15px;height:2px;background:var(--cream);border-radius:2px}
+  .side::-webkit-scrollbar{width:6px}
+  .side::-webkit-scrollbar-thumb{background:var(--panel-3);border-radius:6px}
 
-  /* ---------- Titre ---------- */
-  .titlebar{display:flex;align-items:baseline;gap:11px;flex:none;padding:0 4px}
-  .titlebar h1{font-size:26px;font-weight:800;line-height:1}
-  .titlebar .crumb{color:var(--muted-2);font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase}
-  .titlebar .live{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:800;font-size:12px}
-  .titlebar .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 0}
+  .brand .avatar{width:38px;height:38px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:19px;border:2px solid rgba(0,0,0,.4)}
+  .brand .name{font-family:"Baloo 2";font-weight:800;font-size:19px;line-height:1.05}
+  .beta{display:inline-block;font-size:8.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--gold);background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.32);
+    padding:1px 6px;border-radius:20px;margin-top:3px}
+
+  .wallet{
+    background:linear-gradient(150deg,rgba(232,193,104,.14),rgba(232,193,104,.04));
+    border:1px solid rgba(232,193,104,.24);border-radius:var(--r-m);padding:11px 13px;
+  }
+  .wallet .k{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+  .wallet .v{display:flex;align-items:center;gap:7px;font-weight:800;font-size:21px;margin-top:3px}
+  .wallet .v .key{font-size:15px}
+  .wallet button{width:100%;margin-top:9px;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    color:#3a2a08;font-weight:800;font-size:13px;padding:8px;border-radius:10px;transition:.15s}
+  .wallet button:hover{filter:brightness(1.06)}
+  .wallet button:disabled{opacity:.5; cursor:default; filter:none;}
+
+  .s-label{color:var(--muted-2);font-size:9.5px;font-weight:800;letter-spacing:2.4px;padding:0 8px;margin-top:2px}
+  .s-nav{display:flex;flex-direction:column;gap:2px}
+  .s-nav a{
+    display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--muted);
+    font-weight:800;font-size:14px;padding:10px 12px;border-radius:12px;transition:.15s;position:relative;
+  }
+  .s-nav a .ic{width:20px;text-align:center;font-size:15px;opacity:.9}
+  .s-nav a:hover{background:rgba(232,193,104,.06);color:var(--cream)}
+  .s-nav a.on{background:var(--panel-3);color:var(--cream)}
+  .s-nav a.on::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--gold)}
+  .s-nav a .tag{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:1px;color:var(--gold);
+    background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.28);padding:2px 6px;border-radius:20px}
+
+  .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:10px;border-top:1px solid var(--line)}
+  .s-user{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:14px;padding:8px 10px}
+  .s-user .pfp{width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57)}
+  .s-user .n{font-weight:800;font-size:13.5px;line-height:1.2}
+  .s-user .s{color:var(--muted);font-size:11px;font-weight:700}
+  .s-user .out{margin-left:auto;color:var(--muted-2);font-size:14px;transition:.15s}
+  .s-user .out:hover{color:var(--red)}
+  .wallet-login-btn{width:100%;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));color:#3a2a08;
+    font-family:"Baloo 2";font-weight:800;font-size:14px;padding:12px;border-radius:12px;transition:.15s}
+  .wallet-login-btn:hover{filter:brightness(1.06)}
+
+  /* ================= CONTENU ================= */
+  .main{display:flex;flex-direction:column;gap:var(--gap);padding:16px clamp(16px,2.2vw,34px) 30px;min-width:0}
+
+  .topbar{display:flex;align-items:center;gap:14px;flex:none}
+  .topbar h1{font-size:28px;font-weight:800;line-height:1}
+  .topbar .crumb{color:var(--muted-2);font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .live{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:800;font-size:12px;
+    background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:7px 13px}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .icon-btn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
+    display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.15s}
+  .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
+  .burger{display:none}
 
   /* ---------- Panneau de jeu ---------- */
-  .game-panel{
-    background:linear-gradient(180deg,var(--panel),var(--bg-soft));
-    border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;
-    display:flex;flex-direction:column;
-  }
-  .game-wrap{display:grid;grid-template-columns:280px 1fr}
+  .game-panel{background:linear-gradient(180deg,var(--panel),var(--bg-soft));
+    border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;display:flex;flex-direction:column}
+  .game-wrap{display:grid;grid-template-columns:300px 1fr}
 
   .controls{background:linear-gradient(180deg,var(--panel-2),rgba(34,26,16,.6));
-    border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:10px}
+    border-right:1px solid var(--line);padding:20px 18px;display:flex;flex-direction:column;gap:14px}
   .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg-soft);border-radius:30px;padding:4px;border:1px solid var(--line)}
-  .seg button{padding:9px 0;border-radius:26px;font-weight:800;letter-spacing:1.6px;font-size:12px;color:var(--muted);transition:.18s}
+  .seg button{padding:10px 0;border-radius:26px;font-weight:800;letter-spacing:1.6px;font-size:12px;color:var(--muted);transition:.18s}
   .seg button.on{background:var(--panel-3);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(232,193,104,.15)}
-
-  .field label{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;margin-bottom:6px}
+  .field label{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;margin-bottom:8px}
   .field label .bal{color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:.8px}
   .field label .bal b{color:var(--cream)}
   .input-row{display:flex;align-items:center;gap:6px;background:var(--bg-soft);border:1px solid var(--line);
-    border-radius:var(--r-m);padding:5px 6px 5px 12px;transition:border-color .2s}
+    border-radius:var(--r-m);padding:6px 7px 6px 13px;transition:border-color .2s}
   .input-row.err{border-color:var(--red)}
   .input-row .key{color:var(--gold);font-size:13px}
   .input-row input{flex:1;background:none;border:none;outline:none;color:var(--cream);
@@ -95,57 +120,41 @@
     font-weight:800;font-size:12.5px;color:var(--cream);transition:.15s}
   .chip:hover{border-color:rgba(232,193,104,.4);color:var(--gold)}
   .select{display:flex;align-items:center;gap:8px;width:100%;background:var(--bg-soft);border:1px solid var(--line);
-    border-radius:var(--r-m);padding:11px 12px;font-weight:800;font-size:14px}
+    border-radius:var(--r-m);padding:12px 13px;font-weight:800;font-size:14px}
   .select .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
   .select .arrow{margin-left:auto;color:var(--muted);font-size:10px}
-
   .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .stat{background:var(--bg-soft);border:1px solid var(--line);border-radius:var(--r-m);padding:9px 11px}
+  .stat{background:var(--bg-soft);border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px}
   .stat .k{color:var(--muted);font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
   .stat .v{font-weight:800;font-size:16px;margin-top:3px;display:flex;align-items:center;gap:5px}
   .stat .v .key{color:var(--gold);font-size:13px}
-
   .bet-btn{margin-top:auto;background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep));color:#3a2a08;
-    font-family:"Baloo 2";font-weight:800;font-size:19px;padding:13px;border-radius:var(--r-m);
+    font-family:"Baloo 2";font-weight:800;font-size:19px;padding:14px;border-radius:var(--r-m);
     box-shadow:0 5px 14px rgba(232,193,104,.22), inset 0 1px 0 rgba(255,255,255,.35);transition:.15s}
   .bet-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
   .bet-btn:active{transform:translateY(1px)}
 
-  /* ---------- Plateau ---------- */
-  .board{
-    background:radial-gradient(600px 320px at 50% 0%, rgba(232,193,104,.05), transparent 70%);
-    padding:14px;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;
-  }
-  .mult-rail{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:none}
+  .board{background:radial-gradient(600px 320px at 50% 0%, rgba(232,193,104,.05), transparent 70%);
+    padding:20px 24px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
+  .mult-rail{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;flex:none}
   .mult{background:var(--bg-soft);border:1px solid var(--line);color:var(--muted);
-    font-weight:800;font-size:12px;padding:6px 12px;border-radius:30px;transition:.2s}
+    font-weight:800;font-size:12px;padding:7px 13px;border-radius:30px;transition:.2s}
   .mult.hit{background:var(--red);border-color:transparent;color:#fff;box-shadow:0 3px 12px rgba(242,109,109,.35)}
   .mult.won{background:rgba(95,214,139,.15);border-color:rgba(95,214,139,.4);color:var(--green)}
-
   .board-area{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    grid-template-rows:repeat(5,1fr);   /* lignes fixes : plus de déformation */
-    gap:8px;
-    width:min(100%, calc(100vh - var(--chrome)));
-    aspect-ratio:1;
-  }
-  .tile{
-    border-radius:var(--r-m);background:linear-gradient(180deg,var(--panel-3),var(--panel-2));
-    border:1px solid var(--line);box-shadow:0 3px 0 rgba(0,0,0,.35);
-    font-size:clamp(15px,2.2vh,24px);display:grid;place-items:center;
-    min-width:0;min-height:0;overflow:hidden;line-height:1;
-    transition:background .14s, border-color .14s, box-shadow .14s, filter .14s;
-  }
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(5,1fr);gap:10px;
+    width:min(100%, calc(100vh - var(--chrome)));aspect-ratio:1}
+  .tile{border-radius:var(--r-m);background:linear-gradient(180deg,var(--panel-3),var(--panel-2));
+    border:1px solid var(--line);box-shadow:0 3px 0 rgba(0,0,0,.35);font-size:clamp(15px,2.2vh,24px);
+    display:grid;place-items:center;min-width:0;min-height:0;overflow:hidden;line-height:1;
+    transition:background .14s,border-color .14s,box-shadow .14s,filter .14s}
   .tile:hover:not(.open){border-color:rgba(232,193,104,.35);filter:brightness(1.12)}
   .tile.open{box-shadow:none;cursor:default}
   .tile.gem{background:linear-gradient(180deg,#2a3a2b,#1e2b1f);border-color:rgba(95,214,139,.4)}
   .tile.bomb{background:linear-gradient(180deg,#4a2424,#331717);border-color:rgba(242,109,109,.5)}
   .tile .ico{display:block;animation:reveal .22s ease}
   @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
-
-  .bust-card{position:absolute;top:12px;right:12px;background:rgba(20,14,8,.93);border:1.5px solid var(--red);
+  .bust-card{position:absolute;top:14px;right:14px;background:rgba(20,14,8,.93);border:1.5px solid var(--red);
     border-radius:var(--r-m);padding:10px 18px;text-align:center;box-shadow:0 0 26px rgba(242,109,109,.25);
     opacity:0;transform:translateY(-6px);transition:.25s;pointer-events:none;z-index:2}
   .bust-card.show{opacity:1;transform:translateY(0)}
@@ -153,39 +162,34 @@
   .bust-card .v{color:var(--red);font-weight:800;font-size:13px;margin-top:4px;border-top:1px solid var(--line);padding-top:5px}
   .bust-card .v .key{color:var(--gold)}
 
-  /* ---------- Barre basse du panneau ---------- */
-  .game-bar{
-    display:flex;align-items:center;gap:8px;
-    border-top:1px solid var(--line);background:rgba(20,15,8,.5);
-    padding:8px 12px;
-  }
-  .bar-tools{display:flex;gap:6px;flex:1}
-  .bar-tools button{width:32px;height:32px;border-radius:10px;border:1px solid transparent;
+  .game-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);
+    background:rgba(20,15,8,.5);padding:11px 16px}
+  .bar-tools{display:flex;gap:7px;flex:1}
+  .bar-tools button{width:34px;height:34px;border-radius:10px;border:1px solid transparent;
     color:var(--muted-2);font-size:14px;display:grid;place-items:center;transition:.15s}
   .bar-tools button:hover{color:var(--gold);border-color:var(--line);background:var(--panel-2)}
-  .bar-logo{display:flex;align-items:center;gap:7px;font-family:"Baloo 2";font-weight:800;
-    font-size:15px;color:var(--cream);opacity:.85;letter-spacing:.3px;white-space:nowrap}
-  .bar-logo .mark{width:22px;height:22px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+  .bar-logo{display:flex;align-items:center;gap:7px;font-family:"Baloo 2";font-weight:800;font-size:15px;
+    color:var(--cream);opacity:.85;white-space:nowrap}
+  .bar-logo .mark{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
     display:grid;place-items:center;font-size:11px;border:1.5px solid rgba(0,0,0,.4)}
   .bar-right{flex:1;display:flex;justify-content:flex-end}
   .fair{display:flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line);
-    border-radius:11px;padding:8px 13px;font-weight:800;font-size:13px;color:var(--cream);transition:.15s}
+    border-radius:11px;padding:9px 15px;font-weight:800;font-size:13px;color:var(--cream);transition:.15s}
   .fair:hover{border-color:rgba(232,193,104,.35);color:var(--gold)}
   .fair .shield{color:var(--gold)}
 
   /* ---------- Paris ---------- */
   .bets{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
-    border-radius:var(--r-l);padding:12px 14px}
-  .tabs{display:flex;gap:5px;margin-bottom:8px}
-  .tabs button{padding:8px 15px;border-radius:30px;font-weight:800;font-size:13.5px;color:var(--muted);transition:.18s}
+    border-radius:var(--r-l);padding:16px 18px}
+  .tabs{display:flex;gap:6px;margin-bottom:10px}
+  .tabs button{padding:9px 17px;border-radius:30px;font-weight:800;font-size:13.5px;color:var(--muted);transition:.18s}
   .tabs button:hover{color:var(--cream)}
   .tabs button.on{background:var(--panel-3);color:var(--cream);border:1px solid var(--line)}
   .table-scroll{overflow-x:auto}
   table{width:100%;border-collapse:collapse;min-width:620px}
-  thead th{text-align:left;color:var(--muted-2);font-size:10.5px;letter-spacing:1.6px;font-weight:800;padding:5px 10px;text-transform:uppercase}
+  thead th{text-align:left;color:var(--muted-2);font-size:10.5px;letter-spacing:1.6px;font-weight:800;padding:7px 13px;text-transform:uppercase}
   thead th:nth-child(n+3){text-align:right}
-  tbody td{padding:8px 10px;border-top:1px solid rgba(232,193,104,.05);font-weight:700;font-size:13.5px}
+  tbody td{padding:11px 13px;border-top:1px solid rgba(232,193,104,.05);font-weight:700;font-size:13.5px}
   tbody td:nth-child(n+3){text-align:right}
   tbody tr:hover{background:rgba(232,193,104,.04)}
   tbody tr.fresh{animation:pop .5s ease}
@@ -198,11 +202,9 @@
   .key{color:var(--gold)}
   .win{color:var(--green)}
   .lose{color:var(--muted)}
+  footer{text-align:center;color:var(--muted-2);font-size:11.5px;font-weight:700;padding:4px 0 2px}
 
-  footer{margin-top:14px;text-align:center;color:var(--muted-2);font-size:11.5px;font-weight:700}
-  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
-
-  /* ---------- Drawer mobile ---------- */
+  /* ================= MOBILE (identique à la version précédente) ================= */
   .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
     opacity:0;pointer-events:none;transition:.25s;z-index:50}
   .scrim.open{opacity:1;pointer-events:auto}
@@ -232,164 +234,171 @@
   .d-foot .vault{background:rgba(232,193,104,.10);border-color:rgba(232,193,104,.35);color:var(--gold)}
   .d-foot .vault .dot{background:var(--gold)}
 
-  /* ---------- Écrans étroits ---------- */
-  @media(max-width:1080px){ nav a{padding:8px 8px;font-size:12.5px} .game-wrap{grid-template-columns:255px 1fr} }
+  @media(max-width:1240px){ :root{--side:76px} 
+    .brand .name,.wallet .k,.wallet .v,.wallet button,.s-label,.s-nav a span:not(.ic),.s-user .n,.s-user .s,.s-user .out{display:none}
+    .side{padding:14px 10px;align-items:center}
+    .brand{justify-content:center;padding:0}
+    .wallet{padding:8px;text-align:center;width:100%}
+    .wallet::after{content:"🔑";font-size:16px}
+    .wallet-login-btn{font-size:0;padding:12px;}
+    .wallet-login-btn::after{content:"🎮";font-size:16px}
+    .s-nav{width:100%}
+    .s-nav a{justify-content:center;padding:11px 0}
+    .s-user{padding:6px;justify-content:center}
+    .game-wrap{grid-template-columns:280px 1fr}
+  }
   @media(max-width:860px){
     :root{--chrome:250px}
-    body{padding:10px 12px 22px}
-    header{border-radius:22px;padding:7px 8px;gap:0;justify-content:space-between}
-    nav,.header-right .bell,.header-right .user{display:none}
-    .burger{display:flex}
-    .titlebar h1{font-size:23px}
-    .titlebar .live{display:none}
+    .app{grid-template-columns:1fr}
+    .side{display:none}
+    .main{padding:10px 12px 22px;gap:12px}
+    .topbar{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+      border-radius:22px;padding:7px 8px;gap:10px}
+    .topbar h1{font-size:20px;padding-left:6px}
+    .topbar .crumb,.live{display:none}
+    .burger{display:flex;width:38px;height:38px;border-radius:50%;background:var(--panel-3);
+      border:1px solid var(--line);flex-direction:column;gap:3.5px;align-items:center;justify-content:center}
+    .burger span{display:block;width:15px;height:2px;background:var(--cream);border-radius:2px}
     .game-wrap{grid-template-columns:1fr}
     .board{order:1;padding:12px;gap:10px}
-    .controls{order:2;border-right:none;border-top:1px solid var(--line)}
+    .controls{order:2;border-right:none;border-top:1px solid var(--line);padding:14px;gap:10px}
     .grid{gap:6px;width:100%}
     .bet-btn{margin-top:2px}
     .bar-tools button:nth-child(n+3){display:none}
-  }
-
-  /* ---------- Respiration desktop (mobile inchangé) ---------- */
-  @media(min-width:861px){
-    :root{--gap:18px; --chrome:330px}
-    body{padding:20px clamp(20px,3vw,46px) 40px}
-    header{padding:10px 14px 10px 10px;gap:26px}
-    .logo{gap:11px}
-    .logo .avatar{width:38px;height:38px;font-size:19px}
-    .logo .name{font-size:20px}
-    nav{gap:4px}
-    nav a{padding:10px 15px;font-size:14px}
-    .bell{width:38px;height:38px}
-    .user{padding:5px 15px 5px 6px;font-size:14px}
-    .user .pfp{width:28px;height:28px}
-    .titlebar{padding:4px 6px 2px}
-    .titlebar h1{font-size:29px}
-    .game-wrap{grid-template-columns:320px 1fr}
-    .controls{padding:22px 20px;gap:15px}
-    .field label{margin-bottom:8px}
-    .input-row{padding:7px 8px 7px 14px}
-    .select{padding:13px 14px}
-    .stat{padding:11px 13px}
-    .bet-btn{padding:15px}
-    .board{padding:22px 26px 26px;gap:18px}
-    .mult-rail{gap:8px}
-    .mult{padding:7px 14px}
-    .grid{gap:11px}
-    .game-bar{padding:12px 18px;gap:12px}
-    .bar-tools{gap:8px}
-    .bar-tools button{width:34px;height:34px}
-    .fair{padding:9px 15px}
-    .bets{padding:18px 20px}
-    .tabs{margin-bottom:12px;gap:7px}
-    .tabs button{padding:9px 18px}
-    thead th{padding:8px 14px}
-    tbody td{padding:12px 14px}
-    footer{margin-top:24px}
+    .bets{padding:12px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
-<div class="screen">
-  <header>
-    <div class="logo">
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="brand">
       <div class="avatar">🦁</div>
-      <div class="name">Drop Cash <span class="beta">Beta</span></div>
+      <div>
+        <div class="name">Drop Cash</div>
+        <span class="beta">Beta</span>
+      </div>
     </div>
-    <nav>
-      <a href="#">Leaderboard</a><a href="#">Prediction</a><a href="#">Bonuses</a>
-      <a href="#">Challenges</a><a href="#">Raffles</a><a href="vault.html">Vault</a>
-      <a href="originals.html" class="active">Originals ⌄</a>
+
+    <div class="wallet">
+      <div class="k">Solde</div>
+      <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
+      <button disabled title="Nouvelles clés chaque jour, automatiquement">Recharger</button>
+    </div>
+
+    <div class="s-label">MENU</div>
+    <nav class="s-nav">
+      <a href="#"><span class="ic">🏆</span><span>Leaderboard</span></a>
+      <a href="#"><span class="ic">🔮</span><span>Prediction</span></a>
+      <a href="#"><span class="ic">🎁</span><span>Bonuses</span><span class="tag">3</span></a>
+      <a href="#"><span class="ic">🎯</span><span>Challenges</span></a>
+      <a href="#"><span class="ic">🎟</span><span>Raffles</span></a>
+      <a href="vault.html"><span class="ic">🔒</span><span>Vault</span></a>
     </nav>
-    <div class="header-right">
-      <button class="bell" aria-label="Notifications">🔔</button>
-      <button class="user" id="login-btn" onclick="connectDiscord()" style="display:none;">Login</button>
-      <div class="user" id="user-chip" style="display:none;">
-        <div class="pfp" id="user-pfp"></div><span id="user-pseudo"></span><i>⌄</i>
+
+    <div class="s-label">ORIGINALS</div>
+    <nav class="s-nav">
+      <a href="mines.html" class="on"><span class="ic">💣</span><span>Mines</span></a>
+      <a href="#"><span class="ic">🃏</span><span>Blackjack</span></a>
+      <a href="#"><span class="ic">🐔</span><span>Chicken</span></a>
+      <a href="#"><span class="ic">🔢</span><span>Keno</span></a>
+      <a href="wheel.html"><span class="ic">🎡</span><span>Wheel</span></a>
+      <a href="#"><span class="ic">🎲</span><span>Dice</span></a>
+    </nav>
+
+    <div class="side-foot">
+      <button class="wallet-login-btn" id="side-login-btn" onclick="connectDiscord()">🎮 Se connecter</button>
+      <div class="s-user" id="side-user" style="display:none;">
+        <div class="pfp"></div>
+        <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
+        <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
       </div>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENU ============ -->
+  <div class="main">
+    <div class="topbar">
       <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+      <h1>Mines</h1>
+      <span class="crumb">Originals</span>
+      <div class="top-right">
+        <span class="live"><span class="dot"></span>1 284 en jeu</span>
+        <button class="icon-btn" aria-label="Notifications">🔔</button>
+      </div>
     </div>
-  </header>
 
-  <div class="titlebar">
-    <h1>Mines</h1>
-    <span class="crumb">Originals</span>
-    <span class="live"><span class="dot"></span>1 284 en jeu</span>
-  </div>
-
-  <div class="game-panel">
-    <div class="game-wrap">
-      <aside class="controls">
-        <div class="seg">
-          <button class="on" id="segManual">MANUAL</button>
-          <button id="segAuto">AUTO</button>
-        </div>
-        <div class="field">
-          <label>Bet Amount <span class="bal">🔑 <b id="balance">250</b> KEYS</span></label>
-          <div class="input-row" id="betRow">
-            <span class="key">🔑</span>
-            <input id="bet" type="number" inputmode="numeric" value="10" min="0">
-            <button class="chip" id="half">½</button>
-            <button class="chip" id="double">2×</button>
+    <div class="game-panel">
+      <div class="game-wrap">
+        <aside class="controls">
+          <div class="seg">
+            <button class="on" id="segManual">MANUAL</button>
+            <button id="segAuto">AUTO</button>
           </div>
-        </div>
-        <div class="field">
-          <label>Difficulty</label>
-          <button class="select"><span class="dot"></span> Medium <span class="arrow">⌄</span></button>
-        </div>
-        <div class="stats">
-          <div class="stat"><div class="k">Multiplier</div><div class="v"><span id="multNow">1.00</span>×</div></div>
-          <div class="stat"><div class="k">Profit</div><div class="v"><span class="key">🔑</span><span id="profit">0</span></div></div>
-        </div>
-        <button class="bet-btn" id="play">Bet</button>
-      </aside>
+          <div class="field">
+            <label>Bet Amount <span class="bal">🔑 <b id="balance">0</b> KEYS</span></label>
+            <div class="input-row" id="betRow">
+              <span class="key">🔑</span>
+              <input id="bet" type="number" inputmode="numeric" value="10" min="0">
+              <button class="chip" id="half">½</button>
+              <button class="chip" id="double">2×</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Difficulty</label>
+            <button class="select"><span class="dot"></span> Medium <span class="arrow">⌄</span></button>
+          </div>
+          <div class="stats">
+            <div class="stat"><div class="k">Multiplier</div><div class="v"><span id="multNow">1.00</span>×</div></div>
+            <div class="stat"><div class="k">Profit</div><div class="v"><span class="key">🔑</span><span id="profit">0</span></div></div>
+          </div>
+          <button class="bet-btn" id="play">Bet</button>
+        </aside>
 
-      <section class="board">
-        <div class="bust-card" id="bustCard">
-          <div class="t">Bust</div>
-          <div class="v"><span class="key">🔑</span> <span id="bustAmt">-0</span></div>
+        <section class="board">
+          <div class="bust-card" id="bustCard">
+            <div class="t">Bust</div>
+            <div class="v"><span class="key">🔑</span> <span id="bustAmt">-0</span></div>
+          </div>
+          <div class="mult-rail" id="rail">
+            <span class="mult">1.20×</span><span class="mult">1.55×</span><span class="mult">2.00×</span>
+            <span class="mult">2.70×</span><span class="mult">3.80×</span><span class="mult">5.40×</span>
+            <span class="mult">8.10×</span><span class="mult">12.6×</span>
+          </div>
+          <div class="board-area"><div class="grid" id="grid" aria-label="Plateau Mines"></div></div>
+        </section>
+      </div>
+
+      <div class="game-bar">
+        <div class="bar-tools">
+          <button title="Paramètres">⚙</button>
+          <button title="Plein écran">⛶</button>
+          <button title="Statistiques">📈</button>
+          <button title="Partager">↗</button>
         </div>
-        <div class="mult-rail" id="rail">
-          <span class="mult">1.20×</span><span class="mult">1.55×</span><span class="mult">2.00×</span>
-          <span class="mult">2.70×</span><span class="mult">3.80×</span><span class="mult">5.40×</span>
-          <span class="mult">8.10×</span><span class="mult">12.6×</span>
-        </div>
-        <div class="board-area">
-          <div class="grid" id="grid" aria-label="Plateau Mines"></div>
-        </div>
-      </section>
+        <div class="bar-logo"><span class="mark">🦁</span>Drop Cash</div>
+        <div class="bar-right"><button class="fair"><span class="shield">🛡</span>Équité</button></div>
+      </div>
     </div>
 
-    <div class="game-bar">
-      <div class="bar-tools">
-        <button title="Paramètres">⚙</button>
-        <button title="Plein écran">⛶</button>
-        <button title="Statistiques">📈</button>
-        <button title="Partager">↗</button>
+    <section class="bets">
+      <div class="tabs">
+        <button class="on">All Bets</button><button>High Rollers</button><button>My Bets</button>
       </div>
-      <div class="bar-logo"><span class="mark">🦁</span>Drop Cash</div>
-      <div class="bar-right">
-        <button class="fair"><span class="shield">🛡</span>Équité</button>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Game</th><th>Player</th><th>Time</th><th>Bet</th><th>Multiplier</th><th>Payout</th></tr></thead>
+          <tbody id="betRows"></tbody>
+        </table>
       </div>
-    </div>
+    </section>
+
+    <footer>Drop Cash Originals — jouez de manière responsable · Monnaie virtuelle 🔑</footer>
   </div>
-
-  <section class="bets">
-    <div class="tabs">
-      <button class="on">All Bets</button><button>High Rollers</button><button>My Bets</button>
-    </div>
-    <div class="table-scroll">
-      <table>
-        <thead><tr><th>Game</th><th>Player</th><th>Time</th><th>Bet</th><th>Multiplier</th><th>Payout</th></tr></thead>
-        <tbody id="betRows"></tbody>
-      </table>
-    </div>
-  </section>
 </div>
-
-<footer>Drop Cash Originals — jouez de manière responsable · Monnaie virtuelle 🔑</footer>
 
 <div class="scrim" id="scrim"></div>
 <div class="drawer" id="drawer" role="dialog" aria-label="Menu">
@@ -496,11 +505,17 @@
   const multNow=document.getElementById('multNow'), profitEl=document.getElementById('profit');
   const betInput=document.getElementById('bet'), betRow=document.getElementById('betRow');
   const balanceEl=document.getElementById('balance');
+  const balanceSidebarEl=document.getElementById('balance-sidebar');
   const playBtn=document.getElementById('play');
   const MULTS=[1.20,1.55,2.00,2.70,3.80,5.40,8.10,12.6];
   const multFor = step => MULTS[Math.min(step, MULTS.length-1)];
 
-  let step=0, alive=false, revealedTiles=[], currentBet=0, busy=false;
+  let step=0, alive=false, currentBet=0, busy=false;
+
+  function setBalance(v){
+    balanceEl.textContent = v;
+    balanceSidebarEl.textContent = v;
+  }
 
   function buildEmptyGrid(){
     grid.innerHTML='';
@@ -535,7 +550,7 @@
     try{
       const resp = await fetch(`${workerBase}/mines/status?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
-      balanceEl.textContent = data.keys;
+      setBalance(data.keys);
       if (data.active){
         // Reprise d'une partie en cours après un rechargement de page
         currentBet = data.active.bet; step = data.active.step; alive = true;
@@ -574,8 +589,8 @@
         busy=false; playBtn.disabled=false;
         return;
       }
-      balanceEl.textContent = data.keys;
-      currentBet = bet; step = 0; alive = true; revealedTiles=[];
+      setBalance(data.keys);
+      currentBet = bet; step = 0; alive = true;
       bustCard.classList.remove('show');
       for (const m of rail) m.className='mult';
       buildEmptyGrid();
@@ -636,7 +651,7 @@
       });
       const data = await resp.json();
       if (data.ok){
-        balanceEl.textContent = data.keys;
+        setBalance(data.keys);
         alive=false;
         [...grid.children].forEach(c => { if (!c.classList.contains('open')) c.classList.add('open'); });
         loadHistory();
@@ -704,30 +719,35 @@
   // ---------------- Identité ----------------
   async function applyIdentity(){
     const saved = getSavedDiscordIdentity();
-    const loginBtn = document.getElementById('login-btn');
-    const userChip = document.getElementById('user-chip');
-    const userPseudo = document.getElementById('user-pseudo');
+    const sideLoginBtn = document.getElementById('side-login-btn');
+    const sideUser = document.getElementById('side-user');
+    const sideUserPseudo = document.getElementById('side-user-pseudo');
     const drawerPseudo = document.getElementById('drawer-pseudo');
     const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
 
     if (saved && saved.discordId){
-      loginBtn.style.display = 'none';
-      userChip.style.display = 'flex';
-      userPseudo.textContent = saved.username;
+      sideLoginBtn.style.display = 'none';
+      sideUser.style.display = 'flex';
+      sideUserPseudo.textContent = saved.username;
       drawerPseudo.textContent = saved.username;
       drawerLogoutBtn.style.display = 'grid';
       await refreshStatus();
     } else {
-      loginBtn.style.display = 'flex';
-      userChip.style.display = 'none';
+      sideLoginBtn.style.display = 'block';
+      sideUser.style.display = 'none';
       drawerPseudo.textContent = 'Non connecté';
       drawerLogoutBtn.style.display = 'none';
-      balanceEl.textContent = '0';
+      setBalance('0');
       buildEmptyGrid();
     }
     loadHistory();
   }
 
+  document.getElementById('side-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    alive=false; step=0;
+    applyIdentity();
+  });
   document.getElementById('drawer-logout-btn').addEventListener('click', () => {
     clearDiscordIdentity();
     alive=false; step=0;
@@ -747,4 +767,3 @@
 </script>
 </body>
 </html>
-
