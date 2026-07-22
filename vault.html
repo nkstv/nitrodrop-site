@@ -242,7 +242,6 @@
     .vault-section{animation:none;}
   }
 
-  .vault-stats-bar{display:flex; gap:12px; justify-content:center; margin-bottom:24px; flex-wrap:wrap;}
   .vault-stat-card{
     background:var(--bg-card); border:1px solid var(--line); border-radius:12px;
     padding:14px 26px; text-align:center; min-width:120px;
@@ -433,24 +432,13 @@
 <section class="vault-section">
   <div class="wrap" style="padding:0; max-width:1240px;">
 
-    <div class="vault-stats-bar" id="vault-stats-bar">
-      <div class="vault-stat-card">
-        <div class="n" id="vault-stat-total">$0</div>
-        <div class="l" id="vault-stat-total-label">Total distribué</div>
-      </div>
-      <div class="vault-stat-card">
-        <div class="n" id="vault-stat-rounds" style="color:var(--violet);">0</div>
-        <div class="l" id="vault-stat-rounds-label">Coffres ouverts</div>
-      </div>
-      <div class="vault-stat-card">
-        <div class="n" id="vault-stat-participants" style="color:#fff;">0</div>
-        <div class="l" id="vault-stat-participants-label">Participants</div>
-      </div>
-    </div>
-
     <div class="vault-columns">
 
       <div>
+        <div class="vault-stat-card" style="margin-bottom:16px;">
+          <div class="n" id="vault-stat-total">$0</div>
+          <div class="l" id="vault-stat-total-label">Total distribué</div>
+        </div>
         <div class="steps-strip">
           <div class="step-chip"><b>1.</b> <span id="vault-step1">Rejoins le Discord</span></div>
           <div class="step-chip"><b>2.</b> <span id="vault-step2">Repère le code du jour</span></div>
@@ -489,6 +477,10 @@
       </div>
 
       <div>
+        <div class="vault-stat-card" style="margin-bottom:16px;">
+          <div class="n" id="vault-stat-rounds" style="color:var(--violet);">0</div>
+          <div class="l" id="vault-stat-rounds-label">Coffres ouverts</div>
+        </div>
         <div class="winners-panel">
           <h4 id="vault-winners-title">🏆 Derniers gagnants</h4>
           <div id="vault-winners-list"></div>
@@ -822,7 +814,6 @@
     // Textes des stats et du panneau gagnants
     document.getElementById('vault-stat-total-label').textContent = v.statTotalLabel || 'Total distribué';
     document.getElementById('vault-stat-rounds-label').textContent = v.statRoundsLabel || 'Coffres ouverts';
-    document.getElementById('vault-stat-participants-label').textContent = v.statParticipantsLabel || 'Participants';
     document.getElementById('vault-winners-title').textContent = '🏆 ' + (v.winnersTitle || 'Derniers gagnants');
     document.getElementById('vault-winners-empty').textContent = v.winnersEmpty || "Personne pour l'instant.";
     document.getElementById('vault-username-input').placeholder = v.usernamePlaceholder || 'Ton pseudo';
@@ -947,10 +938,8 @@
 
       // ---- Stats globales ----
       const totalAmount = history.reduce((sum, h) => sum + (parseFloat(h.amount) || 0), 0);
-      const totalParticipants = history.reduce((sum, h) => sum + (h.participants || 0), 0);
       document.getElementById('vault-stat-total').textContent = '$' + (Number.isInteger(totalAmount) ? totalAmount : totalAmount.toFixed(2));
       document.getElementById('vault-stat-rounds').textContent = String(history.length);
-      document.getElementById('vault-stat-participants').textContent = String(totalParticipants);
 
       // ---- Derniers gagnants (panneau latéral, 3 max) ----
       const winnersListEl = document.getElementById('vault-winners-list');
@@ -994,7 +983,6 @@
     }
     emptyEl.style.display = 'none';
 
-    const participantsLabel = (getActive().vault && getActive().vault.participantsLabel) || 'Participants';
     const start = vaultHistoryPageIndex * VAULT_HISTORY_PAGE_SIZE;
     const pageItems = vaultHistoryFull.slice(start, start + VAULT_HISTORY_PAGE_SIZE);
 
@@ -1004,7 +992,6 @@
         <span class="name">${escapeHtml(h.username || '?')}</span>
         <span class="amount">$${escapeHtml(h.amount || '?')}</span>
         <span class="code-used code-font">${escapeHtml(h.code || '?')}</span>
-        <span class="participants">${escapeHtml(participantsLabel)} : ${escapeHtml(String(h.participants != null ? h.participants : '?'))}</span>
         <span class="date">${escapeHtml(date)}</span>
       </div>`;
     }).join('');
