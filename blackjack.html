@@ -829,46 +829,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     });
   });
 
-  // ---------------- Compteur de visiteurs (site entier) ----------------
-  // Compteur EN DIRECT : on envoie un signal de présence toutes les 20s tant que la
-  // page reste ouverte (la clé expire côté serveur si on arrête d'en envoyer), et on
-  // rafraîchit l'affichage au même rythme pour voir le nombre monter/descendre en vrai.
-  let visitorSessionId = '';
-  try{ visitorSessionId = sessionStorage.getItem('nitrodrop_session_id') || ''; }catch(e){}
-
-  async function sendHeartbeat(){
-    if (!workerBase) return;
-    try{
-      const resp = await fetch(`${workerBase}/stats/heartbeat`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: visitorSessionId }),
-      });
-      const data = await resp.json();
-      if (data.sessionId){
-        visitorSessionId = data.sessionId;
-        try{ sessionStorage.setItem('nitrodrop_session_id', visitorSessionId); }catch(e){}
-      }
-    }catch(e){}
-  }
-
-  async function refreshVisitorCount(){
-    const counterEl = document.getElementById('visitor-count');
-    if (!workerBase){ counterEl.textContent = '—'; return; }
-    try{
-      const resp = await fetch(`${workerBase}/stats/visitors`);
-      const data = await resp.json();
-      counterEl.textContent = data.total.toLocaleString('fr-FR');
-    }catch(e){
-      counterEl.textContent = '—';
-    }
-  }
-
-  async function trackVisitor(){
-    await sendHeartbeat();
-    await refreshVisitorCount();
-    setInterval(async () => { await sendHeartbeat(); await refreshVisitorCount(); }, 45000);
-  }
-  trackVisitor();
+  // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
+  document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
 
   // ---------------- Identité ----------------
   async function applyIdentity(){

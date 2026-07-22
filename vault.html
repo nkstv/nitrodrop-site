@@ -869,27 +869,6 @@
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
   // Compteur de visiteurs total du site (une fois par session, peu importe la page)
-  // Signal de présence EN DIRECT (heartbeat) : compte cette page dans le nombre de
-  // visiteurs en ligne affiché sur Mines/Blackjack, tant que l'onglet reste ouvert.
-  (function trackSiteVisit(){
-    if (!workerBase) return;
-    let sessionId = '';
-    try{ sessionId = sessionStorage.getItem('nitrodrop_session_id') || ''; }catch(e){}
-    function sendHeartbeat(){
-      fetch(`${workerBase}/stats/heartbeat`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId }),
-      }).then(r => r.json()).then(data => {
-        if (data.sessionId){
-          sessionId = data.sessionId;
-          try{ sessionStorage.setItem('nitrodrop_session_id', sessionId); }catch(e){}
-        }
-      }).catch(() => {});
-    }
-    sendHeartbeat();
-    setInterval(sendHeartbeat, 45000);
-  })();
-
   // État de pagination de l'historique des gains (5 par page)
   const VAULT_HISTORY_PAGE_SIZE = 5;
   let vaultHistoryFull = [];

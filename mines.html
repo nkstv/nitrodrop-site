@@ -164,6 +164,15 @@
   .bust-card .v{color:var(--red);font-weight:800;font-size:13px;margin-top:4px;border-top:1px solid var(--line);padding-top:5px}
   .bust-card .v .key{color:var(--gold)}
 
+  .win-card{position:absolute;top:14px;right:14px;background:rgba(20,14,8,.93);border:1.5px solid var(--green);
+    border-radius:var(--r-m);padding:10px 18px;text-align:center;box-shadow:0 0 26px rgba(95,214,139,.3);
+    opacity:0;transform:translateY(-6px);transition:.25s;pointer-events:none;z-index:2}
+  .win-card.show{opacity:1;transform:translateY(0)}
+  .win-card .t{font-family:"Baloo 2";font-weight:800;font-size:21px;line-height:1.1;color:var(--green)}
+  .win-card .sep{height:1px;background:var(--line);margin:6px 0}
+  .win-card .v{color:var(--green);font-weight:800;font-size:13px}
+  .win-card .v .key{color:var(--gold)}
+
   .game-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);
     background:rgba(20,15,8,.5);padding:11px 16px}
   .bar-tools{display:flex;gap:7px;flex:1}
@@ -383,6 +392,11 @@
             <div class="t">Bust</div>
             <div class="v"><span class="key">🔑</span> <span id="bustAmt">-0</span></div>
           </div>
+          <div class="win-card" id="winCard">
+            <div class="t"><span id="winMult">1.00</span>×</div>
+            <div class="sep"></div>
+            <div class="v"><span class="key">🔑</span> <span id="winAmt">+0</span></div>
+          </div>
           <div class="mult-rail" id="rail">
             <span class="mult">1.20×</span><span class="mult">1.55×</span><span class="mult">2.00×</span>
             <span class="mult">2.70×</span><span class="mult">3.80×</span><span class="mult">5.40×</span>
@@ -548,6 +562,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   const grid=document.getElementById('grid'), rail=document.getElementById('rail').children;
   const bustCard=document.getElementById('bustCard'), bustAmt=document.getElementById('bustAmt');
+  const winCard=document.getElementById('winCard'), winMultEl=document.getElementById('winMult'), winAmtEl=document.getElementById('winAmt');
   const multNow=document.getElementById('multNow'), profitEl=document.getElementById('profit');
   const betInput=document.getElementById('bet'), betRow=document.getElementById('betRow');
   const balanceEl=document.getElementById('balance');
@@ -633,6 +648,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       setBalance(data.keys);
       currentBet = bet; step = 0; alive = true;
       bustCard.classList.remove('show');
+      winCard.classList.remove('show');
       for (const m of rail) m.className='mult';
       buildEmptyGrid();
       updateStatsDisplay();
@@ -694,7 +710,14 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       if (data.ok){
         setBalance(data.keys);
         alive=false;
+        (data.bombs||[]).forEach(b => {
+          const c = grid.children[b];
+          if (c && !c.classList.contains('open')){ c.classList.add('open','bomb'); c.innerHTML=ico('💣'); }
+        });
         [...grid.children].forEach(c => { if (!c.classList.contains('open')) c.classList.add('open'); });
+        winMultEl.textContent = data.multiplier.toFixed(2);
+        winAmtEl.textContent = '+' + data.payout;
+        winCard.classList.add('show');
         loadHistory();
       }
     }catch(e){}
@@ -737,46 +760,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     }
   }
 
-  // ---------------- Compteur de visiteurs (site entier) ----------------
-  // Compteur EN DIRECT : on envoie un signal de présence toutes les 20s tant que la
-  // page reste ouverte (la clé expire côté serveur si on arrête d'en envoyer), et on
-  // rafraîchit l'affichage au même rythme pour voir le nombre monter/descendre en vrai.
-  let visitorSessionId = '';
-  try{ visitorSessionId = sessionStorage.getItem('nitrodrop_session_id') || ''; }catch(e){}
-
-  async function sendHeartbeat(){
-    if (!workerBase) return;
-    try{
-      const resp = await fetch(`${workerBase}/stats/heartbeat`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: visitorSessionId }),
-      });
-      const data = await resp.json();
-      if (data.sessionId){
-        visitorSessionId = data.sessionId;
-        try{ sessionStorage.setItem('nitrodrop_session_id', visitorSessionId); }catch(e){}
-      }
-    }catch(e){}
-  }
-
-  async function refreshVisitorCount(){
-    const counterEl = document.getElementById('visitor-count');
-    if (!workerBase){ counterEl.textContent = '—'; return; }
-    try{
-      const resp = await fetch(`${workerBase}/stats/visitors`);
-      const data = await resp.json();
-      counterEl.textContent = data.total.toLocaleString('fr-FR');
-    }catch(e){
-      counterEl.textContent = '—';
-    }
-  }
-
-  async function trackVisitor(){
-    await sendHeartbeat();
-    await refreshVisitorCount();
-    setInterval(async () => { await sendHeartbeat(); await refreshVisitorCount(); }, 45000);
-  }
-  trackVisitor();
+  // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
+  document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
 
   // ---------------- Historique (public + personnel) ----------------
   const rows=document.getElementById('betRows');
