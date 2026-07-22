@@ -335,6 +335,55 @@
   .game-card.c-wheel .game-preview{background:radial-gradient(circle at 50% 30%, rgba(182,255,60,0.14), transparent 70%);}
 
   .game-body{padding:8px 24px 26px;}
+
+  /* ---- Machine à sous : mise en page étendue (panneau à gagner + machine) ---- */
+  .slot-expanded{overflow:visible;}
+  .slot-layout{display:grid; grid-template-columns:260px 1fr; gap:0;}
+  .slot-prizes-panel{
+    padding:22px 20px; border-right:1px solid var(--line);
+    background:radial-gradient(circle at 30% 0%, rgba(139,92,255,0.08), transparent 70%);
+  }
+  .slot-prizes-eyebrow{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--violet); font-weight:700; margin-bottom:6px;}
+  .slot-prizes-title{font-family:'Unbounded'; font-weight:800; font-size:16px; color:var(--text); margin-bottom:16px; line-height:1.3;}
+  .slot-prize-row{
+    display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px;
+    background:var(--bg-raise); border:1px solid var(--line); margin-bottom:14px;
+  }
+  .slot-prize-symbol{font-size:18px; letter-spacing:1px; flex-shrink:0;}
+  .slot-prize-name{font-size:12px; color:var(--text-dim); margin-bottom:4px;}
+  .slot-prize-mystery{font-family:'Unbounded'; font-weight:700; font-size:13px; color:var(--green);}
+  .slot-divider{height:1px; background:var(--line); margin:14px 0;}
+
+  .slot-fair-box{
+    margin-top:20px; background:var(--bg-raise); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px; text-align:left; display:flex; gap:10px;
+  }
+  .slot-fair-icon{font-size:17px; flex-shrink:0;}
+  .slot-fair-title{font-size:12.5px; font-weight:700; color:var(--text); margin-bottom:2px;}
+  .slot-fair-text{font-size:11.5px; color:var(--text-dim); line-height:1.5;}
+
+  .slot-history-section{margin-top:20px; text-align:left;}
+  .slot-history-title{font-family:'Unbounded'; font-size:13.5px; font-weight:700; color:var(--text); margin:0 0 10px;}
+  .slot-history-row{
+    display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:10px;
+    background:var(--bg-raise); border:1px solid var(--line); margin-bottom:6px; font-size:12.5px;
+  }
+  .slot-history-avatar{
+    width:22px; height:22px; border-radius:50%; background:var(--violet-deep); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0;
+  }
+  .slot-history-name{color:var(--text); font-weight:600; flex-shrink:0; width:88px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .slot-history-symbols{flex:1; font-size:13px; letter-spacing:1px; color:var(--text-dim);}
+  .slot-history-result{font-family:'Unbounded'; font-weight:700; font-size:12px; flex-shrink:0;}
+  .slot-history-win{color:var(--green);}
+  .slot-history-lose{color:var(--text-faint);}
+  .slot-history-time{color:var(--text-faint); font-size:10.5px; flex-shrink:0; width:44px; text-align:right;}
+
+  @media (max-width: 760px){
+    .slot-layout{grid-template-columns:1fr;}
+    .slot-prizes-panel{border-right:none; border-bottom:1px solid var(--line);}
+    .slot-history-name{width:64px;}
+  }
   .game-tag{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;}
   .game-card.c-ticket .game-tag{color:#FF5C7A;}
   .game-card.c-slot .game-tag{color:var(--violet);}
@@ -624,27 +673,60 @@
         </div>
       </div>
 
-      <div class="game-card c-slot" id="slot-game-card">
-        <div class="game-preview">
-          <div class="slot-reels" id="slot-reels">
-            <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
-            <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
-            <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
+      <div class="game-card c-slot slot-expanded" id="slot-game-card">
+        <div class="slot-layout">
+
+          <div class="slot-prizes-panel">
+            <div class="slot-prizes-eyebrow" id="slot-prizes-eyebrow">Machine à sous</div>
+            <div class="slot-prizes-title" id="slot-prizes-title">Ce que tu peux gagner</div>
+            <div class="slot-prize-row">
+              <div class="slot-prize-symbol">7️⃣7️⃣7️⃣</div>
+              <div class="slot-prize-info">
+                <div class="slot-prize-name" id="slot-prize-name">Combinaison gagnante</div>
+                <div class="slot-prize-mystery" id="slot-prize-mystery">🎁 Montant surprise</div>
+              </div>
+            </div>
+            <div class="slot-divider"></div>
+            <div class="game-meta" style="margin:0;">
+              <span class="tries-badge" id="slot-tries-remaining" style="display:none;"></span>
+            </div>
           </div>
-        </div>
-        <div class="game-body">
-          <div class="game-tag" id="slot-tag">Machine à sous</div>
-          <h3 class="game-title" id="slot-title">Tente ta chance</h3>
-          <p class="game-desc" id="slot-subtitle">Un spin gratuit par jour.</p>
-          <div class="game-meta">
-            <span class="tries-badge" id="slot-tries-remaining" style="display:none;"></span>
+
+          <div class="slot-machine-col">
+            <div class="game-preview">
+              <div class="slot-reels" id="slot-reels">
+                <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
+                <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
+                <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
+              </div>
+            </div>
+            <div class="game-body">
+              <div class="game-tag" id="slot-tag">Machine à sous</div>
+              <h3 class="game-title" id="slot-title">Tente ta chance</h3>
+              <p class="game-desc" id="slot-subtitle">Un spin gratuit par jour.</p>
+              <button type="button" class="btn-play" id="slot-submit-btn" onclick="submitSlot()">Spin</button>
+              <p id="slot-cooldown-message" class="locked-note" style="display:none;"></p>
+              <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+              <p id="slot-result-message" style="margin-top:14px; font-size:13.5px; color:var(--text-dim); line-height:1.6; display:none;"></p>
+              <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+              <button type="button" id="slot-play-again-btn" class="btn-play" style="display:none; margin-top:10px;" onclick="replaySlot()">Rejouer</button>
+
+              <div class="slot-fair-box">
+                <div class="slot-fair-icon">🔒</div>
+                <div>
+                  <div class="slot-fair-title" id="slot-fair-title">Provably fair</div>
+                  <div class="slot-fair-text" id="slot-fair-text">Le tirage est calculé côté serveur avant l'affichage du résultat : le résultat n'est jamais généré ni modifiable depuis le navigateur.</div>
+                </div>
+              </div>
+
+              <div class="slot-history-section">
+                <h4 class="slot-history-title" id="slot-history-title">📜 Historique des mises</h4>
+                <div id="slot-history-list"></div>
+                <p id="slot-history-empty" style="font-size:12.5px; color:var(--text-faint); display:none;">Aucune mise pour l'instant.</p>
+              </div>
+            </div>
           </div>
-          <button type="button" class="btn-play" id="slot-submit-btn" onclick="submitSlot()">Spin</button>
-          <p id="slot-cooldown-message" class="locked-note" style="display:none;"></p>
-          <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-          <p id="slot-result-message" style="margin-top:14px; font-size:13.5px; color:var(--text-dim); line-height:1.6; display:none;"></p>
-          <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-          <button type="button" id="slot-play-again-btn" class="btn-play" style="display:none; margin-top:10px;" onclick="replaySlot()">Rejouer</button>
+
         </div>
       </div>
 
@@ -878,6 +960,27 @@
     document.getElementById('tile-scratch-title').textContent = (cfg.scratchTicket && cfg.scratchTicket.tag) || 'Ticket à gratter';
     document.getElementById('tile-slot-title').textContent = (cfg.slotMachine && cfg.slotMachine.tag) || 'Machine à sous';
     document.getElementById('tile-wheel-title').textContent = (cfg.wheelGame && cfg.wheelGame.tag) || 'Roue de la fortune';
+
+    // Textes fixes (pas besoin d'un champ admin dédié) pour le panneau étendu de la machine à sous
+    const slotExtraText = currentLang === 'fr' ? {
+      eyebrow: 'Machine à sous', prizesTitle: 'Ce que tu peux gagner', prizeName: 'Combinaison gagnante',
+      mystery: '🎁 Montant surprise', fairTitle: 'Provably fair',
+      fairText: "Le tirage est calculé côté serveur avant l'affichage du résultat : le résultat n'est jamais généré ni modifiable depuis le navigateur.",
+      historyTitle: '📜 Historique des mises', historyEmpty: 'Aucune mise pour l\'instant.',
+    } : {
+      eyebrow: 'Slot machine', prizesTitle: 'What you can win', prizeName: 'Winning combination',
+      mystery: '🎁 Surprise amount', fairTitle: 'Provably fair',
+      fairText: 'The outcome is computed server-side before the result is shown: it is never generated or editable from the browser.',
+      historyTitle: '📜 Bet history', historyEmpty: 'No bets yet.',
+    };
+    document.getElementById('slot-prizes-eyebrow').textContent = slotExtraText.eyebrow;
+    document.getElementById('slot-prizes-title').textContent = slotExtraText.prizesTitle;
+    document.getElementById('slot-prize-name').textContent = slotExtraText.prizeName;
+    document.getElementById('slot-prize-mystery').textContent = slotExtraText.mystery;
+    document.getElementById('slot-fair-title').textContent = slotExtraText.fairTitle;
+    document.getElementById('slot-fair-text').textContent = slotExtraText.fairText;
+    document.getElementById('slot-history-title').textContent = slotExtraText.historyTitle;
+    document.getElementById('slot-history-empty').textContent = slotExtraText.historyEmpty;
   }
 
   applyChrome(getActive());
@@ -1321,7 +1424,7 @@
     if (grid){
       grid.style.display = 'grid';
       grid.style.gridTemplateColumns = '1fr';
-      grid.style.maxWidth = '440px';
+      grid.style.maxWidth = (cardId === 'slot-game-card') ? '760px' : '440px';
       grid.style.marginLeft = 'auto';
       grid.style.marginRight = 'auto';
       grid.querySelectorAll('.game-card').forEach(card => {
@@ -1367,6 +1470,50 @@
     document.getElementById('slot-submit-btn').textContent = st.spinText || 'Spin';
     document.getElementById('slot-result-message').textContent = '';
     checkAlreadyPlayed('slot', getSharedDiscordId());
+    loadSlotHistory();
+  }
+
+  async function loadSlotHistory(){
+    const listEl = document.getElementById('slot-history-list');
+    const emptyEl = document.getElementById('slot-history-empty');
+    if (!workerBase || !listEl) return;
+    try{
+      const resp = await fetch(`${workerBase}/slot/history?limit=8`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      const history = data.history || [];
+      if (history.length === 0){
+        if (emptyEl) emptyEl.style.display = 'block';
+        listEl.innerHTML = '';
+        return;
+      }
+      if (emptyEl) emptyEl.style.display = 'none';
+      listEl.innerHTML = history.map(h => {
+        const initial = (h.pseudo || '?').trim().charAt(0).toUpperCase() || '?';
+        const timeAgo = h.dateMs ? formatTimeAgo(h.dateMs) : '';
+        const resultHtml = h.won
+          ? `<span class="slot-history-result slot-history-win">+$${escapeHtml(String(h.amount))}</span>`
+          : `<span class="slot-history-result slot-history-lose">Perdu</span>`;
+        return `<div class="slot-history-row">
+          <div class="slot-history-avatar">${escapeHtml(initial)}</div>
+          <div class="slot-history-name">${escapeHtml(h.pseudo || '?')}</div>
+          <div class="slot-history-symbols">${h.won ? '7️⃣ 7️⃣ 7️⃣' : '🎰'}</div>
+          ${resultHtml}
+          <div class="slot-history-time">${escapeHtml(timeAgo)}</div>
+        </div>`;
+      }).join('');
+    }catch(e){
+      // Historique non-critique : on échoue silencieusement plutôt que de bloquer le jeu
+    }
+  }
+
+  function formatTimeAgo(dateMs){
+    const diffMin = Math.max(0, Math.round((Date.now() - dateMs) / 60000));
+    if (diffMin < 1) return 'à l\'instant';
+    if (diffMin < 60) return diffMin + ' min';
+    const diffH = Math.round(diffMin / 60);
+    if (diffH < 24) return diffH + ' h';
+    return Math.round(diffH / 24) + ' j';
   }
 
   function showSlotFormError(msg){
@@ -1457,6 +1604,7 @@
                 playAgainBtn.textContent = st.playAgainText || 'Rejouer';
                 playAgainBtn.style.display = 'block';
               }
+              loadSlotHistory();
             }
           } else {
             el.textContent = pick();
