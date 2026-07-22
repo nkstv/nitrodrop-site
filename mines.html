@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171209">
+<title>Drop Cash — Mines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
+    --line:rgba(232,193,104,.10); --gold:#E8C168; --gold-deep:#C79A3C;
+    --cream:#F2E9D8; --muted:#9a8b6d; --muted-2:#6f6350;
+    --red:#F26D6D; --green:#5FD68B;
+    --r-l:20px; --r-m:14px;
+    --gap:12px;
+    --chrome:200px; /* header + titre + barre basse + paddings */
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    background:radial-gradient(1000px 500px at 70% -10%, rgba(232,193,104,.055), transparent 60%), var(--bg);
+    color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif;
+    padding:12px clamp(12px,2vw,26px) 24px;
+  }
+  h1{font-family:"Baloo 2",sans-serif}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+  .screen{display:flex;flex-direction:column;gap:var(--gap)}
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex;align-items:center;gap:20px;flex-wrap:nowrap;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:1px solid var(--line);border-radius:44px;padding:7px 10px 7px 8px;
+    box-shadow:0 8px 22px rgba(0,0,0,.35);flex:none;
+  }
+  .logo{display:flex;align-items:center;gap:9px;flex:none}
+  .logo .avatar{width:34px;height:34px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:17px;border:2px solid rgba(0,0,0,.4)}
+  .logo .name{font-family:"Baloo 2";font-weight:800;font-size:19px;letter-spacing:.3px;
+    display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .beta{font-family:"Nunito Sans";font-size:9px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--gold);background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.32);
+    padding:2px 7px;border-radius:20px}
+  nav{display:flex;gap:2px;flex:1;min-width:0;overflow:hidden}
+  nav a{color:var(--muted);text-decoration:none;font-weight:800;font-size:13.5px;
+    padding:8px 11px;border-radius:30px;transition:.18s;white-space:nowrap}
+  nav a:hover{color:var(--cream);background:rgba(232,193,104,.06)}
+  nav a.active{color:var(--gold)}
+  .header-right{display:flex;align-items:center;gap:8px;flex:none}
+  .bell{width:34px;height:34px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
+    display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.18s}
+  .bell:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
+  .user{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel-2);
+    padding:4px 12px 4px 5px;border-radius:30px;font-weight:800;font-size:13.5px;white-space:nowrap}
+  .user .pfp{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57)}
+  .user i{color:var(--muted);font-style:normal;font-size:10px}
+  .burger{display:none;width:38px;height:38px;border-radius:50%;background:var(--panel-3);
+    border:1px solid var(--line);flex-direction:column;gap:3.5px;align-items:center;justify-content:center}
+  .burger span{display:block;width:15px;height:2px;background:var(--cream);border-radius:2px}
+
+  /* ---------- Titre ---------- */
+  .titlebar{display:flex;align-items:baseline;gap:11px;flex:none;padding:0 4px}
+  .titlebar h1{font-size:26px;font-weight:800;line-height:1}
+  .titlebar .crumb{color:var(--muted-2);font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+  .titlebar .live{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:800;font-size:12px}
+  .titlebar .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+
+  /* ---------- Panneau de jeu ---------- */
+  .game-panel{
+    background:linear-gradient(180deg,var(--panel),var(--bg-soft));
+    border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .game-wrap{display:grid;grid-template-columns:280px 1fr}
+
+  .controls{background:linear-gradient(180deg,var(--panel-2),rgba(34,26,16,.6));
+    border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:10px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg-soft);border-radius:30px;padding:4px;border:1px solid var(--line)}
+  .seg button{padding:9px 0;border-radius:26px;font-weight:800;letter-spacing:1.6px;font-size:12px;color:var(--muted);transition:.18s}
+  .seg button.on{background:var(--panel-3);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(232,193,104,.15)}
+
+  .field label{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;margin-bottom:6px}
+  .field label .bal{color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:.8px}
+  .field label .bal b{color:var(--cream)}
+  .input-row{display:flex;align-items:center;gap:6px;background:var(--bg-soft);border:1px solid var(--line);
+    border-radius:var(--r-m);padding:5px 6px 5px 12px;transition:border-color .2s}
+  .input-row.err{border-color:var(--red)}
+  .input-row .key{color:var(--gold);font-size:13px}
+  .input-row input{flex:1;background:none;border:none;outline:none;color:var(--cream);
+    font-family:"Nunito Sans";font-weight:800;font-size:15px;min-width:0}
+  .chip{background:var(--panel-3);border:1px solid var(--line);border-radius:9px;padding:7px 11px;
+    font-weight:800;font-size:12.5px;color:var(--cream);transition:.15s}
+  .chip:hover{border-color:rgba(232,193,104,.4);color:var(--gold)}
+  .select{display:flex;align-items:center;gap:8px;width:100%;background:var(--bg-soft);border:1px solid var(--line);
+    border-radius:var(--r-m);padding:11px 12px;font-weight:800;font-size:14px}
+  .select .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+  .select .arrow{margin-left:auto;color:var(--muted);font-size:10px}
+
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .stat{background:var(--bg-soft);border:1px solid var(--line);border-radius:var(--r-m);padding:9px 11px}
+  .stat .k{color:var(--muted);font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
+  .stat .v{font-weight:800;font-size:16px;margin-top:3px;display:flex;align-items:center;gap:5px}
+  .stat .v .key{color:var(--gold);font-size:13px}
+
+  .bet-btn{margin-top:auto;background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep));color:#3a2a08;
+    font-family:"Baloo 2";font-weight:800;font-size:19px;padding:13px;border-radius:var(--r-m);
+    box-shadow:0 5px 14px rgba(232,193,104,.22), inset 0 1px 0 rgba(255,255,255,.35);transition:.15s}
+  .bet-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .bet-btn:active{transform:translateY(1px)}
+
+  /* ---------- Plateau ---------- */
+  .board{
+    background:radial-gradient(600px 320px at 50% 0%, rgba(232,193,104,.05), transparent 70%);
+    padding:14px;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;
+  }
+  .mult-rail{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:none}
+  .mult{background:var(--bg-soft);border:1px solid var(--line);color:var(--muted);
+    font-weight:800;font-size:12px;padding:6px 12px;border-radius:30px;transition:.2s}
+  .mult.hit{background:var(--red);border-color:transparent;color:#fff;box-shadow:0 3px 12px rgba(242,109,109,.35)}
+  .mult.won{background:rgba(95,214,139,.15);border-color:rgba(95,214,139,.4);color:var(--green)}
+
+  .board-area{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    grid-template-rows:repeat(5,1fr);   /* lignes fixes : plus de déformation */
+    gap:8px;
+    width:min(100%, calc(100vh - var(--chrome)));
+    aspect-ratio:1;
+  }
+  .tile{
+    border-radius:var(--r-m);background:linear-gradient(180deg,var(--panel-3),var(--panel-2));
+    border:1px solid var(--line);box-shadow:0 3px 0 rgba(0,0,0,.35);
+    font-size:clamp(15px,2.2vh,24px);display:grid;place-items:center;
+    min-width:0;min-height:0;overflow:hidden;line-height:1;
+    transition:background .14s, border-color .14s, box-shadow .14s, filter .14s;
+  }
+  .tile:hover:not(.open){border-color:rgba(232,193,104,.35);filter:brightness(1.12)}
+  .tile.open{box-shadow:none;cursor:default}
+  .tile.gem{background:linear-gradient(180deg,#2a3a2b,#1e2b1f);border-color:rgba(95,214,139,.4)}
+  .tile.bomb{background:linear-gradient(180deg,#4a2424,#331717);border-color:rgba(242,109,109,.5)}
+  .tile .ico{display:block;animation:reveal .22s ease}
+  @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+
+  .bust-card{position:absolute;top:12px;right:12px;background:rgba(20,14,8,.93);border:1.5px solid var(--red);
+    border-radius:var(--r-m);padding:10px 18px;text-align:center;box-shadow:0 0 26px rgba(242,109,109,.25);
+    opacity:0;transform:translateY(-6px);transition:.25s;pointer-events:none;z-index:2}
+  .bust-card.show{opacity:1;transform:translateY(0)}
+  .bust-card .t{font-family:"Baloo 2";font-weight:800;font-size:21px;line-height:1.1}
+  .bust-card .v{color:var(--red);font-weight:800;font-size:13px;margin-top:4px;border-top:1px solid var(--line);padding-top:5px}
+  .bust-card .v .key{color:var(--gold)}
+
+  /* ---------- Barre basse du panneau ---------- */
+  .game-bar{
+    display:flex;align-items:center;gap:8px;
+    border-top:1px solid var(--line);background:rgba(20,15,8,.5);
+    padding:8px 12px;
+  }
+  .bar-tools{display:flex;gap:6px;flex:1}
+  .bar-tools button{width:32px;height:32px;border-radius:10px;border:1px solid transparent;
+    color:var(--muted-2);font-size:14px;display:grid;place-items:center;transition:.15s}
+  .bar-tools button:hover{color:var(--gold);border-color:var(--line);background:var(--panel-2)}
+  .bar-logo{display:flex;align-items:center;gap:7px;font-family:"Baloo 2";font-weight:800;
+    font-size:15px;color:var(--cream);opacity:.85;letter-spacing:.3px;white-space:nowrap}
+  .bar-logo .mark{width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:11px;border:1.5px solid rgba(0,0,0,.4)}
+  .bar-right{flex:1;display:flex;justify-content:flex-end}
+  .fair{display:flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:11px;padding:8px 13px;font-weight:800;font-size:13px;color:var(--cream);transition:.15s}
+  .fair:hover{border-color:rgba(232,193,104,.35);color:var(--gold)}
+  .fair .shield{color:var(--gold)}
+
+  /* ---------- Paris ---------- */
+  .bets{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+    border-radius:var(--r-l);padding:12px 14px}
+  .tabs{display:flex;gap:5px;margin-bottom:8px}
+  .tabs button{padding:8px 15px;border-radius:30px;font-weight:800;font-size:13.5px;color:var(--muted);transition:.18s}
+  .tabs button:hover{color:var(--cream)}
+  .tabs button.on{background:var(--panel-3);color:var(--cream);border:1px solid var(--line)}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:620px}
+  thead th{text-align:left;color:var(--muted-2);font-size:10.5px;letter-spacing:1.6px;font-weight:800;padding:5px 10px;text-transform:uppercase}
+  thead th:nth-child(n+3){text-align:right}
+  tbody td{padding:8px 10px;border-top:1px solid rgba(232,193,104,.05);font-weight:700;font-size:13.5px}
+  tbody td:nth-child(n+3){text-align:right}
+  tbody tr:hover{background:rgba(232,193,104,.04)}
+  tbody tr.fresh{animation:pop .5s ease}
+  @keyframes pop{from{background:rgba(232,193,104,.12)}to{background:transparent}}
+  .g{display:flex;align-items:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:14px}
+  .g .ic{width:24px;height:24px;border-radius:8px;background:var(--panel-3);border:1px solid var(--line);display:grid;place-items:center;font-size:12px}
+  .p{display:flex;align-items:center;gap:8px}
+  .p .pfp{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9aa7c7,#3c455e)}
+  td.time{color:var(--muted)}
+  .key{color:var(--gold)}
+  .win{color:var(--green)}
+  .lose{color:var(--muted)}
+
+  footer{margin-top:14px;text-align:center;color:var(--muted-2);font-size:11.5px;font-weight:700}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+
+  /* ---------- Drawer mobile ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:linear-gradient(180deg,#241c12,#191309);border-top:1px solid var(--line);
+    border-radius:24px 24px 0 0;padding:12px 14px calc(16px + env(safe-area-inset-bottom));
+    transform:translateY(105%);transition:transform .3s cubic-bezier(.22,.9,.3,1);
+    box-shadow:0 -18px 44px rgba(0,0,0,.6);max-height:88vh;overflow-y:auto}
+  .drawer.open{transform:translateY(0)}
+  .handle{width:50px;height:4px;border-radius:4px;background:#4a4032;margin:3px auto 14px}
+  .d-user{display:flex;align-items:center;gap:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:11px 12px}
+  .d-user .pfp{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);flex:none}
+  .d-user .n{font-weight:800;font-size:17px}
+  .d-user .s{color:var(--muted);font-weight:600;font-size:13px;margin-top:1px}
+  .d-out{margin-left:auto;width:38px;height:38px;border-radius:50%;background:rgba(242,109,109,.14);
+    border:1px solid rgba(242,109,109,.3);color:var(--red);display:grid;place-items:center;font-size:15px;flex:none}
+  .d-sep{height:1px;background:var(--line);margin:14px 4px}
+  .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .d-item{background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:13px 12px;
+    font-weight:800;font-size:15px;text-align:left;display:flex;align-items:center;gap:9px}
+  .d-item:active{background:var(--panel-3)}
+  .d-label{color:var(--muted-2);font-size:10.5px;font-weight:800;letter-spacing:2.6px;margin:16px 4px 9px}
+  .d-foot{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+  .d-foot button, .d-foot a{padding:14px;border-radius:13px;font-weight:800;font-size:14.5px;display:flex;
+    align-items:center;justify-content:center;gap:8px;background:var(--panel-2);border:1px solid var(--line)}
+  .d-foot .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+  .d-foot .vault{background:rgba(232,193,104,.10);border-color:rgba(232,193,104,.35);color:var(--gold)}
+  .d-foot .vault .dot{background:var(--gold)}
+
+  /* ---------- Écrans étroits ---------- */
+  @media(max-width:1080px){ nav a{padding:8px 8px;font-size:12.5px} .game-wrap{grid-template-columns:255px 1fr} }
+  @media(max-width:860px){
+    :root{--chrome:250px}
+    body{padding:10px 12px 22px}
+    header{border-radius:22px;padding:7px 8px;gap:0;justify-content:space-between}
+    nav,.header-right .bell,.header-right .user{display:none}
+    .burger{display:flex}
+    .titlebar h1{font-size:23px}
+    .titlebar .live{display:none}
+    .game-wrap{grid-template-columns:1fr}
+    .board{order:1;padding:12px;gap:10px}
+    .controls{order:2;border-right:none;border-top:1px solid var(--line)}
+    .grid{gap:6px;width:100%}
+    .bet-btn{margin-top:2px}
+    .bar-tools button:nth-child(n+3){display:none}
+  }
+
+  /* ---------- Respiration desktop (mobile inchangé) ---------- */
+  @media(min-width:861px){
+    :root{--gap:18px; --chrome:330px}
+    body{padding:20px clamp(20px,3vw,46px) 40px}
+    header{padding:10px 14px 10px 10px;gap:26px}
+    .logo{gap:11px}
+    .logo .avatar{width:38px;height:38px;font-size:19px}
+    .logo .name{font-size:20px}
+    nav{gap:4px}
+    nav a{padding:10px 15px;font-size:14px}
+    .bell{width:38px;height:38px}
+    .user{padding:5px 15px 5px 6px;font-size:14px}
+    .user .pfp{width:28px;height:28px}
+    .titlebar{padding:4px 6px 2px}
+    .titlebar h1{font-size:29px}
+    .game-wrap{grid-template-columns:320px 1fr}
+    .controls{padding:22px 20px;gap:15px}
+    .field label{margin-bottom:8px}
+    .input-row{padding:7px 8px 7px 14px}
+    .select{padding:13px 14px}
+    .stat{padding:11px 13px}
+    .bet-btn{padding:15px}
+    .board{padding:22px 26px 26px;gap:18px}
+    .mult-rail{gap:8px}
+    .mult{padding:7px 14px}
+    .grid{gap:11px}
+    .game-bar{padding:12px 18px;gap:12px}
+    .bar-tools{gap:8px}
+    .bar-tools button{width:34px;height:34px}
+    .fair{padding:9px 15px}
+    .bets{padding:18px 20px}
+    .tabs{margin-bottom:12px;gap:7px}
+    .tabs button{padding:9px 18px}
+    thead th{padding:8px 14px}
+    tbody td{padding:12px 14px}
+    footer{margin-top:24px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <header>
+    <div class="logo">
+      <div class="avatar">🦁</div>
+      <div class="name">Drop Cash <span class="beta">Beta</span></div>
+    </div>
+    <nav>
+      <a href="#">Leaderboard</a><a href="#">Prediction</a><a href="#">Bonuses</a>
+      <a href="#">Challenges</a><a href="#">Raffles</a><a href="vault.html">Vault</a>
+      <a href="originals.html" class="active">Originals ⌄</a>
+    </nav>
+    <div class="header-right">
+      <button class="bell" aria-label="Notifications">🔔</button>
+      <button class="user" id="login-btn" onclick="connectDiscord()" style="display:none;">Login</button>
+      <div class="user" id="user-chip" style="display:none;">
+        <div class="pfp" id="user-pfp"></div><span id="user-pseudo"></span><i>⌄</i>
+      </div>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="titlebar">
+    <h1>Mines</h1>
+    <span class="crumb">Originals</span>
+    <span class="live"><span class="dot"></span>1 284 en jeu</span>
+  </div>
+
+  <div class="game-panel">
+    <div class="game-wrap">
+      <aside class="controls">
+        <div class="seg">
+          <button class="on" id="segManual">MANUAL</button>
+          <button id="segAuto">AUTO</button>
+        </div>
+        <div class="field">
+          <label>Bet Amount <span class="bal">🔑 <b id="balance">250</b> KEYS</span></label>
+          <div class="input-row" id="betRow">
+            <span class="key">🔑</span>
+            <input id="bet" type="number" inputmode="numeric" value="10" min="0">
+            <button class="chip" id="half">½</button>
+            <button class="chip" id="double">2×</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Difficulty</label>
+          <button class="select"><span class="dot"></span> Medium <span class="arrow">⌄</span></button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Multiplier</div><div class="v"><span id="multNow">1.00</span>×</div></div>
+          <div class="stat"><div class="k">Profit</div><div class="v"><span class="key">🔑</span><span id="profit">0</span></div></div>
+        </div>
+        <button class="bet-btn" id="play">Bet</button>
+      </aside>
+
+      <section class="board">
+        <div class="bust-card" id="bustCard">
+          <div class="t">Bust</div>
+          <div class="v"><span class="key">🔑</span> <span id="bustAmt">-0</span></div>
+        </div>
+        <div class="mult-rail" id="rail">
+          <span class="mult">1.20×</span><span class="mult">1.55×</span><span class="mult">2.00×</span>
+          <span class="mult">2.70×</span><span class="mult">3.80×</span><span class="mult">5.40×</span>
+          <span class="mult">8.10×</span><span class="mult">12.6×</span>
+        </div>
+        <div class="board-area">
+          <div class="grid" id="grid" aria-label="Plateau Mines"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="game-bar">
+      <div class="bar-tools">
+        <button title="Paramètres">⚙</button>
+        <button title="Plein écran">⛶</button>
+        <button title="Statistiques">📈</button>
+        <button title="Partager">↗</button>
+      </div>
+      <div class="bar-logo"><span class="mark">🦁</span>Drop Cash</div>
+      <div class="bar-right">
+        <button class="fair"><span class="shield">🛡</span>Équité</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="bets">
+    <div class="tabs">
+      <button class="on">All Bets</button><button>High Rollers</button><button>My Bets</button>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Game</th><th>Player</th><th>Time</th><th>Bet</th><th>Multiplier</th><th>Payout</th></tr></thead>
+        <tbody id="betRows"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<footer>Drop Cash Originals — jouez de manière responsable · Monnaie virtuelle 🔑</footer>
+
+<div class="scrim" id="scrim"></div>
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="handle"></div>
+  <div class="d-user" id="drawer-user">
+    <div class="pfp"></div>
+    <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
+  </div>
+  <div class="d-sep"></div>
+  <div class="d-grid">
+    <button class="d-item">Leaderboard</button><button class="d-item">Prediction</button>
+    <button class="d-item">Bonuses</button><button class="d-item">Challenges</button>
+    <button class="d-item">Raffles</button><a class="d-item" href="vault.html">Vault</a>
+  </div>
+  <div class="d-label">ORIGINALS</div>
+  <div class="d-grid">
+    <button class="d-item"><span>🃏</span>Blackjack</button><button class="d-item"><span>🔢</span>Keno</button>
+    <button class="d-item"><span>🐔</span>Chicken</button><a class="d-item" href="wheel.html"><span>🎡</span>Wheel</a>
+    <a class="d-item" href="mines.html"><span>💣</span>Mines</a><button class="d-item"><span>🎲</span>Dice</button>
+  </div>
+  <div class="d-foot">
+    <button><span class="dot"></span>My Profile</button>
+    <a class="vault" href="vault.html"><span class="dot"></span>Open Vault</a>
+  </div>
+</div>
+
+<script src="nitrodrop-config.js?v=20260721a"></script>
+<script>
+  const CONFIG = nitrodropLoadPublishedConfig();
+  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
+  const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function isMobileDevice(){
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+  }
+
+  function saveDiscordIdentity(discordId, username){
+    const payload = JSON.stringify({ discordId, username });
+    try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
+  }
+
+  function clearDiscordIdentity(){
+    try{ localStorage.removeItem(DISCORD_STORAGE_KEY); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=; max-age=0; path=/; SameSite=Lax'; }catch(e){}
+  }
+
+  function getSavedDiscordIdentity(){
+    try{
+      const raw = localStorage.getItem(DISCORD_STORAGE_KEY);
+      if (raw){
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.discordId) return parsed;
+      }
+    }catch(e){}
+    try{
+      const match = document.cookie.match(new RegExp('(?:^|; )' + DISCORD_STORAGE_KEY + '=([^;]*)'));
+      if (match){
+        const raw = decodeURIComponent(match[1]);
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.discordId){
+          try{ localStorage.setItem(DISCORD_STORAGE_KEY, raw); }catch(e){}
+          return parsed;
+        }
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function getSharedDiscordId(){ const s = getSavedDiscordIdentity(); return s ? s.discordId : ''; }
+  function getSharedUsername(){ const s = getSavedDiscordIdentity(); return s ? s.username : ''; }
+
+  function connectDiscord(){
+    const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
+    if (!clientId){ alert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
+    const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
+    if (isMobileDevice()){
+      try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
+      window.location.href = authUrl;
+      return;
+    }
+    window.open(authUrl, 'discord-oauth', 'width=500,height=750');
+  }
+</script>
+<script>
+(async function(){
+  const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
+  const toggle=o=>{drawer.classList.toggle('open',o);scrim.classList.toggle('open',o);document.body.style.overflow=o?'hidden':''};
+  document.getElementById('burger').addEventListener('click',()=>toggle(true));
+  scrim.addEventListener('click',()=>toggle(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false)});
+  drawer.querySelectorAll('.d-item,.d-foot button').forEach(b=>b.addEventListener('click',()=>toggle(false)));
+
+  const grid=document.getElementById('grid'), rail=document.getElementById('rail').children;
+  const bustCard=document.getElementById('bustCard'), bustAmt=document.getElementById('bustAmt');
+  const multNow=document.getElementById('multNow'), profitEl=document.getElementById('profit');
+  const betInput=document.getElementById('bet'), betRow=document.getElementById('betRow');
+  const balanceEl=document.getElementById('balance');
+  const playBtn=document.getElementById('play');
+  const MULTS=[1.20,1.55,2.00,2.70,3.80,5.40,8.10,12.6];
+  const multFor = step => MULTS[Math.min(step, MULTS.length-1)];
+
+  let step=0, alive=false, revealedTiles=[], currentBet=0, busy=false;
+
+  function buildEmptyGrid(){
+    grid.innerHTML='';
+    for(let i=0;i<25;i++){
+      const t=document.createElement('button');
+      t.className='tile';t.dataset.i=i;t.setAttribute('aria-label','Case '+(i+1));
+      t.addEventListener('click',()=>reveal(t));
+      grid.appendChild(t);
+    }
+  }
+  const ico=e=>'<span class="ico">'+e+'</span>';
+
+  function setPlayBtnState(){
+    if (alive){
+      playBtn.textContent = step>0 ? 'Cash Out' : 'En jeu…';
+      playBtn.disabled = step===0;
+    } else {
+      playBtn.textContent = 'Bet';
+      playBtn.disabled = false;
+    }
+  }
+
+  function updateStatsDisplay(){
+    const m = multFor(Math.max(step-1,0));
+    multNow.textContent = step>0 ? m.toFixed(2) : '1.00';
+    profitEl.textContent = step>0 ? Math.round(currentBet*(m-1)) : '0';
+  }
+
+  async function refreshStatus(){
+    const discordId = getSharedDiscordId();
+    if (!discordId || !workerBase) return;
+    try{
+      const resp = await fetch(`${workerBase}/mines/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      balanceEl.textContent = data.keys;
+      if (data.active){
+        // Reprise d'une partie en cours après un rechargement de page
+        currentBet = data.active.bet; step = data.active.step; alive = true;
+        buildEmptyGrid();
+        for (const m of rail) m.className='mult';
+        for (let s=0; s<step && s<rail.length; s++) rail[s].classList.add('won');
+        data.active.revealed.forEach(i => {
+          const tile = grid.children[i];
+          tile.classList.add('open','gem'); tile.innerHTML=ico('💎');
+        });
+        betInput.value = currentBet;
+        updateStatsDisplay();
+      }
+      setPlayBtnState();
+    }catch(e){}
+  }
+
+  async function startRound(){
+    if (busy) return;
+    const discordId = getSharedDiscordId(), pseudo = getSharedUsername();
+    if (!discordId){ connectDiscord(); return; }
+    const bet = Math.floor(+betInput.value || 0);
+    if (!(bet>0)){ betRow.classList.add('err'); setTimeout(()=>betRow.classList.remove('err'),1200); return; }
+
+    busy=true; playBtn.disabled=true;
+    try{
+      const resp = await fetch(`${workerBase}/mines/start`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ discordId, pseudo, bet }),
+      });
+      const data = await resp.json();
+      if (!data.ok){
+        if (data.reason==='insufficient_keys') alert('Solde de clés insuffisant.');
+        else if (data.reason==='round_in_progress') alert('Une partie est déjà en cours.');
+        else alert("Impossible de démarrer la partie.");
+        busy=false; playBtn.disabled=false;
+        return;
+      }
+      balanceEl.textContent = data.keys;
+      currentBet = bet; step = 0; alive = true; revealedTiles=[];
+      bustCard.classList.remove('show');
+      for (const m of rail) m.className='mult';
+      buildEmptyGrid();
+      updateStatsDisplay();
+      setPlayBtnState();
+    }catch(e){
+      alert('Erreur réseau, réessaie.');
+    }
+    busy=false;
+  }
+
+  async function reveal(t){
+    if (!alive || busy || t.classList.contains('open')) return;
+    const discordId = getSharedDiscordId();
+    const i = +t.dataset.i;
+    busy=true;
+    try{
+      const resp = await fetch(`${workerBase}/mines/reveal`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ discordId, tileIndex: i }),
+      });
+      const data = await resp.json();
+      if (!data.ok){ busy=false; return; }
+
+      t.classList.add('open');
+      if (data.hit){
+        t.classList.add('bomb'); t.innerHTML=ico('💣'); alive=false;
+        if (step>0) rail[Math.min(step-1,rail.length-1)].classList.add('hit');
+        bustAmt.textContent='-'+currentBet;
+        bustCard.classList.add('show');
+        multNow.textContent='0.00'; profitEl.textContent='0';
+        (data.bombs||[]).forEach(b => {
+          const c = grid.children[b];
+          if (c && !c.classList.contains('open')){ c.classList.add('open','bomb'); c.innerHTML=ico('💣'); }
+        });
+        setPlayBtnState();
+        loadHistory();
+      } else {
+        t.classList.add('gem'); t.innerHTML=ico('💎');
+        if (step<rail.length) rail[step].classList.add('won');
+        step = data.step;
+        multNow.textContent = data.multiplier.toFixed(2);
+        profitEl.textContent = data.profit;
+        setPlayBtnState();
+      }
+    }catch(e){}
+    busy=false;
+  }
+
+  async function cashOut(){
+    if (!alive || step<1 || busy) return;
+    const discordId = getSharedDiscordId();
+    busy=true; playBtn.disabled=true;
+    try{
+      const resp = await fetch(`${workerBase}/mines/cashout`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ discordId }),
+      });
+      const data = await resp.json();
+      if (data.ok){
+        balanceEl.textContent = data.keys;
+        alive=false;
+        [...grid.children].forEach(c => { if (!c.classList.contains('open')) c.classList.add('open'); });
+        loadHistory();
+      }
+    }catch(e){}
+    alive=false; busy=false;
+    setPlayBtnState();
+  }
+
+  playBtn.addEventListener('click', () => { if (alive) cashOut(); else startRound(); });
+  document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(0,Math.floor((+betInput.value||0)/2)));
+  document.getElementById('double').addEventListener('click',()=>betInput.value=(+betInput.value||0)*2);
+  segManual.addEventListener('click',()=>{segManual.classList.add('on');segAuto.classList.remove('on')});
+  segAuto.addEventListener('click',()=>{segAuto.classList.add('on');segManual.classList.remove('on')});
+
+  // ---------------- Historique (public + personnel) ----------------
+  const rows=document.getElementById('betRows');
+  const tabButtons = document.querySelectorAll('.tabs button');
+  let activeTab = 'all';
+
+  function renderHistoryRows(list){
+    rows.innerHTML='';
+    list.forEach(p => {
+      const tr=document.createElement('tr');
+      const mult = p.busted ? 0 : p.multiplier;
+      const payout = p.busted ? 0 : p.payout;
+      tr.innerHTML=`<td><span class="g"><span class="ic">💣</span>Mines</span></td>
+        <td><span class="p"><span class="pfp"></span>${escapeHtml(p.pseudo||'?')}</span></td>
+        <td class="time">${p.date ? p.date.slice(11,16) : ''}</td>
+        <td><span class="key">🔑</span> ${escapeHtml(String(p.bet))}</td>
+        <td class="${mult>=2?'win':mult===0?'lose':''}">${mult.toFixed ? mult.toFixed(2) : mult}×</td>
+        <td class="${payout>p.bet?'win':''}"><span class="key">🔑</span> ${escapeHtml(String(payout))}</td>`;
+      rows.appendChild(tr);
+    });
+  }
+
+  async function loadHistory(){
+    if (!workerBase) return;
+    try{
+      if (activeTab === 'mine'){
+        const discordId = getSharedDiscordId();
+        if (!discordId){ renderHistoryRows([]); return; }
+        const resp = await fetch(`${workerBase}/mines/my-history?discordId=${encodeURIComponent(discordId)}&limit=20`);
+        const data = await resp.json();
+        renderHistoryRows(data.history || []);
+      } else {
+        const resp = await fetch(`${workerBase}/mines/history?limit=20`);
+        const data = await resp.json();
+        let list = data.history || [];
+        if (activeTab === 'high') list = list.slice().sort((a,b) => b.payout - a.payout);
+        renderHistoryRows(list);
+      }
+    }catch(e){}
+  }
+
+  tabButtons.forEach((btn, idx) => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      activeTab = idx===0 ? 'all' : idx===1 ? 'high' : 'mine';
+      loadHistory();
+    });
+  });
+
+  // ---------------- Identité ----------------
+  async function applyIdentity(){
+    const saved = getSavedDiscordIdentity();
+    const loginBtn = document.getElementById('login-btn');
+    const userChip = document.getElementById('user-chip');
+    const userPseudo = document.getElementById('user-pseudo');
+    const drawerPseudo = document.getElementById('drawer-pseudo');
+    const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
+
+    if (saved && saved.discordId){
+      loginBtn.style.display = 'none';
+      userChip.style.display = 'flex';
+      userPseudo.textContent = saved.username;
+      drawerPseudo.textContent = saved.username;
+      drawerLogoutBtn.style.display = 'grid';
+      await refreshStatus();
+    } else {
+      loginBtn.style.display = 'flex';
+      userChip.style.display = 'none';
+      drawerPseudo.textContent = 'Non connecté';
+      drawerLogoutBtn.style.display = 'none';
+      balanceEl.textContent = '0';
+      buildEmptyGrid();
+    }
+    loadHistory();
+  }
+
+  document.getElementById('drawer-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    alive=false; step=0;
+    applyIdentity();
+    toggle(false);
+  });
+
+  window.addEventListener('message', (event) => {
+    if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
+    saveDiscordIdentity(event.data.discordId, event.data.username);
+    applyIdentity();
+  });
+
+  buildEmptyGrid();
+  applyIdentity();
+})();
+</script>
+</body>
+</html>
+
