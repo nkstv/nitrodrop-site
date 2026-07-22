@@ -571,8 +571,26 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const balanceEl=document.getElementById('balance');
   const balanceSidebarEl=document.getElementById('balance-sidebar');
   const playBtn=document.getElementById('play');
-  const MULTS=[1.20,1.55,2.00,2.70,3.80,5.40,8.10,12.6];
-  const multFor = step => MULTS[Math.min(step, MULTS.length-1)];
+  const MINES_TILE_COUNT_CLIENT = 25;
+  const MINES_HOUSE_EDGE_CLIENT = 0.96;
+  // Même formule que côté serveur : recalculée à chaque changement de difficulté,
+  // pour que le rail et l'indicateur "Multiplier" affichent les vraies valeurs
+  // (avant, ils restaient figés sur les chiffres du mode Medium quel que soit le choix).
+  function multFor(step, mineCount){
+    const M = mineCount;
+    const T = MINES_TILE_COUNT_CLIENT;
+    let fair = 1;
+    for (let i = 0; i <= step; i++){
+      fair *= (T - i) / (T - M - i);
+    }
+    return Math.round(fair * MINES_HOUSE_EDGE_CLIENT * 100) / 100;
+  }
+
+  function updateRailDisplay(){
+    for (let i = 0; i < rail.length; i++){
+      rail[i].textContent = multFor(i, currentMineCount).toFixed(2) + '×';
+    }
+  }
 
   let step=0, alive=false, currentBet=0, busy=false, currentMineCount=5;
 
@@ -593,7 +611,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const ico=e=>'<span class="ico">'+e+'</span>';
 
   function updateStatsDisplay(){
-    const m = multFor(Math.max(step-1,0));
+    const m = multFor(Math.max(step-1,0), currentMineCount);
     multNow.textContent = step>0 ? m.toFixed(2) : '1.00';
     profitEl.textContent = step>0 ? Math.round(currentBet*(m-1)) : '0';
   }
@@ -749,6 +767,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     difficultyBtn.dataset.mines = lvl.mines;
     difficultyBtn.dataset.idx = idx;
     difficultyBtn.innerHTML = `<span class="dot"></span> ${lvl.label} <span class="arrow">⌄</span>`;
+    updateRailDisplay();
   }
   difficultyBtn.addEventListener('click', () => {
     if (alive) return; // pas de changement de difficulté en pleine partie
