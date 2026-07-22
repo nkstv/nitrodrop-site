@@ -149,6 +149,11 @@
   .bj-action-btn:disabled{opacity:.4;cursor:default;}
   .bj-action-btn .ic{font-size:14px;}
   #hitBtn .ic{color:var(--green);} #standBtn .ic{color:var(--red);} #doubleBtn .ic{color:var(--gold);}
+  .bj-insurance{background:rgba(232,193,104,.08);border:1px solid rgba(232,193,104,.35);border-radius:12px;padding:12px;margin-bottom:2px;}
+  .bj-insurance-text{font-size:12.5px;font-weight:700;color:var(--cream);text-align:center;margin-bottom:10px;line-height:1.45;}
+  .bj-insurance-text span{color:var(--gold);}
+  .bj-insurance-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  #insureYesBtn .ic{color:var(--gold);} #insureNoBtn .ic{color:var(--muted);}
 
   .bj-board{justify-content:center;min-height:340px;position:relative;}
   .bj-badge{
@@ -375,6 +380,14 @@
             </div>
           </div>
 
+          <div class="bj-insurance" id="bjInsurance" style="display:none;">
+            <div class="bj-insurance-text">Le croupier montre un As. Prendre une assurance ? <span id="bjInsuranceCost"></span></div>
+            <div class="bj-insurance-btns">
+              <button class="bj-action-btn" id="insureYesBtn"><span class="ic">🛡</span>Assurer</button>
+              <button class="bj-action-btn" id="insureNoBtn"><span class="ic">✕</span>Non merci</button>
+            </div>
+          </div>
+
           <div class="bj-actions">
             <button class="bj-action-btn" id="hitBtn" disabled><span class="ic">⬇</span>Hit</button>
             <button class="bj-action-btn" id="standBtn" disabled><span class="ic">✋</span>Stand</button>
@@ -561,6 +574,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const playBtn=document.getElementById('play');
   const hitBtn=document.getElementById('hitBtn'), standBtn=document.getElementById('standBtn');
   const splitBtn=document.getElementById('splitBtn'), doubleBtn=document.getElementById('doubleBtn');
+  const bjInsurance=document.getElementById('bjInsurance'), bjInsuranceCost=document.getElementById('bjInsuranceCost');
+  const insureYesBtn=document.getElementById('insureYesBtn'), insureNoBtn=document.getElementById('insureNoBtn');
   const bjTable=document.getElementById('bjTable'), bjPlaceholder=document.getElementById('bjPlaceholder');
   const bjResultEl=document.getElementById('bjResult');
   const winCard=document.getElementById('winCard'), winMultEl=document.getElementById('winMult'), winAmtEl=document.getElementById('winAmt');
@@ -626,10 +641,19 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
     const isPlaying = state.status === 'playing';
     roundActive = isPlaying;
-    hitBtn.disabled = !isPlaying;
-    standBtn.disabled = !isPlaying;
-    splitBtn.disabled = !isPlaying || !state.canSplit;
-    doubleBtn.disabled = !isPlaying || !state.canDouble;
+
+    // Assurance : quand elle est proposée, on la met en avant et on bloque les
+    // autres actions tant que le joueur n'a pas répondu (assurer / non merci).
+    const insurancePending = isPlaying && state.canInsure;
+    bjInsurance.style.display = insurancePending ? 'block' : 'none';
+    if (insurancePending){
+      bjInsuranceCost.textContent = state.insuranceCost ? `(coût : 🔑 ${state.insuranceCost})` : '';
+    }
+
+    hitBtn.disabled = !isPlaying || insurancePending || state.canHit === false;
+    standBtn.disabled = !isPlaying || insurancePending;
+    splitBtn.disabled = !isPlaying || insurancePending || !state.canSplit;
+    doubleBtn.disabled = !isPlaying || insurancePending || !state.canDouble;
     playBtn.disabled = isPlaying;
     playBtn.textContent = isPlaying ? 'En cours…' : 'Bet';
     betRow.querySelectorAll('input,button').forEach(el => el.disabled = isPlaying);
@@ -659,6 +683,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     bjPlaceholder.style.display = 'flex';
     bjResultEl.style.display = 'none';
     winCard.classList.remove('show');
+    bjInsurance.style.display = 'none';
     hitBtn.disabled = true; standBtn.disabled = true; splitBtn.disabled = true; doubleBtn.disabled = true;
     playBtn.disabled = false; playBtn.textContent = 'Bet';
     betRow.querySelectorAll('input,button').forEach(el => el.disabled = false);
@@ -730,6 +755,29 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   }
 
   playBtn.addEventListener('click', dealHand);
+  async function bjInsuranceAction(take){
+    if (busy || !roundActive) return;
+    const discordId = getSharedDiscordId();
+    busy=true;
+    try{
+      const resp = await fetch(`${workerBase}/blackjack/insurance`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ discordId, take }),
+      });
+      const data = await resp.json();
+      if (!data.ok){
+        if (data.reason==='insufficient_keys') showAlert('Solde de clés insuffisant pour l\'assurance.');
+        busy=false;
+        return;
+      }
+      if (data.keys != null) setBalance(data.keys);
+      renderState(data.state);
+    }catch(e){}
+    busy=false;
+  }
+  insureYesBtn.addEventListener('click', () => bjInsuranceAction(true));
+  insureNoBtn.addEventListener('click', () => bjInsuranceAction(false));
+
   hitBtn.addEventListener('click', () => bjAction('hit'));
   standBtn.addEventListener('click', () => bjAction('stand'));
   doubleBtn.addEventListener('click', () => bjAction('double'));

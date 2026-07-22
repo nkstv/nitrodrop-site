@@ -120,7 +120,9 @@
   .select{display:flex;align-items:center;gap:8px;width:100%;background:var(--bg-soft);border:1px solid var(--line);
     border-radius:var(--r-m);padding:12px 13px;font-weight:800;font-size:14px}
   .select .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
-  .select .arrow{margin-left:auto;color:var(--muted);font-size:10px}
+  .select .diff-bombs{margin-left:auto;color:var(--gold);font-weight:800;font-size:12.5px;}
+  .select .diff-bombs + .arrow{margin-left:8px;}
+  .select .arrow{color:var(--muted);font-size:10px}
   .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .stat{background:var(--bg-soft);border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px}
   .stat .k{color:var(--muted);font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
@@ -352,7 +354,7 @@
           </div>
           <div class="field">
             <label>Difficulty</label>
-            <button class="select" id="difficultyBtn" type="button" data-mines="5"><span class="dot"></span> Medium <span class="arrow">⌄</span></button>
+            <button class="select" id="difficultyBtn" type="button" data-mines="5"><span class="dot"></span> Medium <span class="diff-bombs">💣 5</span> <span class="arrow">⌄</span></button>
           </div>
           <div class="stats">
             <div class="stat"><div class="k">Multiplier</div><div class="v"><span id="multNow">1.00</span>×</div></div>
@@ -723,7 +725,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     currentMineCount = lvl.mines;
     difficultyBtn.dataset.mines = lvl.mines;
     difficultyBtn.dataset.idx = idx;
-    difficultyBtn.innerHTML = `<span class="dot"></span> ${lvl.label} <span class="arrow">⌄</span>`;
+    difficultyBtn.innerHTML = `<span class="dot"></span> ${lvl.label} <span class="diff-bombs">💣 ${lvl.mines}</span> <span class="arrow">⌄</span>`;
     updateRailDisplay();
   }
   difficultyBtn.addEventListener('click', () => {
