@@ -652,18 +652,18 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (state.status === 'resolved'){
       const totalBet = state.hands.reduce((s,h)=>s+h.bet,0);
       const totalPayout = state.totalPayout || 0;
-      let label, cls;
-      if (totalPayout > totalBet){ label = totalPayout>0 && state.hands.some(h=>h.result==='blackjack') ? 'Blackjack !' : 'Tu gagnes !'; cls='win'; }
-      else if (totalPayout === totalBet){ label = 'Égalité'; cls='push'; }
-      else { label = 'Perdu'; cls='lose'; }
-      bjResultEl.textContent = label + ` (${totalPayout>0?'+':''}${(totalPayout-totalBet).toFixed(2)} 🔑)`;
-      bjResultEl.className = 'bj-result ' + cls;
-      bjResultEl.style.display = 'block';
-      // Carte de gain centrée (même animation que Mines et Slot)
       if (totalPayout > totalBet){
+        // Gain : la carte verte centrée se suffit à elle-même (pas de texte en plus)
         winMultEl.textContent = (totalPayout / totalBet).toFixed(2);
         winAmtEl.textContent = '+' + roundKeysClient(totalPayout - totalBet);
         winCard.classList.add('show');
+      } else {
+        // Égalité ou défaite : pas de carte, donc on garde un retour texte
+        const label = totalPayout === totalBet ? 'Égalité' : 'Perdu';
+        const cls = totalPayout === totalBet ? 'push' : 'lose';
+        bjResultEl.textContent = label;
+        bjResultEl.className = 'bj-result ' + cls;
+        bjResultEl.style.display = 'block';
       }
       loadHistory();
     }

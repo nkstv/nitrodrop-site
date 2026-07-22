@@ -641,7 +641,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       diceMarker.style.left = data.roll + '%';
       diceResultEl.style.display = 'block';
       diceResultEl.className = 'dice-result ' + (data.won ? 'win' : 'lose');
-      diceResultEl.textContent = data.roll.toFixed(2) + (data.won ? ` (+${data.payout} 🔑)` : ' (Perdu)');
+      diceResultEl.textContent = data.roll.toFixed(2) + (data.won ? '' : ' (Perdu)');
       // Carte de gain centrée (même animation que Mines et Slot), affichée une fois
       // que le marqueur a fini de glisser jusqu'à sa position.
       if (data.won){
