@@ -958,7 +958,7 @@
     }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify`;
+      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
     const btn = document.getElementById('shared-discord-connect-btn');
     btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
 

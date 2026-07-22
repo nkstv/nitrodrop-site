@@ -20,12 +20,15 @@
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
 
   let modal = {};
+  let workerBase = '';
   try{
     const CONFIG = nitrodropLoadPublishedConfig();
     const lang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'fr';
     const active = (CONFIG.content && (CONFIG.content[lang] || CONFIG.content[CONFIG.defaultLang])) || {};
     modal = active.modal || {};
     document.documentElement.lang = lang;
+    const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+    workerBase = relayUrl.replace(/\/notify\/?$/, '');
   }catch(e){}
 
   msgEl.textContent = modal.callbackConnectingText || 'Connexion en cours…';
@@ -53,6 +56,17 @@
       try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
       try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
     }catch(e){}
+
+    // Ajout automatique au serveur Discord (nécessite le scope "guilds.join" déjà demandé
+    // dans l'URL d'autorisation). Volontairement non-bloquant : si ça échoue (bot absent,
+    // permissions manquantes...), la connexion au site continue normalement quand même.
+    if (workerBase){
+      fetch(`${workerBase}/discord/join-guild`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken, discordId: user.id }),
+      }).catch(() => {});
+    }
 
     if (window.opener){
       // Flux popup (desktop) : on prévient l'onglet d'origine, puis on ferme celui-ci.
