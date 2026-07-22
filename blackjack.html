@@ -216,7 +216,7 @@
   .g{display:flex;align-items:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:14px}
   .g .ic{width:24px;height:24px;border-radius:8px;background:var(--panel-3);border:1px solid var(--line);display:grid;place-items:center;font-size:12px}
   .p{display:flex;align-items:center;gap:8px}
-  .p .pfp{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9aa7c7,#3c455e)}
+  .p .pfp{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9aa7c7,#3c455e);object-fit:cover;flex:none;}
   td.time{color:var(--muted)}
   .key{color:var(--gold)}
   .win{color:var(--green)}
@@ -506,6 +506,7 @@
 
   function getSharedDiscordId(){ const s = getSavedDiscordIdentity(); return s ? s.discordId : ''; }
   function getSharedUsername(){ const s = getSavedDiscordIdentity(); return s ? s.username : ''; }
+  function getSharedAvatarUrl(){ const s = getSavedDiscordIdentity(); return s ? (s.avatarUrl || '') : ''; }
 
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
@@ -653,7 +654,7 @@
     try{
       const resp = await fetch(`${workerBase}/blackjack/deal`, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ discordId, pseudo, bet }),
+        body: JSON.stringify({ discordId, pseudo, bet, avatarUrl: getSharedAvatarUrl() }),
       });
       const data = await resp.json();
       if (!data.ok){
@@ -718,7 +719,7 @@
       const resultLabel = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Gagné' : p.result==='push' ? 'Égalité' : 'Perdu';
       const resultCls = (p.result==='win'||p.result==='blackjack') ? 'win' : p.result==='push' ? '' : 'lose';
       tr.innerHTML=`<td><span class="g"><span class="ic">🃏</span>Blackjack</span></td>
-        <td><span class="p"><span class="pfp"></span>${escapeHtml(p.pseudo||'?')}</span></td>
+        <td><span class="p"><img class="pfp" src="${escapeHtml(p.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="" referrerpolicy="no-referrer">${escapeHtml(p.pseudo||'?')}</span></td>
         <td class="time">${p.date ? p.date.slice(11,16) : ''}</td>
         <td><span class="key">🔑</span> ${escapeHtml(String(p.bet))}</td>
         <td class="${resultCls}">${resultLabel}</td>
