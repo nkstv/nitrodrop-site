@@ -128,6 +128,16 @@
     padding:20px 24px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
   .board-area{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
 
+
+  .win-card{position:absolute;top:50%;left:50%;background:rgba(15,11,6,.96);border:2px solid var(--green);
+    border-radius:20px;padding:22px 34px;text-align:center;box-shadow:0 0 50px rgba(95,214,139,.4), 0 20px 50px rgba(0,0,0,.5);
+    opacity:0;transform:translate(-50%,-50%) scale(.85);transition:.25s;pointer-events:none;z-index:5}
+  .win-card.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .win-card .t{font-family:"Baloo 2";font-weight:800;font-size:34px;line-height:1.1;color:var(--green)}
+  .win-card .sep{height:1px;background:var(--line);margin:10px 0}
+  .win-card .v{color:var(--green);font-weight:800;font-size:19px}
+  .win-card .v .key{color:var(--gold)}
+
   /* ---------- Blackjack ---------- */
   .bj-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
   .bj-action-btn{
@@ -387,6 +397,11 @@
 
         <section class="board bj-board">
           <div class="bj-badge">🃏</div>
+          <div class="win-card" id="winCard">
+            <div class="t"><span id="winMult">1.00</span>×</div>
+            <div class="sep"></div>
+            <div class="v"><span class="key">🔑</span> <span id="winAmt">+0</span></div>
+          </div>
           <div class="bj-table" id="bjTable" style="display:none;">
             <div class="bj-hand-row">
               <div class="bj-hand-label" id="dealerLabel">Dealer</div>
@@ -563,6 +578,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const splitBtn=document.getElementById('splitBtn'), doubleBtn=document.getElementById('doubleBtn');
   const bjTable=document.getElementById('bjTable'), bjPlaceholder=document.getElementById('bjPlaceholder');
   const bjResultEl=document.getElementById('bjResult');
+  const winCard=document.getElementById('winCard'), winMultEl=document.getElementById('winMult'), winAmtEl=document.getElementById('winAmt');
+  const roundKeysClient = n => Math.round(n * 100) / 100;
   const dealerCardsEl=document.getElementById('dealerCards'), dealerLabelEl=document.getElementById('dealerLabel');
   const playerRows=[document.getElementById('playerHandRow0'), document.getElementById('playerHandRow1')];
   const playerCardsEls=[document.getElementById('playerCards0'), document.getElementById('playerCards1')];
@@ -599,6 +616,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     bjPlaceholder.style.display = 'none';
     bjTable.style.display = 'flex';
     bjResultEl.style.display = 'none';
+    winCard.classList.remove('show');
 
     const dealerVal = state.dealerHidden ? cardValueLabel([state.dealerCards[0]]) : cardValueLabel(state.dealerCards);
     dealerLabelEl.innerHTML = `Dealer <span class="total">${state.dealerHidden ? dealerVal+' + ?' : dealerVal}</span>`;
@@ -641,6 +659,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       bjResultEl.textContent = label + ` (${totalPayout>0?'+':''}${(totalPayout-totalBet).toFixed(2)} 🔑)`;
       bjResultEl.className = 'bj-result ' + cls;
       bjResultEl.style.display = 'block';
+      // Carte de gain centrée (même animation que Mines et Slot)
+      if (totalPayout > totalBet){
+        winMultEl.textContent = (totalPayout / totalBet).toFixed(2);
+        winAmtEl.textContent = '+' + roundKeysClient(totalPayout - totalBet);
+        winCard.classList.add('show');
+      }
       loadHistory();
     }
   }
@@ -649,6 +673,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     bjTable.style.display = 'none';
     bjPlaceholder.style.display = 'flex';
     bjResultEl.style.display = 'none';
+    winCard.classList.remove('show');
     hitBtn.disabled = true; standBtn.disabled = true; splitBtn.disabled = true; doubleBtn.disabled = true;
     playBtn.disabled = false; playBtn.textContent = 'Bet';
     betRow.querySelectorAll('input,button').forEach(el => el.disabled = false);

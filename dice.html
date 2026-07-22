@@ -131,6 +131,16 @@
     padding:20px 24px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
   .board-area{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
 
+
+  .win-card{position:absolute;top:50%;left:50%;background:rgba(15,11,6,.96);border:2px solid var(--green);
+    border-radius:20px;padding:22px 34px;text-align:center;box-shadow:0 0 50px rgba(95,214,139,.4), 0 20px 50px rgba(0,0,0,.5);
+    opacity:0;transform:translate(-50%,-50%) scale(.85);transition:.25s;pointer-events:none;z-index:5}
+  .win-card.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .win-card .t{font-family:"Baloo 2";font-weight:800;font-size:34px;line-height:1.1;color:var(--green)}
+  .win-card .sep{height:1px;background:var(--line);margin:10px 0}
+  .win-card .v{color:var(--green);font-weight:800;font-size:19px}
+  .win-card .v .key{color:var(--gold)}
+
   /* ---------- Dice ---------- */
   .dice-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .dice-stats .stat{
@@ -397,6 +407,11 @@
         </aside>
 
         <section class="board dice-board">
+          <div class="win-card" id="winCard">
+            <div class="t"><span id="winMult">1.00</span>×</div>
+            <div class="sep"></div>
+            <div class="v"><span class="key">🔑</span> <span id="winAmt">+0</span></div>
+          </div>
           <div class="dice-result" id="diceResult" style="display:none;"></div>
           <div class="dice-track-wrap">
             <div class="dice-track" id="diceTrack">
@@ -562,6 +577,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const winChanceEl=document.getElementById('winChance'), diceMultEl=document.getElementById('diceMult');
   const diceTrack=document.getElementById('diceTrack'), diceMarker=document.getElementById('diceMarker');
   const diceResultEl=document.getElementById('diceResult'), dicePlaceholder=document.getElementById('dicePlaceholder');
+  const winCard=document.getElementById('winCard'), winMultEl=document.getElementById('winMult'), winAmtEl=document.getElementById('winAmt');
 
   let direction = 'under'; // 'under' ou 'over'
   let busy=false;
@@ -605,6 +621,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (!(bet>0)){ betRow.classList.add('err'); setTimeout(()=>betRow.classList.remove('err'),1200); return; }
 
     busy=true; playBtn.disabled=true;
+    winCard.classList.remove('show');
     try{
       const resp = await fetch(`${workerBase}/dice/roll`, {
         method:'POST', headers:{'Content-Type':'application/json'},
@@ -625,6 +642,15 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       diceResultEl.style.display = 'block';
       diceResultEl.className = 'dice-result ' + (data.won ? 'win' : 'lose');
       diceResultEl.textContent = data.roll.toFixed(2) + (data.won ? ` (+${data.payout} 🔑)` : ' (Perdu)');
+      // Carte de gain centrée (même animation que Mines et Slot), affichée une fois
+      // que le marqueur a fini de glisser jusqu'à sa position.
+      if (data.won){
+        setTimeout(() => {
+          winMultEl.textContent = data.multiplier.toFixed(2);
+          winAmtEl.textContent = '+' + data.payout;
+          winCard.classList.add('show');
+        }, 550);
+      }
       loadHistory();
     }catch(e){
       showAlert('Erreur réseau, réessaie.');
