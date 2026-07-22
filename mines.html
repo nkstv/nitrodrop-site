@@ -774,7 +774,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   async function trackVisitor(){
     await sendHeartbeat();
     await refreshVisitorCount();
-    setInterval(async () => { await sendHeartbeat(); await refreshVisitorCount(); }, 20000);
+    setInterval(async () => { await sendHeartbeat(); await refreshVisitorCount(); }, 45000);
   }
   trackVisitor();
 
