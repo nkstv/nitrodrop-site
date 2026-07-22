@@ -52,9 +52,9 @@
   }
   td{padding:8px 10px; font-size:12px; border-bottom:1px solid var(--line); vertical-align:middle;}
   .cell-truncate{max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; cursor:help;}
-  #table-scroll{overflow-x:auto; border-radius:14px;}
-  #table-scroll::-webkit-scrollbar{height:8px;}
-  #table-scroll::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:4px;}
+  #table-scroll, #users-table-scroll{overflow-x:auto; border-radius:14px;}
+  #table-scroll::-webkit-scrollbar, #users-table-scroll::-webkit-scrollbar{height:8px;}
+  #table-scroll::-webkit-scrollbar-thumb, #users-table-scroll::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:4px;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:rgba(255,255,255,0.02);}
   .mono{font-family:'JetBrains Mono'; font-size:12px; color:var(--text-dim);}
@@ -95,6 +95,7 @@
       <button class="dash-tab" id="tab-btn-slot" onclick="switchDashTab('slot')">🎰 Machine à sous</button>
       <button class="dash-tab" id="tab-btn-wheel" onclick="switchDashTab('wheel')">🎡 Roue</button>
       <button class="dash-tab" id="tab-btn-affiliates" onclick="switchDashTab('affiliates')">📊 Affiliés</button>
+      <button class="dash-tab" id="tab-btn-users" onclick="switchDashTab('users')">👥 Utilisateurs</button>
     </div>
 
     <div id="tab-bonus">
@@ -252,6 +253,21 @@
       </div>
       <div class="stats" id="affiliate-stats"></div>
       <div id="affiliate-table-container"></div>
+    </div>
+
+    <div id="tab-users" style="display:none;">
+      <div class="stats" id="users-stats"></div>
+
+      <div class="toolbar">
+        <input type="text" id="users-filter-search" placeholder="Rechercher pseudo / Discord ID..." oninput="applyUsersFilters()" style="min-width:260px;">
+        <select id="users-filter-banned" onchange="applyUsersFilters()">
+          <option value="">Statut : tous</option>
+          <option value="active">Actif</option>
+          <option value="banned">Banni</option>
+        </select>
+      </div>
+
+      <div id="users-table-container"></div>
     </div>
   </div>
 </div>
@@ -731,6 +747,7 @@
   let allWheelPlays = [];
   let wheelLoaded = false;
   let affiliatesLoaded = false;
+  let usersLoaded = false;
   let activeDashTab = 'bonus';
 
   function switchDashTab(tab){
@@ -740,11 +757,13 @@
     document.getElementById('tab-slot').style.display = tab === 'slot' ? '' : 'none';
     document.getElementById('tab-wheel').style.display = tab === 'wheel' ? '' : 'none';
     document.getElementById('tab-affiliates').style.display = tab === 'affiliates' ? '' : 'none';
+    document.getElementById('tab-users').style.display = tab === 'users' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-scratch').classList.toggle('active', tab === 'scratch');
     document.getElementById('tab-btn-slot').classList.toggle('active', tab === 'slot');
     document.getElementById('tab-btn-wheel').classList.toggle('active', tab === 'wheel');
     document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
+    document.getElementById('tab-btn-users').classList.toggle('active', tab === 'users');
     if (tab === 'scratch' && !scratchLoaded){
       loadScratchPlays();
     }
@@ -753,6 +772,9 @@
     }
     if (tab === 'wheel' && !wheelLoaded){
       loadWheelPlays();
+    }
+    if (tab === 'users' && !usersLoaded){
+      loadUsers();
     }
     if (tab === 'affiliates' && !affiliatesLoaded){
       affiliatesLoaded = true;
@@ -768,6 +790,8 @@
       loadSlotPlays();
     } else if (activeDashTab === 'wheel'){
       loadWheelPlays();
+    } else if (activeDashTab === 'users'){
+      loadUsers();
     } else {
       loadSubmissions();
     }
@@ -1383,6 +1407,142 @@
         <tbody>${rows}</tbody>
       </table>
     `;
+  }
+
+  // ==================================================================
+  // Onglet Utilisateurs — annuaire des joueurs Mines/Blackjack, recherche,
+  // ajustement des clés, bannissement.
+  // ==================================================================
+  let allUsers = [];
+  let filteredUsers = [];
+
+  async function loadUsers(){
+    usersLoaded = true;
+    const container = document.getElementById('users-table-container');
+    container.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/admin/users`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      allUsers = data.users || [];
+      renderUsersStats(data.total || allUsers.length, data.dailyKeys);
+      applyUsersFilters();
+    }catch(e){
+      container.innerHTML = `<div class="empty">Erreur de chargement : ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  function renderUsersStats(total, dailyKeys){
+    const totalKeys = allUsers.reduce((sum, u) => sum + (u.keys || 0), 0);
+    const bannedCount = allUsers.filter(u => u.banned).length;
+    document.getElementById('users-stats').innerHTML = `
+      <div class="stat"><div class="n">${total}</div><div class="l">Joueurs connus</div></div>
+      <div class="stat"><div class="n">${totalKeys.toFixed(2)}</div><div class="l">Clés en circulation</div></div>
+      <div class="stat"><div class="n">${bannedCount}</div><div class="l">Bannis</div></div>
+      <div class="stat"><div class="n">${dailyKeys != null ? dailyKeys : '—'}</div><div class="l">Clés offertes / jour</div></div>
+    `;
+  }
+
+  function applyUsersFilters(){
+    const search = document.getElementById('users-filter-search').value.toLowerCase().trim();
+    const bannedFilter = document.getElementById('users-filter-banned').value;
+    filteredUsers = allUsers.filter(u => {
+      if (search && !u.pseudo.toLowerCase().includes(search) && !u.discordId.includes(search)) return false;
+      if (bannedFilter === 'active' && u.banned) return false;
+      if (bannedFilter === 'banned' && !u.banned) return false;
+      return true;
+    });
+    renderUsersTable();
+  }
+
+  function renderUsersTable(){
+    const container = document.getElementById('users-table-container');
+    if (filteredUsers.length === 0){
+      container.innerHTML = '<div class="empty">Aucun joueur ne correspond à ces filtres.</div>';
+      return;
+    }
+    const rows = filteredUsers.map(u => {
+      const created = discordIdToDate(u.discordId);
+      const createdLabel = created ? created.toLocaleDateString('fr-FR') : '—';
+      const lastSeenLabel = u.lastSeen ? new Date(u.lastSeen).toLocaleString('fr-FR') : '—';
+      const avatarSrc = u.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png';
+      return `
+        <tr id="user-row-${escapeHtml(u.discordId)}">
+          <td>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <img src="${escapeHtml(avatarSrc)}" alt="" referrerpolicy="no-referrer" style="width:26px; height:26px; border-radius:50%; object-fit:cover; flex:none;">
+              <span class="cell-truncate" title="${escapeHtml(u.pseudo)}">${escapeHtml(u.pseudo || '?')}</span>
+            </span>
+          </td>
+          <td class="mono cell-truncate" title="${escapeHtml(u.discordId)}">${escapeHtml(u.discordId)}</td>
+          <td><b id="user-keys-${escapeHtml(u.discordId)}">${(u.keys || 0).toFixed(2)}</b></td>
+          <td class="mono">${lastSeenLabel}</td>
+          <td class="mono">${createdLabel}</td>
+          <td>${u.banned ? '<span class="badge" style="color:#FF7A90; border-color:#FF7A90;">Banni</span>' : '<span class="badge" style="color:var(--green); border-color:var(--green);">Actif</span>'}</td>
+          <td>
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              <input type="number" id="user-amount-${escapeHtml(u.discordId)}" placeholder="Montant" min="0" step="1" style="width:80px; padding:6px 8px;">
+              <button type="button" class="btn" onclick="adjustUserKeys('${escapeHtml(u.discordId)}','add')">+ Ajouter</button>
+              <button type="button" class="btn" onclick="adjustUserKeys('${escapeHtml(u.discordId)}','remove')">− Retirer</button>
+              <button type="button" class="btn" onclick="toggleUserBan('${escapeHtml(u.discordId)}', ${!u.banned})">${u.banned ? 'Débannir' : 'Bannir'}</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+    container.innerHTML = `
+      <div id="users-table-scroll">
+        <table>
+          <thead><tr><th>Joueur</th><th>Discord ID</th><th>Clés</th><th>Vu la dernière fois</th><th>Compte Discord créé le</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  async function adjustUserKeys(discordId, mode){
+    const input = document.getElementById(`user-amount-${discordId}`);
+    const amount = parseFloat(input.value);
+    if (!Number.isFinite(amount) || amount <= 0){
+      alert('Entre un montant valide avant d\'ajouter ou retirer des clés.');
+      return;
+    }
+    try{
+      const resp = await fetch(`${workerBaseUrl}/admin/users/keys`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ discordId, mode, amount }),
+      });
+      const data = await resp.json();
+      if (!data.ok){ alert('Échec de la mise à jour du solde.'); return; }
+      const user = allUsers.find(u => u.discordId === discordId);
+      if (user) user.keys = data.keys;
+      const keysEl = document.getElementById(`user-keys-${discordId}`);
+      if (keysEl) keysEl.textContent = data.keys.toFixed(2);
+      input.value = '';
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
+  }
+
+  async function toggleUserBan(discordId, banned){
+    if (!confirm(banned ? 'Bannir ce joueur des mini-jeux ?' : 'Débannir ce joueur ?')) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/admin/users/ban`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ discordId, banned }),
+      });
+      const data = await resp.json();
+      if (!data.ok){ alert('Échec de la mise à jour du statut.'); return; }
+      const user = allUsers.find(u => u.discordId === discordId);
+      if (user) user.banned = banned;
+      applyUsersFilters();
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
   }
 </script>
 

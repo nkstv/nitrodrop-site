@@ -580,6 +580,7 @@
       if (!data.ok){
         if (data.reason==='insufficient_keys') alert('Solde de clés insuffisant.');
         else if (data.reason==='round_in_progress') alert('Une partie est déjà en cours.');
+        else if (data.reason==='banned') alert('Ton compte a été banni des mini-jeux.');
         else alert("Impossible de démarrer la partie.");
         busy=false; playBtn.disabled=false;
         return;
