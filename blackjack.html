@@ -167,8 +167,14 @@
     width:56px;height:78px;border-radius:9px;background:linear-gradient(180deg,#fdf8ec,#efe4c8);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     font-family:"Baloo 2";font-weight:800;font-size:19px;box-shadow:0 3px 10px rgba(0,0,0,.35);
-    animation:reveal .22s ease;
+    animation:reveal .28s ease backwards;
   }
+  .bj-cards .bj-card:nth-child(1){animation-delay:0s}
+  .bj-cards .bj-card:nth-child(2){animation-delay:.18s}
+  .bj-cards .bj-card:nth-child(3){animation-delay:.36s}
+  .bj-cards .bj-card:nth-child(4){animation-delay:.54s}
+  .bj-cards .bj-card:nth-child(5){animation-delay:.72s}
+  .bj-cards .bj-card:nth-child(n+6){animation-delay:.9s}
   .bj-card.red{color:#c0392b;} .bj-card.black{color:#20180d;}
   .bj-card.back{background:linear-gradient(135deg,#3a2c14,#221a10);border:2px solid var(--gold-deep);color:transparent;}
   .bj-card .suit{font-size:15px;margin-top:2px;}
@@ -287,6 +293,25 @@
     .bets{padding:12px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
+  .custom-alert-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
+  }
+  .custom-alert-overlay.show{display:flex;}
+  .custom-alert-box{
+    background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:18px;
+    padding:24px 26px; max-width:340px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.55);
+    animation:reveal .18s ease;
+  }
+  .custom-alert-title{font-family:"Baloo 2"; font-weight:800; font-size:15px; color:var(--gold); margin-bottom:10px;}
+  .custom-alert-msg{font-size:14.5px; color:var(--cream); line-height:1.5; margin-bottom:20px;}
+  .custom-alert-btn{
+    width:100%; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:12px; border-radius:12px; transition:.15s;
+  }
+  .custom-alert-btn:hover{filter:brightness(1.06);}
 </style>
 </head>
 <body>
@@ -345,7 +370,7 @@
       <h1>Blackjack</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
-        <span class="live"><span class="dot"></span><span id="visitor-count">—</span> visiteurs</span>
+        <span class="live">👀 <span id="visitor-count">—</span> visiteurs au total</span>
         <button class="icon-btn" aria-label="Notifications">🔔</button>
       </div>
     </div>
@@ -456,12 +481,25 @@
   </div>
 </div>
 
+<div class="custom-alert-overlay" id="customAlertOverlay">
+  <div class="custom-alert-box">
+    <div class="custom-alert-title">drop-cash.com</div>
+    <div class="custom-alert-msg" id="customAlertMsg"></div>
+    <button class="custom-alert-btn" id="customAlertOkBtn" type="button">OK</button>
+  </div>
+</div>
+
 <script src="nitrodrop-config.js?v=20260721a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
+  function formatLocalTime(dateMs){
+    if (!dateMs) return '';
+    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+  }
 
   function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -510,7 +548,7 @@
 
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){ alert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
@@ -523,6 +561,18 @@
   }
 </script>
 <script>
+// Popup d'alerte maison (remplace alert() natif du navigateur) — globale, utilisée
+// aussi bien ici que dans le script d'identité partagé (connectDiscord, etc.)
+const customAlertOverlay = document.getElementById('customAlertOverlay');
+const customAlertMsg = document.getElementById('customAlertMsg');
+function showAlert(message){
+  customAlertMsg.textContent = message;
+  customAlertOverlay.classList.add('show');
+}
+document.getElementById('customAlertOkBtn').addEventListener('click', () => {
+  customAlertOverlay.classList.remove('show');
+});
+
 (async function(){
   const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
   const toggle=o=>{drawer.classList.toggle('open',o);scrim.classList.toggle('open',o);document.body.style.overflow=o?'hidden':''};
@@ -658,17 +708,17 @@
       });
       const data = await resp.json();
       if (!data.ok){
-        if (data.reason==='insufficient_keys') alert('Solde de clés insuffisant.');
-        else if (data.reason==='round_in_progress') alert('Une partie est déjà en cours.');
-        else if (data.reason==='banned') alert('Ton compte a été banni des mini-jeux.');
-        else alert("Impossible de lancer la donne.");
+        if (data.reason==='insufficient_keys') showAlert('Solde de clés insuffisant.');
+        else if (data.reason==='round_in_progress') showAlert('Une partie est déjà en cours.');
+        else if (data.reason==='banned') showAlert('Ton compte a été banni des mini-jeux.');
+        else showAlert("Impossible de lancer la donne.");
         playBtn.disabled=false; busy=false;
         return;
       }
       setBalance(data.keys);
       renderState(data.state);
     }catch(e){
-      alert('Erreur réseau, réessaie.');
+      showAlert('Erreur réseau, réessaie.');
       playBtn.disabled=false;
     }
     busy=false;
@@ -685,7 +735,7 @@
       });
       const data = await resp.json();
       if (!data.ok){
-        if (data.reason==='insufficient_keys') alert('Solde de clés insuffisant pour cette action.');
+        if (data.reason==='insufficient_keys') showAlert('Solde de clés insuffisant pour cette action.');
         busy=false;
         return;
       }
@@ -717,14 +767,26 @@
     rows.innerHTML='';
     list.forEach(p => {
       const tr=document.createElement('tr');
-      const resultLabel = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Gagné' : p.result==='push' ? 'Égalité' : 'Perdu';
-      const resultCls = (p.result==='win'||p.result==='blackjack') ? 'win' : p.result==='push' ? '' : 'lose';
-      tr.innerHTML=`<td><span class="g"><span class="ic">🃏</span>Blackjack</span></td>
+      const isMines = p.game === 'mines';
+      const gameIcon = isMines ? '💣' : '🃏';
+      const gameName = isMines ? 'Mines' : 'Blackjack';
+      let resultHtml, payout;
+      if (isMines){
+        const mult = p.busted ? 0 : p.multiplier;
+        payout = p.busted ? 0 : p.payout;
+        resultHtml = `<span class="${mult>=2?'win':mult===0?'lose':''}">${(mult.toFixed ? mult.toFixed(2) : mult)}×</span>`;
+      } else {
+        payout = p.payout;
+        const label = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Gagné' : p.result==='push' ? 'Égalité' : 'Perdu';
+        const cls = (p.result==='win'||p.result==='blackjack') ? 'win' : p.result==='push' ? '' : 'lose';
+        resultHtml = `<span class="${cls}">${label}</span>`;
+      }
+      tr.innerHTML=`<td><span class="g"><span class="ic">${gameIcon}</span>${gameName}</span></td>
         <td><span class="p"><img class="pfp" src="${escapeHtml(p.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="" referrerpolicy="no-referrer">${escapeHtml(p.pseudo||'?')}</span></td>
-        <td class="time">${p.date ? p.date.slice(11,16) : ''}</td>
+        <td class="time">${formatLocalTime(p.dateMs)}</td>
         <td><span class="key">🔑</span> ${escapeHtml(String(p.bet))}</td>
-        <td class="${resultCls}">${resultLabel}</td>
-        <td class="${p.payout>p.bet?'win':''}"><span class="key">🔑</span> ${escapeHtml(String(p.payout))}</td>`;
+        <td>${resultHtml}</td>
+        <td class="${payout>p.bet?'win':''}"><span class="key">🔑</span> ${escapeHtml(String(payout))}</td>`;
       rows.appendChild(tr);
     });
   }
@@ -732,17 +794,28 @@
   async function loadHistory(){
     if (!workerBase) return;
     try{
+      let minesList = [], bjList = [];
       if (activeTab === 'mine'){
         const discordId = getSharedDiscordId();
         if (!discordId){ renderHistoryRows([]); return; }
-        const resp = await fetch(`${workerBase}/blackjack/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`);
-        const data = await resp.json();
-        renderHistoryRows(data.history || []);
+        const [r1, r2] = await Promise.all([
+          fetch(`${workerBase}/mines/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`),
+          fetch(`${workerBase}/blackjack/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`),
+        ]);
+        const d1 = await r1.json(), d2 = await r2.json();
+        minesList = (d1.history || []).map(p => ({ ...p, game: 'mines' }));
+        bjList = (d2.history || []).map(p => ({ ...p, game: 'blackjack' }));
       } else {
-        const resp = await fetch(`${workerBase}/blackjack/history?limit=10`);
-        const data = await resp.json();
-        renderHistoryRows(data.history || []);
+        const [r1, r2] = await Promise.all([
+          fetch(`${workerBase}/mines/history?limit=10`),
+          fetch(`${workerBase}/blackjack/history?limit=10`),
+        ]);
+        const d1 = await r1.json(), d2 = await r2.json();
+        minesList = (d1.history || []).map(p => ({ ...p, game: 'mines' }));
+        bjList = (d2.history || []).map(p => ({ ...p, game: 'blackjack' }));
       }
+      const merged = [...minesList, ...bjList].sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0)).slice(0, 10);
+      renderHistoryRows(merged);
     }catch(e){}
   }
 

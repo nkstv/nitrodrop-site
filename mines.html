@@ -104,7 +104,8 @@
 
   .controls{background:linear-gradient(180deg,var(--panel-2),rgba(34,26,16,.6));
     border-right:1px solid var(--line);padding:20px 18px;display:flex;flex-direction:column;gap:14px}
-  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg-soft);border-radius:30px;padding:4px;border:1px solid var(--line)}
+  .seg{display:grid;grid-template-columns:1fr;background:var(--bg-soft);border-radius:30px;padding:4px;border:1px solid var(--line)}
+  .seg button:disabled{cursor:default;}
   .seg button{padding:10px 0;border-radius:26px;font-weight:800;letter-spacing:1.6px;font-size:12px;color:var(--muted);transition:.18s}
   .seg button.on{background:var(--panel-3);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(232,193,104,.15)}
   .field label{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;margin-bottom:8px}
@@ -268,6 +269,25 @@
     .bets{padding:12px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
+  .custom-alert-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
+  }
+  .custom-alert-overlay.show{display:flex;}
+  .custom-alert-box{
+    background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:18px;
+    padding:24px 26px; max-width:340px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.55);
+    animation:reveal .18s ease;
+  }
+  .custom-alert-title{font-family:"Baloo 2"; font-weight:800; font-size:15px; color:var(--gold); margin-bottom:10px;}
+  .custom-alert-msg{font-size:14.5px; color:var(--cream); line-height:1.5; margin-bottom:20px;}
+  .custom-alert-btn{
+    width:100%; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:12px; border-radius:12px; transition:.15s;
+  }
+  .custom-alert-btn:hover{filter:brightness(1.06);}
 </style>
 </head>
 <body>
@@ -326,7 +346,7 @@
       <h1>Mines</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
-        <span class="live"><span class="dot"></span><span id="visitor-count">—</span> visiteurs</span>
+        <span class="live">👀 <span id="visitor-count">—</span> visiteurs au total</span>
         <button class="icon-btn" aria-label="Notifications">🔔</button>
       </div>
     </div>
@@ -335,8 +355,7 @@
       <div class="game-wrap">
         <aside class="controls">
           <div class="seg">
-            <button class="on" id="segManual">MANUAL</button>
-            <button id="segAuto">AUTO</button>
+            <button class="on" type="button" disabled>MANUAL</button>
           </div>
           <div class="field">
             <label>Bet Amount <span class="bal">🔑 <b id="balance">0</b> KEYS</span></label>
@@ -390,7 +409,7 @@
       </div>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Game</th><th>Player</th><th>Time</th><th>Bet</th><th>Multiplier</th><th>Payout</th></tr></thead>
+          <thead><tr><th>Game</th><th>Player</th><th>Time</th><th>Bet</th><th>Result</th><th>Payout</th></tr></thead>
           <tbody id="betRows"></tbody>
         </table>
       </div>
@@ -426,12 +445,25 @@
   </div>
 </div>
 
+<div class="custom-alert-overlay" id="customAlertOverlay">
+  <div class="custom-alert-box">
+    <div class="custom-alert-title">drop-cash.com</div>
+    <div class="custom-alert-msg" id="customAlertMsg"></div>
+    <button class="custom-alert-btn" id="customAlertOkBtn" type="button">OK</button>
+  </div>
+</div>
+
 <script src="nitrodrop-config.js?v=20260721a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
+  function formatLocalTime(dateMs){
+    if (!dateMs) return '';
+    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+  }
 
   function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -480,7 +512,7 @@
 
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){ alert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
@@ -493,6 +525,18 @@
   }
 </script>
 <script>
+// Popup d'alerte maison (remplace alert() natif du navigateur) — globale, utilisée
+// aussi bien ici que dans le script d'identité partagé (connectDiscord, etc.)
+const customAlertOverlay = document.getElementById('customAlertOverlay');
+const customAlertMsg = document.getElementById('customAlertMsg');
+function showAlert(message){
+  customAlertMsg.textContent = message;
+  customAlertOverlay.classList.add('show');
+}
+document.getElementById('customAlertOkBtn').addEventListener('click', () => {
+  customAlertOverlay.classList.remove('show');
+});
+
 (async function(){
   const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
   const toggle=o=>{drawer.classList.toggle('open',o);scrim.classList.toggle('open',o);document.body.style.overflow=o?'hidden':''};
@@ -578,10 +622,10 @@
       });
       const data = await resp.json();
       if (!data.ok){
-        if (data.reason==='insufficient_keys') alert('Solde de clés insuffisant.');
-        else if (data.reason==='round_in_progress') alert('Une partie est déjà en cours.');
-        else if (data.reason==='banned') alert('Ton compte a été banni des mini-jeux.');
-        else alert("Impossible de démarrer la partie.");
+        if (data.reason==='insufficient_keys') showAlert('Solde de clés insuffisant.');
+        else if (data.reason==='round_in_progress') showAlert('Une partie est déjà en cours.');
+        else if (data.reason==='banned') showAlert('Ton compte a été banni des mini-jeux.');
+        else showAlert("Impossible de démarrer la partie.");
         busy=false; playBtn.disabled=false;
         return;
       }
@@ -593,7 +637,7 @@
       updateStatsDisplay();
       setPlayBtnState();
     }catch(e){
-      alert('Erreur réseau, réessaie.');
+      showAlert('Erreur réseau, réessaie.');
     }
     busy=false;
   }
@@ -657,14 +701,9 @@
     setPlayBtnState();
   }
 
-  playBtn.addEventListener('click', () => {
-    if (segAuto.classList.contains('on')){ toggleAutoPlay(); return; }
-    if (alive) cashOut(); else startRound();
-  });
+  playBtn.addEventListener('click', () => { if (alive) cashOut(); else startRound(); });
   document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(1,Math.floor((+betInput.value||0)/2)));
   document.getElementById('double').addEventListener('click',()=>betInput.value=(+betInput.value||0)*2);
-  segManual.addEventListener('click',()=>{segManual.classList.add('on');segAuto.classList.remove('on');stopAutoPlay();setPlayBtnState();});
-  segAuto.addEventListener('click',()=>{segAuto.classList.add('on');segManual.classList.remove('on');setPlayBtnState();});
 
   // ---------------- Difficulté (Low/Medium/High) ----------------
   const DIFFICULTY_LEVELS = [
@@ -687,56 +726,7 @@
   });
   setDifficulty(1); // Medium par défaut, comme avant
 
-  // ---------------- Auto (joue automatiquement N manches) ----------------
-  const AUTO_ROUNDS_TOTAL = 10;
-  const AUTO_SAFE_REVEALS = 3; // révèle 3 cases sûres par manche puis encaisse
-  let autoRunning = false, autoRoundsLeft = 0;
-
-  function stopAutoPlay(){
-    autoRunning = false;
-    setPlayBtnState();
-  }
-
-  async function toggleAutoPlay(){
-    if (autoRunning){ stopAutoPlay(); return; }
-    if (!getSharedDiscordId()){ connectDiscord(); return; }
-    autoRunning = true;
-    autoRoundsLeft = AUTO_ROUNDS_TOTAL;
-    runNextAutoRound();
-  }
-
-  async function runNextAutoRound(){
-    if (!autoRunning || autoRoundsLeft <= 0){ autoRunning=false; setPlayBtnState(); return; }
-    autoRoundsLeft--;
-    setPlayBtnState();
-    await startRound();
-    if (!alive){ setTimeout(runNextAutoRound, 900); return; } // le lancement a échoué (solde insuffisant, etc.)
-
-    const tileIndices = [...Array(25).keys()];
-    for (let i = tileIndices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [tileIndices[i], tileIndices[j]] = [tileIndices[j], tileIndices[i]];
-    }
-
-    let revealsDone = 0;
-    for (const idx of tileIndices) {
-      if (!autoRunning || !alive || revealsDone >= AUTO_SAFE_REVEALS) break;
-      const tile = grid.children[idx];
-      await reveal(tile);
-      revealsDone++;
-      await new Promise(r => setTimeout(r, 450));
-    }
-    if (alive && step > 0) await cashOut();
-
-    if (autoRunning) setTimeout(runNextAutoRound, 900);
-  }
-
   function setPlayBtnState(){
-    if (autoRunning){
-      playBtn.textContent = `Stop (${autoRoundsLeft} restantes)`;
-      playBtn.disabled = false;
-      return;
-    }
     if (alive){
       playBtn.textContent = step>0 ? 'Cash Out' : 'En jeu…';
       playBtn.disabled = step===0;
@@ -778,13 +768,25 @@
     rows.innerHTML='';
     list.forEach(p => {
       const tr=document.createElement('tr');
-      const mult = p.busted ? 0 : p.multiplier;
-      const payout = p.busted ? 0 : p.payout;
-      tr.innerHTML=`<td><span class="g"><span class="ic">💣</span>Mines</span></td>
+      const isMines = p.game === 'mines';
+      const gameIcon = isMines ? '💣' : '🃏';
+      const gameName = isMines ? 'Mines' : 'Blackjack';
+      let resultHtml, payout;
+      if (isMines){
+        const mult = p.busted ? 0 : p.multiplier;
+        payout = p.busted ? 0 : p.payout;
+        resultHtml = `<span class="${mult>=2?'win':mult===0?'lose':''}">${(mult.toFixed ? mult.toFixed(2) : mult)}×</span>`;
+      } else {
+        payout = p.payout;
+        const label = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Gagné' : p.result==='push' ? 'Égalité' : 'Perdu';
+        const cls = (p.result==='win'||p.result==='blackjack') ? 'win' : p.result==='push' ? '' : 'lose';
+        resultHtml = `<span class="${cls}">${label}</span>`;
+      }
+      tr.innerHTML=`<td><span class="g"><span class="ic">${gameIcon}</span>${gameName}</span></td>
         <td><span class="p"><img class="pfp" src="${escapeHtml(p.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="" referrerpolicy="no-referrer">${escapeHtml(p.pseudo||'?')}</span></td>
-        <td class="time">${p.date ? p.date.slice(11,16) : ''}</td>
+        <td class="time">${formatLocalTime(p.dateMs)}</td>
         <td><span class="key">🔑</span> ${escapeHtml(String(p.bet))}</td>
-        <td class="${mult>=2?'win':mult===0?'lose':''}">${mult.toFixed ? mult.toFixed(2) : mult}×</td>
+        <td>${resultHtml}</td>
         <td class="${payout>p.bet?'win':''}"><span class="key">🔑</span> ${escapeHtml(String(payout))}</td>`;
       rows.appendChild(tr);
     });
@@ -793,17 +795,28 @@
   async function loadHistory(){
     if (!workerBase) return;
     try{
+      let minesList = [], bjList = [];
       if (activeTab === 'mine'){
         const discordId = getSharedDiscordId();
         if (!discordId){ renderHistoryRows([]); return; }
-        const resp = await fetch(`${workerBase}/mines/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`);
-        const data = await resp.json();
-        renderHistoryRows(data.history || []);
+        const [r1, r2] = await Promise.all([
+          fetch(`${workerBase}/mines/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`),
+          fetch(`${workerBase}/blackjack/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`),
+        ]);
+        const d1 = await r1.json(), d2 = await r2.json();
+        minesList = (d1.history || []).map(p => ({ ...p, game: 'mines' }));
+        bjList = (d2.history || []).map(p => ({ ...p, game: 'blackjack' }));
       } else {
-        const resp = await fetch(`${workerBase}/mines/history?limit=10`);
-        const data = await resp.json();
-        renderHistoryRows(data.history || []);
+        const [r1, r2] = await Promise.all([
+          fetch(`${workerBase}/mines/history?limit=10`),
+          fetch(`${workerBase}/blackjack/history?limit=10`),
+        ]);
+        const d1 = await r1.json(), d2 = await r2.json();
+        minesList = (d1.history || []).map(p => ({ ...p, game: 'mines' }));
+        bjList = (d2.history || []).map(p => ({ ...p, game: 'blackjack' }));
       }
+      const merged = [...minesList, ...bjList].sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0)).slice(0, 10);
+      renderHistoryRows(merged);
     }catch(e){}
   }
 
