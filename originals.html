@@ -883,8 +883,8 @@
   });
 
   // ---------- Base commune pour les appels au Worker (mini-jeux) ----------
-  function saveDiscordIdentity(discordId, username){
-    const payload = JSON.stringify({ discordId, username });
+  function saveDiscordIdentity(discordId, username, avatarUrl){
+    const payload = JSON.stringify({ discordId, username, avatarUrl });
     try{
       localStorage.setItem(DISCORD_STORAGE_KEY, payload);
     }catch(e){}
@@ -985,8 +985,8 @@
 
   window.addEventListener('message', (event) => {
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
-    const { discordId, username } = event.data;
-    saveDiscordIdentity(discordId, username);
+    const { discordId, username, avatarUrl } = event.data;
+    saveDiscordIdentity(discordId, username, avatarUrl);
     applySharedIdentity();
   });
 </script>

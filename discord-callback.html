@@ -48,11 +48,26 @@
     if (!resp.ok) throw new Error('Réponse Discord invalide (' + resp.status + ')');
     const user = await resp.json();
 
+    // URL de l'avatar Discord (le vrai s'il existe, sinon l'avatar par défaut Discord)
+    let avatarUrl;
+    if (user.avatar){
+      const ext = user.avatar.startsWith('a_') ? 'gif' : 'png';
+      avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=64`;
+    } else {
+      let defaultIndex = 0;
+      try{
+        defaultIndex = (user.discriminator && user.discriminator !== '0')
+          ? (parseInt(user.discriminator, 10) % 5)
+          : Number((BigInt(user.id) >> 22n) % 6n);
+      }catch(e){}
+      avatarUrl = `https://cdn.discordapp.com/embed/avatars/${defaultIndex}.png`;
+    }
+
     // Sauvegarde directe ici (localStorage + cookie), qu'il y ait un window.opener ou non.
     // Sur mobile, la connexion se fait en pleine page (pas de popup fiable), donc on ne peut
     // pas compter uniquement sur postMessage vers un window.opener qui n'existe pas.
     try{
-      const payload = JSON.stringify({ discordId: user.id, username: user.username });
+      const payload = JSON.stringify({ discordId: user.id, username: user.username, avatarUrl });
       try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
       try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
     }catch(e){}
@@ -74,7 +89,8 @@
         window.opener.postMessage({
           type: 'nitrodrop-discord-auth',
           discordId: user.id,
-          username: user.username
+          username: user.username,
+          avatarUrl
         }, '*');
       }catch(e){}
       msgEl.textContent = modal.callbackSuccessMessage || "Connecté ! Cette fenêtre va se fermer…";

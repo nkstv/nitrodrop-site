@@ -73,7 +73,7 @@
   .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:10px;border-top:1px solid var(--line)}
   .s-user{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);
     border-radius:14px;padding:8px 10px}
-  .s-user .pfp{width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57)}
+  .s-user .pfp{width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);object-fit:cover;}
   .s-user .n{font-weight:800;font-size:13.5px;line-height:1.2}
   .s-user .s{color:var(--muted);font-size:11px;font-weight:700}
   .s-user .out{margin-left:auto;color:var(--muted-2);font-size:14px;transition:.15s}
@@ -216,7 +216,7 @@
   .drawer.open{transform:translateY(0)}
   .handle{width:50px;height:4px;border-radius:4px;background:#4a4032;margin:3px auto 14px}
   .d-user{display:flex;align-items:center;gap:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:11px 12px}
-  .d-user .pfp{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);flex:none}
+  .d-user .pfp{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);flex:none;object-fit:cover;}
   .d-user .n{font-weight:800;font-size:17px}
   .d-user .s{color:var(--muted);font-weight:600;font-size:13px;margin-top:1px}
   .d-out{margin-left:auto;width:38px;height:38px;border-radius:50%;background:rgba(242,109,109,.14);
@@ -312,7 +312,7 @@
     <div class="side-foot">
       <button class="wallet-login-btn" id="side-login-btn" onclick="connectDiscord()">🎮 Se connecter</button>
       <div class="s-user" id="side-user" style="display:none;">
-        <div class="pfp"></div>
+        <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
         <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
         <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
       </div>
@@ -386,7 +386,7 @@
 
     <section class="bets">
       <div class="tabs">
-        <button class="on">All Bets</button><button>High Rollers</button><button>My Bets</button>
+        <button class="on">All Bets</button><button>My Bets</button>
       </div>
       <div class="table-scroll">
         <table>
@@ -404,7 +404,7 @@
 <div class="drawer" id="drawer" role="dialog" aria-label="Menu">
   <div class="handle"></div>
   <div class="d-user" id="drawer-user">
-    <div class="pfp"></div>
+    <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
     <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
     <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
   </div>
@@ -441,8 +441,8 @@
     return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
   }
 
-  function saveDiscordIdentity(discordId, username){
-    const payload = JSON.stringify({ discordId, username });
+  function saveDiscordIdentity(discordId, username, avatarUrl){
+    const payload = JSON.stringify({ discordId, username, avatarUrl });
     try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
     try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
   }
@@ -794,15 +794,13 @@
       if (activeTab === 'mine'){
         const discordId = getSharedDiscordId();
         if (!discordId){ renderHistoryRows([]); return; }
-        const resp = await fetch(`${workerBase}/mines/my-history?discordId=${encodeURIComponent(discordId)}&limit=20`);
+        const resp = await fetch(`${workerBase}/mines/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`);
         const data = await resp.json();
         renderHistoryRows(data.history || []);
       } else {
-        const resp = await fetch(`${workerBase}/mines/history?limit=20`);
+        const resp = await fetch(`${workerBase}/mines/history?limit=10`);
         const data = await resp.json();
-        let list = data.history || [];
-        if (activeTab === 'high') list = list.slice().sort((a,b) => b.payout - a.payout);
-        renderHistoryRows(list);
+        renderHistoryRows(data.history || []);
       }
     }catch(e){}
   }
@@ -811,7 +809,7 @@
     btn.addEventListener('click', () => {
       tabButtons.forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
-      activeTab = idx===0 ? 'all' : idx===1 ? 'high' : 'mine';
+      activeTab = idx===0 ? 'all' : 'mine';
       loadHistory();
     });
   });
@@ -822,14 +820,19 @@
     const sideLoginBtn = document.getElementById('side-login-btn');
     const sideUser = document.getElementById('side-user');
     const sideUserPseudo = document.getElementById('side-user-pseudo');
+    const sideUserPfp = document.getElementById('side-user-pfp');
     const drawerPseudo = document.getElementById('drawer-pseudo');
+    const drawerPfp = document.getElementById('drawer-user-pfp');
     const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
+    const fallbackAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 
     if (saved && saved.discordId){
       sideLoginBtn.style.display = 'none';
       sideUser.style.display = 'flex';
       sideUserPseudo.textContent = saved.username;
+      sideUserPfp.src = saved.avatarUrl || fallbackAvatar;
       drawerPseudo.textContent = saved.username;
+      drawerPfp.src = saved.avatarUrl || fallbackAvatar;
       drawerLogoutBtn.style.display = 'grid';
       await refreshStatus();
     } else {
@@ -857,7 +860,7 @@
 
   window.addEventListener('message', (event) => {
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
-    saveDiscordIdentity(event.data.discordId, event.data.username);
+    saveDiscordIdentity(event.data.discordId, event.data.username, event.data.avatarUrl);
     applyIdentity();
   });
 
