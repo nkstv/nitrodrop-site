@@ -320,6 +320,7 @@
   .slot-prizes-panel{
     padding:22px 20px; border-right:1px solid var(--line);
     background:radial-gradient(circle at 30% 0%, rgba(139,92,255,0.08), transparent 70%);
+    display:flex; flex-direction:column; justify-content:center;
   }
   .slot-prizes-eyebrow{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--violet); font-weight:700; margin-bottom:6px;}
   .slot-prizes-title{font-family:'Unbounded'; font-weight:800; font-size:16px; color:var(--text); margin-bottom:16px; line-height:1.3;}
@@ -331,15 +332,6 @@
   .slot-prize-name{font-size:12px; color:var(--text-dim); margin-bottom:4px;}
   .slot-prize-mystery{font-family:'Unbounded'; font-weight:700; font-size:13px; color:var(--green);}
   .slot-divider{height:1px; background:var(--line); margin:14px 0;}
-
-  .slot-fair-box{
-    margin-top:20px; background:var(--bg-raise); border:1px solid var(--line); border-radius:12px;
-    padding:14px 16px; text-align:left; display:flex; gap:10px;
-  }
-  .slot-fair-icon{font-size:17px; flex-shrink:0;}
-  .slot-fair-title{font-size:12.5px; font-weight:700; color:var(--text); margin-bottom:2px;}
-  .slot-fair-list{margin:0; padding:0 0 0 16px; font-size:11.5px; color:var(--text-dim); line-height:1.6;}
-  .slot-fair-list li{margin-bottom:2px;}
 
   .slot-history-section{margin-top:20px; text-align:left;}
   .slot-history-title{font-family:'Unbounded'; font-size:13.5px; font-weight:700; color:var(--text); margin:0 0 10px;}
@@ -630,14 +622,6 @@
               <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
               <button type="button" id="slot-play-again-btn" class="btn-play" style="display:none; margin-top:10px;" onclick="replaySlot()">Rejouer</button>
 
-              <div class="slot-fair-box">
-                <div class="slot-fair-icon">🔒</div>
-                <div>
-                  <div class="slot-fair-title" id="slot-fair-title">Provably fair</div>
-                  <ul class="slot-fair-list" id="slot-fair-list"></ul>
-                </div>
-              </div>
-
               <div class="slot-history-section">
                 <h4 class="slot-history-title" id="slot-history-title">📜 Historique des mises</h4>
                 <div id="slot-history-list"></div>
@@ -838,29 +822,17 @@
     // Textes fixes (pas besoin d'un champ admin dédié) pour le panneau étendu de la machine à sous
     const slotExtraText = currentLang === 'fr' ? {
       eyebrow: 'Machine à sous', prizesTitle: 'Ce que tu peux gagner', prizeName: 'Combinaison gagnante',
-      mystery: '🎁 Montant surprise', fairTitle: '🔒 Provably fair',
-      fairPoints: [
-        'Le résultat (gagné ou perdu) est tiré par le serveur avant même que l\'animation des rouleaux ne démarre — ton navigateur ne fait que l\'afficher, il ne peut ni le calculer ni le modifier.',
-        'La limite d\'un essai par jour est vérifiée côté serveur par ton identifiant Discord, pas par ton navigateur : recharger la page ou vider ton cache ne redonne pas d\'essai.',
-        'La chance de gain et le montant ne sont jamais envoyés à ton navigateur avant que tu joues, pour qu\'aucune information ne puisse fuiter avant le tirage.',
-      ],
+      mystery: '🎁 Montant surprise',
       historyTitle: '📜 Historique des mises', historyEmpty: 'Aucune mise pour l\'instant.',
     } : {
       eyebrow: 'Slot machine', prizesTitle: 'What you can win', prizeName: 'Winning combination',
-      mystery: '🎁 Surprise amount', fairTitle: '🔒 Provably fair',
-      fairPoints: [
-        'The outcome (win or lose) is rolled by the server before the reel animation even starts — your browser only displays it, it can neither compute nor change it.',
-        'The one-try-per-day limit is enforced server-side against your Discord ID, not your browser: reloading the page or clearing your cache does not grant another try.',
-        'The odds and the win amount are never sent to your browser before you play, so nothing can leak ahead of the draw.',
-      ],
+      mystery: '🎁 Surprise amount',
       historyTitle: '📜 Bet history', historyEmpty: 'No bets yet.',
     };
     document.getElementById('slot-prizes-eyebrow').textContent = slotExtraText.eyebrow;
     document.getElementById('slot-prizes-title').textContent = slotExtraText.prizesTitle;
     document.getElementById('slot-prize-name').textContent = slotExtraText.prizeName;
     document.getElementById('slot-prize-mystery').textContent = slotExtraText.mystery;
-    document.getElementById('slot-fair-title').textContent = slotExtraText.fairTitle;
-    document.getElementById('slot-fair-list').innerHTML = slotExtraText.fairPoints.map(p => `<li>${escapeHtml(p)}</li>`).join('');
     document.getElementById('slot-history-title').textContent = slotExtraText.historyTitle;
     document.getElementById('slot-history-empty').textContent = slotExtraText.historyEmpty;
   }
