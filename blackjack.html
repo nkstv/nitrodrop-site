@@ -250,13 +250,6 @@
     color:var(--cream);text-decoration:none}
   .d-item:active{background:var(--panel-3)}
   .d-label{color:var(--muted-2);font-size:10.5px;font-weight:800;letter-spacing:2.6px;margin:16px 4px 9px}
-  .d-foot{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
-  .d-foot button, .d-foot a{padding:14px;border-radius:13px;font-weight:800;font-size:14.5px;display:flex;
-    align-items:center;justify-content:center;gap:8px;background:var(--panel-2);border:1px solid var(--line);
-    color:var(--cream);text-decoration:none}
-  .d-foot .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
-  .d-foot .vault{background:rgba(232,193,104,.10);border-color:rgba(232,193,104,.35);color:var(--gold)}
-  .d-foot .vault .dot{background:var(--gold)}
 
   @media(max-width:1240px){ :root{--side:76px} 
     .brand .name,.wallet .k,.wallet .v,.wallet button,.s-label,.s-nav a span:not(.ic),.s-user .n,.s-user .s,.s-user .out{display:none}
@@ -334,7 +327,7 @@
     <div class="s-label">MENU</div>
     <nav class="s-nav">
       <a href="leaderboard.html"><span class="ic">🏆</span><span>Leaderboard</span></a>
-      <a href="#"><span class="ic">🎁</span><span>Bonuses</span><span class="tag">3</span></a>
+      <a href="bonuses.html"><span class="ic">🎁</span><span>Bonuses</span><span class="tag" id="bonus-count">—</span></a>
       <a href="vault.html"><span class="ic">🔒</span><span>Vault</span></a>
     </nav>
 
@@ -452,17 +445,13 @@
   </div>
   <div class="d-sep"></div>
   <div class="d-grid">
-    <a class="d-item" href="leaderboard.html">Leaderboard</a><button class="d-item">Bonuses</button>
+    <a class="d-item" href="leaderboard.html">Leaderboard</a><a class="d-item" href="bonuses.html">Bonuses</a>
     <a class="d-item" href="vault.html">Vault</a>
   </div>
   <div class="d-label">ORIGINALS</div>
   <div class="d-grid">
     <a class="d-item" href="blackjack.html"><span>🃏</span>Blackjack</a><a class="d-item" href="slot.html"><span>🎰</span>Slot</a>
     <a class="d-item" href="mines.html"><span>💣</span>Mines</a><a class="d-item" href="dice.html"><span>🎲</span>Dice</a>
-  </div>
-  <div class="d-foot">
-    <button><span class="dot"></span>My Profile</button>
-    <a class="vault" href="vault.html"><span class="dot"></span>Open Vault</a>
   </div>
 </div>
 
@@ -564,7 +553,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   document.getElementById('burger').addEventListener('click',()=>toggle(true));
   scrim.addEventListener('click',()=>toggle(false));
   document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false)});
-  drawer.querySelectorAll('.d-item,.d-foot button').forEach(b=>b.addEventListener('click',()=>toggle(false)));
+  drawer.querySelectorAll('.d-item').forEach(b=>b.addEventListener('click',()=>toggle(false)));
 
   const betInput=document.getElementById('bet'), betRow=document.getElementById('betRow');
   const balanceEl=document.getElementById('balance');
@@ -823,6 +812,24 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
   document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
+
+  // ---------------- Badge du nombre d'offres (lu depuis la config, jamais codé en dur) ----------------
+  (function updateBonusCount(){
+    const el = document.getElementById('bonus-count');
+    if (!el) return;
+    try{
+      let lang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
+      if (!CONFIG.content || !CONFIG.content[lang]) lang = CONFIG.defaultLang || 'en';
+      const offers = CONFIG.content && CONFIG.content[lang] && CONFIG.content[lang].offers;
+      if (offers && offers.length){
+        el.textContent = String(offers.length);
+      } else {
+        el.style.display = 'none';
+      }
+    }catch(e){
+      el.style.display = 'none';
+    }
+  })();
 
   // ---------------- Identité ----------------
   async function applyIdentity(){
