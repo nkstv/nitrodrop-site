@@ -52,9 +52,9 @@
   }
   td{padding:8px 10px; font-size:12px; border-bottom:1px solid var(--line); vertical-align:middle;}
   .cell-truncate{max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; cursor:help;}
-  #table-scroll, #users-table-scroll{overflow-x:auto; border-radius:14px;}
-  #table-scroll::-webkit-scrollbar, #users-table-scroll::-webkit-scrollbar{height:8px;}
-  #table-scroll::-webkit-scrollbar-thumb, #users-table-scroll::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:4px;}
+  #table-scroll, #users-table-scroll, #lb-table-scroll{overflow-x:auto; border-radius:14px;}
+  #table-scroll::-webkit-scrollbar, #users-table-scroll::-webkit-scrollbar, #lb-table-scroll::-webkit-scrollbar{height:8px;}
+  #table-scroll::-webkit-scrollbar-thumb, #users-table-scroll::-webkit-scrollbar-thumb, #lb-table-scroll::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:4px;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:rgba(255,255,255,0.02);}
   .mono{font-family:'JetBrains Mono'; font-size:12px; color:var(--text-dim);}
@@ -96,6 +96,7 @@
       <button class="dash-tab" id="tab-btn-wheel" onclick="switchDashTab('wheel')">🎡 Roue</button>
       <button class="dash-tab" id="tab-btn-affiliates" onclick="switchDashTab('affiliates')">📊 Affiliés</button>
       <button class="dash-tab" id="tab-btn-users" onclick="switchDashTab('users')">👥 Utilisateurs</button>
+      <button class="dash-tab" id="tab-btn-leaderboard" onclick="switchDashTab('leaderboard')">🏆 Leaderboard</button>
     </div>
 
     <div id="tab-bonus">
@@ -268,6 +269,21 @@
       </div>
 
       <div id="users-table-container"></div>
+    </div>
+
+    <div id="tab-leaderboard" style="display:none;">
+      <div class="stats" id="lb-stats"></div>
+
+      <div class="toolbar">
+        <input type="text" id="lb-filter-search" placeholder="Rechercher pseudo / Discord ID..." oninput="applyLbFilters()" style="min-width:260px;">
+        <select id="lb-filter-state" onchange="applyLbFilters()">
+          <option value="">Affichage : tous</option>
+          <option value="adjusted">Corrigés uniquement</option>
+          <option value="excluded">Masqués uniquement</option>
+        </select>
+      </div>
+
+      <div id="lb-table-container"></div>
     </div>
   </div>
 </div>
@@ -748,6 +764,7 @@
   let wheelLoaded = false;
   let affiliatesLoaded = false;
   let usersLoaded = false;
+  let leaderboardLoaded = false;
   let activeDashTab = 'bonus';
 
   function switchDashTab(tab){
@@ -758,12 +775,14 @@
     document.getElementById('tab-wheel').style.display = tab === 'wheel' ? '' : 'none';
     document.getElementById('tab-affiliates').style.display = tab === 'affiliates' ? '' : 'none';
     document.getElementById('tab-users').style.display = tab === 'users' ? '' : 'none';
+    document.getElementById('tab-leaderboard').style.display = tab === 'leaderboard' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-scratch').classList.toggle('active', tab === 'scratch');
     document.getElementById('tab-btn-slot').classList.toggle('active', tab === 'slot');
     document.getElementById('tab-btn-wheel').classList.toggle('active', tab === 'wheel');
     document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
     document.getElementById('tab-btn-users').classList.toggle('active', tab === 'users');
+    document.getElementById('tab-btn-leaderboard').classList.toggle('active', tab === 'leaderboard');
     if (tab === 'scratch' && !scratchLoaded){
       loadScratchPlays();
     }
@@ -775,6 +794,9 @@
     }
     if (tab === 'users' && !usersLoaded){
       loadUsers();
+    }
+    if (tab === 'leaderboard' && !leaderboardLoaded){
+      loadAdminLeaderboard();
     }
     if (tab === 'affiliates' && !affiliatesLoaded){
       affiliatesLoaded = true;
@@ -792,6 +814,8 @@
       loadWheelPlays();
     } else if (activeDashTab === 'users'){
       loadUsers();
+    } else if (activeDashTab === 'leaderboard'){
+      loadAdminLeaderboard();
     } else {
       loadSubmissions();
     }
@@ -1540,6 +1564,170 @@
       const user = allUsers.find(u => u.discordId === discordId);
       if (user) user.banned = banned;
       applyUsersFilters();
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
+  }
+
+  // ==================================================================
+  // Onglet Leaderboard — corriger le total misé affiché d'un joueur.
+  // Les corrections sont stockées à part : l'historique des parties
+  // n'est jamais modifié, donc tout reste traçable.
+  // ==================================================================
+  let allLbEntries = [];
+  let filteredLbEntries = [];
+
+  async function loadAdminLeaderboard(){
+    leaderboardLoaded = true;
+    const container = document.getElementById('lb-table-container');
+    container.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/leaderboard/admin`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      allLbEntries = data.leaderboard || [];
+      renderLbStats();
+      applyLbFilters();
+    }catch(e){
+      container.innerHTML = `<div class="empty">Erreur de chargement : ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  function renderLbStats(){
+    const totalWager = allLbEntries.reduce((sum, e) => sum + (e.wager || 0), 0);
+    const adjustedCount = allLbEntries.filter(e => e.adjustment !== 0).length;
+    const excludedCount = allLbEntries.filter(e => e.excluded).length;
+    document.getElementById('lb-stats').innerHTML = `
+      <div class="stat"><div class="n">${allLbEntries.length}</div><div class="l">Joueurs classés</div></div>
+      <div class="stat"><div class="n">${totalWager.toFixed(2)}</div><div class="l">Total misé (affiché)</div></div>
+      <div class="stat"><div class="n">${adjustedCount}</div><div class="l">Corrigés</div></div>
+      <div class="stat"><div class="n">${excludedCount}</div><div class="l">Masqués du classement</div></div>
+    `;
+  }
+
+  function applyLbFilters(){
+    const search = document.getElementById('lb-filter-search').value.toLowerCase().trim();
+    const state = document.getElementById('lb-filter-state').value;
+    filteredLbEntries = allLbEntries.filter(e => {
+      if (search && !(e.pseudo || '').toLowerCase().includes(search) && !e.discordId.includes(search)) return false;
+      if (state === 'adjusted' && e.adjustment === 0) return false;
+      if (state === 'excluded' && !e.excluded) return false;
+      return true;
+    });
+    renderLbTable();
+  }
+
+  function renderLbTable(){
+    const container = document.getElementById('lb-table-container');
+    if (filteredLbEntries.length === 0){
+      container.innerHTML = '<div class="empty">Aucun joueur ne correspond à ces filtres.</div>';
+      return;
+    }
+    const rows = filteredLbEntries.map((e, idx) => {
+      const avatarSrc = e.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png';
+      const adjLabel = e.adjustment === 0
+        ? '<span style="color:var(--text-faint);">—</span>'
+        : `<span style="color:${e.adjustment > 0 ? 'var(--green)' : '#FF7A90'}; font-weight:700;">${e.adjustment > 0 ? '+' : ''}${e.adjustment.toFixed(2)}</span>`;
+      return `
+        <tr>
+          <td style="font-weight:800; color:var(--text-faint);">#${idx + 1}</td>
+          <td>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <img src="${escapeHtml(avatarSrc)}" alt="" referrerpolicy="no-referrer" style="width:26px; height:26px; border-radius:50%; object-fit:cover; flex:none;">
+              <span class="cell-truncate" title="${escapeHtml(e.pseudo)}">${escapeHtml(e.pseudo || '?')}</span>
+            </span>
+          </td>
+          <td class="mono cell-truncate" title="${escapeHtml(e.discordId)}">${escapeHtml(e.discordId)}</td>
+          <td class="mono" title="Total réellement joué, hors correction">${e.rawWager.toFixed(2)}</td>
+          <td>${adjLabel}</td>
+          <td><b id="lb-wager-${escapeHtml(e.discordId)}">${e.wager.toFixed(2)}</b></td>
+          <td>${e.excluded ? '<span class="badge" style="color:#FF7A90; border-color:#FF7A90;">Masqué</span>' : '<span class="badge" style="color:var(--green); border-color:var(--green);">Visible</span>'}</td>
+          <td>
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              <input type="number" id="lb-value-${escapeHtml(e.discordId)}" placeholder="Total" step="1" style="width:90px; padding:6px 8px;">
+              <button type="button" class="btn" onclick="setPlayerWager('${escapeHtml(e.discordId)}')">Définir</button>
+              <button type="button" class="btn" onclick="resetPlayerWager('${escapeHtml(e.discordId)}')">Réinitialiser</button>
+              <button type="button" class="btn" onclick="togglePlayerExcluded('${escapeHtml(e.discordId)}', ${!e.excluded})">${e.excluded ? 'Réafficher' : 'Masquer'}</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+    container.innerHTML = `
+      <div id="lb-table-scroll">
+        <table>
+          <thead><tr><th>Rang</th><th>Joueur</th><th>Discord ID</th><th>Misé réel</th><th>Correction</th><th>Total affiché</th><th>Classement</th><th>Actions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  async function setPlayerWager(discordId){
+    const input = document.getElementById(`lb-value-${discordId}`);
+    const value = parseFloat(input.value);
+    if (!Number.isFinite(value) || value < 0){
+      alert('Entre un total misé valide (0 ou plus).');
+      return;
+    }
+    const entry = allLbEntries.find(e => e.discordId === discordId);
+    if (!entry) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/leaderboard/set-wager`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ discordId, mode: 'set', value, rawWager: entry.rawWager }),
+      });
+      const data = await resp.json();
+      if (!data.ok){ alert('Échec de la mise à jour.'); return; }
+      entry.adjustment = data.adjustment;
+      entry.wager = Math.max(0, Math.round((entry.rawWager + data.adjustment) * 100) / 100);
+      input.value = '';
+      renderLbStats();
+      applyLbFilters();
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
+  }
+
+  async function resetPlayerWager(discordId){
+    if (!confirm('Retirer la correction et revenir au total réellement joué ?')) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/leaderboard/set-wager`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ discordId, mode: 'reset' }),
+      });
+      const data = await resp.json();
+      if (!data.ok){ alert('Échec de la réinitialisation.'); return; }
+      const entry = allLbEntries.find(e => e.discordId === discordId);
+      if (entry){
+        entry.adjustment = 0;
+        entry.wager = entry.rawWager;
+      }
+      renderLbStats();
+      applyLbFilters();
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
+  }
+
+  async function togglePlayerExcluded(discordId, excluded){
+    if (!confirm(excluded ? 'Masquer ce joueur du classement public ?' : 'Réafficher ce joueur dans le classement ?')) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/leaderboard/exclude`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ discordId, excluded }),
+      });
+      const data = await resp.json();
+      if (!data.ok){ alert('Échec de la mise à jour.'); return; }
+      const entry = allLbEntries.find(e => e.discordId === discordId);
+      if (entry) entry.excluded = excluded;
+      renderLbStats();
+      applyLbFilters();
     }catch(e){
       alert('Erreur réseau : ' + e.message);
     }
