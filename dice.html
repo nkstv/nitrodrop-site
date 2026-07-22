@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171209">
+<title>Drop Cash — Dice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
+    --line:rgba(232,193,104,.10); --gold:#E8C168; --gold-deep:#C79A3C;
+    --cream:#F2E9D8; --muted:#9a8b6d; --muted-2:#6f6350;
+    --red:#F26D6D; --green:#5FD68B;
+    --r-l:20px; --r-m:14px;
+    --gap:14px; --chrome:300px; --side:238px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    background:radial-gradient(1000px 500px at 70% -10%, rgba(232,193,104,.055), transparent 60%), var(--bg);
+    color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif;
+  }
+  h1{font-family:"Baloo 2",sans-serif}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+
+  .app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
+
+  /* ================= SIDEBAR ================= */
+  .side{
+    position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel) 60%,var(--bg-soft));
+    border-right:1px solid var(--line);padding:16px 12px;gap:14px;overflow-y:auto;
+  }
+  .side::-webkit-scrollbar{width:6px}
+  .side::-webkit-scrollbar-thumb{background:var(--panel-3);border-radius:6px}
+
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 0}
+  .brand .avatar{width:38px;height:38px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:19px;border:2px solid rgba(0,0,0,.4)}
+  .brand .name{font-family:"Baloo 2";font-weight:800;font-size:19px;line-height:1.05}
+  .beta{display:inline-block;font-size:8.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--gold);background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.32);
+    padding:1px 6px;border-radius:20px;margin-top:3px}
+
+  .wallet{
+    background:linear-gradient(150deg,rgba(232,193,104,.14),rgba(232,193,104,.04));
+    border:1px solid rgba(232,193,104,.24);border-radius:var(--r-m);padding:11px 13px;
+  }
+  .wallet .k{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+  .wallet .v{display:flex;align-items:center;gap:7px;font-weight:800;font-size:21px;margin-top:3px}
+  .wallet .v .key{font-size:15px}
+  .wallet button{width:100%;margin-top:9px;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    color:#3a2a08;font-weight:800;font-size:13px;padding:8px;border-radius:10px;transition:.15s}
+  .wallet button:hover{filter:brightness(1.06)}
+  .wallet button:disabled{opacity:.5; cursor:default; filter:none;}
+
+  .s-label{color:var(--muted-2);font-size:9.5px;font-weight:800;letter-spacing:2.4px;padding:0 8px;margin-top:2px}
+  .s-nav{display:flex;flex-direction:column;gap:2px}
+  .s-nav a{
+    display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--muted);
+    font-weight:800;font-size:14px;padding:10px 12px;border-radius:12px;transition:.15s;position:relative;
+  }
+  .s-nav a .ic{width:20px;text-align:center;font-size:15px;opacity:.9}
+  .s-nav a:hover{background:rgba(232,193,104,.06);color:var(--cream)}
+  .s-nav a.on{background:var(--panel-3);color:var(--cream)}
+  .s-nav a.on::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--gold)}
+  .s-nav a .tag{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:1px;color:var(--gold);
+    background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.28);padding:2px 6px;border-radius:20px}
+
+  .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:10px;border-top:1px solid var(--line)}
+  .s-user{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:14px;padding:8px 10px}
+  .s-user .pfp{width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);object-fit:cover;}
+  .s-user .n{font-weight:800;font-size:13.5px;line-height:1.2}
+  .s-user .s{color:var(--muted);font-size:11px;font-weight:700}
+  .s-user .out{margin-left:auto;color:var(--muted-2);font-size:14px;transition:.15s}
+  .s-user .out:hover{color:var(--red)}
+  .wallet-login-btn{width:100%;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));color:#3a2a08;
+    font-family:"Baloo 2";font-weight:800;font-size:14px;padding:12px;border-radius:12px;transition:.15s}
+  .wallet-login-btn:hover{filter:brightness(1.06)}
+
+  /* ================= CONTENU ================= */
+  .main{display:flex;flex-direction:column;gap:var(--gap);padding:16px clamp(16px,2.2vw,34px) 30px;min-width:0}
+
+  .topbar{display:flex;align-items:center;gap:14px;flex:none}
+  .topbar h1{font-size:28px;font-weight:800;line-height:1}
+  .topbar .crumb{color:var(--muted-2);font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .live{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:800;font-size:12px;
+    background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:7px 13px}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.4s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .icon-btn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
+    display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.15s}
+  .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
+  .burger{display:none}
+
+  /* ---------- Panneau de jeu ---------- */
+  .game-panel{background:linear-gradient(180deg,var(--panel),var(--bg-soft));
+    border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;display:flex;flex-direction:column}
+  .game-wrap{display:grid;grid-template-columns:300px 1fr}
+
+  .controls{background:linear-gradient(180deg,var(--panel-2),rgba(34,26,16,.6));
+    border-right:1px solid var(--line);padding:20px 18px;display:flex;flex-direction:column;gap:14px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg-soft);border-radius:30px;padding:4px;border:1px solid var(--line)}
+  .seg button{padding:10px 0;border-radius:26px;font-weight:800;letter-spacing:1.6px;font-size:12px;color:var(--muted);transition:.18s}
+  .seg button.on{background:var(--panel-3);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(232,193,104,.15)}
+  .field label{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;margin-bottom:8px}
+  .field label .bal{color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:.8px}
+  .field label .bal b{color:var(--cream)}
+  .input-row{display:flex;align-items:center;gap:6px;background:var(--bg-soft);border:1px solid var(--line);
+    border-radius:var(--r-m);padding:6px 7px 6px 13px;transition:border-color .2s}
+  .input-row.err{border-color:var(--red)}
+  .input-row .key{color:var(--gold);font-size:13px}
+  .input-row input{flex:1;background:none;border:none;outline:none;color:var(--cream);
+    font-family:"Nunito Sans";font-weight:800;font-size:15px;min-width:0}
+  .chip{background:var(--panel-3);border:1px solid var(--line);border-radius:9px;padding:7px 11px;
+    font-weight:800;font-size:12.5px;color:var(--cream);transition:.15s}
+  .chip:hover{border-color:rgba(232,193,104,.4);color:var(--gold)}
+  .bet-btn{margin-top:auto;background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep));color:#3a2a08;
+    font-family:"Baloo 2";font-weight:800;font-size:19px;padding:14px;border-radius:var(--r-m);
+    box-shadow:0 5px 14px rgba(232,193,104,.22), inset 0 1px 0 rgba(255,255,255,.35);transition:.15s}
+  .bet-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .bet-btn:active{transform:translateY(1px)}
+  .bet-btn:disabled{opacity:.55; filter:none; cursor:default; transform:none; box-shadow:none;}
+
+  .board{background:radial-gradient(600px 320px at 50% 0%, rgba(232,193,104,.05), transparent 70%);
+    padding:20px 24px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
+  .board-area{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+
+  /* ---------- Dice ---------- */
+  .dice-slider{
+    width:100%; height:6px; border-radius:3px; appearance:none; background:var(--bg-soft);
+    outline:none; margin-top:4px;
+  }
+  .dice-slider::-webkit-slider-thumb{
+    appearance:none; width:20px; height:20px; border-radius:50%;
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    border:2px solid #191309; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.4);
+  }
+  .dice-slider::-moz-range-thumb{
+    width:20px; height:20px; border-radius:50%;
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    border:2px solid #191309; cursor:pointer;
+  }
+
+  .dice-board{justify-content:center; min-height:340px; gap:28px;}
+  .dice-result{font-family:"Baloo 2"; font-weight:800; font-size:44px;}
+  .dice-result.win{color:var(--green);} .dice-result.lose{color:var(--red);}
+  .dice-placeholder{font-family:"Baloo 2"; font-weight:800; font-size:22px; color:var(--cream);}
+  .dice-track-wrap{width:100%; max-width:520px;}
+  .dice-track{
+    position:relative; height:16px; border-radius:10px; overflow:visible;
+    background:linear-gradient(90deg, var(--green) 0%, var(--green) 50%, var(--red) 50%, var(--red) 100%);
+  }
+  .dice-marker{
+    position:absolute; top:-9px; width:5px; height:34px; background:#fff; border-radius:3px;
+    box-shadow:0 0 10px rgba(255,255,255,.7); transform:translateX(-50%); transition:left .5s cubic-bezier(.22,.9,.3,1);
+  }
+  .dice-track-labels{display:flex; justify-content:space-between; margin-top:10px; font-size:11px; color:var(--muted); font-weight:700;}
+  @media(max-width:860px){
+    .dice-board{min-height:260px;}
+    .dice-result{font-size:32px;}
+  }
+  @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+
+  .game-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);
+    background:rgba(20,15,8,.5);padding:11px 16px}
+  .bar-tools{display:flex;gap:7px;flex:1}
+  .bar-tools button{width:34px;height:34px;border-radius:10px;border:1px solid transparent;
+    color:var(--muted-2);font-size:14px;display:grid;place-items:center;transition:.15s}
+  .bar-tools button:hover{color:var(--gold);border-color:var(--line);background:var(--panel-2)}
+  .bar-logo{display:flex;align-items:center;gap:7px;font-family:"Baloo 2";font-weight:800;font-size:15px;
+    color:var(--cream);opacity:.85;white-space:nowrap}
+  .bar-logo .mark{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:11px;border:1.5px solid rgba(0,0,0,.4)}
+  .bar-right{flex:1;display:flex;justify-content:flex-end}
+  .fair{display:flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:11px;padding:9px 15px;font-weight:800;font-size:13px;color:var(--cream);transition:.15s}
+  .fair:hover{border-color:rgba(232,193,104,.35);color:var(--gold)}
+  .fair .shield{color:var(--gold)}
+
+  /* ---------- Paris ---------- */
+  .bets{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+    border-radius:var(--r-l);padding:16px 18px}
+  .tabs{display:flex;gap:6px;margin-bottom:10px}
+  .tabs button{padding:9px 17px;border-radius:30px;font-weight:800;font-size:13.5px;color:var(--muted);transition:.18s}
+  .tabs button:hover{color:var(--cream)}
+  .tabs button.on{background:var(--panel-3);color:var(--cream);border:1px solid var(--line)}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:620px}
+  thead th{text-align:left;color:var(--muted-2);font-size:10.5px;letter-spacing:1.6px;font-weight:800;padding:7px 13px;text-transform:uppercase}
+  thead th:nth-child(n+3){text-align:right}
+  tbody td{padding:11px 13px;border-top:1px solid rgba(232,193,104,.05);font-weight:700;font-size:13.5px}
+  tbody td:nth-child(n+3){text-align:right}
+  tbody tr:hover{background:rgba(232,193,104,.04)}
+  tbody tr.fresh{animation:pop .5s ease}
+  @keyframes pop{from{background:rgba(232,193,104,.12)}to{background:transparent}}
+  .g{display:flex;align-items:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:14px}
+  .g .ic{width:24px;height:24px;border-radius:8px;background:var(--panel-3);border:1px solid var(--line);display:grid;place-items:center;font-size:12px}
+  .p{display:flex;align-items:center;gap:8px}
+  .p .pfp{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9aa7c7,#3c455e);object-fit:cover;flex:none;}
+  td.time{color:var(--muted)}
+  .key{color:var(--gold)}
+  .win{color:var(--green)}
+  .lose{color:var(--muted)}
+  footer{text-align:center;color:var(--muted-2);font-size:11.5px;font-weight:700;padding:4px 0 2px}
+
+  /* ================= MOBILE (identique à la version précédente) ================= */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:linear-gradient(180deg,#241c12,#191309);border-top:1px solid var(--line);
+    border-radius:24px 24px 0 0;padding:12px 14px calc(16px + env(safe-area-inset-bottom));
+    transform:translateY(105%);transition:transform .3s cubic-bezier(.22,.9,.3,1);
+    box-shadow:0 -18px 44px rgba(0,0,0,.6);max-height:88vh;overflow-y:auto}
+  .drawer.open{transform:translateY(0)}
+  .handle{width:50px;height:4px;border-radius:4px;background:#4a4032;margin:3px auto 14px}
+  .d-user{display:flex;align-items:center;gap:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:11px 12px}
+  .d-user .pfp{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);flex:none;object-fit:cover;}
+  .d-user .n{font-weight:800;font-size:17px}
+  .d-user .s{color:var(--muted);font-weight:600;font-size:13px;margin-top:1px}
+  .d-out{margin-left:auto;width:38px;height:38px;border-radius:50%;background:rgba(242,109,109,.14);
+    border:1px solid rgba(242,109,109,.3);color:var(--red);display:grid;place-items:center;font-size:15px;flex:none}
+  .d-sep{height:1px;background:var(--line);margin:14px 4px}
+  .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .d-item{background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:13px 12px;
+    font-weight:800;font-size:15px;text-align:left;display:flex;align-items:center;gap:9px}
+  .d-item:active{background:var(--panel-3)}
+  .d-label{color:var(--muted-2);font-size:10.5px;font-weight:800;letter-spacing:2.6px;margin:16px 4px 9px}
+  .d-foot{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+  .d-foot button, .d-foot a{padding:14px;border-radius:13px;font-weight:800;font-size:14.5px;display:flex;
+    align-items:center;justify-content:center;gap:8px;background:var(--panel-2);border:1px solid var(--line)}
+  .d-foot .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+  .d-foot .vault{background:rgba(232,193,104,.10);border-color:rgba(232,193,104,.35);color:var(--gold)}
+  .d-foot .vault .dot{background:var(--gold)}
+
+  @media(max-width:1240px){ :root{--side:76px} 
+    .brand .name,.wallet .k,.wallet .v,.wallet button,.s-label,.s-nav a span:not(.ic),.s-user .n,.s-user .s,.s-user .out{display:none}
+    .side{padding:14px 10px;align-items:center}
+    .brand{justify-content:center;padding:0}
+    .wallet{padding:8px;text-align:center;width:100%}
+    .wallet::after{content:"🔑";font-size:16px}
+    .wallet-login-btn{font-size:0;padding:12px;}
+    .wallet-login-btn::after{content:"🎮";font-size:16px}
+    .s-nav{width:100%}
+    .s-nav a{justify-content:center;padding:11px 0}
+    .s-user{padding:6px;justify-content:center}
+    .game-wrap{grid-template-columns:280px 1fr}
+  }
+  @media(max-width:860px){
+    :root{--chrome:250px}
+    .app{grid-template-columns:1fr}
+    .side{display:none}
+    .main{padding:10px 12px 22px;gap:12px}
+    .topbar{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+      border-radius:22px;padding:7px 8px;gap:10px}
+    .topbar h1{font-size:20px;padding-left:6px}
+    .topbar .crumb,.live{display:none}
+    .burger{display:flex;width:38px;height:38px;border-radius:50%;background:var(--panel-3);
+      border:1px solid var(--line);flex-direction:column;gap:3.5px;align-items:center;justify-content:center}
+    .burger span{display:block;width:15px;height:2px;background:var(--cream);border-radius:2px}
+    .game-wrap{grid-template-columns:1fr}
+    .board{order:1;padding:12px;gap:10px}
+    .controls{order:2;border-right:none;border-top:1px solid var(--line);padding:14px;gap:10px}
+    .grid{gap:6px;width:100%}
+    .bet-btn{margin-top:2px}
+    .bar-tools button:nth-child(n+3){display:none}
+    .bets{padding:12px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
+  .custom-alert-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
+  }
+  .custom-alert-overlay.show{display:flex;}
+  .custom-alert-box{
+    background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:18px;
+    padding:24px 26px; max-width:340px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.55);
+    animation:reveal .18s ease;
+  }
+  .custom-alert-title{font-family:"Baloo 2"; font-weight:800; font-size:15px; color:var(--gold); margin-bottom:10px;}
+  .custom-alert-msg{font-size:14.5px; color:var(--cream); line-height:1.5; margin-bottom:20px;}
+  .custom-alert-btn{
+    width:100%; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:12px; border-radius:12px; transition:.15s;
+  }
+  .custom-alert-btn:hover{filter:brightness(1.06);}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="brand">
+      <div class="avatar">🦁</div>
+      <div>
+        <div class="name">Drop Cash</div>
+        <span class="beta">Beta</span>
+      </div>
+    </div>
+
+    <div class="wallet">
+      <div class="k">Solde</div>
+      <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
+      <button disabled title="Nouvelles clés chaque jour, automatiquement">Recharger</button>
+    </div>
+
+    <div class="s-label">MENU</div>
+    <nav class="s-nav">
+      <a href="#"><span class="ic">🏆</span><span>Leaderboard</span></a>
+      <a href="#"><span class="ic">🔮</span><span>Prediction</span></a>
+      <a href="#"><span class="ic">🎁</span><span>Bonuses</span><span class="tag">3</span></a>
+      <a href="#"><span class="ic">🎯</span><span>Challenges</span></a>
+      <a href="#"><span class="ic">🎟</span><span>Raffles</span></a>
+      <a href="vault.html"><span class="ic">🔒</span><span>Vault</span></a>
+    </nav>
+
+    <div class="s-label">ORIGINALS</div>
+    <nav class="s-nav">
+      <a href="mines.html"><span class="ic">💣</span><span>Mines</span></a>
+      <a href="blackjack.html"><span class="ic">🃏</span><span>Blackjack</span></a>
+      <a href="#"><span class="ic">🐔</span><span>Chicken</span></a>
+      <a href="#"><span class="ic">🔢</span><span>Keno</span></a>
+      <a href="wheel.html"><span class="ic">🎡</span><span>Wheel</span></a>
+      <a href="dice.html" class="on"><span class="ic">🎲</span><span>Dice</span></a>
+    </nav>
+
+    <div class="side-foot">
+      <button class="wallet-login-btn" id="side-login-btn" onclick="connectDiscord()">🎮 Se connecter</button>
+      <div class="s-user" id="side-user" style="display:none;">
+        <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
+        <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
+        <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENU ============ -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+      <h1>Dice</h1>
+      <span class="crumb">Originals</span>
+      <div class="top-right">
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> visiteurs en ligne</span>
+        <button class="icon-btn" aria-label="Notifications">🔔</button>
+      </div>
+    </div>
+
+    <div class="game-panel">
+      <div class="game-wrap bj-wrap">
+        <aside class="controls">
+          <div class="seg">
+            <button class="on" id="dirUnderBtn" type="button">ROLL UNDER</button>
+            <button id="dirOverBtn" type="button">ROLL OVER</button>
+          </div>
+          <div class="field">
+            <label>Bet Amount <span class="bal">🔑 <b id="balance">0</b> KEYS</span></label>
+            <div class="input-row" id="betRow">
+              <span class="key">🔑</span>
+              <input id="bet" type="number" inputmode="numeric" value="1" min="1">
+              <button class="chip" id="half">½</button>
+              <button class="chip" id="double">2×</button>
+              <button class="chip" id="maxBet">Max</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Target <span class="bal"><b id="targetDisplay">50.00</b></span></label>
+            <input type="range" id="targetSlider" min="2" max="98" step="0.01" value="50" class="dice-slider">
+          </div>
+          <div class="stats">
+            <div class="stat"><div class="k">Win Chance</div><div class="v"><span id="winChance">50.00</span>%</div></div>
+            <div class="stat"><div class="k">Multiplier</div><div class="v"><span id="diceMult">1.94</span>×</div></div>
+          </div>
+          <button class="bet-btn" id="play">Bet</button>
+        </aside>
+
+        <section class="board dice-board">
+          <div class="dice-result" id="diceResult" style="display:none;"></div>
+          <div class="dice-track-wrap">
+            <div class="dice-track" id="diceTrack">
+              <div class="dice-marker" id="diceMarker" style="display:none;"></div>
+            </div>
+            <div class="dice-track-labels"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+          </div>
+          <div class="dice-placeholder" id="dicePlaceholder">Place your bet to roll</div>
+        </section>
+      </div>
+
+      <div class="game-bar">
+        <div class="bar-tools">
+          <button title="Paramètres">⚙</button>
+          <button title="Plein écran">⛶</button>
+          <button title="Statistiques">📈</button>
+          <button title="Partager">↗</button>
+        </div>
+        <div class="bar-logo"><span class="mark">🦁</span>Drop Cash</div>
+        <div class="bar-right"><button class="fair"><span class="shield">🛡</span>Équité</button></div>
+      </div>
+    </div>
+
+    <section class="bets">
+      <div class="tabs">
+        <button class="on">All Bets</button><button>My Bets</button>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Game</th><th>Player</th><th>Time</th><th>Bet</th><th>Result</th><th>Payout</th></tr></thead>
+          <tbody id="betRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>Drop Cash Originals — jouez de manière responsable · Monnaie virtuelle 🔑</footer>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="handle"></div>
+  <div class="d-user" id="drawer-user">
+    <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
+    <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
+  </div>
+  <div class="d-sep"></div>
+  <div class="d-grid">
+    <button class="d-item">Leaderboard</button><button class="d-item">Prediction</button>
+    <button class="d-item">Bonuses</button><button class="d-item">Challenges</button>
+    <button class="d-item">Raffles</button><a class="d-item" href="vault.html">Vault</a>
+  </div>
+  <div class="d-label">ORIGINALS</div>
+  <div class="d-grid">
+    <a class="d-item" href="blackjack.html"><span>🃏</span>Blackjack</a><button class="d-item"><span>🔢</span>Keno</button>
+    <button class="d-item"><span>🐔</span>Chicken</button><a class="d-item" href="wheel.html"><span>🎡</span>Wheel</a>
+    <a class="d-item" href="mines.html"><span>💣</span>Mines</a><a class="d-item" href="dice.html"><span>🎲</span>Dice</a>
+  </div>
+  <div class="d-foot">
+    <button><span class="dot"></span>My Profile</button>
+    <a class="vault" href="vault.html"><span class="dot"></span>Open Vault</a>
+  </div>
+</div>
+
+<div class="custom-alert-overlay" id="customAlertOverlay">
+  <div class="custom-alert-box">
+    <div class="custom-alert-title">drop-cash.com</div>
+    <div class="custom-alert-msg" id="customAlertMsg"></div>
+    <button class="custom-alert-btn" id="customAlertOkBtn" type="button">OK</button>
+  </div>
+</div>
+
+<script src="nitrodrop-config.js?v=20260721a"></script>
+<script>
+  const CONFIG = nitrodropLoadPublishedConfig();
+  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
+  const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
+  function formatLocalTime(dateMs){
+    if (!dateMs) return '';
+    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function isMobileDevice(){
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+  }
+
+  function saveDiscordIdentity(discordId, username, avatarUrl){
+    const payload = JSON.stringify({ discordId, username, avatarUrl });
+    try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
+  }
+
+  function clearDiscordIdentity(){
+    try{ localStorage.removeItem(DISCORD_STORAGE_KEY); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=; max-age=0; path=/; SameSite=Lax'; }catch(e){}
+  }
+
+  function getSavedDiscordIdentity(){
+    try{
+      const raw = localStorage.getItem(DISCORD_STORAGE_KEY);
+      if (raw){
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.discordId) return parsed;
+      }
+    }catch(e){}
+    try{
+      const match = document.cookie.match(new RegExp('(?:^|; )' + DISCORD_STORAGE_KEY + '=([^;]*)'));
+      if (match){
+        const raw = decodeURIComponent(match[1]);
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.discordId){
+          try{ localStorage.setItem(DISCORD_STORAGE_KEY, raw); }catch(e){}
+          return parsed;
+        }
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function getSharedDiscordId(){ const s = getSavedDiscordIdentity(); return s ? s.discordId : ''; }
+  function getSharedUsername(){ const s = getSavedDiscordIdentity(); return s ? s.username : ''; }
+  function getSharedAvatarUrl(){ const s = getSavedDiscordIdentity(); return s ? (s.avatarUrl || '') : ''; }
+
+  function connectDiscord(){
+    const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
+    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
+    const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
+    if (isMobileDevice()){
+      try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
+      window.location.href = authUrl;
+      return;
+    }
+    window.open(authUrl, 'discord-oauth', 'width=500,height=750');
+  }
+</script>
+<script>
+// Popup d'alerte maison (remplace alert() natif du navigateur) — globale, utilisée
+// aussi bien ici que dans le script d'identité partagé (connectDiscord, etc.)
+const customAlertOverlay = document.getElementById('customAlertOverlay');
+const customAlertMsg = document.getElementById('customAlertMsg');
+function showAlert(message){
+  customAlertMsg.textContent = message;
+  customAlertOverlay.classList.add('show');
+}
+document.getElementById('customAlertOkBtn').addEventListener('click', () => {
+  customAlertOverlay.classList.remove('show');
+});
+
+(async function(){
+  const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
+  const toggle=o=>{drawer.classList.toggle('open',o);scrim.classList.toggle('open',o);document.body.style.overflow=o?'hidden':''};
+  document.getElementById('burger').addEventListener('click',()=>toggle(true));
+  scrim.addEventListener('click',()=>toggle(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false)});
+  drawer.querySelectorAll('.d-item,.d-foot button').forEach(b=>b.addEventListener('click',()=>toggle(false)));
+
+  const betInput=document.getElementById('bet'), betRow=document.getElementById('betRow');
+  const balanceEl=document.getElementById('balance');
+  const balanceSidebarEl=document.getElementById('balance-sidebar');
+  const playBtn=document.getElementById('play');
+  const dirUnderBtn=document.getElementById('dirUnderBtn'), dirOverBtn=document.getElementById('dirOverBtn');
+  const targetSlider=document.getElementById('targetSlider'), targetDisplay=document.getElementById('targetDisplay');
+  const winChanceEl=document.getElementById('winChance'), diceMultEl=document.getElementById('diceMult');
+  const diceTrack=document.getElementById('diceTrack'), diceMarker=document.getElementById('diceMarker');
+  const diceResultEl=document.getElementById('diceResult'), dicePlaceholder=document.getElementById('dicePlaceholder');
+
+  let direction = 'under'; // 'under' ou 'over'
+  let busy=false;
+  const HOUSE_EDGE = 0.97;
+
+  function setBalance(v){
+    balanceEl.textContent = v;
+    balanceSidebarEl.textContent = v;
+  }
+
+  function updateDiceStats(){
+    const target = parseFloat(targetSlider.value);
+    targetDisplay.textContent = target.toFixed(2);
+    const winChance = direction === 'under' ? target : (100 - target);
+    const multiplier = (100 / winChance) * HOUSE_EDGE;
+    winChanceEl.textContent = winChance.toFixed(2);
+    diceMultEl.textContent = multiplier.toFixed(2);
+    diceTrack.style.background = direction === 'under'
+      ? `linear-gradient(90deg, var(--green) 0%, var(--green) ${target}%, var(--red) ${target}%, var(--red) 100%)`
+      : `linear-gradient(90deg, var(--red) 0%, var(--red) ${target}%, var(--green) ${target}%, var(--green) 100%)`;
+  }
+
+  dirUnderBtn.addEventListener('click', () => {
+    direction = 'under';
+    dirUnderBtn.classList.add('on'); dirOverBtn.classList.remove('on');
+    updateDiceStats();
+  });
+  dirOverBtn.addEventListener('click', () => {
+    direction = 'over';
+    dirOverBtn.classList.add('on'); dirUnderBtn.classList.remove('on');
+    updateDiceStats();
+  });
+  targetSlider.addEventListener('input', updateDiceStats);
+  updateDiceStats();
+
+  async function rollDice(){
+    if (busy) return;
+    const discordId = getSharedDiscordId(), pseudo = getSharedUsername();
+    if (!discordId){ connectDiscord(); return; }
+    const bet = Math.floor(+betInput.value || 0);
+    if (!(bet>0)){ betRow.classList.add('err'); setTimeout(()=>betRow.classList.remove('err'),1200); return; }
+
+    busy=true; playBtn.disabled=true;
+    try{
+      const resp = await fetch(`${workerBase}/dice/roll`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ discordId, pseudo, avatarUrl: getSharedAvatarUrl(), bet, target: parseFloat(targetSlider.value), direction }),
+      });
+      const data = await resp.json();
+      if (!data.ok){
+        if (data.reason==='insufficient_keys') showAlert('Solde de clés insuffisant.');
+        else if (data.reason==='banned') showAlert('Ton compte a été banni des mini-jeux.');
+        else showAlert("Impossible de lancer le dé.");
+        playBtn.disabled=false; busy=false;
+        return;
+      }
+      setBalance(data.keys);
+      dicePlaceholder.style.display = 'none';
+      diceMarker.style.display = 'block';
+      diceMarker.style.left = data.roll + '%';
+      diceResultEl.style.display = 'block';
+      diceResultEl.className = 'dice-result ' + (data.won ? 'win' : 'lose');
+      diceResultEl.textContent = data.roll.toFixed(2) + (data.won ? ` (+${data.payout} 🔑)` : ' (Perdu)');
+      loadHistory();
+    }catch(e){
+      showAlert('Erreur réseau, réessaie.');
+    }
+    playBtn.disabled=false; busy=false;
+  }
+
+  playBtn.addEventListener('click', rollDice);
+  document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(1,Math.floor((+betInput.value||0)/2)));
+  document.getElementById('double').addEventListener('click',()=>betInput.value=(+betInput.value||0)*2);
+  document.getElementById('maxBet').addEventListener('click',()=>{
+    const max = parseFloat(balanceEl.textContent) || 0;
+    betInput.value = Math.max(1, Math.floor(max));
+  });
+
+  // ---------------- Historique (public + personnel) ----------------
+  const rows=document.getElementById('betRows');
+  const tabButtons = document.querySelectorAll('.tabs button');
+  let activeTab = 'all';
+
+  function renderHistoryRows(list){
+    rows.innerHTML='';
+    list.forEach(p => {
+      const tr=document.createElement('tr');
+      const isMines = p.game === 'mines';
+      const isBlackjack = p.game === 'blackjack';
+      const gameIcon = isMines ? '💣' : isBlackjack ? '🃏' : '🎲';
+      const gameName = isMines ? 'Mines' : isBlackjack ? 'Blackjack' : 'Dice';
+      let resultHtml, payout;
+      if (isMines){
+        const mult = p.busted ? 0 : p.multiplier;
+        payout = p.busted ? 0 : p.payout;
+        resultHtml = `<span class="${mult>=2?'win':mult===0?'lose':''}">${(mult.toFixed ? mult.toFixed(2) : mult)}×</span>`;
+      } else if (isBlackjack){
+        payout = p.payout;
+        const label = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Gagné' : p.result==='push' ? 'Égalité' : 'Perdu';
+        const cls = (p.result==='win'||p.result==='blackjack') ? 'win' : p.result==='push' ? '' : 'lose';
+        resultHtml = `<span class="${cls}">${label}</span>`;
+      } else {
+        payout = p.payout;
+        resultHtml = `<span class="${p.won?'win':'lose'}">${p.won ? p.multiplier.toFixed(2)+'×' : 'Perdu'}</span>`;
+      }
+      tr.innerHTML=`<td><span class="g"><span class="ic">${gameIcon}</span>${gameName}</span></td>
+        <td><span class="p"><img class="pfp" src="${escapeHtml(p.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="" referrerpolicy="no-referrer">${escapeHtml(p.pseudo||'?')}</span></td>
+        <td class="time">${formatLocalTime(p.dateMs)}</td>
+        <td><span class="key">🔑</span> ${escapeHtml(String(p.bet))}</td>
+        <td>${resultHtml}</td>
+        <td class="${payout>p.bet?'win':''}"><span class="key">🔑</span> ${escapeHtml(String(payout))}</td>`;
+      rows.appendChild(tr);
+    });
+  }
+
+  async function loadHistory(){
+    if (!workerBase) return;
+    try{
+      let lists = [];
+      const games = ['mines', 'blackjack', 'dice'];
+      if (activeTab === 'mine'){
+        const discordId = getSharedDiscordId();
+        if (!discordId){ renderHistoryRows([]); return; }
+        const resps = await Promise.all(games.map(g => fetch(`${workerBase}/${g}/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`)));
+        const datas = await Promise.all(resps.map(r => r.json()));
+        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g })));
+      } else {
+        const resps = await Promise.all(games.map(g => fetch(`${workerBase}/${g}/history?limit=10`)));
+        const datas = await Promise.all(resps.map(r => r.json()));
+        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g })));
+      }
+      const merged = lists.flat().sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0)).slice(0, 10);
+      renderHistoryRows(merged);
+    }catch(e){}
+  }
+
+  tabButtons.forEach((btn, idx) => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      activeTab = idx===0 ? 'all' : 'mine';
+      loadHistory();
+    });
+  });
+
+  // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
+  document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
+
+  // ---------------- Identité ----------------
+  async function applyIdentity(){
+    const saved = getSavedDiscordIdentity();
+    const sideLoginBtn = document.getElementById('side-login-btn');
+    const sideUser = document.getElementById('side-user');
+    const sideUserPseudo = document.getElementById('side-user-pseudo');
+    const sideUserPfp = document.getElementById('side-user-pfp');
+    const drawerPseudo = document.getElementById('drawer-pseudo');
+    const drawerPfp = document.getElementById('drawer-user-pfp');
+    const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
+    const fallbackAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+    if (saved && saved.discordId){
+      sideLoginBtn.style.display = 'none';
+      sideUser.style.display = 'flex';
+      sideUserPseudo.textContent = saved.username;
+      sideUserPfp.src = saved.avatarUrl || fallbackAvatar;
+      drawerPseudo.textContent = saved.username;
+      drawerPfp.src = saved.avatarUrl || fallbackAvatar;
+      drawerLogoutBtn.style.display = 'grid';
+      const config = await getKeysStatus(saved.discordId);
+      setBalance(config);
+    } else {
+      sideLoginBtn.style.display = 'block';
+      sideUser.style.display = 'none';
+      drawerPseudo.textContent = 'Non connecté';
+      drawerLogoutBtn.style.display = 'none';
+      setBalance('0');
+    }
+    loadHistory();
+  }
+
+  async function getKeysStatus(discordId){
+    if (!workerBase) return '0';
+    try{
+      const resp = await fetch(`${workerBase}/mines/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      return data.keys;
+    }catch(e){ return '0'; }
+  }
+
+  document.getElementById('side-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    applyIdentity();
+  });
+  document.getElementById('drawer-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    applyIdentity();
+    toggle(false);
+  });
+
+  window.addEventListener('message', (event) => {
+    if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
+    saveDiscordIdentity(event.data.discordId, event.data.username, event.data.avatarUrl);
+    applyIdentity();
+  });
+
+  applyIdentity();
+})();
+</script>
+</body>
+</html>
