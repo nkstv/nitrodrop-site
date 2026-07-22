@@ -2,311 +2,153 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="page-title">Coffre-fort — Drop-Cash.com</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171209">
+<title>Drop Cash — Vault</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#07070C;
-    --bg-raise:#100F1C;
-    --bg-card:#131226;
-    --line:rgba(255,255,255,0.08);
-    --line-strong:rgba(255,255,255,0.16);
-    --green:#B6FF3C;
-    --green-dim:#7FCB1F;
-    --violet:#8B5CFF;
-    --violet-deep:#4B2FBF;
-    --text:#F1F0FA;
-    --text-dim:#9591B0;
-    --text-faint:#5F5C77;
-    --radius:18px;
+    --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
+    --line:rgba(232,193,104,.10); --gold:#E8C168; --gold-deep:#C79A3C;
+    --cream:#F2E9D8; --muted:#9a8b6d; --muted-2:#6f6350;
+    --red:#F26D6D; --green:#5FD68B;
+    --r-l:20px; --r-m:14px;
+    --gap:14px; --chrome:300px; --side:238px;
   }
-
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:clip;
-    min-height:100vh;
-    display:flex; flex-direction:column;
+    background:radial-gradient(1000px 500px at 70% -10%, rgba(232,193,104,.055), transparent 60%), var(--bg);
+    color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif;
   }
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size:56px 56px;
-    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
-    pointer-events:none;
-    z-index:0;
-  }
-  a{color:inherit; text-decoration:none;}
-  img{max-width:100%; display:block;}
-  :focus-visible{outline:2px solid var(--green); outline-offset:3px; border-radius:4px;}
+  h1{font-family:"Baloo 2",sans-serif}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
 
-  .wrap{max-width:1240px; margin:0 auto; padding:0 32px; position:relative; z-index:1;}
-  h1,h2,h3{font-family:'Unbounded', sans-serif; line-height:1.05; letter-spacing:-0.01em;}
-  .code-font{font-family:'JetBrains Mono', monospace; letter-spacing:0.04em;}
+  .app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
 
-  /* ---------- NAV (identique au site) ---------- */
-  nav{
-    position:sticky; top:0; z-index:50;
-    background:rgba(7,7,12,0.75);
-    backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--line);
+  /* ================= SIDEBAR ================= */
+  .side{
+    position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel) 60%,var(--bg-soft));
+    border-right:1px solid var(--line);padding:16px 12px;gap:14px;overflow-y:auto;
   }
-  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:18px 0;}
-  .logo{display:flex; align-items:center; gap:10px; font-family:'Unbounded'; font-weight:900; font-size:19px;}
-  .logo-mark{
-    width:34px; height:34px; border-radius:9px;
-    background:linear-gradient(135deg, var(--violet), var(--violet-deep));
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 22px rgba(139,92,255,0.55);
-    font-size:16px;
-  }
-  .logo .logo-accent{color:var(--green);}
-  .nav-links{display:flex; gap:34px; font-size:14.5px; color:var(--text-dim); font-weight:500;}
-  .nav-links a:hover{color:var(--text);}
-  .nav-cta{
-    background:var(--green); color:#08130a; font-weight:700; font-size:14px;
-    padding:10px 20px; border-radius:10px;
-    box-shadow:0 0 0 0 rgba(182,255,60,0.6);
-    transition:box-shadow .2s ease, transform .2s ease;
-  }
-  .nav-cta:hover{box-shadow:0 0 26px rgba(182,255,60,0.45); transform:translateY(-1px);}
-  .lang-switch{display:flex; gap:4px; background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:8px; padding:3px;}
-  .lang-switch-btn{
-    background:none; border:none; color:var(--text-dim); font-weight:700; font-size:12px;
-    padding:6px 10px; border-radius:6px; cursor:pointer; letter-spacing:0.03em;
-  }
-  .lang-switch-btn.active{background:var(--green); color:#08130a;}
-  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer;}
-  .burger span{width:22px; height:2px; background:var(--text); transition:transform .2s ease, opacity .2s ease;}
-  .mobile-nav{
-    display:none; flex-direction:column; gap:2px;
-    background:var(--bg-raise); border-bottom:1px solid var(--line);
-    padding:8px 0;
-  }
-  .mobile-nav.open{display:flex;}
-  .mobile-nav a{
-    padding:14px 32px; font-size:15px; color:var(--text-dim); font-weight:500;
-    border-bottom:1px solid var(--line);
-  }
-  .mobile-nav a:last-child{border-bottom:none;}
-  .mobile-nav a:active{color:var(--text); background:var(--bg-card);}
+  .side::-webkit-scrollbar{width:6px}
+  .side::-webkit-scrollbar-thumb{background:var(--panel-3);border-radius:6px}
 
-  /* ---------- FOOTER (identique au site) ---------- */
-  footer{border-top:1px solid var(--line); padding:56px 0 40px; margin-top:auto;}
-  .footer-top{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:32px;}
-  .footer-cols{display:flex; gap:64px; flex-wrap:wrap;}
-  .footer-col h4{font-size:12.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px;}
-  .footer-col a{display:block; font-size:14px; color:var(--text-dim); margin-bottom:10px;}
-  .footer-col a:hover{color:var(--text);}
-  .floating-widget{
-    position:fixed; bottom:24px; right:24px; z-index:200;
-    width:60px; height:60px; border-radius:50%;
-    border:3px solid var(--green); box-shadow:0 0 20px rgba(182,255,60,0.4);
-    overflow:visible; display:flex; align-items:center; justify-content:center;
-    background:var(--bg-card);
-  }
-  .floating-widget img{width:100%; height:100%; border-radius:50%; object-fit:cover;}
-  .floating-widget-badge{
-    position:absolute; bottom:-6px; left:-6px;
-    width:28px; height:28px; border-radius:50%;
-    background:#5865F2; border:2px solid var(--bg);
-    display:flex; align-items:center; justify-content:center; font-size:14px;
-  }
-  @media (max-width:960px){
-    .floating-widget{width:50px; height:50px; bottom:16px; right:16px;}
-    .floating-widget-badge{width:24px; height:24px; font-size:12px;}
-  }
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 0}
+  .brand .avatar{width:38px;height:38px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:19px;border:2px solid rgba(0,0,0,.4)}
+  .brand .name{font-family:"Baloo 2";font-weight:800;font-size:19px;line-height:1.05}
+  .beta{display:inline-block;font-size:8.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--gold);background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.32);
+    padding:1px 6px;border-radius:20px;margin-top:3px}
 
-  .modal-overlay{
-    position:fixed; inset:0; z-index:200;
-    background:rgba(4,4,8,0.72); backdrop-filter:blur(6px);
-    display:flex; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity .2s ease;
-    padding:20px;
+  .wallet{
+    background:linear-gradient(150deg,rgba(232,193,104,.14),rgba(232,193,104,.04));
+    border:1px solid rgba(232,193,104,.24);border-radius:var(--r-m);padding:11px 13px;
   }
-  .modal-overlay.active{opacity:1; pointer-events:auto;}
-  .modal{
-    position:relative; width:100%; max-width:420px;
-    background:var(--bg-card); border:1px solid var(--line-strong); border-radius:20px;
-    padding:34px; box-shadow:0 40px 100px rgba(0,0,0,0.6);
-    transform:translateY(14px); transition:transform .2s ease;
-  }
-  .modal-overlay.active .modal{transform:translateY(0);}
-  .modal-close{
-    position:absolute; top:16px; right:16px; background:none; border:none; color:var(--text-dim);
-    font-size:22px; cursor:pointer; line-height:1; padding:4px;
-  }
-  .modal-close:hover{color:var(--text);}
-  .modal-tag{color:var(--green); font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
-  .modal h3{font-family:'Unbounded'; font-size:22px; color:#fff; margin-top:10px;}
-  .modal-sub{font-size:13.5px; color:var(--text-dim); margin-top:10px; line-height:1.6;}
-  #scratch-form, #slot-form, #wheel-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
-  #scratch-form label, #slot-form label, #wheel-form label{display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
-  #scratch-form input, #slot-form input, #wheel-form input{
-    background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
-    padding:12px 14px; color:var(--text); font-size:14px; font-family:'Inter'; width:100%;
-  }
-  #scratch-form input:focus, #slot-form input:focus, #wheel-form input:focus{border-color:var(--green);}
-  .modal-submit{
-    margin-top:6px; background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
-    padding:14px; border:none; border-radius:10px; cursor:pointer; width:100%;
-  }
-  .modal-submit:hover{background:#c8ff6a;}
-  .modal-ghost{
-    background:transparent; border:1px solid var(--line-strong); color:var(--text);
-    font-weight:600; font-size:14.5px; padding:14px; border-radius:10px; cursor:pointer; width:100%;
-  }
-  .modal-ghost:hover{border-color:var(--text-dim);}
+  .wallet .k{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+  .wallet .v{display:flex;align-items:center;gap:7px;font-weight:800;font-size:21px;margin-top:3px}
+  .wallet .v .key{font-size:15px}
+  .wallet button{width:100%;margin-top:9px;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    color:#3a2a08;font-weight:800;font-size:13px;padding:8px;border-radius:10px;transition:.15s}
+  .wallet button:hover{filter:brightness(1.06)}
+  .wallet button:disabled{opacity:.5; cursor:default; filter:none;}
 
-  .scratch-card-visual{
-    width:200px; height:200px; margin:20px auto 0; border-radius:16px; position:relative; overflow:hidden;
-    border:1px solid var(--line);
+  .s-label{color:var(--muted-2);font-size:9.5px;font-weight:800;letter-spacing:2.4px;padding:0 8px;margin-top:2px}
+  .s-nav{display:flex;flex-direction:column;gap:2px}
+  .s-nav a{
+    display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--muted);
+    font-weight:800;font-size:14px;padding:10px 12px;border-radius:12px;transition:.15s;position:relative;
   }
-  .scratch-silver{
-    position:absolute; inset:0; z-index:2;
-    background:repeating-linear-gradient(135deg,#9a99a8,#9a99a8 8px,#8685934a 8px,#8685934a 16px);
-    display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer;
-    transition:opacity .4s ease, transform .4s ease;
-  }
-  .scratch-silver.revealed{opacity:0; transform:scale(1.15); pointer-events:none;}
-  .scratch-result{
-    position:absolute; inset:0; z-index:1; background:var(--bg-card);
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    font-family:'Unbounded'; font-weight:900; font-size:28px; color:var(--green);
-  }
+  .s-nav a .ic{width:20px;text-align:center;font-size:15px;opacity:.9}
+  .s-nav a:hover{background:rgba(232,193,104,.06);color:var(--cream)}
+  .s-nav a.on{background:var(--panel-3);color:var(--cream)}
+  .s-nav a.on::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--gold)}
+  .s-nav a .tag{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:1px;color:var(--gold);
+    background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.28);padding:2px 6px;border-radius:20px}
 
-  .slot-reels{
-    display:flex; gap:8px; justify-content:center; margin-top:20px;
-    background:var(--bg-raise); border:1px solid var(--line); border-radius:14px; padding:16px;
-  }
-  .slot-reel{
-    width:64px; height:74px; background:var(--bg-card); border-radius:8px;
-    display:flex; align-items:center; justify-content:center; font-size:30px; overflow:hidden;
-  }
-  .slot-reel.spinning .slot-sym{animation:slot-blur .07s linear infinite;}
-  @keyframes slot-blur{0%{transform:translateY(-4px);}50%{transform:translateY(4px);}100%{transform:translateY(-4px);}}
+  .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:10px;border-top:1px solid var(--line)}
+  .s-user{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:14px;padding:8px 10px}
+  .s-user .pfp{width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);object-fit:cover;}
+  .s-user .n{font-weight:800;font-size:13.5px;line-height:1.2}
+  .s-user .s{color:var(--muted);font-size:11px;font-weight:700}
+  .s-user .out{margin-left:auto;color:var(--muted-2);font-size:14px;transition:.15s}
+  .s-user .out:hover{color:var(--red)}
+  .wallet-login-btn{width:100%;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));color:#3a2a08;
+    font-family:"Baloo 2";font-weight:800;font-size:14px;padding:12px;border-radius:12px;transition:.15s}
+  .wallet-login-btn:hover{filter:brightness(1.06)}
 
-  .wheel-wrap{position:relative; width:220px; height:220px; margin:20px auto 0;}
-  .wheel-pointer{
-    position:absolute; top:-4px; left:50%; transform:translateX(-50%); z-index:3;
-    width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent;
-    border-top:18px solid var(--green);
-  }
-  .wheel-disc{
-    width:220px; height:220px; border-radius:50%; position:relative;
-    background: conic-gradient(
-      var(--bg-card) 0deg 45deg, var(--green) 45deg 90deg,
-      var(--bg-card) 90deg 135deg, var(--green) 135deg 180deg,
-      var(--bg-card) 180deg 225deg, var(--green) 225deg 270deg,
-      var(--bg-card) 270deg 315deg, var(--green) 315deg 360deg
-    );
-    border:3px solid var(--line-strong); box-shadow:0 0 0 6px var(--bg-raise);
-  }
-  .wheel-label-pos{position:absolute; top:50%; left:50%; width:0; height:0;}
-  .wheel-label-content{position:absolute; display:block; font-size:22px; transform-origin:center; margin-left:-12px; margin-top:-12px;}
-  .wheel-center-dot{
-    position:absolute; top:50%; left:50%; width:22px; height:22px; margin:-11px 0 0 -11px;
-    background:var(--bg-raise); border:2px solid var(--line-strong); border-radius:50%; z-index:2;
-  }
-  .tg-btn{
-    display:flex; align-items:center; gap:8px; background:#3FA9F5; color:#071018;
-    font-weight:700; font-size:13px; padding:12px; border-radius:9px; text-decoration:none;
-  }
+  /* ================= CONTENU ================= */
+  .main{display:flex;flex-direction:column;gap:var(--gap);padding:16px clamp(16px,2.2vw,34px) 30px;min-width:0}
 
-  .disclaimer{
-    margin-top:44px; padding-top:28px; border-top:1px solid var(--line);
-    font-size:12px; color:var(--text-faint); line-height:1.7; max-width:820px;
-  }
-  .age-badge{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:28px; height:28px; border:1px solid var(--line-strong); border-radius:6px;
-    font-size:11px; font-weight:800; margin-right:8px; color:var(--text-dim);
-  }
+  .topbar{display:flex;align-items:center;gap:14px;flex:none}
+  .topbar h1{font-size:28px;font-weight:800;line-height:1}
+  .topbar .crumb{color:var(--muted-2);font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .live{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:800;font-size:12px;
+    background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:7px 13px}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.4s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .icon-btn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
+    display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.15s}
+  .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
+  .burger{display:none}
 
-  /* ---------- VAULT ---------- */
-  @keyframes fadeInUp{
-    from{opacity:0; transform:translateY(20px);}
-    to{opacity:1; transform:translateY(0);}
-  }
-  .vault-section{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:64px 20px; animation:fadeInUp 0.6s ease both;}
-  @media (prefers-reduced-motion: reduce){
-    .vault-section{animation:none;}
-  }
+  /* ---------- Coffre-fort ---------- */
+  .vault-layout{display:grid; grid-template-columns:260px 1fr 260px; gap:18px; align-items:start;}
+  .vault-side{display:flex; flex-direction:column; gap:14px;}
 
-  .vault-stat-card{
-    background:var(--bg-card); border:1px solid var(--line); border-radius:12px;
-    padding:14px 26px; text-align:center; min-width:120px;
+  .vault-stat{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
+    border-radius:var(--r-l); padding:18px; text-align:center;
   }
-  .vault-stat-card .n{font-family:'Unbounded'; font-weight:900; font-size:20px; color:var(--green);}
-  .vault-stat-card .l{font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;}
+  .vault-stat .n{font-family:"Baloo 2"; font-weight:800; font-size:28px; color:var(--gold); line-height:1.1;}
+  .vault-stat .l{color:var(--muted); font-size:10.5px; font-weight:800; letter-spacing:1.4px;
+    text-transform:uppercase; margin-top:6px;}
 
-  .vault-columns{display:grid; grid-template-columns:1fr 360px 1fr; gap:32px; align-items:start; margin-bottom:24px;}
+  .vault-steps{display:flex; flex-direction:column; gap:8px;}
+  .vault-step{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--r-m);
+    padding:11px 13px; font-size:12.5px; font-weight:700; color:var(--muted);
+  }
+  .vault-step b{color:var(--gold); margin-right:4px;}
 
-  .telegram-panel{
-    background:radial-gradient(120% 140% at 20% 10%, rgba(63,169,245,0.14), transparent 60%), var(--bg-card);
-    border:1px solid rgba(105,175,255,0.32); border-radius:16px; padding:26px 24px; text-align:center;
+  .vault-tg{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
+    border-radius:var(--r-l); padding:20px 18px; text-align:center;
   }
-  .telegram-panel .icon{
-    width:52px; height:52px; margin:0 auto 16px; border-radius:50%;
-    background:linear-gradient(135deg,#5FC1FF,#1C6FD1); display:flex; align-items:center; justify-content:center; font-size:22px;
-    box-shadow:0 0 20px rgba(63,169,245,0.4);
+  .vault-tg .ic{
+    width:42px; height:42px; border-radius:12px; margin:0 auto 12px;
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    display:grid; place-items:center; font-size:20px; color:#3a2a08;
   }
-  .telegram-panel .tag{font-size:11px; color:#6FC0FF; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;}
-  .telegram-panel h4{font-size:17px; color:#fff; margin-bottom:12px; line-height:1.3;}
-  .telegram-panel p{font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-bottom:20px;}
-  .telegram-panel a{
-    display:block; background:linear-gradient(135deg,#6CC4FF,#3FA9F5); color:#071018;
-    font-weight:700; font-size:13px; padding:13px; border-radius:9px; max-width:220px; margin:0 auto;
+  .vault-tg .tag{color:var(--gold); font-size:10px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase;}
+  .vault-tg h4{font-family:"Baloo 2"; font-weight:800; font-size:16px; color:var(--cream); margin-top:6px;}
+  .vault-tg p{font-size:12.5px; color:var(--muted); line-height:1.55; margin-top:8px;}
+  .vault-tg a{
+    display:block; margin-top:14px; padding:11px; border-radius:var(--r-m);
+    background:var(--panel-3); border:1px solid var(--line); color:var(--cream);
+    font-family:"Baloo 2"; font-weight:800; font-size:13.5px; text-decoration:none; transition:.15s;
   }
+  .vault-tg a:hover{border-color:rgba(232,193,104,.4); color:var(--gold);}
 
-  .steps-strip{display:flex; flex-direction:column; gap:10px; margin-bottom:16px;}
-  .step-chip{
-    background:linear-gradient(120deg, rgba(139,92,255,0.14), rgba(182,255,60,0.08));
-    border:1px solid rgba(139,92,255,0.25); border-radius:10px; padding:12px 18px;
-    font-size:12.5px; color:var(--text-dim);
+  .vault-main{
+    background:linear-gradient(180deg,var(--panel),var(--bg-soft));
+    border:1px solid var(--line); border-radius:var(--r-l); padding:30px 26px 26px; text-align:center;
   }
-  .step-chip b{color:var(--green);}
+  .vault-eyebrow{color:var(--gold); font-size:10.5px; font-weight:800; letter-spacing:2px; text-transform:uppercase;}
+  .vault-title{font-family:"Baloo 2"; font-weight:800; font-size:28px; color:var(--cream); margin-top:8px;}
+  .vault-subtitle{font-size:13.5px; color:var(--muted); line-height:1.6; margin-top:10px; max-width:420px; margin-left:auto; margin-right:auto;}
 
-  .winners-panel{background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:18px 16px;}
-  .winners-panel h4{font-size:12px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; text-align:center; margin-bottom:14px; font-weight:600;}
-  .winner-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
-  .winner-row:last-child{margin-bottom:0;}
-  .winner-avatar{
-    width:26px; height:26px; border-radius:50%; background:var(--bg-raise); border:1px solid var(--line-strong);
-    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0;
-  }
-  .winner-name{flex:1; font-size:13px; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .winner-amount{font-size:13px; color:var(--green); font-weight:700; font-family:'JetBrains Mono';}
-
-  @media (max-width:900px){
-    .vault-columns{grid-template-columns:1fr; max-width:440px; margin-left:auto; margin-right:auto;}
-  }
-  .vault-card{
-    width:100%; max-width:440px; text-align:center;
-    background:var(--bg-card); border:1px solid var(--line); border-radius:24px;
-    padding:40px 32px;
-  }
-  .vault-eyebrow{
-    color:var(--green); font-size:12.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
-    margin-bottom:10px;
-  }
-  .vault-title{font-size:26px; color:#fff; margin-bottom:10px;}
-  .vault-subtitle{font-size:14px; color:var(--text-dim); line-height:1.6; margin-bottom:32px;}
-
-  .vault-visual{width:180px; height:180px; margin:0 auto 32px; position:relative;}
+  .vault-visual{width:180px; height:180px; margin:28px auto; position:relative;}
   .vault-door{
     position:absolute; inset:0; border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #2a2840, #100F1C 70%);
-    border:4px solid #3a3850;
+    background:radial-gradient(circle at 35% 30%, #3a2c14, #191309 70%);
+    border:4px solid var(--gold-deep);
     display:flex; align-items:center; justify-content:center;
     transition:opacity .4s ease, transform .4s ease;
   }
@@ -319,143 +161,267 @@
     80%{transform:translateX(6px) rotate(1deg);}
   }
   .vault-dial{
-    width:84px; height:84px; border-radius:50%; border:3px solid #4a4870;
+    width:84px; height:84px; border-radius:50%; border:3px solid var(--gold);
     display:flex; align-items:center; justify-content:center;
     transition:transform .6s cubic-bezier(.34,1.56,.64,1);
   }
-  .vault-dial::before{content:""; width:5px; height:32px; background:var(--violet); border-radius:3px;}
+  .vault-dial::before{content:""; width:5px; height:32px; background:var(--gold); border-radius:3px;}
   .vault-dial.spin{transform:rotate(1080deg);}
-
   .vault-half{
-    position:absolute; top:14px; width:66px; height:150px;
-    background:linear-gradient(135deg,#3a3850,#100F1C);
-    border:2px solid #4a4870; transition:transform .6s cubic-bezier(.6,-0.28,.4,1.3), opacity .4s ease;
+    position:absolute; top:14px; width:66px; height:150px; display:none;
+    background:linear-gradient(135deg,#3a2c14,#191309);
+    border:2px solid var(--gold-deep); transition:transform .6s cubic-bezier(.6,-0.28,.4,1.3), opacity .4s ease;
   }
   .vault-half-left{left:2px; border-radius:14px 3px 3px 14px; transform:rotate(-18deg) translateX(-4px);}
   .vault-half-right{right:2px; border-radius:3px 14px 14px 3px; transform:rotate(18deg) translateX(4px);}
-  .vault-half{display:none;}
-  .vault-visual.opened .vault-door{opacity:0; transform:scale(0.9);}
+  .vault-visual.opened .vault-door{opacity:0; transform:scale(.9);}
   .vault-visual.opened .vault-half{display:block;}
-  .vault-visual.opened .vault-half-left{transform:rotate(-38deg) translate(-30px, -6px);}
-  .vault-visual.opened .vault-half-right{transform:rotate(38deg) translate(30px, -6px);}
+  .vault-visual.opened .vault-half-left{transform:rotate(-38deg) translate(-30px,-6px);}
+  .vault-visual.opened .vault-half-right{transform:rotate(38deg) translate(30px,-6px);}
   .vault-amount{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-family:'Unbounded'; font-weight:900; font-size:26px; color:var(--green);
+    font-family:"Baloo 2"; font-weight:800; font-size:28px; color:var(--green);
     opacity:0; transition:opacity .3s ease .35s;
   }
   .vault-visual.opened .vault-amount{opacity:1;}
 
-  .vault-form{display:flex; flex-direction:column; gap:14px;}
+  .vault-form{display:flex; flex-direction:column; gap:12px; max-width:340px; margin:0 auto;}
   .vault-form input{
-    background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
-    padding:14px 16px; color:var(--text); font-size:15px; text-align:center; font-family:'JetBrains Mono';
-    letter-spacing:0.05em;
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--r-m);
+    padding:13px 15px; color:var(--cream); font-family:"Nunito Sans"; font-weight:700; font-size:14.5px;
+    text-align:center; outline:none; transition:border-color .15s; width:100%;
   }
-  .vault-form input:focus{border-color:var(--green); outline:none;}
-  .vault-submit{
-    background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
-    padding:14px; border:none; border-radius:10px; cursor:pointer;
-  }
-  .vault-submit:hover{background:#c8ff6a;}
-  .vault-submit:disabled{opacity:0.6; cursor:default;}
-  .vault-message{font-size:13.5px; margin-top:16px; line-height:1.6;}
-  .vault-message.error{color:#FF7A90;}
-  .vault-message.success{color:var(--green);}
-  .vault-message.info{color:var(--text-dim);}
-  .vault-history-row{
-    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px 12px;
-    background:var(--bg-raise); border:1px solid var(--line); border-radius:10px;
-    padding:10px 14px; font-size:13px;
-  }
-  .vault-history-row .name{color:var(--text); font-weight:600;}
-  .vault-history-row .amount{color:var(--green); font-family:'JetBrains Mono'; font-weight:700;}
-  .vault-history-row .participants{color:var(--text-dim); font-size:11.5px;}
-  .vault-history-row .code-used{color:var(--violet); font-size:12px; font-weight:700;}
-  .vault-history-row .date{color:var(--text-faint); font-size:11.5px;}
-  #vault-history-prev-btn:hover:not(:disabled), #vault-history-next-btn:hover:not(:disabled){border-color:var(--line-strong);}
-  #vault-history-prev-btn:disabled, #vault-history-next-btn:disabled{opacity:.3; cursor:not-allowed;}
+  .vault-form input:focus{border-color:rgba(232,193,104,.5);}
+  .vault-form input:disabled{opacity:.5;}
+  .vault-form .bet-btn{margin-top:2px;}
 
-  @media (max-width:960px){
-    .nav-links{display:none;}
-    .nav-inner > .lang-switch{display:none;}
-    .nav-inner > .nav-cta{display:none;}
-    .burger{display:flex;}
-    .wrap{padding:0 20px;}
-    .nav-inner{padding:16px 0; gap:12px;}
-    .logo{gap:8px; font-size:16px;}
-    .logo-mark{width:30px; height:30px; font-size:14px; flex-shrink:0;}
-    .burger{padding:6px; margin:-6px 0 -6px 6px;}
+  .vault-message{margin-top:16px; font-size:13.5px; font-weight:700; line-height:1.55; min-height:20px;}
+  .vault-message.success{color:var(--green);}
+  .vault-message.error{color:var(--red);}
+  .vault-message.info{color:var(--muted);}
+
+  .vault-winners{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
+    border-radius:var(--r-l); padding:18px;
   }
+  .vault-winners h4{font-family:"Baloo 2"; font-weight:800; font-size:14px; color:var(--cream); margin-bottom:12px;}
+  .winner-row{display:flex; align-items:center; gap:9px; padding:8px 0; border-top:1px solid var(--line);}
+  .winner-row:first-of-type{border-top:none;}
+  .winner-avatar{
+    width:28px; height:28px; border-radius:50%; flex:none; display:grid; place-items:center;
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:13px;
+  }
+  .winner-name{flex:1; font-weight:800; font-size:13px; color:var(--cream);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .winner-amount{color:var(--green); font-weight:800; font-size:13px;}
+
+  .vault-empty{font-size:13px; color:var(--muted-2); text-align:center; padding:14px 0;}
+  .vault-history-title{font-family:"Baloo 2"; font-weight:800; font-size:17px; color:var(--cream); margin-bottom:14px;}
+  .vault-pagination{display:flex; justify-content:center; align-items:center; gap:10px; margin-top:14px;}
+  .vault-pagination button{
+    width:36px; height:36px; border-radius:10px; border:1px solid var(--line);
+    background:var(--panel-3); color:var(--cream); font-size:13px; transition:.15s;
+  }
+  .vault-pagination button:hover:not(:disabled){border-color:rgba(232,193,104,.4); color:var(--gold);}
+  .vault-pagination button:disabled{opacity:.35; cursor:default;}
+
+  @media(max-width:1100px){
+    .vault-layout{grid-template-columns:1fr;}
+    .vault-side{flex-direction:row; flex-wrap:wrap;}
+    .vault-side > *{flex:1; min-width:200px;}
+  }
+  @media(max-width:600px){
+    .vault-side{flex-direction:column;}
+    .vault-title{font-size:22px;}
+  }
+
+  /* ---------- Paris ---------- */
+  .bets{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+    border-radius:var(--r-l);padding:16px 18px}
+  .tabs{display:flex;gap:6px;margin-bottom:10px}
+  .tabs button{padding:9px 17px;border-radius:30px;font-weight:800;font-size:13.5px;color:var(--muted);transition:.18s}
+  .tabs button:hover{color:var(--cream)}
+  .tabs button.on{background:var(--panel-3);color:var(--cream);border:1px solid var(--line)}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:620px}
+  thead th{text-align:left;color:var(--muted-2);font-size:10.5px;letter-spacing:1.6px;font-weight:800;padding:7px 13px;text-transform:uppercase}
+  thead th:nth-child(n+3){text-align:right}
+  tbody td{padding:11px 13px;border-top:1px solid rgba(232,193,104,.05);font-weight:700;font-size:13.5px}
+  tbody td:nth-child(n+3){text-align:right}
+  tbody tr:hover{background:rgba(232,193,104,.04)}
+  tbody tr.fresh{animation:pop .5s ease}
+  @keyframes pop{from{background:rgba(232,193,104,.12)}to{background:transparent}}
+  .g{display:flex;align-items:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:14px}
+  .g .ic{width:24px;height:24px;border-radius:8px;background:var(--panel-3);border:1px solid var(--line);display:grid;place-items:center;font-size:12px}
+  .p{display:flex;align-items:center;gap:8px}
+  .p .pfp{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9aa7c7,#3c455e);object-fit:cover;flex:none;}
+  td.time{color:var(--muted)}
+  .key{color:var(--gold)}
+  .win{color:var(--green)}
+  .lose{color:var(--muted)}
+
+  /* ================= MOBILE (identique à la version précédente) ================= */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:linear-gradient(180deg,#241c12,#191309);border-top:1px solid var(--line);
+    border-radius:24px 24px 0 0;padding:12px 14px calc(16px + env(safe-area-inset-bottom));
+    transform:translateY(105%);transition:transform .3s cubic-bezier(.22,.9,.3,1);
+    box-shadow:0 -18px 44px rgba(0,0,0,.6);max-height:88vh;overflow-y:auto}
+  .drawer.open{transform:translateY(0)}
+  .handle{width:50px;height:4px;border-radius:4px;background:#4a4032;margin:3px auto 14px}
+  .d-user{display:flex;align-items:center;gap:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:11px 12px}
+  .d-user .pfp{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);flex:none;object-fit:cover;}
+  .d-user .n{font-weight:800;font-size:17px}
+  .d-user .s{color:var(--muted);font-weight:600;font-size:13px;margin-top:1px}
+  .d-out{margin-left:auto;width:38px;height:38px;border-radius:50%;background:rgba(242,109,109,.14);
+    border:1px solid rgba(242,109,109,.3);color:var(--red);display:grid;place-items:center;font-size:15px;flex:none}
+  .d-sep{height:1px;background:var(--line);margin:14px 4px}
+  .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .d-item{background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:13px 12px;
+    font-weight:800;font-size:15px;text-align:left;display:flex;align-items:center;gap:9px;
+    color:var(--cream);text-decoration:none}
+  .d-item:active{background:var(--panel-3)}
+  .d-label{color:var(--muted-2);font-size:10.5px;font-weight:800;letter-spacing:2.6px;margin:16px 4px 9px}
+
+  @media(max-width:1240px){ :root{--side:76px} 
+    .brand .name,.wallet .k,.wallet .v,.wallet button,.s-label,.s-nav a span:not(.ic),.s-user .n,.s-user .s,.s-user .out{display:none}
+    .side{padding:14px 10px;align-items:center}
+    .brand{justify-content:center;padding:0}
+    .wallet{padding:8px;text-align:center;width:100%}
+    .wallet::after{content:"🔑";font-size:16px}
+    .wallet-login-btn{font-size:0;padding:12px;}
+    .wallet-login-btn::after{content:"🎮";font-size:16px}
+    .s-nav{width:100%}
+    .s-nav a{justify-content:center;padding:11px 0}
+    .s-user{padding:6px;justify-content:center}
+    .game-wrap{grid-template-columns:280px 1fr}
+  }
+  @media(max-width:860px){
+    :root{--chrome:250px}
+    .app{grid-template-columns:1fr}
+    .side{display:none}
+    .main{padding:10px 12px 22px;gap:12px}
+    .topbar{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+      border-radius:22px;padding:7px 8px;gap:10px}
+    .topbar h1{font-size:20px;padding-left:6px}
+    .topbar .crumb,.live{display:none}
+    .burger{display:flex;width:38px;height:38px;border-radius:50%;background:var(--panel-3);
+      border:1px solid var(--line);flex-direction:column;gap:3.5px;align-items:center;justify-content:center}
+    .burger span{display:block;width:15px;height:2px;background:var(--cream);border-radius:2px}
+    .game-wrap{grid-template-columns:1fr}
+    .board{order:1;padding:12px;gap:10px}
+    .controls{order:2;border-right:none;border-top:1px solid var(--line);padding:14px;gap:10px}
+    .grid{gap:6px;width:100%}
+    .bet-btn{margin-top:2px}
+    .bar-tools button:nth-child(n+3){display:none}
+    .bets{padding:12px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
+  @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+  .custom-alert-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
+  }
+  .custom-alert-overlay.show{display:flex;}
+  .custom-alert-box{
+    background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:18px;
+    padding:24px 26px; max-width:340px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.55);
+    animation:reveal .18s ease;
+  }
+  .custom-alert-title{font-family:"Baloo 2"; font-weight:800; font-size:15px; color:var(--gold); margin-bottom:10px;}
+  .custom-alert-msg{font-size:14.5px; color:var(--cream); line-height:1.5; margin-bottom:20px;}
+  .custom-alert-btn{
+    width:100%; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:12px; border-radius:12px; transition:.15s;
+  }
+  .custom-alert-btn:hover{filter:brightness(1.06);}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="wrap nav-inner">
-    <a class="logo" href="/"><div class="logo-mark">⚡</div><span id="brand-text1-nav">DROP</span><span id="brand-text2-nav" class="logo-accent">CASH</span></a>
-    <div class="nav-links" id="nav-links">
-      <a href="#" id="nav-link-0">Codes bonus</a>
-      <a href="#" id="nav-link-1">Classement</a>
-      <a href="#" id="nav-link-2">Comment ça marche</a>
-      <a href="#" id="nav-link-3">Discord</a>
-      <a href="#" id="nav-scratch-btn">🎫 Ticket</a>
-      <a href="#" id="nav-slot-btn">🎰 Slot</a>
-      <a href="#" id="nav-wheel-btn">🎡 Roue</a>
-      <a href="/originals" id="nav-originals-btn">🎮 Originals</a>
-    </div>
-    <div class="lang-switch">
-      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
-      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
-    </div>
-    <a href="/#offres" class="nav-cta" id="nav-cta">Voir les codes</a>
-    <button class="burger" aria-label="Menu" id="burger-btn"><span></span><span></span><span></span></button>
-  </div>
-  <div class="mobile-nav" id="mobile-nav">
-    <div class="lang-switch" style="padding:14px 32px; border-bottom:1px solid var(--line);">
-      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
-      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
-    </div>
-    <div style="padding:14px 32px; border-bottom:1px solid var(--line);">
-      <a href="/#offres" class="nav-cta" id="nav-cta-mobile" style="display:block; text-align:center;">Voir les codes</a>
-    </div>
-    <a href="#" id="mobile-nav-link-0">Codes bonus</a>
-    <a href="#" id="mobile-nav-link-1">Classement</a>
-    <a href="#" id="mobile-nav-link-2">Comment ça marche</a>
-    <a href="#" id="mobile-nav-link-3">Discord</a>
-    <a href="#" id="mobile-nav-scratch-btn">🎫 Ticket</a>
-    <a href="#" id="mobile-nav-slot-btn">🎰 Slot</a>
-    <a href="#" id="mobile-nav-wheel-btn">🎡 Roue</a>
-    <a href="/originals" id="mobile-nav-originals-btn">🎮 Originals</a>
-  </div>
-</nav>
-
-<section class="vault-section">
-  <div class="wrap" style="padding:0; max-width:1240px;">
-
-    <div class="vault-columns">
-
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="brand">
+      <div class="avatar">🦁</div>
       <div>
-        <div class="vault-stat-card" style="margin-bottom:16px;">
+        <div class="name">Drop Cash</div>
+        <span class="beta">Beta</span>
+      </div>
+    </div>
+
+    <div class="wallet">
+      <div class="k">Solde</div>
+      <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
+      <button disabled title="Nouvelles clés chaque jour, automatiquement">Recharger</button>
+    </div>
+
+    <div class="s-label">MENU</div>
+    <nav class="s-nav">
+      <a href="/leaderboard"><span class="ic">🏆</span><span>Leaderboard</span></a>
+      <a href="/bonuses"><span class="ic">🎁</span><span>Bonuses</span><span class="tag" id="bonus-count">—</span></a>
+      <a href="/vault" class="on"><span class="ic">🔒</span><span>Vault</span></a>
+    </nav>
+
+    <div class="s-label">ORIGINALS</div>
+    <nav class="s-nav">
+      <a href="/mines"><span class="ic">💣</span><span>Mines</span></a>
+      <a href="/blackjack"><span class="ic">🃏</span><span>Blackjack</span></a>
+      <a href="/slot"><span class="ic">🎰</span><span>Slot</span></a>
+      <a href="/dice"><span class="ic">🎲</span><span>Dice</span></a>
+    </nav>
+
+    <div class="side-foot">
+      <button class="wallet-login-btn" id="side-login-btn" onclick="connectDiscord()">🎮 Se connecter</button>
+      <div class="s-user" id="side-user" style="display:none;">
+        <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
+        <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
+        <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENU ============ -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+      <h1>Vault</h1>
+      <span class="crumb">Originals</span>
+      <div class="top-right">
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> visiteurs en ligne</span>
+        <button class="icon-btn" aria-label="Notifications">🔔</button>
+      </div>
+    </div>
+
+    <div class="vault-layout">
+
+      <aside class="vault-side">
+        <div class="vault-stat">
           <div class="n" id="vault-stat-total">$0</div>
           <div class="l" id="vault-stat-total-label">Total distribué</div>
         </div>
-        <div class="steps-strip">
-          <div class="step-chip"><b>1.</b> <span id="vault-step1">Rejoins le Discord</span></div>
-          <div class="step-chip"><b>2.</b> <span id="vault-step2">Repère le code du jour</span></div>
-          <div class="step-chip"><b>3.</b> <span id="vault-step3">Sois le premier à l'entrer</span></div>
+        <div class="vault-steps">
+          <div class="vault-step"><b>1.</b> <span id="vault-step1">Rejoins le Discord</span></div>
+          <div class="vault-step"><b>2.</b> <span id="vault-step2">Repère le code du jour</span></div>
+          <div class="vault-step"><b>3.</b> <span id="vault-step3">Sois le premier à l'entrer</span></div>
         </div>
-        <div class="telegram-panel">
-          <div class="icon">✈</div>
+        <div class="vault-tg">
+          <div class="ic">✈</div>
           <div class="tag" id="vault-tg-tag">Récompenses quotidiennes</div>
           <h4 id="vault-tg-title">Rejoins le Telegram</h4>
           <p id="vault-tg-desc">Cadeaux quotidiens, bonus exclusifs et nouvelles opportunités.</p>
-          <a href="#" id="vault-tg-btn" target="_blank">Rejoindre →</a>
+          <a href="#" id="vault-tg-btn" target="_blank" rel="noopener">Rejoindre →</a>
         </div>
-      </div>
+      </aside>
 
-      <div class="vault-card">
+      <section class="vault-main">
         <div class="vault-eyebrow" id="vault-eyebrow">Accès exclusif</div>
-        <h1 class="vault-title" id="vault-title">Le coffre-fort</h1>
+        <h2 class="vault-title" id="vault-title">Le coffre-fort</h2>
         <p class="vault-subtitle" id="vault-subtitle">Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.</p>
 
         <div class="vault-visual" id="vault-visual">
@@ -470,410 +436,211 @@
         <form class="vault-form" id="vault-form">
           <input type="text" id="vault-username-input" placeholder="Ton pseudo" autocomplete="off">
           <input type="text" id="vault-code-input" placeholder="Code secret" autocomplete="off">
-          <button type="submit" class="vault-submit" id="vault-submit-btn">Ouvrir le coffre</button>
+          <button type="submit" class="bet-btn" id="vault-submit-btn">Ouvrir le coffre</button>
         </form>
 
         <p class="vault-message" id="vault-message"></p>
-      </div>
+      </section>
 
-      <div>
-        <div class="vault-stat-card" style="margin-bottom:16px;">
-          <div class="n" id="vault-stat-rounds" style="color:var(--violet);">0</div>
+      <aside class="vault-side">
+        <div class="vault-stat">
+          <div class="n" id="vault-stat-rounds">0</div>
           <div class="l" id="vault-stat-rounds-label">Coffres ouverts</div>
         </div>
-        <div class="winners-panel">
+        <div class="vault-winners">
           <h4 id="vault-winners-title">🏆 Derniers gagnants</h4>
           <div id="vault-winners-list"></div>
-          <p id="vault-winners-empty" style="font-size:11.5px; color:var(--text-faint); text-align:center; display:none;">Personne pour l'instant.</p>
+          <p id="vault-winners-empty" class="vault-empty" style="display:none;">Personne pour l'instant.</p>
         </div>
+      </aside>
 
-        <div class="vault-card" style="margin-top:16px; max-width:none;">
-          <h3 id="vault-history-title" style="font-size:16px; color:#fff; margin-bottom:16px; text-align:left;">Historique des gains</h3>
-          <div id="vault-history-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-          <p id="vault-history-empty" style="font-size:13px; color:var(--text-faint); display:none;">Aucun gain pour l'instant.</p>
-          <div id="vault-history-pagination" style="display:none; justify-content:center; align-items:center; gap:10px; margin-top:16px;">
-            <button type="button" id="vault-history-prev-btn" aria-label="précédent" style="width:36px; height:36px; border-radius:8px; border:1px solid var(--line); background:var(--bg-raise); color:var(--text); cursor:pointer; font-size:14px; line-height:1;">◀</button>
-            <button type="button" id="vault-history-next-btn" aria-label="suivant" style="width:36px; height:36px; border-radius:8px; border:1px solid var(--line); background:var(--bg-raise); color:var(--text); cursor:pointer; font-size:14px; line-height:1;">▶</button>
-          </div>
-        </div>
+    </div>
+
+    <section class="bets">
+      <h3 class="vault-history-title" id="vault-history-title">Historique des gains</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Gagnant</th><th>Montant</th><th>Code</th><th>Date</th></tr></thead>
+          <tbody id="vault-history-list"></tbody>
+        </table>
       </div>
-
-    </div>
-
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <div class="footer-top">
-      <a class="logo" href="/"><div class="logo-mark">⚡</div><span id="brand-text1-footer">DROP</span><span id="brand-text2-footer" class="logo-accent">CASH</span></a>
-      <div class="footer-cols">
-        <div class="footer-col">
-          <h4 id="footer-nav-title">Navigation</h4>
-          <a href="#" id="footer-nav-link-0">Codes bonus</a>
-          <a href="#" id="footer-nav-link-1">Classement</a>
-          <a href="#" id="footer-nav-link-2">Comment ça marche</a>
-        </div>
-        <div class="footer-col">
-          <h4 id="footer-community-title">Communauté</h4>
-          <a href="#" id="footer-community-link-0">Discord</a>
-          <a href="#" id="footer-community-link-1">Telegram</a>
-          <a href="#" id="footer-community-link-2">Contact</a>
-        </div>
+      <p id="vault-history-empty" class="vault-empty" style="display:none;">Aucun gain pour l'instant.</p>
+      <div id="vault-history-pagination" class="vault-pagination" style="display:none;">
+        <button type="button" id="vault-history-prev-btn" aria-label="précédent">◀</button>
+        <button type="button" id="vault-history-next-btn" aria-label="suivant">▶</button>
       </div>
-    </div>
-    <div class="disclaimer">
-      <span class="age-badge">18+</span><span id="footer-disclaimer">Le jeu comporte des risques : endettement, isolement, dépendance.</span>
-    </div>
-  </div>
-</footer>
+    </section>
 
-<a href="#" id="floating-widget" class="floating-widget" target="_blank" rel="noopener" style="display:none;">
-  <img id="floating-widget-img" src="" alt="">
-  <span class="floating-widget-badge">🎮</span>
-</a>
-
-<div class="modal-overlay" id="scratch-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeScratchModal()" aria-label="Fermer">×</button>
-
-    <div id="scratch-step-form">
-      <div class="modal-tag" id="scratch-tag">Ticket à gratter</div>
-      <h3 id="scratch-title">Tente ta chance</h3>
-      <p class="modal-sub" id="scratch-subtitle">Un essai gratuit par jour.</p>
-      <form id="scratch-form" onsubmit="submitScratch(event)">
-        <label><span id="scratch-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="scratch-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('scratch')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="scratch-discord-note">
-          Connexion Discord requise pour participer (1 essai par jour).
-        </p>
-        <div id="scratch-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="scratch-discord-input">
-        <button type="submit" class="modal-submit" id="scratch-submit-btn">Gratter le ticket</button>
-        <p id="scratch-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="scratch-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="scratch-step-card" style="display:none; text-align:center;">
-      <h3 id="scratch-result-title">Ton ticket</h3>
-      <div class="scratch-card-visual" id="scratch-card-visual">
-        <div class="scratch-silver" id="scratch-silver">👆</div>
-        <div class="scratch-result" id="scratch-result"></div>
-      </div>
-      <p id="scratch-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="scratch-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="scratch-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayScratch()">Rejouer</button>
-    </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="slot-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeSlotModal()" aria-label="Fermer">×</button>
-
-    <div id="slot-step-form">
-      <div class="modal-tag" id="slot-tag">Machine à sous</div>
-      <h3 id="slot-title">Tente ta chance</h3>
-      <p class="modal-sub" id="slot-subtitle">Un spin gratuit par jour.</p>
-      <form id="slot-form" onsubmit="submitSlot(event)">
-        <label><span id="slot-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="slot-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('slot')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="slot-discord-note">
-          Connexion Discord requise pour participer (1 spin par jour).
-        </p>
-        <div id="slot-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="slot-discord-input">
-        <button type="submit" class="modal-submit" id="slot-submit-btn">Spin</button>
-        <p id="slot-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="slot-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="slot-step-card" style="display:none; text-align:center;">
-      <h3 id="slot-result-title">Résultat</h3>
-      <div class="slot-reels" id="slot-reels">
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
-      </div>
-      <p id="slot-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="slot-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replaySlot()">Rejouer</button>
-    </div>
+<div class="scrim" id="scrim"></div>
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="handle"></div>
+  <div class="d-user" id="drawer-user">
+    <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
+    <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
+  </div>
+  <div class="d-sep"></div>
+  <div class="d-grid">
+    <a class="d-item" href="/leaderboard">Leaderboard</a><a class="d-item" href="/bonuses">Bonuses</a>
+    <a class="d-item" href="/vault">Vault</a>
+  </div>
+  <div class="d-label">ORIGINALS</div>
+  <div class="d-grid">
+    <a class="d-item" href="/blackjack"><span>🃏</span>Blackjack</a><a class="d-item" href="/slot"><span>🎰</span>Slot</a>
+    <a class="d-item" href="/mines"><span>💣</span>Mines</a><a class="d-item" href="/dice"><span>🎲</span>Dice</a>
   </div>
 </div>
 
-<div class="modal-overlay" id="wheel-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeWheelModal()" aria-label="Fermer">×</button>
-
-    <div id="wheel-step-form">
-      <div class="modal-tag" id="wheel-tag">Roue de la fortune</div>
-      <h3 id="wheel-title">Fais tourner la roue</h3>
-      <p class="modal-sub" id="wheel-subtitle">Tente ta chance chaque jour.</p>
-      <form id="wheel-form" onsubmit="submitWheel(event)">
-        <label><span id="wheel-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="wheel-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('wheel')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="wheel-discord-note">
-          Connexion Discord requise pour participer.
-        </p>
-        <div id="wheel-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="wheel-discord-input">
-        <button type="submit" class="modal-submit" id="wheel-submit-btn">Faire tourner la roue</button>
-        <p id="wheel-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="wheel-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="wheel-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="wheel-step-card" style="display:none; text-align:center;">
-      <h3 id="wheel-result-title">Résultat</h3>
-      <div class="wheel-wrap">
-        <div class="wheel-pointer"></div>
-        <div class="wheel-disc" id="wheel-disc">
-          <div class="wheel-label-pos" style="transform:rotate(22.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-22.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(67.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-67.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(112.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-112.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(157.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-157.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(202.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-202.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(247.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-247.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(292.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-292.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(337.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-337.5deg);">🎉</span></div>
-        </div>
-        <div class="wheel-center-dot"></div>
-      </div>
-      <p id="wheel-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="wheel-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="wheel-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayWheel()">Rejouer</button>
-    </div>
+<div class="custom-alert-overlay" id="customAlertOverlay">
+  <div class="custom-alert-box">
+    <div class="custom-alert-title">drop-cash.com</div>
+    <div class="custom-alert-msg" id="customAlertMsg"></div>
+    <button class="custom-alert-btn" id="customAlertOkBtn" type="button">OK</button>
   </div>
 </div>
 
-<script src="nitrodrop-config.js?v=20260719a"></script>
+<script src="nitrodrop-config.js?v=20260721a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
+  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
+  const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
-  (function migrateToI18n(cfg){
-    if (cfg.content) return;
-    const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
-                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine','wheelGame'];
-    const en = {};
-    textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
-    cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
-    cfg.defaultLang = cfg.defaultLang || 'en';
-  })(CONFIG);
-
-  let currentLang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
-  const urlLangParam = new URLSearchParams(location.search).get('lang');
-  if (urlLangParam && CONFIG.content[urlLangParam]) {
-    currentLang = urlLangParam;
-    localStorage.setItem('nitrodrop_lang', currentLang);
+  function formatLocalTime(dateMs){
+    if (!dateMs) return '';
+    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
   }
-  if (!CONFIG.content[currentLang]) currentLang = CONFIG.defaultLang || 'en';
-  function getActive(){ return CONFIG.content[currentLang]; }
 
   function escapeHtml(str){
-    return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
+
+  function isMobileDevice(){
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+  }
+
+  function saveDiscordIdentity(discordId, username, avatarUrl){
+    const payload = JSON.stringify({ discordId, username, avatarUrl });
+    try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
+  }
+
+  function clearDiscordIdentity(){
+    try{ localStorage.removeItem(DISCORD_STORAGE_KEY); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=; max-age=0; path=/; SameSite=Lax'; }catch(e){}
+  }
+
+  function getSavedDiscordIdentity(){
+    try{
+      const raw = localStorage.getItem(DISCORD_STORAGE_KEY);
+      if (raw){
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.discordId) return parsed;
+      }
+    }catch(e){}
+    try{
+      const match = document.cookie.match(new RegExp('(?:^|; )' + DISCORD_STORAGE_KEY + '=([^;]*)'));
+      if (match){
+        const raw = decodeURIComponent(match[1]);
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.discordId){
+          try{ localStorage.setItem(DISCORD_STORAGE_KEY, raw); }catch(e){}
+          return parsed;
+        }
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function getSharedDiscordId(){ const s = getSavedDiscordIdentity(); return s ? s.discordId : ''; }
+  function getSharedUsername(){ const s = getSavedDiscordIdentity(); return s ? s.username : ''; }
+  function getSharedAvatarUrl(){ const s = getSavedDiscordIdentity(); return s ? (s.avatarUrl || '') : ''; }
+
+  function connectDiscord(){
+    const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
+    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
+    const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
+    if (isMobileDevice()){
+      try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
+      window.location.href = authUrl;
+      return;
+    }
+    window.open(authUrl, 'discord-oauth', 'width=500,height=750');
+  }
+</script>
+<script>
+// Popup d'alerte maison (remplace alert() natif du navigateur) — globale, utilisée
+// aussi bien ici que dans le script d'identité partagé (connectDiscord, etc.)
+const customAlertOverlay = document.getElementById('customAlertOverlay');
+const customAlertMsg = document.getElementById('customAlertMsg');
+function showAlert(message){
+  customAlertMsg.textContent = message;
+  customAlertOverlay.classList.add('show');
+}
+document.getElementById('customAlertOkBtn').addEventListener('click', () => {
+  customAlertOverlay.classList.remove('show');
+});
+
+(async function(){
+  const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
+  const toggle=o=>{drawer.classList.toggle('open',o);scrim.classList.toggle('open',o);document.body.style.overflow=o?'hidden':''};
+  document.getElementById('burger').addEventListener('click',()=>toggle(true));
+  scrim.addEventListener('click',()=>toggle(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false)});
+  drawer.querySelectorAll('.d-item').forEach(b=>b.addEventListener('click',()=>toggle(false)));
+
+  const balanceSidebarEl=document.getElementById('balance-sidebar');
+  function setBalance(v){ balanceSidebarEl.textContent = v; }
+
+  // ---------------- Langue / textes ----------------
+  let currentLang = 'en';
+  try{ currentLang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en'; }catch(e){}
+  const urlLangParam = new URLSearchParams(location.search).get('lang');
+  if (urlLangParam && CONFIG.content && CONFIG.content[urlLangParam]) currentLang = urlLangParam;
+  if (!CONFIG.content || !CONFIG.content[currentLang]) currentLang = (CONFIG.defaultLang || 'en');
+  function getActive(){ return CONFIG.content[currentLang]; }
+
   function fillTemplate(tpl, vars){
     return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
   }
 
-  const SLOT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  function slotSpinText(el, finalText){
-    if (!el) return;
-    if (el.dataset.slotValue === finalText && !el.dataset.slotSpinning) return;
-    el.dataset.slotValue = finalText;
-    el.dataset.slotSpinning = '1';
-    el.innerHTML = '';
-    const letters = finalText.split('');
-    const spans = letters.map(ch => {
-      const s = document.createElement('span');
-      s.style.display = 'inline-block';
-      s.style.minWidth = '0.55em';
-      s.style.textAlign = 'center';
-      s.textContent = ch === ' ' ? '\u00A0' : ch;
-      el.appendChild(s);
-      return s;
-    });
-    let remaining = spans.length;
-    spans.forEach((span, i) => {
-      const finalChar = letters[i];
-      if (finalChar === ' '){ remaining--; if (remaining <= 0) el.dataset.slotSpinning = ''; return; }
-      const spinTime = 550 + i * 90;
-      const stepTime = 45;
-      let elapsed = 0;
-      const interval = setInterval(() => {
-        elapsed += stepTime;
-        if (elapsed >= spinTime){
-          span.textContent = finalChar;
-          clearInterval(interval);
-          remaining--;
-          if (remaining <= 0) el.dataset.slotSpinning = '';
-        } else {
-          span.textContent = SLOT_CHARS[Math.floor(Math.random() * SLOT_CHARS.length)];
-        }
-      }, stepTime);
-    });
-  }
-
-  // ---------- Applique nav / footer / brand / textes du coffre ----------
-  function applyChrome(cfg){
-    const brandText1 = (cfg.brand && cfg.brand.text1) || 'NITRO';
-    const brandText2 = (cfg.brand && cfg.brand.text2) || 'DROP';
-    document.getElementById('brand-text1-nav').textContent = brandText1;
-    slotSpinText(document.getElementById('brand-text2-nav'), brandText2);
-    document.getElementById('brand-text1-footer').textContent = brandText1;
-    slotSpinText(document.getElementById('brand-text2-footer'), brandText2);
-    document.getElementById('page-title').textContent = (cfg.pageTitle || 'Drop-Cash.com') + ' — Vault';
-
-    // Les liens du menu pointent vers les sections de la page d'accueil
-    cfg.nav.links.forEach((link, i) => {
-      const href = link.href && link.href.startsWith('#') ? '/' + link.href : link.href;
-      const el = document.getElementById('nav-link-' + i);
-      if (el){
-        if (link.label && link.label.trim()){
-          el.textContent = link.label; el.href = href; el.style.display = '';
-          if (link.newTab){ el.target = '_blank'; el.rel = 'noopener'; }
-          else { el.removeAttribute('target'); el.removeAttribute('rel'); }
-        }
-        else { el.style.display = 'none'; }
-      }
-      const mEl = document.getElementById('mobile-nav-link-' + i);
-      if (mEl){
-        if (link.label && link.label.trim()){
-          mEl.textContent = link.label; mEl.href = href; mEl.style.display = '';
-          if (link.newTab){ mEl.target = '_blank'; mEl.rel = 'noopener'; }
-          else { mEl.removeAttribute('target'); mEl.removeAttribute('rel'); }
-        }
-        else { mEl.style.display = 'none'; }
-      }
-    });
-
-    const ctaHref = cfg.nav.ctaHref && cfg.nav.ctaHref.startsWith('#') ? '/' + cfg.nav.ctaHref : cfg.nav.ctaHref;
-    const navCta = document.getElementById('nav-cta');
-    navCta.textContent = cfg.nav.ctaText;
-    navCta.href = ctaHref;
-    const navCtaMobile = document.getElementById('nav-cta-mobile');
-    navCtaMobile.textContent = cfg.nav.ctaText;
-    navCtaMobile.href = ctaHref;
-
-    document.getElementById('footer-nav-title').textContent = cfg.footer.navTitle;
-    cfg.footer.navLinks.forEach((link, i) => {
-      const href = link.href && link.href.startsWith('#') ? '/' + link.href : link.href;
-      const el = document.getElementById('footer-nav-link-' + i);
-      if (el){ el.textContent = link.label; el.href = href; }
-    });
-    document.getElementById('footer-community-title').textContent = cfg.footer.communityTitle;
-    cfg.footer.communityLinks.forEach((link, i) => {
-      const el = document.getElementById('footer-community-link-' + i);
-      if (el){
-        el.textContent = link.label; el.href = link.href;
-        if (link.newTab){ el.target = '_blank'; el.rel = 'noopener'; }
-        else { el.removeAttribute('target'); el.removeAttribute('rel'); }
-      }
-    });
-    document.getElementById('footer-disclaimer').textContent = cfg.footer.disclaimer;
-    document.querySelectorAll('.modal-close').forEach(btn => {
-      btn.setAttribute('aria-label', (cfg.modal && cfg.modal.closeAriaLabel) || 'Fermer');
-    });
-    const scratchNavLabel = (cfg.scratchTicket && cfg.scratchTicket.navLabel) || '🎫 Ticket';
-    document.getElementById('nav-scratch-btn').textContent = scratchNavLabel;
-    document.getElementById('mobile-nav-scratch-btn').textContent = scratchNavLabel;
-    const slotNavLabel = (cfg.slotMachine && cfg.slotMachine.navLabel) || '🎰 Slot';
-    document.getElementById('nav-slot-btn').textContent = slotNavLabel;
-    document.getElementById('mobile-nav-slot-btn').textContent = slotNavLabel;
-    const wheelNavLabel = (cfg.wheelGame && cfg.wheelGame.navLabel) || '🎡 Roue';
-    document.getElementById('nav-wheel-btn').textContent = wheelNavLabel;
-    document.getElementById('mobile-nav-wheel-btn').textContent = wheelNavLabel;
-
-    // Textes du coffre-fort (éditables dans l'admin)
-    const v = cfg.vault || {};
-    document.getElementById('vault-eyebrow').textContent = v.eyebrow || 'Accès exclusif';
-    document.getElementById('vault-title').textContent = v.title || 'Le coffre-fort';
-    document.getElementById('vault-subtitle').textContent = v.subtitle || "Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.";
-    document.getElementById('vault-code-input').placeholder = v.codePlaceholder || 'Code secret';
-    document.getElementById('vault-submit-btn').textContent = v.submitText || 'Ouvrir le coffre';
-
-    // Bandeau Telegram (réutilise le texte déjà configuré pour le site)
-    document.getElementById('vault-tg-tag').textContent = cfg.telegram.tag;
-    document.getElementById('vault-tg-title').textContent = cfg.telegram.title;
-    document.getElementById('vault-tg-desc').textContent = cfg.telegram.desc;
+  // Applique les libellés du coffre depuis la config (mêmes clés qu'avant)
+  (function applyVaultTexts(){
+    const v = getActive().vault;
+    if (!v) return;
+    const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+    set('vault-eyebrow', v.eyebrow);
+    set('vault-title', v.title);
+    set('vault-subtitle', v.subtitle);
+    set('vault-step1', v.step1);
+    set('vault-step2', v.step2);
+    set('vault-step3', v.step3);
+    const tg = getActive().telegram || {};
+    set('vault-tg-tag', tg.tag);
+    set('vault-tg-title', tg.title);
+    set('vault-tg-desc', tg.desc);
+    set('vault-winners-title', v.winnersTitle);
+    set('vault-history-title', v.historyTitle);
+    set('vault-stat-total-label', v.statTotalLabel);
+    set('vault-stat-rounds-label', v.statRoundsLabel);
+    set('vault-history-empty', v.historyEmpty);
+    if (v.winnersEmpty) set('vault-winners-empty', v.winnersEmpty);
+    set('vault-submit-btn', v.submitText);
+    const userInput = document.getElementById('vault-username-input');
+    if (v.usernamePlaceholder) userInput.placeholder = v.usernamePlaceholder;
+    const codeInput = document.getElementById('vault-code-input');
+    if (v.codePlaceholder) codeInput.placeholder = v.codePlaceholder;
     const tgBtn = document.getElementById('vault-tg-btn');
-    tgBtn.textContent = cfg.telegram.btnText;
-    tgBtn.href = cfg.telegram.btnHref;
-
-    // Étapes "comment participer"
-    document.getElementById('vault-step1').textContent = v.step1 || 'Rejoins le Discord';
-    document.getElementById('vault-step2').textContent = v.step2 || 'Repère le code du jour';
-    document.getElementById('vault-step3').textContent = v.step3 || "Sois le premier à l'entrer";
-
-    // Textes des stats et du panneau gagnants
-    document.getElementById('vault-stat-total-label').textContent = v.statTotalLabel || 'Total distribué';
-    document.getElementById('vault-stat-rounds-label').textContent = v.statRoundsLabel || 'Coffres ouverts';
-    document.getElementById('vault-winners-title').textContent = '🏆 ' + (v.winnersTitle || 'Derniers gagnants');
-    document.getElementById('vault-winners-empty').textContent = v.winnersEmpty || "Personne pour l'instant.";
-    document.getElementById('vault-username-input').placeholder = v.usernamePlaceholder || 'Ton pseudo';
-    document.getElementById('vault-history-title').textContent = v.historyTitle || 'Historique des gains';
-    document.getElementById('vault-history-empty').textContent = v.historyEmpty || 'Aucun gain pour l\'instant.';
-  }
-
-  applyChrome(getActive());
-
-  // Bouton flottant (image + lien) — indépendant de la langue
-  (function applyFloatingWidget(){
-    const widget = CONFIG.floatingWidget || {};
-    const el = document.getElementById('floating-widget');
-    if (widget.enabled && widget.imageUrl && widget.linkUrl){
-      document.getElementById('floating-widget-img').src = widget.imageUrl;
-      el.href = widget.linkUrl;
-      el.style.display = 'flex';
-    } else {
-      el.style.display = 'none';
-    }
+    if (tg.btnText) tgBtn.textContent = tg.btnText;
+    if (tg.btnHref) tgBtn.href = tg.btnHref;
   })();
 
-  function setLanguage(lang){
-    if (!CONFIG.content[lang]) return;
-    currentLang = lang;
-    localStorage.setItem('nitrodrop_lang', lang);
-    document.documentElement.lang = lang;
-    applyChrome(getActive());
-    if (vaultAlreadyClaimed){
-      const v = getActive().vault || {};
-      showMessage(v.alreadyClaimedMessage || 'Ce coffre a déjà été réclamé par quelqu\u0027un d\u0027autre.', 'info');
-    }
-    loadHistory();
-    document.querySelectorAll('.lang-switch-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.lang === lang);
-    });
-  }
-  document.querySelectorAll('.lang-switch-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === currentLang);
-    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
-  });
-
-  // ---- Menu mobile ----
-  const burgerBtn = document.getElementById('burger-btn');
-  const mobileNav = document.getElementById('mobile-nav');
-  burgerBtn.addEventListener('click', () => mobileNav.classList.toggle('open'));
-  mobileNav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => mobileNav.classList.remove('open'));
-  });
-
-  // ---------- Logique du coffre-fort ----------
-  const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
-  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
-
-  // Compteur de visiteurs total du site (une fois par session, peu importe la page)
-  // État de pagination de l'historique des gains (5 par page)
-  const VAULT_HISTORY_PAGE_SIZE = 5;
-  let vaultHistoryFull = [];
-  let vaultHistoryPageIndex = 0;
-
+  // ---------------- Sons ----------------
   const soundFiles = CONFIG.vaultSounds || {};
   function playSound(name){
     const file = soundFiles[name];
@@ -885,14 +652,20 @@
     }catch(e){}
   }
 
+  // ---------------- Coffre-fort ----------------
   const vaultForm = document.getElementById('vault-form');
   const vaultSubmitBtn = document.getElementById('vault-submit-btn');
   const vaultCodeInput = document.getElementById('vault-code-input');
+  const vaultUsernameInput = document.getElementById('vault-username-input');
   const vaultMessage = document.getElementById('vault-message');
   const vaultDoor = document.getElementById('vault-door');
   const vaultDial = document.getElementById('vault-dial');
   const vaultVisual = document.getElementById('vault-visual');
   const vaultAmountEl = document.getElementById('vault-amount');
+
+  const VAULT_HISTORY_PAGE_SIZE = 5;
+  let vaultHistoryFull = [];
+  let vaultHistoryPageIndex = 0;
 
   function showMessage(text, type){
     vaultMessage.textContent = text;
@@ -901,11 +674,9 @@
 
   function lockFormOut(){
     vaultCodeInput.disabled = true;
+    vaultUsernameInput.disabled = true;
     vaultSubmitBtn.disabled = true;
-    document.getElementById('vault-username-input').disabled = true;
   }
-
-  let vaultAlreadyClaimed = false;
 
   async function checkInitialStatus(){
     if (!workerBase){
@@ -918,18 +689,16 @@
       if (!resp.ok) return;
       const data = await resp.json();
       if (data.claimed){
-        vaultAlreadyClaimed = true;
         const v = getActive().vault || {};
-        showMessage(v.alreadyClaimedMessage || 'Ce coffre a déjà été réclamé par quelqu\'un d\'autre.', 'info');
+        showMessage(v.alreadyClaimedMessage || "Ce coffre a déjà été réclamé par quelqu'un d'autre.", 'info');
         lockFormOut();
       }
     }catch(e){
-      console.error('Impossible de vérifier l\'état du coffre :', e);
+      console.error("Impossible de vérifier l'état du coffre :", e);
     }
   }
-  checkInitialStatus();
 
-  async function loadHistory(){
+  async function loadVaultHistory(){
     if (!workerBase) return;
     try{
       const resp = await fetch(`${workerBase}/vault/history`);
@@ -937,12 +706,13 @@
       const data = await resp.json();
       const history = data.history || [];
 
-      // ---- Stats globales ----
+      // Stats globales
       const totalAmount = history.reduce((sum, h) => sum + (parseFloat(h.amount) || 0), 0);
-      document.getElementById('vault-stat-total').textContent = '$' + (Number.isInteger(totalAmount) ? totalAmount : totalAmount.toFixed(2));
+      document.getElementById('vault-stat-total').textContent =
+        '$' + (Number.isInteger(totalAmount) ? totalAmount : totalAmount.toFixed(2));
       document.getElementById('vault-stat-rounds').textContent = String(history.length);
 
-      // ---- Derniers gagnants (panneau latéral, 3 max) ----
+      // Derniers gagnants (3 max)
       const winnersListEl = document.getElementById('vault-winners-list');
       const winnersEmptyEl = document.getElementById('vault-winners-empty');
       if (history.length === 0){
@@ -960,12 +730,11 @@
         }).join('');
       }
 
-      // ---- Historique complet (en bas de page), paginé 5 par 5 ----
       vaultHistoryFull = history;
       vaultHistoryPageIndex = 0;
       renderVaultHistoryPage();
     }catch(e){
-      console.error('Impossible de charger l\'historique du coffre :', e);
+      console.error("Impossible de charger l'historique du coffre :", e);
     }
   }
 
@@ -988,13 +757,13 @@
     const pageItems = vaultHistoryFull.slice(start, start + VAULT_HISTORY_PAGE_SIZE);
 
     listEl.innerHTML = pageItems.map(h => {
-      const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString() : '';
-      return `<div class="vault-history-row">
-        <span class="name">${escapeHtml(h.username || '?')}</span>
-        <span class="amount">$${escapeHtml(h.amount || '?')}</span>
-        <span class="code-used code-font">${escapeHtml(h.code || '?')}</span>
-        <span class="date">${escapeHtml(date)}</span>
-      </div>`;
+      const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString('fr-FR') : '';
+      return `<tr>
+        <td><span class="p">${escapeHtml(h.username || '?')}</span></td>
+        <td class="win">$${escapeHtml(h.amount || '?')}</td>
+        <td class="mono">${escapeHtml(h.code || '?')}</td>
+        <td class="time">${escapeHtml(date)}</td>
+      </tr>`;
     }).join('');
 
     const totalPages = Math.ceil(vaultHistoryFull.length / VAULT_HISTORY_PAGE_SIZE);
@@ -1011,7 +780,6 @@
     if (vaultHistoryPageIndex > 0){
       vaultHistoryPageIndex--;
       renderVaultHistoryPage();
-      document.getElementById('vault-history-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   });
   document.getElementById('vault-history-next-btn').addEventListener('click', () => {
@@ -1019,12 +787,8 @@
     if (vaultHistoryPageIndex < totalPages - 1){
       vaultHistoryPageIndex++;
       renderVaultHistoryPage();
-      document.getElementById('vault-history-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   });
-  loadHistory();
-
-  const vaultUsernameInput = document.getElementById('vault-username-input');
 
   vaultForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1060,7 +824,7 @@
           const template = v.successMessage || 'Félicitations, tu remportes {amount} !';
           showMessage(fillTemplate(template, { amount: data.amount ? '$' + data.amount : '' }), 'success');
           lockFormOut();
-          loadHistory();
+          loadVaultHistory();
         } else if (data.reason === 'already_claimed'){
           playSound('fail');
           vaultDoor.classList.add('shake');
@@ -1088,604 +852,89 @@
     }
   });
 
-  // ---- Ticket à gratter / Machine à sous ----
-  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
+  // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
+  document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
 
-  function saveDiscordIdentity(discordId, username, avatarUrl){
-    const payload = JSON.stringify({ discordId, username, avatarUrl });
+  // ---------------- Badge du nombre d'offres (lu depuis la config, jamais codé en dur) ----------------
+  (function updateBonusCount(){
+    const el = document.getElementById('bonus-count');
+    if (!el) return;
     try{
-      localStorage.setItem(DISCORD_STORAGE_KEY, payload);
-    }catch(e){}
-    try{
-      document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax';
-    }catch(e){}
-  }
-
-  function getSavedDiscordIdentity(){
-    try{
-      const raw = localStorage.getItem(DISCORD_STORAGE_KEY);
-      if (raw){
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.discordId) return parsed;
+      const offers = CONFIG.content && CONFIG.content[currentLang] && CONFIG.content[currentLang].offers;
+      if (offers && offers.length){
+        el.textContent = String(offers.length);
+      } else {
+        el.style.display = 'none';
       }
-    }catch(e){}
-    try{
-      const match = document.cookie.match(new RegExp('(?:^|; )' + DISCORD_STORAGE_KEY + '=([^;]*)'));
-      if (match){
-        const raw = decodeURIComponent(match[1]);
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.discordId){
-          try{ localStorage.setItem(DISCORD_STORAGE_KEY, raw); }catch(e){}
-          return parsed;
-        }
-      }
-    }catch(e){}
-    return null;
-  }
+    }catch(e){
+      el.style.display = 'none';
+    }
+  })();
 
-  // Pseudo utilisé pour les 3 mini-jeux (Ticket/Slot/Roue) : plus de champ manuel,
-  // on prend directement le pseudo Discord (comme sur la page Originals).
-  function getConnectedUsername(){
+  // ---------------- Identité ----------------
+  async function applyIdentity(){
     const saved = getSavedDiscordIdentity();
-    return (saved && saved.username) || '';
-  }
+    const sideLoginBtn = document.getElementById('side-login-btn');
+    const sideUser = document.getElementById('side-user');
+    const sideUserPseudo = document.getElementById('side-user-pseudo');
+    const sideUserPfp = document.getElementById('side-user-pfp');
+    const drawerPseudo = document.getElementById('drawer-pseudo');
+    const drawerPfp = document.getElementById('drawer-user-pfp');
+    const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
+    const fallbackAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 
-  // Réutilise la connexion Discord déjà faite dans une autre popup (évite de se reconnecter à chaque fois)
-  function applyDiscordIdentityToForm(context){
-    const prefix = context === 'slot' ? 'slot' : context === 'wheel' ? 'wheel' : 'scratch';
-    const saved = getSavedDiscordIdentity();
-    const input = document.getElementById(prefix + '-discord-input');
-    const btn = document.getElementById(prefix + '-discord-connect-btn');
-    const info = document.getElementById(prefix + '-discord-connected-info');
     if (saved && saved.discordId){
-      input.value = saved.discordId;
-      btn.style.display = 'none';
-      info.style.display = 'block';
-      const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
-      info.textContent = template.replace('{username}', saved.username || 'Discord');
+      sideLoginBtn.style.display = 'none';
+      sideUser.style.display = 'flex';
+      sideUserPseudo.textContent = saved.username;
+      sideUserPfp.src = saved.avatarUrl || fallbackAvatar;
+      drawerPseudo.textContent = saved.username;
+      drawerPfp.src = saved.avatarUrl || fallbackAvatar;
+      drawerLogoutBtn.style.display = 'grid';
+      // Pré-remplit le pseudo du coffre avec le pseudo Discord (pratique, mais modifiable)
+      if (!vaultUsernameInput.value && !vaultUsernameInput.disabled){
+        vaultUsernameInput.value = saved.username || '';
+      }
+      const keys = await getKeysStatus(saved.discordId);
+      setBalance(keys);
     } else {
-      input.value = '';
-      btn.style.display = '';
-      info.style.display = 'none';
+      sideLoginBtn.style.display = 'block';
+      sideUser.style.display = 'none';
+      drawerPseudo.textContent = 'Non connecté';
+      drawerLogoutBtn.style.display = 'none';
+      setBalance('0');
     }
   }
 
-  // ---------- Compte à rebours "déjà joué aujourd'hui" (ticket + slot) ----------
-  const cooldownIntervals = {};
-
-  function msUntilNextUtcMidnight(){
-    const now = new Date();
-    const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
-    return next - now.getTime();
-  }
-
-  function formatCountdown(ms){
-    if (ms < 0) ms = 0;
-    const totalSec = Math.floor(ms / 1000);
-    const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSec % 60).padStart(2, '0');
-    return `${h}:${m}:${s}`;
-  }
-
-  function clearCooldown(prefix){
-    if (cooldownIntervals[prefix]){
-      clearInterval(cooldownIntervals[prefix]);
-      cooldownIntervals[prefix] = null;
-    }
-  }
-
-  function showCooldown(prefix, template){
-    clearCooldown(prefix);
-    const submitBtn = document.getElementById(prefix + '-submit-btn');
-    const msgEl = document.getElementById(prefix + '-cooldown-message');
-    const triesEl = document.getElementById(prefix + '-tries-remaining');
-    submitBtn.style.display = 'none';
-    msgEl.style.display = 'block';
-    if (triesEl) triesEl.style.display = 'none';
-    const tick = () => {
-      const ms = msUntilNextUtcMidnight();
-      msgEl.textContent = fillTemplate(template || 'Reviens dans {time}', { time: formatCountdown(ms) });
-      if (ms <= 1000){
-        clearCooldown(prefix);
-        hideCooldown(prefix);
-      }
-    };
-    tick();
-    cooldownIntervals[prefix] = setInterval(tick, 1000);
-  }
-
-  function hideCooldown(prefix, remaining){
-    clearCooldown(prefix);
-    const submitBtn = document.getElementById(prefix + '-submit-btn');
-    const msgEl = document.getElementById(prefix + '-cooldown-message');
-    const triesEl = document.getElementById(prefix + '-tries-remaining');
-    submitBtn.style.display = '';
-    msgEl.style.display = 'none';
-    if (triesEl){
-      if (typeof remaining === 'number'){
-        const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
-        triesEl.textContent = fillTemplate(st.triesRemainingText || '{remaining} essai(s) restant(s) aujourd\'hui', { remaining });
-        triesEl.style.display = 'block';
-      } else {
-        triesEl.style.display = 'none';
-      }
-    }
-  }
-
-  async function checkAlreadyPlayed(prefix, discordId){
-    if (!discordId){ hideCooldown(prefix); return; }
-    const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
+  async function getKeysStatus(discordId){
+    if (!workerBase) return '0';
     try{
-      const resp = await fetch(`${workerBase}/${prefix}/status?discordId=${encodeURIComponent(discordId)}`);
+      const resp = await fetch(`${workerBase}/mines/status?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
-      if (data.alreadyPlayed){
-        showCooldown(prefix, st.cooldownMessage || 'Reviens dans {time}');
-      } else {
-        hideCooldown(prefix, data.remaining);
-      }
-    }catch(err){
-      hideCooldown(prefix);
-    }
+      return data.keys;
+    }catch(e){ return '0'; }
   }
 
-  function isMobileDevice(){
-    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
-  }
-
-  function connectDiscord(context){
-    const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){
-      alert(getActive().modal.discordNotConfiguredAlert || 'Connexion Discord non configurée par l\'administrateur du site.');
-      return;
-    }
-    const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
-    const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
-    const btnId = context === 'slot' ? 'slot-discord-connect-btn'
-                : context === 'wheel' ? 'wheel-discord-connect-btn'
-                : 'scratch-discord-connect-btn';
-    const btn = document.getElementById(btnId);
-    btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
-    window.discordConnectContext = context;
-
-    if (isMobileDevice()){
-      // Sur mobile, les popups ne sont pas fiables : on part en pleine page, et
-      // discord-callback.html nous ramène ici une fois la connexion terminée.
-      try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
-      window.location.href = authUrl;
-      return;
-    }
-    window.open(authUrl, 'discord-oauth', 'width=500,height=750');
-  }
+  document.getElementById('side-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    applyIdentity();
+  });
+  document.getElementById('drawer-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    applyIdentity();
+    toggle(false);
+  });
 
   window.addEventListener('message', (event) => {
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
-    const { discordId, username, avatarUrl } = event.data;
-    saveDiscordIdentity(discordId, username, avatarUrl);
-    const ctx = window.discordConnectContext || 'scratch';
-    applyDiscordIdentityToForm(ctx);
-    checkAlreadyPlayed(ctx, discordId);
+    saveDiscordIdentity(event.data.discordId, event.data.username, event.data.avatarUrl);
+    applyIdentity();
   });
 
-  function openScratchModal(){
-    document.getElementById('scratch-step-form').style.display = 'block';
-    document.getElementById('scratch-step-card').style.display = 'none';
-    document.getElementById('scratch-form').reset();
-    document.getElementById('scratch-form-error').style.display = 'none';
-    document.getElementById('scratch-silver').classList.remove('revealed');
-    document.getElementById('scratch-discord-claim-btn').style.display = 'none';
-
-    const st = getActive().scratchTicket || {};
-    document.getElementById('scratch-tag').textContent = st.tag || 'Ticket à gratter';
-    document.getElementById('scratch-title').textContent = st.title || 'Tente ta chance';
-    document.getElementById('scratch-subtitle').textContent = st.subtitle || 'Un essai gratuit par jour.';
-    document.getElementById('scratch-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('scratch-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
-    document.getElementById('scratch-submit-btn').textContent = st.submitText || 'Gratter le ticket';
-    document.getElementById('scratch-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 essai par jour).';
-    document.getElementById('scratch-result-title').textContent = st.resultTitle || 'Ton ticket';
-    applyDiscordIdentityToForm('scratch');
-    checkAlreadyPlayed('scratch', document.getElementById('scratch-discord-input').value);
-
-    document.getElementById('scratch-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeScratchModal(){
-    document.getElementById('scratch-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('scratch');
-  }
-
-  function showScratchFormError(msg){
-    const el = document.getElementById('scratch-form-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  async function submitScratch(e){
-    e.preventDefault();
-    const pseudo = getConnectedUsername();
-    const discordId = document.getElementById('scratch-discord-input').value;
-    const st = getActive().scratchTicket || {};
-    if (!discordId){
-      showScratchFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
-      return;
-    }
-
-    const submitBtn = document.getElementById('scratch-submit-btn');
-    submitBtn.disabled = true;
-
-    try{
-      const resp = await fetch(`${workerBase}/scratch/play`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo, discordId })
-      });
-      const data = await resp.json();
-      submitBtn.disabled = false;
-
-      if (data.ok === false && data.reason === 'already_played_today'){
-        showScratchFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
-        return;
-      }
-      if (data.ok === false && data.reason === 'banned'){
-        showScratchFormError('Ton compte a été banni des mini-jeux.');
-        return;
-      }
-      if (data.ok === false){
-        showScratchFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
-        return;
-      }
-
-      document.getElementById('scratch-step-form').style.display = 'none';
-      document.getElementById('scratch-step-card').style.display = 'block';
-
-      const silver = document.getElementById('scratch-silver');
-      const resultEl = document.getElementById('scratch-result');
-      const msgEl = document.getElementById('scratch-result-message');
-      const claimBtn = document.getElementById('scratch-discord-claim-btn');
-      const playAgainBtn = document.getElementById('scratch-play-again-btn');
-      playAgainBtn.style.display = 'none';
-
-      silver.onclick = () => {
-        silver.classList.add('revealed');
-        if (data.won){
-          resultEl.textContent = '$' + data.amount;
-          msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
-          claimBtn.style.display = 'flex';
-          claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
-          claimBtn.href = (CONFIG.scratchTicket && CONFIG.scratchTicket.discordClaimLink) || '#';
-        } else {
-          resultEl.textContent = '😔';
-          msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
-        }
-        if (data.remaining > 0){
-          playAgainBtn.textContent = st.playAgainText || 'Rejouer';
-          playAgainBtn.style.display = 'block';
-        }
-      };
-    }catch(err){
-      submitBtn.disabled = false;
-      showScratchFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
-    }
-  }
-
-  function replayScratch(){
-    document.getElementById('scratch-step-card').style.display = 'none';
-    document.getElementById('scratch-play-again-btn').style.display = 'none';
-    document.getElementById('scratch-step-form').style.display = 'block';
-    document.getElementById('scratch-discord-claim-btn').style.display = 'none';
-    const discordId = document.getElementById('scratch-discord-input').value;
-    checkAlreadyPlayed('scratch', discordId);
-  }
-
-  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
-  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
-
-  const SLOT_SYMBOLS = ['7️⃣','🍒','💎','🔔','🍋','⭐'];
-
-  function openSlotModal(){
-    document.getElementById('slot-step-form').style.display = 'block';
-    document.getElementById('slot-step-card').style.display = 'none';
-    document.getElementById('slot-form').reset();
-    document.getElementById('slot-form-error').style.display = 'none';
-    document.getElementById('slot-discord-claim-btn').style.display = 'none';
-    document.querySelectorAll('#slot-reels .slot-reel').forEach(r => r.classList.remove('spinning'));
-
-    const st = getActive().slotMachine || {};
-    document.getElementById('slot-tag').textContent = st.tag || 'Machine à sous';
-    document.getElementById('slot-title').textContent = st.title || 'Tente ta chance';
-    document.getElementById('slot-subtitle').textContent = st.subtitle || 'Un spin gratuit par jour.';
-    document.getElementById('slot-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('slot-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
-    document.getElementById('slot-submit-btn').textContent = st.spinText || 'Spin';
-    document.getElementById('slot-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 spin par jour).';
-    document.getElementById('slot-result-title').textContent = st.resultTitle || 'Résultat';
-    document.getElementById('slot-result-message').textContent = '';
-    applyDiscordIdentityToForm('slot');
-    checkAlreadyPlayed('slot', document.getElementById('slot-discord-input').value);
-
-    document.getElementById('slot-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeSlotModal(){
-    document.getElementById('slot-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('slot');
-  }
-
-  function showSlotFormError(msg){
-    const el = document.getElementById('slot-form-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  async function submitSlot(e){
-    e.preventDefault();
-    const pseudo = getConnectedUsername();
-    const discordId = document.getElementById('slot-discord-input').value;
-    const st = getActive().slotMachine || {};
-    if (!discordId){
-      showSlotFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
-      return;
-    }
-
-    const submitBtn = document.getElementById('slot-submit-btn');
-    submitBtn.disabled = true;
-
-    try{
-      const resp = await fetch(`${workerBase}/slot/play`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo, discordId })
-      });
-      const data = await resp.json();
-
-      if (data.ok === false && data.reason === 'already_played_today'){
-        submitBtn.disabled = false;
-        showSlotFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
-        return;
-      }
-      if (data.ok === false && data.reason === 'banned'){
-        showSlotFormError('Ton compte a été banni des mini-jeux.');
-        return;
-      }
-      if (data.ok === false){
-        submitBtn.disabled = false;
-        showSlotFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
-        return;
-      }
-
-      document.getElementById('slot-step-form').style.display = 'none';
-      document.getElementById('slot-step-card').style.display = 'block';
-
-      const reels = document.querySelectorAll('#slot-reels .slot-reel');
-      const syms = [document.getElementById('slot-sym-0'), document.getElementById('slot-sym-1'), document.getElementById('slot-sym-2')];
-      const msgEl = document.getElementById('slot-result-message');
-      const claimBtn = document.getElementById('slot-discord-claim-btn');
-      const playAgainBtn = document.getElementById('slot-play-again-btn');
-      playAgainBtn.style.display = 'none';
-      submitBtn.textContent = st.spinningText || 'Ça tourne...';
-
-      reels.forEach(r => r.classList.add('spinning'));
-
-      // Le résultat final est déterminé AVANT le lancement de l'animation, pour que chaque
-      // rouleau s'arrête directement sur son symbole définitif (pas de changement après coup).
-      const pick = () => SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
-      let finalSyms;
-      if (data.won){
-        const winSym = SLOT_SYMBOLS[0];
-        finalSyms = [winSym, winSym, winSym];
-      } else {
-        let a = pick(), b = pick(), c = pick();
-        if (a === b && b === c){
-          do { c = pick(); } while (c === a);
-        }
-        finalSyms = [a, b, c];
-      }
-
-      syms.forEach((el, i) => {
-        let ticks = 0;
-        const maxTicks = 14 + i * 6;
-        const iv = setInterval(() => {
-          ticks++;
-          if (ticks >= maxTicks){
-            el.textContent = finalSyms[i];
-            clearInterval(iv);
-            reels[i].classList.remove('spinning');
-            if (i === syms.length - 1){
-              submitBtn.disabled = false;
-              submitBtn.textContent = st.spinText || 'Spin';
-              if (data.won){
-                msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
-                claimBtn.style.display = 'flex';
-                claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
-                claimBtn.href = (CONFIG.slotMachine && CONFIG.slotMachine.discordClaimLink) || '#';
-              } else {
-                msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
-              }
-              if (data.remaining > 0){
-                playAgainBtn.textContent = st.playAgainText || 'Rejouer';
-                playAgainBtn.style.display = 'block';
-              }
-            }
-          } else {
-            el.textContent = pick();
-          }
-        }, 70);
-      });
-    }catch(err){
-      submitBtn.disabled = false;
-      submitBtn.textContent = st.spinText || 'Spin';
-      showSlotFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
-    }
-  }
-
-  function replaySlot(){
-    document.getElementById('slot-step-card').style.display = 'none';
-    document.getElementById('slot-play-again-btn').style.display = 'none';
-    document.getElementById('slot-step-form').style.display = 'block';
-    document.getElementById('slot-discord-claim-btn').style.display = 'none';
-    const discordId = document.getElementById('slot-discord-input').value;
-    checkAlreadyPlayed('slot', discordId);
-  }
-
-  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
-  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
-
-  // ---------- Roue de la fortune ----------
-  function openWheelModal(){
-    document.getElementById('wheel-step-form').style.display = 'block';
-    document.getElementById('wheel-step-card').style.display = 'none';
-    document.getElementById('wheel-form').reset();
-    document.getElementById('wheel-form-error').style.display = 'none';
-    document.getElementById('wheel-discord-claim-btn').style.display = 'none';
-    document.getElementById('wheel-disc').style.transition = 'none';
-    document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
-
-    const st = getActive().wheelGame || {};
-    document.getElementById('wheel-tag').textContent = st.tag || 'Roue de la fortune';
-    document.getElementById('wheel-title').textContent = st.title || 'Fais tourner la roue';
-    document.getElementById('wheel-subtitle').textContent = st.subtitle || 'Tente ta chance chaque jour.';
-    document.getElementById('wheel-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('wheel-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
-    document.getElementById('wheel-submit-btn').textContent = st.spinText || 'Faire tourner la roue';
-    document.getElementById('wheel-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer.';
-    document.getElementById('wheel-result-title').textContent = st.resultTitle || 'Résultat';
-    document.getElementById('wheel-result-message').textContent = '';
-    applyDiscordIdentityToForm('wheel');
-    checkAlreadyPlayed('wheel', document.getElementById('wheel-discord-input').value);
-
-    document.getElementById('wheel-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeWheelModal(){
-    document.getElementById('wheel-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('wheel');
-  }
-
-  function showWheelFormError(msg){
-    const el = document.getElementById('wheel-form-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  // Fait tourner la roue jusqu'au centre d'un secteur du bon type (gagné/perdu),
-  // choisi au hasard parmi les 4 secteurs de ce type, avec plusieurs tours complets.
-  function spinWheelTo(discEl, won, onDone){
-    const winIndexes = [1, 3, 5, 7];
-    const loseIndexes = [0, 2, 4, 6];
-    const pool = won ? winIndexes : loseIndexes;
-    const idx = pool[Math.floor(Math.random() * pool.length)];
-    const segmentCenter = idx * 45 + 22.5;
-    const rest = (360 - segmentCenter) % 360;
-    const spins = 6;
-    const target = spins * 360 + rest;
-
-    discEl.style.transition = 'none';
-    discEl.style.transform = 'rotate(0deg)';
-    void discEl.offsetWidth;
-    discEl.style.transition = 'transform 4.5s cubic-bezier(0.12,0.67,0.1,0.99)';
-
-    const handleEnd = () => {
-      discEl.removeEventListener('transitionend', handleEnd);
-      onDone();
-    };
-    discEl.addEventListener('transitionend', handleEnd);
-
-    requestAnimationFrame(() => {
-      discEl.style.transform = `rotate(${target}deg)`;
-    });
-  }
-
-  async function submitWheel(e){
-    e.preventDefault();
-    const pseudo = getConnectedUsername();
-    const discordId = document.getElementById('wheel-discord-input').value;
-    const st = getActive().wheelGame || {};
-    if (!discordId){
-      showWheelFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
-      return;
-    }
-
-    const submitBtn = document.getElementById('wheel-submit-btn');
-    submitBtn.disabled = true;
-
-    try{
-      const resp = await fetch(`${workerBase}/wheel/play`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo, discordId })
-      });
-      const data = await resp.json();
-
-      if (data.ok === false && data.reason === 'already_played_today'){
-        submitBtn.disabled = false;
-        showWheelFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
-        return;
-      }
-      if (data.ok === false && data.reason === 'banned'){
-        showWheelFormError('Ton compte a été banni des mini-jeux.');
-        return;
-      }
-      if (data.ok === false){
-        submitBtn.disabled = false;
-        showWheelFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
-        return;
-      }
-
-      document.getElementById('wheel-step-form').style.display = 'none';
-      document.getElementById('wheel-step-card').style.display = 'block';
-
-      const msgEl = document.getElementById('wheel-result-message');
-      const claimBtn = document.getElementById('wheel-discord-claim-btn');
-      const playAgainBtn = document.getElementById('wheel-play-again-btn');
-      playAgainBtn.style.display = 'none';
-      submitBtn.textContent = st.spinningText || 'Ça tourne...';
-
-      const disc = document.getElementById('wheel-disc');
-      spinWheelTo(disc, data.won, () => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = st.spinText || 'Faire tourner la roue';
-        if (data.won){
-          msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
-          claimBtn.style.display = 'flex';
-          claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
-          claimBtn.href = (CONFIG.wheelGame && CONFIG.wheelGame.discordClaimLink) || '#';
-        } else {
-          msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
-        }
-        if (data.remaining > 0){
-          playAgainBtn.textContent = st.playAgainText || 'Rejouer';
-          playAgainBtn.style.display = 'block';
-        }
-      });
-    }catch(err){
-      submitBtn.disabled = false;
-      submitBtn.textContent = st.spinText || 'Faire tourner la roue';
-      showWheelFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
-    }
-  }
-
-  function replayWheel(){
-    document.getElementById('wheel-step-card').style.display = 'none';
-    document.getElementById('wheel-play-again-btn').style.display = 'none';
-    document.getElementById('wheel-step-form').style.display = 'block';
-    document.getElementById('wheel-discord-claim-btn').style.display = 'none';
-    document.getElementById('wheel-disc').style.transition = 'none';
-    document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
-    const discordId = document.getElementById('wheel-discord-input').value;
-    checkAlreadyPlayed('wheel', discordId);
-  }
-
-  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
-  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
+  checkInitialStatus();
+  loadVaultHistory();
+  applyIdentity();
+})();
 </script>
-
 </body>
 </html>
