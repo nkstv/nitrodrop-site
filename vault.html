@@ -1339,6 +1339,10 @@
         showScratchFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
         return;
       }
+      if (data.ok === false && data.reason === 'banned'){
+        showScratchFormError('Ton compte a été banni des mini-jeux.');
+        return;
+      }
       if (data.ok === false){
         showScratchFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
         return;
@@ -1452,6 +1456,10 @@
       if (data.ok === false && data.reason === 'already_played_today'){
         submitBtn.disabled = false;
         showSlotFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
+        return;
+      }
+      if (data.ok === false && data.reason === 'banned'){
+        showSlotFormError('Ton compte a été banni des mini-jeux.');
         return;
       }
       if (data.ok === false){
@@ -1628,6 +1636,10 @@
       if (data.ok === false && data.reason === 'already_played_today'){
         submitBtn.disabled = false;
         showWheelFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
+        return;
+      }
+      if (data.ok === false && data.reason === 'banned'){
+        showWheelFormError('Ton compte a été banni des mini-jeux.');
         return;
       }
       if (data.ok === false){

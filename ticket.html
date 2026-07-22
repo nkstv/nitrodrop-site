@@ -1223,6 +1223,10 @@
         showScratchFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
         return;
       }
+      if (data.ok === false && data.reason === 'banned'){
+        showScratchFormError('Ton compte a été banni des mini-jeux.');
+        return;
+      }
       if (data.ok === false){
         showScratchFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
         return;
