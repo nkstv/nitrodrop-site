@@ -1640,6 +1640,17 @@
     return relayUrl.replace(/\/notify\/?$/, '');
   }
 
+  // Compteur de visiteurs total du site (une fois par session, peu importe la page)
+  (function trackSiteVisit(){
+    const workerBase = getWorkerBase();
+    if (!workerBase) return;
+    try{
+      if (sessionStorage.getItem('nitrodrop_visit_counted')) return;
+      sessionStorage.setItem('nitrodrop_visit_counted', '1');
+    }catch(e){}
+    fetch(`${workerBase}/stats/visit`, { method: 'POST' }).catch(() => {});
+  })();
+
   function openScratchModal(){
     document.getElementById('scratch-step-form').style.display = 'block';
     document.getElementById('scratch-step-card').style.display = 'none';

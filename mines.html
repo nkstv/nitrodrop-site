@@ -326,7 +326,7 @@
       <h1>Mines</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
-        <span class="live"><span class="dot"></span>1 284 en jeu</span>
+        <span class="live"><span class="dot"></span><span id="visitor-count">—</span> visiteurs</span>
         <button class="icon-btn" aria-label="Notifications">🔔</button>
       </div>
     </div>
@@ -342,14 +342,14 @@
             <label>Bet Amount <span class="bal">🔑 <b id="balance">0</b> KEYS</span></label>
             <div class="input-row" id="betRow">
               <span class="key">🔑</span>
-              <input id="bet" type="number" inputmode="numeric" value="10" min="0">
+              <input id="bet" type="number" inputmode="numeric" value="1" min="1">
               <button class="chip" id="half">½</button>
               <button class="chip" id="double">2×</button>
             </div>
           </div>
           <div class="field">
             <label>Difficulty</label>
-            <button class="select"><span class="dot"></span> Medium <span class="arrow">⌄</span></button>
+            <button class="select" id="difficultyBtn" type="button" data-mines="5"><span class="dot"></span> Medium <span class="arrow">⌄</span></button>
           </div>
           <div class="stats">
             <div class="stat"><div class="k">Multiplier</div><div class="v"><span id="multNow">1.00</span>×</div></div>
@@ -510,7 +510,7 @@
   const MULTS=[1.20,1.55,2.00,2.70,3.80,5.40,8.10,12.6];
   const multFor = step => MULTS[Math.min(step, MULTS.length-1)];
 
-  let step=0, alive=false, currentBet=0, busy=false;
+  let step=0, alive=false, currentBet=0, busy=false, currentMineCount=5;
 
   function setBalance(v){
     balanceEl.textContent = v;
@@ -528,16 +528,6 @@
   }
   const ico=e=>'<span class="ico">'+e+'</span>';
 
-  function setPlayBtnState(){
-    if (alive){
-      playBtn.textContent = step>0 ? 'Cash Out' : 'En jeu…';
-      playBtn.disabled = step===0;
-    } else {
-      playBtn.textContent = 'Bet';
-      playBtn.disabled = false;
-    }
-  }
-
   function updateStatsDisplay(){
     const m = multFor(Math.max(step-1,0));
     multNow.textContent = step>0 ? m.toFixed(2) : '1.00';
@@ -554,6 +544,9 @@
       if (data.active){
         // Reprise d'une partie en cours après un rechargement de page
         currentBet = data.active.bet; step = data.active.step; alive = true;
+        currentMineCount = data.active.mineCount;
+        const idx = DIFFICULTY_LEVELS.findIndex(l => l.mines === currentMineCount);
+        setDifficulty(idx >= 0 ? idx : 1);
         buildEmptyGrid();
         for (const m of rail) m.className='mult';
         for (let s=0; s<step && s<rail.length; s++) rail[s].classList.add('won');
@@ -562,7 +555,8 @@
           tile.classList.add('open','gem'); tile.innerHTML=ico('💎');
         });
         betInput.value = currentBet;
-        updateStatsDisplay();
+        multNow.textContent = data.active.multiplier.toFixed(2);
+        profitEl.textContent = step>0 ? Math.round(currentBet*(data.active.multiplier-1)*100)/100 : 0;
       }
       setPlayBtnState();
     }catch(e){}
@@ -579,7 +573,7 @@
     try{
       const resp = await fetch(`${workerBase}/mines/start`, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ discordId, pseudo, bet }),
+        body: JSON.stringify({ discordId, pseudo, bet, mineCount: currentMineCount }),
       });
       const data = await resp.json();
       if (!data.ok){
@@ -661,11 +655,117 @@
     setPlayBtnState();
   }
 
-  playBtn.addEventListener('click', () => { if (alive) cashOut(); else startRound(); });
-  document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(0,Math.floor((+betInput.value||0)/2)));
+  playBtn.addEventListener('click', () => {
+    if (segAuto.classList.contains('on')){ toggleAutoPlay(); return; }
+    if (alive) cashOut(); else startRound();
+  });
+  document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(1,Math.floor((+betInput.value||0)/2)));
   document.getElementById('double').addEventListener('click',()=>betInput.value=(+betInput.value||0)*2);
-  segManual.addEventListener('click',()=>{segManual.classList.add('on');segAuto.classList.remove('on')});
-  segAuto.addEventListener('click',()=>{segAuto.classList.add('on');segManual.classList.remove('on')});
+  segManual.addEventListener('click',()=>{segManual.classList.add('on');segAuto.classList.remove('on');stopAutoPlay();setPlayBtnState();});
+  segAuto.addEventListener('click',()=>{segAuto.classList.add('on');segManual.classList.remove('on');setPlayBtnState();});
+
+  // ---------------- Difficulté (Low/Medium/High) ----------------
+  const DIFFICULTY_LEVELS = [
+    { mines: 3, label: 'Low' },
+    { mines: 5, label: 'Medium' },
+    { mines: 10, label: 'High' },
+  ];
+  const difficultyBtn = document.getElementById('difficultyBtn');
+  function setDifficulty(idx){
+    const lvl = DIFFICULTY_LEVELS[idx];
+    currentMineCount = lvl.mines;
+    difficultyBtn.dataset.mines = lvl.mines;
+    difficultyBtn.dataset.idx = idx;
+    difficultyBtn.innerHTML = `<span class="dot"></span> ${lvl.label} <span class="arrow">⌄</span>`;
+  }
+  difficultyBtn.addEventListener('click', () => {
+    if (alive) return; // pas de changement de difficulté en pleine partie
+    const idx = ((+difficultyBtn.dataset.idx || 1) + 1) % DIFFICULTY_LEVELS.length;
+    setDifficulty(idx);
+  });
+  setDifficulty(1); // Medium par défaut, comme avant
+
+  // ---------------- Auto (joue automatiquement N manches) ----------------
+  const AUTO_ROUNDS_TOTAL = 10;
+  const AUTO_SAFE_REVEALS = 3; // révèle 3 cases sûres par manche puis encaisse
+  let autoRunning = false, autoRoundsLeft = 0;
+
+  function stopAutoPlay(){
+    autoRunning = false;
+    setPlayBtnState();
+  }
+
+  async function toggleAutoPlay(){
+    if (autoRunning){ stopAutoPlay(); return; }
+    if (!getSharedDiscordId()){ connectDiscord(); return; }
+    autoRunning = true;
+    autoRoundsLeft = AUTO_ROUNDS_TOTAL;
+    runNextAutoRound();
+  }
+
+  async function runNextAutoRound(){
+    if (!autoRunning || autoRoundsLeft <= 0){ autoRunning=false; setPlayBtnState(); return; }
+    autoRoundsLeft--;
+    setPlayBtnState();
+    await startRound();
+    if (!alive){ setTimeout(runNextAutoRound, 900); return; } // le lancement a échoué (solde insuffisant, etc.)
+
+    const tileIndices = [...Array(25).keys()];
+    for (let i = tileIndices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tileIndices[i], tileIndices[j]] = [tileIndices[j], tileIndices[i]];
+    }
+
+    let revealsDone = 0;
+    for (const idx of tileIndices) {
+      if (!autoRunning || !alive || revealsDone >= AUTO_SAFE_REVEALS) break;
+      const tile = grid.children[idx];
+      await reveal(tile);
+      revealsDone++;
+      await new Promise(r => setTimeout(r, 450));
+    }
+    if (alive && step > 0) await cashOut();
+
+    if (autoRunning) setTimeout(runNextAutoRound, 900);
+  }
+
+  function setPlayBtnState(){
+    if (autoRunning){
+      playBtn.textContent = `Stop (${autoRoundsLeft} restantes)`;
+      playBtn.disabled = false;
+      return;
+    }
+    if (alive){
+      playBtn.textContent = step>0 ? 'Cash Out' : 'En jeu…';
+      playBtn.disabled = step===0;
+    } else {
+      playBtn.textContent = 'Bet';
+      playBtn.disabled = false;
+    }
+  }
+
+  // ---------------- Compteur de visiteurs (site entier) ----------------
+  async function trackVisitor(){
+    const counterEl = document.getElementById('visitor-count');
+    if (!workerBase){ counterEl.textContent = '—'; return; }
+    try{
+      let total;
+      if (!sessionStorage.getItem('nitrodrop_visit_counted')){
+        const resp = await fetch(`${workerBase}/stats/visit`, { method: 'POST' });
+        const data = await resp.json();
+        total = data.total;
+        sessionStorage.setItem('nitrodrop_visit_counted', '1');
+      } else {
+        const resp = await fetch(`${workerBase}/stats/visitors`);
+        const data = await resp.json();
+        total = data.total;
+      }
+      counterEl.textContent = total.toLocaleString('fr-FR');
+    }catch(e){
+      counterEl.textContent = '—';
+    }
+  }
+  trackVisitor();
 
   // ---------------- Historique (public + personnel) ----------------
   const rows=document.getElementById('betRows');

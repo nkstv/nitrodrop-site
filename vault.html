@@ -868,6 +868,16 @@
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
+  // Compteur de visiteurs total du site (une fois par session, peu importe la page)
+  (function trackSiteVisit(){
+    if (!workerBase) return;
+    try{
+      if (sessionStorage.getItem('nitrodrop_visit_counted')) return;
+      sessionStorage.setItem('nitrodrop_visit_counted', '1');
+    }catch(e){}
+    fetch(`${workerBase}/stats/visit`, { method: 'POST' }).catch(() => {});
+  })();
+
   // État de pagination de l'historique des gains (5 par page)
   const VAULT_HISTORY_PAGE_SIZE = 5;
   let vaultHistoryFull = [];
