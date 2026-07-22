@@ -295,6 +295,7 @@
   .originals-grid{
     display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; align-items:start;
   }
+  .single-game-grid{grid-template-columns:1fr; max-width:900px; margin:0 auto;}
   .game-card{
     background:var(--bg-card); border:1px solid var(--line-strong); border-radius:20px;
     box-shadow:0 20px 60px rgba(0,0,0,0.35); position:relative; overflow:hidden;
@@ -303,29 +304,6 @@
   .game-card.c-ticket::before{background:#FF5C7A;}
   .game-card.c-slot::before{background:var(--violet);}
   .game-card.c-wheel::before{background:var(--green);}
-
-  .game-tiles-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:32px;}
-  .game-tile{
-    display:block; padding:0; border:1px solid var(--line); border-radius:16px; overflow:hidden;
-    background:var(--bg-card); cursor:pointer; text-align:center; font-family:inherit;
-    transition:transform .2s ease, border-color .2s ease;
-  }
-  .game-tile:hover{transform:translateY(-4px); border-color:var(--line-strong);}
-  .game-tile-visual{
-    height:110px; display:flex; align-items:center; justify-content:center; font-size:44px;
-  }
-  .game-tile.c-ticket .game-tile-visual{background:linear-gradient(160deg, #FF5C7A, #ff8fa8);}
-  .game-tile.c-slot .game-tile-visual{background:linear-gradient(160deg, var(--violet), #b79bff);}
-  .game-tile.c-wheel .game-tile-visual{background:linear-gradient(160deg, var(--green), #ddffb0);}
-  .game-tile-info{padding:14px 10px 16px;}
-  .game-tile-title{font-family:'Unbounded', sans-serif; font-weight:800; font-size:14.5px; color:var(--text); margin-bottom:4px; line-height:1.3;}
-  .game-tile-brand{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); font-weight:600;}
-  @media (max-width: 720px){
-    .game-tiles-grid{grid-template-columns:repeat(3, 1fr); gap:10px;}
-    .game-tile-visual{height:80px; font-size:32px;}
-    .game-tile-title{font-size:12px;}
-    .game-tile-brand{display:none;}
-  }
 
   .game-preview{
     min-height:150px; display:flex; align-items:center; justify-content:center; padding:24px;
@@ -570,6 +548,7 @@
       <a href="#" id="nav-link-1">Classement</a>
       <a href="#" id="nav-link-2">Comment ça marche</a>
       <a href="#" id="nav-link-3">Discord</a>
+      <a href="originals.html">🎮 Originals</a>
       <a href="ticket.html" id="nav-scratch-btn">🎫 Ticket</a>
       <a href="slot.html" id="nav-slot-btn">🎰 Slot</a>
       <a href="wheel.html" id="nav-wheel-btn">🎡 Roue</a>
@@ -593,6 +572,7 @@
     <a href="#" id="mobile-nav-link-1">Classement</a>
     <a href="#" id="mobile-nav-link-2">Comment ça marche</a>
     <a href="#" id="mobile-nav-link-3">Discord</a>
+    <a href="originals.html">🎮 Originals</a>
     <a href="ticket.html" id="mobile-nav-scratch-btn">🎫 Ticket</a>
     <a href="slot.html" id="mobile-nav-slot-btn">🎰 Slot</a>
     <a href="wheel.html" id="mobile-nav-wheel-btn">🎡 Roue</a>
@@ -601,9 +581,6 @@
 
 <section class="originals-section">
   <div class="wrap" style="max-width:1240px;">
-
-    <div class="originals-intro">
-      <div class="eyebrow" id="originals-eyebrow">Drop Cash Originals</div>
       <h1 id="originals-title">Nos mini-jeux exclusifs</h1>
       <p class="lede" id="originals-subtitle">Connecte-toi une seule fois, puis tente ta chance sur les 3 jeux ci-dessous.</p>
     </div>
@@ -622,29 +599,46 @@
     </div>
 
     <div id="games-container" style="display:none;">
-    <div class="game-tiles-grid" id="game-tiles-grid">
-      <a href="ticket.html" class="game-tile c-ticket">
-        <div class="game-tile-visual">🎫</div>
-        <div class="game-tile-info">
-          <div class="game-tile-title" id="tile-scratch-title">Ticket à gratter</div>
-          <div class="game-tile-brand">Drop Cash</div>
+    <div class="originals-grid games-grid single-game-grid" id="games-grid">
+
+      >
+
+      >
+
+      <div class="game-card c-wheel" id="wheel-game-card">
+        <div class="game-preview">
+          <div class="wheel-wrap">
+            <div class="wheel-pointer"></div>
+            <div class="wheel-disc" id="wheel-disc">
+              <div class="wheel-label-pos" style="transform:rotate(22.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-22.5deg);">😔</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(67.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-67.5deg);">🎉</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(112.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-112.5deg);">😔</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(157.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-157.5deg);">🎉</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(202.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-202.5deg);">😔</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(247.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-247.5deg);">🎉</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(292.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-292.5deg);">😔</span></div>
+              <div class="wheel-label-pos" style="transform:rotate(337.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-337.5deg);">🎉</span></div>
+            </div>
+            <div class="wheel-center-dot"></div>
+          </div>
         </div>
-      </a>
-      <a href="slot.html" class="game-tile c-slot">
-        <div class="game-tile-visual">🎰</div>
-        <div class="game-tile-info">
-          <div class="game-tile-title" id="tile-slot-title">Machine à sous</div>
-          <div class="game-tile-brand">Drop Cash</div>
+        <div class="game-body">
+          <div class="game-tag" id="wheel-tag">Roue de la fortune</div>
+          <h3 class="game-title" id="wheel-title">Fais tourner la roue</h3>
+          <p class="game-desc" id="wheel-subtitle">Tente ta chance chaque jour.</p>
+          <div class="game-meta">
+            <span class="tries-badge" id="wheel-tries-remaining" style="display:none;"></span>
+          </div>
+          <button type="button" class="btn-play" id="wheel-submit-btn" onclick="submitWheel()">Faire tourner la roue</button>
+          <p id="wheel-cooldown-message" class="locked-note" style="display:none;"></p>
+          <p id="wheel-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
+          <p id="wheel-result-message" style="margin-top:14px; font-size:13.5px; color:var(--text-dim); line-height:1.6; display:none;"></p>
+          <a href="#" id="wheel-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
+          <button type="button" id="wheel-play-again-btn" class="btn-play" style="display:none; margin-top:10px;" onclick="replayWheel()">Rejouer</button>
         </div>
-      </a>
-      <a href="wheel.html" class="game-tile c-wheel">
-        <div class="game-tile-visual">🎡</div>
-        <div class="game-tile-info">
-          <div class="game-tile-title" id="tile-wheel-title">Roue de la fortune</div>
-          <div class="game-tile-brand">Drop Cash</div>
-        </div>
-      </a>
-    </div>>
+      </div>
+
+    </div>
     </div>
   </div>
 </section>
@@ -691,6 +685,10 @@
   // applySharedIdentity() ci-dessous — doit donc être déclarée avant.
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
+  // Idem : hideCooldown()/showCooldown() peuvent être atteintes de façon synchrone
+  // dès le premier applySharedIdentity() (via checkAlreadyPlayed), par précaution.
+  const cooldownIntervals = {};
 
   (function migrateToI18n(cfg){
     if (cfg.content) return;
@@ -826,10 +824,6 @@
     document.getElementById('nav-wheel-btn').textContent = wheelNavLabel;
     document.getElementById('mobile-nav-wheel-btn').textContent = wheelNavLabel;
 
-    document.getElementById('tile-scratch-title').textContent = (cfg.scratchTicket && cfg.scratchTicket.tag) || 'Ticket à gratter';
-    document.getElementById('tile-slot-title').textContent = (cfg.slotMachine && cfg.slotMachine.tag) || 'Machine à sous';
-    document.getElementById('tile-wheel-title').textContent = (cfg.wheelGame && cfg.wheelGame.tag) || 'Roue de la fortune';
-
   }
 
   applyChrome(getActive());
@@ -922,6 +916,7 @@
       const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
       connectedInfo.innerHTML = template.replace('{username}', escapeHtml(saved.username || 'Discord'));
       gamesContainer.style.display = 'block';
+      initWheelGame();
     } else {
       gate.style.display = 'block';
       connectedRow.style.display = 'none';
@@ -940,12 +935,83 @@
   }
 
   // ---------- Compte à rebours "déjà joué aujourd'hui" (ticket + slot) ----------
-  
-  
-  
-  
-  
-  
+  function msUntilNextUtcMidnight(){
+    const now = new Date();
+    const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
+    return next - now.getTime();
+  }
+
+  function formatCountdown(ms){
+    if (ms < 0) ms = 0;
+    const totalSec = Math.floor(ms / 1000);
+    const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+    const s = String(totalSec % 60).padStart(2, '0');
+    return `${h}:${m}:${s}`;
+  }
+
+  function clearCooldown(prefix){
+    if (cooldownIntervals[prefix]){
+      clearInterval(cooldownIntervals[prefix]);
+      cooldownIntervals[prefix] = null;
+    }
+  }
+
+  function showCooldown(prefix, template){
+    clearCooldown(prefix);
+    const submitBtn = document.getElementById(prefix + '-submit-btn');
+    const msgEl = document.getElementById(prefix + '-cooldown-message');
+    const triesEl = document.getElementById(prefix + '-tries-remaining');
+    submitBtn.style.display = 'none';
+    msgEl.style.display = 'block';
+    if (triesEl) triesEl.style.display = 'none';
+    const tick = () => {
+      const ms = msUntilNextUtcMidnight();
+      msgEl.textContent = fillTemplate(template || 'Reviens dans {time}', { time: formatCountdown(ms) });
+      if (ms <= 1000){
+        clearCooldown(prefix);
+        hideCooldown(prefix);
+      }
+    };
+    tick();
+    cooldownIntervals[prefix] = setInterval(tick, 1000);
+  }
+
+  function hideCooldown(prefix, remaining){
+    clearCooldown(prefix);
+    const submitBtn = document.getElementById(prefix + '-submit-btn');
+    const msgEl = document.getElementById(prefix + '-cooldown-message');
+    const triesEl = document.getElementById(prefix + '-tries-remaining');
+    submitBtn.style.display = '';
+    msgEl.style.display = 'none';
+    if (triesEl){
+      if (typeof remaining === 'number'){
+        const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
+        triesEl.textContent = fillTemplate(st.triesRemainingText || '{remaining} essai(s) restant(s) aujourd\'hui', { remaining });
+        triesEl.style.display = 'block';
+      } else {
+        triesEl.style.display = 'none';
+      }
+    }
+  }
+
+  async function checkAlreadyPlayed(prefix, discordId){
+    if (!discordId){ hideCooldown(prefix); return; }
+    const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
+    const url = `${workerBase}/${prefix}/status?discordId=${encodeURIComponent(discordId)}`;
+    try{
+      const resp = await fetch(url);
+      const data = await resp.json();
+      if (data.alreadyPlayed){
+        showCooldown(prefix, st.cooldownMessage || 'Reviens dans {time}');
+      } else {
+        hideCooldown(prefix, data.remaining);
+      }
+    }catch(err){
+      hideCooldown(prefix);
+    }
+  }
+
   function isMobileDevice(){
     return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
   }
@@ -978,7 +1044,159 @@
     const { discordId, username } = event.data;
     saveDiscordIdentity(discordId, username);
     applySharedIdentity();
+    // Les 3 jeux sont visibles en même temps sur cette page : la connexion
+    // doit s'appliquer partout d'un coup, pas seulement au jeu qui l'a déclenchée.
+    checkAlreadyPlayed('wheel', discordId);
   });
+
+  // ---------- Ticket à gratter : vrai geste de grattage (canvas), pas juste un clic ----------
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('scratch-game-card'); });
+  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('scratch-game-card'); });
+
+  
+  
+  
+  
+  
+  
+  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('slot-game-card'); });
+  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('slot-game-card'); });
+
+  // ---------- Roue de la fortune ----------
+  function initWheelGame(){
+    document.getElementById('wheel-form-error').style.display = 'none';
+    document.getElementById('wheel-result-message').style.display = 'none';
+    document.getElementById('wheel-play-again-btn').style.display = 'none';
+    document.getElementById('wheel-discord-claim-btn').style.display = 'none';
+    document.getElementById('wheel-submit-btn').style.display = '';
+    document.getElementById('wheel-disc').style.transition = 'none';
+    document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
+
+    const st = getActive().wheelGame || {};
+    document.getElementById('wheel-tag').textContent = st.tag || 'Roue de la fortune';
+    document.getElementById('wheel-title').textContent = st.title || 'Fais tourner la roue';
+    document.getElementById('wheel-subtitle').textContent = st.subtitle || 'Tente ta chance chaque jour.';
+    document.getElementById('wheel-submit-btn').textContent = st.spinText || 'Faire tourner la roue';
+    document.getElementById('wheel-result-message').textContent = '';
+    checkAlreadyPlayed('wheel', getSharedDiscordId());
+  }
+
+  function showWheelFormError(msg){
+    const el = document.getElementById('wheel-form-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  // Fait tourner la roue jusqu'au centre d'un secteur du bon type (gagné/perdu),
+  // choisi au hasard parmi les 4 secteurs de ce type, avec plusieurs tours complets.
+  function spinWheelTo(discEl, won, onDone){
+    const winIndexes = [1, 3, 5, 7];
+    const loseIndexes = [0, 2, 4, 6];
+    const pool = won ? winIndexes : loseIndexes;
+    const idx = pool[Math.floor(Math.random() * pool.length)];
+    const segmentCenter = idx * 45 + 22.5;
+    const rest = (360 - segmentCenter) % 360;
+    const spins = 6;
+    const target = spins * 360 + rest;
+
+    discEl.style.transition = 'none';
+    discEl.style.transform = 'rotate(0deg)';
+    void discEl.offsetWidth;
+    discEl.style.transition = 'transform 4.5s cubic-bezier(0.12,0.67,0.1,0.99)';
+
+    const handleEnd = () => {
+      discEl.removeEventListener('transitionend', handleEnd);
+      onDone();
+    };
+    discEl.addEventListener('transitionend', handleEnd);
+
+    requestAnimationFrame(() => {
+      discEl.style.transform = `rotate(${target}deg)`;
+    });
+  }
+
+  async function submitWheel(){
+    const pseudo = getSharedUsername();
+    const discordId = getSharedDiscordId();
+    const st = getActive().wheelGame || {};
+    if (!discordId){
+      showWheelFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
+      return;
+    }
+    document.getElementById('wheel-form-error').style.display = 'none';
+
+    const submitBtn = document.getElementById('wheel-submit-btn');
+    submitBtn.disabled = true;
+
+    try{
+      const resp = await fetch(`${workerBase}/wheel/play`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pseudo, discordId })
+      });
+      const data = await resp.json();
+
+      if (data.ok === false && data.reason === 'already_played_today'){
+        submitBtn.disabled = false;
+        showWheelFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
+        return;
+      }
+      if (data.ok === false){
+        submitBtn.disabled = false;
+        showWheelFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
+        return;
+      }
+
+      const msgEl = document.getElementById('wheel-result-message');
+      const claimBtn = document.getElementById('wheel-discord-claim-btn');
+      const playAgainBtn = document.getElementById('wheel-play-again-btn');
+      playAgainBtn.style.display = 'none';
+      submitBtn.textContent = st.spinningText || 'Ça tourne...';
+
+      const disc = document.getElementById('wheel-disc');
+      spinWheelTo(disc, data.won, () => {
+        submitBtn.disabled = false;
+        submitBtn.style.display = 'none';
+        msgEl.style.display = 'block';
+        if (data.won){
+          msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
+          claimBtn.style.display = 'flex';
+          claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
+          claimBtn.href = (CONFIG.wheelGame && CONFIG.wheelGame.discordClaimLink) || '#';
+        } else {
+          msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
+        }
+        if (data.remaining > 0){
+          playAgainBtn.textContent = st.playAgainText || 'Rejouer';
+          playAgainBtn.style.display = 'block';
+        }
+      });
+    }catch(err){
+      submitBtn.disabled = false;
+      submitBtn.textContent = st.spinText || 'Faire tourner la roue';
+      showWheelFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
+    }
+  }
+
+  function replayWheel(){
+    initWheelGame();
+  }
+
+  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('wheel-game-card'); });
+  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('wheel-game-card'); });
 </script>
 
 </body>
