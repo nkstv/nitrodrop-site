@@ -375,6 +375,7 @@
               <input id="bet" type="number" inputmode="numeric" value="1" min="1">
               <button class="chip" id="half">½</button>
               <button class="chip" id="double">2×</button>
+              <button class="chip" id="maxBet">Max</button>
             </div>
           </div>
           <div class="field">
@@ -729,6 +730,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   playBtn.addEventListener('click', () => { if (alive) cashOut(); else startRound(); });
   document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(1,Math.floor((+betInput.value||0)/2)));
   document.getElementById('double').addEventListener('click',()=>betInput.value=(+betInput.value||0)*2);
+  document.getElementById('maxBet').addEventListener('click',()=>{
+    const max = parseFloat(balanceEl.textContent) || 0;
+    betInput.value = Math.max(1, Math.floor(max));
+  });
 
   // ---------------- Difficulté (Low/Medium/High) ----------------
   const DIFFICULTY_LEVELS = [
