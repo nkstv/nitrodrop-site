@@ -132,6 +132,24 @@
   .board-area{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
 
   /* ---------- Dice ---------- */
+  .dice-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .dice-stats .stat{
+    background:linear-gradient(180deg, var(--panel-3), var(--bg-soft));
+    border:1px solid var(--line); border-radius:14px; padding:13px 14px;
+    display:flex; flex-direction:column; gap:6px; transition:.18s;
+  }
+  .dice-stats .stat.accent{border-color:rgba(232,193,104,.35); box-shadow:0 0 18px rgba(232,193,104,.07);}
+  .dice-stats .stat .k{
+    color:var(--muted); font-size:10px; font-weight:800; letter-spacing:1.1px;
+    text-transform:uppercase; display:flex; align-items:center; gap:5px; white-space:nowrap;
+  }
+  .dice-stats .stat .v{
+    font-family:"Baloo 2"; font-weight:800; font-size:23px; color:var(--cream);
+    display:flex; align-items:baseline; gap:2px; line-height:1;
+  }
+  .dice-stats .stat.accent .v{color:var(--gold);}
+  .dice-stats .stat .v .unit{font-size:14px; opacity:.65; font-weight:800;}
+
   .dice-slider{
     width:100%; height:6px; border-radius:3px; appearance:none; background:var(--bg-soft);
     outline:none; margin-top:4px;
@@ -167,21 +185,12 @@
   }
   @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
 
-  .game-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);
+  .game-bar{display:flex;align-items:center;justify-content:center;border-top:1px solid var(--line);
     background:rgba(20,15,8,.5);padding:11px 16px}
-  .bar-tools{display:flex;gap:7px;flex:1}
-  .bar-tools button{width:34px;height:34px;border-radius:10px;border:1px solid transparent;
-    color:var(--muted-2);font-size:14px;display:grid;place-items:center;transition:.15s}
-  .bar-tools button:hover{color:var(--gold);border-color:var(--line);background:var(--panel-2)}
   .bar-logo{display:flex;align-items:center;gap:7px;font-family:"Baloo 2";font-weight:800;font-size:15px;
     color:var(--cream);opacity:.85;white-space:nowrap}
   .bar-logo .mark{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
     display:grid;place-items:center;font-size:11px;border:1.5px solid rgba(0,0,0,.4)}
-  .bar-right{flex:1;display:flex;justify-content:flex-end}
-  .fair{display:flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line);
-    border-radius:11px;padding:9px 15px;font-weight:800;font-size:13px;color:var(--cream);transition:.15s}
-  .fair:hover{border-color:rgba(232,193,104,.35);color:var(--gold)}
-  .fair .shield{color:var(--gold)}
 
   /* ---------- Paris ---------- */
   .bets{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
@@ -270,7 +279,6 @@
     .controls{order:2;border-right:none;border-top:1px solid var(--line);padding:14px;gap:10px}
     .grid{gap:6px;width:100%}
     .bet-btn{margin-top:2px}
-    .bar-tools button:nth-child(n+3){display:none}
     .bets{padding:12px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -375,9 +383,15 @@
             <label>Target <span class="bal"><b id="targetDisplay">50.00</b></span></label>
             <input type="range" id="targetSlider" min="2" max="98" step="0.01" value="50" class="dice-slider">
           </div>
-          <div class="stats">
-            <div class="stat"><div class="k">Win Chance</div><div class="v"><span id="winChance">50.00</span>%</div></div>
-            <div class="stat"><div class="k">Multiplier</div><div class="v"><span id="diceMult">1.94</span>×</div></div>
+          <div class="stats dice-stats">
+            <div class="stat">
+              <div class="k">🎯 Win Chance</div>
+              <div class="v"><span id="winChance">50.00</span><span class="unit">%</span></div>
+            </div>
+            <div class="stat accent">
+              <div class="k">💰 Multiplier</div>
+              <div class="v"><span id="diceMult">1.94</span><span class="unit">×</span></div>
+            </div>
           </div>
           <button class="bet-btn" id="play">Bet</button>
         </aside>
@@ -395,14 +409,7 @@
       </div>
 
       <div class="game-bar">
-        <div class="bar-tools">
-          <button title="Paramètres">⚙</button>
-          <button title="Plein écran">⛶</button>
-          <button title="Statistiques">📈</button>
-          <button title="Partager">↗</button>
-        </div>
         <div class="bar-logo"><span class="mark">🦁</span>Drop Cash</div>
-        <div class="bar-right"><button class="fair"><span class="shield">🛡</span>Équité</button></div>
       </div>
     </div>
 
