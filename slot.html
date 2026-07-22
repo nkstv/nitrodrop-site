@@ -338,7 +338,8 @@
   }
   .slot-fair-icon{font-size:17px; flex-shrink:0;}
   .slot-fair-title{font-size:12.5px; font-weight:700; color:var(--text); margin-bottom:2px;}
-  .slot-fair-text{font-size:11.5px; color:var(--text-dim); line-height:1.5;}
+  .slot-fair-list{margin:0; padding:0 0 0 16px; font-size:11.5px; color:var(--text-dim); line-height:1.6;}
+  .slot-fair-list li{margin-bottom:2px;}
 
   .slot-history-section{margin-top:20px; text-align:left;}
   .slot-history-title{font-family:'Unbounded'; font-size:13.5px; font-weight:700; color:var(--text); margin:0 0 10px;}
@@ -581,27 +582,15 @@
 
 <section class="originals-section">
   <div class="wrap" style="max-width:1240px;">
-      <h1 id="originals-title">Nos mini-jeux exclusifs</h1>
-      <p class="lede" id="originals-subtitle">Connecte-toi une seule fois, puis tente ta chance sur les 3 jeux ci-dessous.</p>
-    </div>
 
-    <div class="identity-bar" id="identity-bar">
-      <div id="identity-gate" style="text-align:center; width:100%;">
-        <div class="identity-avatar" id="identity-avatar-gate" style="margin:0 auto 16px;">🎮</div>
-        <div class="identity-gate-title">Connecte-toi avec Discord pour débloquer les 3 jeux</div>
-        <button type="button" id="shared-discord-connect-btn" class="btn-discord btn-discord-big" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
-      </div>
-
-      <div id="identity-connected-row" style="display:none; align-items:center; gap:16px; width:100%;">
-        <div class="identity-avatar connected" id="identity-avatar-connected">🎮</div>
-        <div id="shared-discord-connected-info" class="identity-connected"></div>
-      </div>
+    <div id="slot-gate" style="text-align:center; max-width:420px; margin:60px auto;">
+      <div class="identity-avatar" id="identity-avatar-gate" style="margin:0 auto 16px;">🎮</div>
+      <div class="identity-gate-title" id="slot-gate-title">Connecte-toi avec Discord pour jouer</div>
+      <button type="button" id="shared-discord-connect-btn" class="btn-discord btn-discord-big" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
     </div>
 
     <div id="games-container" style="display:none;">
     <div class="originals-grid games-grid single-game-grid" id="games-grid">
-
-      >
 
       <div class="game-card c-slot slot-expanded" id="slot-game-card">
         <div class="slot-layout">
@@ -645,7 +634,7 @@
                 <div class="slot-fair-icon">🔒</div>
                 <div>
                   <div class="slot-fair-title" id="slot-fair-title">Provably fair</div>
-                  <div class="slot-fair-text" id="slot-fair-text">Le tirage est calculé côté serveur avant l'affichage du résultat : le résultat n'est jamais généré ni modifiable depuis le navigateur.</div>
+                  <ul class="slot-fair-list" id="slot-fair-list"></ul>
                 </div>
               </div>
 
@@ -659,8 +648,6 @@
 
         </div>
       </div>
-
-      >
 
     </div>
     </div>
@@ -851,13 +838,21 @@
     // Textes fixes (pas besoin d'un champ admin dédié) pour le panneau étendu de la machine à sous
     const slotExtraText = currentLang === 'fr' ? {
       eyebrow: 'Machine à sous', prizesTitle: 'Ce que tu peux gagner', prizeName: 'Combinaison gagnante',
-      mystery: '🎁 Montant surprise', fairTitle: 'Provably fair',
-      fairText: "Le tirage est calculé côté serveur avant l'affichage du résultat : le résultat n'est jamais généré ni modifiable depuis le navigateur.",
+      mystery: '🎁 Montant surprise', fairTitle: '🔒 Provably fair',
+      fairPoints: [
+        'Le résultat (gagné ou perdu) est tiré par le serveur avant même que l\'animation des rouleaux ne démarre — ton navigateur ne fait que l\'afficher, il ne peut ni le calculer ni le modifier.',
+        'La limite d\'un essai par jour est vérifiée côté serveur par ton identifiant Discord, pas par ton navigateur : recharger la page ou vider ton cache ne redonne pas d\'essai.',
+        'La chance de gain et le montant ne sont jamais envoyés à ton navigateur avant que tu joues, pour qu\'aucune information ne puisse fuiter avant le tirage.',
+      ],
       historyTitle: '📜 Historique des mises', historyEmpty: 'Aucune mise pour l\'instant.',
     } : {
       eyebrow: 'Slot machine', prizesTitle: 'What you can win', prizeName: 'Winning combination',
-      mystery: '🎁 Surprise amount', fairTitle: 'Provably fair',
-      fairText: 'The outcome is computed server-side before the result is shown: it is never generated or editable from the browser.',
+      mystery: '🎁 Surprise amount', fairTitle: '🔒 Provably fair',
+      fairPoints: [
+        'The outcome (win or lose) is rolled by the server before the reel animation even starts — your browser only displays it, it can neither compute nor change it.',
+        'The one-try-per-day limit is enforced server-side against your Discord ID, not your browser: reloading the page or clearing your cache does not grant another try.',
+        'The odds and the win amount are never sent to your browser before you play, so nothing can leak ahead of the draw.',
+      ],
       historyTitle: '📜 Bet history', historyEmpty: 'No bets yet.',
     };
     document.getElementById('slot-prizes-eyebrow').textContent = slotExtraText.eyebrow;
@@ -865,7 +860,7 @@
     document.getElementById('slot-prize-name').textContent = slotExtraText.prizeName;
     document.getElementById('slot-prize-mystery').textContent = slotExtraText.mystery;
     document.getElementById('slot-fair-title').textContent = slotExtraText.fairTitle;
-    document.getElementById('slot-fair-text').textContent = slotExtraText.fairText;
+    document.getElementById('slot-fair-list').innerHTML = slotExtraText.fairPoints.map(p => `<li>${escapeHtml(p)}</li>`).join('');
     document.getElementById('slot-history-title').textContent = slotExtraText.historyTitle;
     document.getElementById('slot-history-empty').textContent = slotExtraText.historyEmpty;
   }
@@ -949,21 +944,14 @@
   function applySharedIdentity(){
     const saved = getSavedDiscordIdentity();
 
-    const gate = document.getElementById('identity-gate');
-    const connectedRow = document.getElementById('identity-connected-row');
-    const connectedInfo = document.getElementById('shared-discord-connected-info');
+    const gate = document.getElementById('slot-gate');
     const gamesContainer = document.getElementById('games-container');
     if (saved && saved.discordId){
       gate.style.display = 'none';
-      connectedRow.style.display = 'flex';
-      document.getElementById('identity-avatar-connected').classList.add('connected');
-      const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
-      connectedInfo.innerHTML = template.replace('{username}', escapeHtml(saved.username || 'Discord'));
       gamesContainer.style.display = 'block';
       initSlotGame();
     } else {
       gate.style.display = 'block';
-      connectedRow.style.display = 'none';
       gamesContainer.style.display = 'none';
     }
   }
@@ -1151,10 +1139,14 @@
         const resultHtml = h.won
           ? `<span class="slot-history-result slot-history-win">+$${escapeHtml(String(h.amount))}</span>`
           : `<span class="slot-history-result slot-history-lose">Perdu</span>`;
+        // On ne connaît les symboles exacts que pour une victoire (toujours 7️⃣7️⃣7️⃣) :
+        // pour une défaite, le tirage réel n'est pas stocké côté serveur, donc on
+        // n'invente rien plutôt que d'afficher une icône fixe et trompeuse.
+        const symbolsHtml = h.won ? '7️⃣ 7️⃣ 7️⃣' : '';
         return `<div class="slot-history-row">
           <div class="slot-history-avatar">${escapeHtml(initial)}</div>
           <div class="slot-history-name">${escapeHtml(h.pseudo || '?')}</div>
-          <div class="slot-history-symbols">${h.won ? '7️⃣ 7️⃣ 7️⃣' : '🎰'}</div>
+          <div class="slot-history-symbols">${symbolsHtml}</div>
           ${resultHtml}
           <div class="slot-history-time">${escapeHtml(timeAgo)}</div>
         </div>`;
