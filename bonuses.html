@@ -254,6 +254,68 @@
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+  /* ---------- Modale de réclamation de bonus ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:150;
+    background:rgba(0,0,0,.72); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .2s ease; padding:20px;
+    overflow-y:auto;
+  }
+  .modal-overlay.active{opacity:1; pointer-events:auto;}
+  .modal{
+    position:relative; width:100%; max-width:420px;
+    background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:20px;
+    padding:34px; box-shadow:0 40px 100px rgba(0,0,0,.6);
+    transform:translateY(14px); transition:transform .2s ease; margin:auto;
+  }
+  .modal-overlay.active .modal{transform:translateY(0);}
+  .modal-close{
+    position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted);
+    font-size:24px; line-height:1; padding:4px; cursor:pointer;
+  }
+  .modal-close:hover{color:var(--cream);}
+  .modal-tag{color:var(--gold); font-size:11px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase;}
+  .modal h3{font-family:"Baloo 2"; font-weight:800; font-size:22px; color:var(--cream); margin-top:10px;}
+  .modal-sub{font-size:13.5px; color:var(--muted); margin-top:10px; line-height:1.6;}
+  .modal-sub strong{color:var(--gold); font-weight:800;}
+  #claim-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
+  #claim-form label{display:flex; flex-direction:column; gap:8px; font-size:11px; color:var(--muted);
+    font-weight:800; text-transform:uppercase; letter-spacing:1.1px;}
+  #claim-form input{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:10px;
+    padding:12px 14px; color:var(--cream); font-family:"Nunito Sans"; font-weight:700; font-size:14px; width:100%;
+    outline:none; transition:border-color .15s;
+  }
+  #claim-form input:focus{border-color:rgba(232,193,104,.5);}
+  .modal-submit{
+    margin-top:6px; background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:14px; border:none; border-radius:12px;
+    cursor:pointer; width:100%; transition:.15s;
+  }
+  .modal-submit:hover{filter:brightness(1.06);}
+  .modal-submit:disabled{opacity:.55; filter:none; cursor:default;}
+  .gate-actions{display:flex; flex-direction:column; gap:12px; margin-top:26px;}
+  .modal-ghost{
+    background:var(--panel-3); border:1px solid var(--line); color:var(--cream);
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:14px; border-radius:12px; cursor:pointer; width:100%;
+    transition:.15s;
+  }
+  .modal-ghost:hover{border-color:rgba(232,193,104,.4);}
+  #modal-step-confirm{text-align:center;}
+  .confirm-icon{
+    width:56px; height:56px; border-radius:50%; background:rgba(95,214,139,.12); border:1px solid var(--green);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 18px; color:var(--green);
+    font-size:26px; font-weight:800;
+  }
+  #modal-step-confirm p{font-size:13.5px; color:var(--muted); margin-top:10px; line-height:1.6;}
+  #modal-step-confirm p strong{color:var(--gold); font-weight:800;}
+  .countdown{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-weight:800; font-size:32px; color:var(--gold);
+    margin:22px 0 10px; letter-spacing:1px;
+  }
+  .modal-note{font-size:12px; color:var(--muted-2); margin-top:14px;}
+
   /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
   @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
   .custom-alert-overlay{
@@ -359,6 +421,51 @@
   <div class="d-grid">
     <a class="d-item" href="/blackjack"><span>🃏</span>Blackjack</a><a class="d-item" href="/slot"><span>🎰</span>Slot</a>
     <a class="d-item" href="/mines"><span>💣</span>Mines</a><a class="d-item" href="/dice"><span>🎲</span>Dice</a>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Fermer">×</button>
+
+    <div id="modal-step-gate">
+      <div class="modal-tag" id="gate-tag">Recevoir le bonus</div>
+      <h3 id="gate-platform-name"></h3>
+      <p class="modal-sub" id="gate-sub"></p>
+      <div class="gate-actions">
+        <button type="button" class="modal-submit" id="gate-yes-btn" onclick="gateYes()">Oui, je suis inscrit</button>
+        <button type="button" class="modal-ghost" id="gate-no-btn" onclick="gateNo()">Non, je m'inscris d'abord</button>
+      </div>
+    </div>
+
+    <div id="modal-step-form" style="display:none;">
+      <div class="modal-tag" id="form-tag-label">Réclamer le bonus</div>
+      <h3 id="modal-platform-name"></h3>
+      <p class="modal-sub" id="form-sub"></p>
+      <form id="claim-form" onsubmit="submitClaim(event)">
+        <label><span id="email-label-text">Email</span>
+          <input type="email" required placeholder="toi@email.com" id="claim-email-input">
+        </label>
+        <label><span id="pseudo-label-text">Pseudo sur la plateforme</span>
+          <input type="text" required placeholder="Ton pseudo de compte" id="claim-pseudo-input">
+        </label>
+        <label><span id="discord-label-text">Ton compte Discord</span></label>
+        <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
+        <p id="discord-join-note" style="font-size:11.5px; color:var(--muted-2); margin-top:-8px; line-height:1.5;"></p>
+        <div id="discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:700; text-align:center;"></div>
+        <input type="hidden" id="claim-discord-input">
+        <button type="submit" class="modal-submit" id="claim-submit-btn">Confirmer ma demande</button>
+      </form>
+    </div>
+
+    <div id="modal-step-confirm" style="display:none;">
+      <div class="confirm-icon">✓</div>
+      <h3 id="confirm-title">Demande envoyée</h3>
+      <p id="confirm-text"></p>
+      <div class="countdown" id="countdown">24:00:00</div>
+      <p class="modal-note" id="confirm-note"></p>
+      <a href="#" class="modal-ghost" id="confirm-telegram-btn" style="margin-top:20px; display:block; text-align:center; text-decoration:none;">Rejoindre le canal Telegram</a>
+    </div>
   </div>
 </div>
 
@@ -491,7 +598,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
     const grid = document.getElementById('offers-grid');
     grid.innerHTML = '';
-    cfg.offers.forEach((offer) => {
+    cfg.offers.forEach((offer, idx) => {
       const card = document.createElement('div');
       card.className = 'offer-card' + (offer.featured ? ' featured' : '');
       const markStyle = (offer.markColorStart && offer.markColorEnd)
@@ -521,10 +628,18 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         `}
         <div class="offer-btns">
           <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
-          <a href="/?lang=${encodeURIComponent(currentLang)}#offers" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}">${escapeHtml(offer.claimText)}</a>
+          <a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>
         </div>
       `;
       grid.appendChild(card);
+    });
+
+    grid.querySelectorAll('[data-claim-idx]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const offer = cfg.offers[parseInt(btn.dataset.claimIdx, 10)];
+        openModal(offer.name, offer.code, offer.signupHref, offer.codeEnabled !== false);
+      });
     });
 
     grid.querySelectorAll('[data-copy-code]').forEach(btn => {
@@ -539,6 +654,234 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       });
     });
   }
+
+  // ==================================================================
+  // Modale de réclamation de bonus — reprise complète du fonctionnement
+  // de la page d'accueil (portail « déjà inscrit ? », formulaire, envoi
+  // au relais, compte à rebours de 24h).
+  // ==================================================================
+  const overlay = document.getElementById('modal-overlay');
+  const stepGate = document.getElementById('modal-step-gate');
+  const stepForm = document.getElementById('modal-step-form');
+  const stepConfirm = document.getElementById('modal-step-confirm');
+  const claimForm = document.getElementById('claim-form');
+  let countdownInterval = null;
+  let currentSignupUrl = '#';
+  let currentClaimCode = '';
+
+  function fillTemplate(tpl, vars){
+    return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
+  }
+
+  function getOrCreateDeviceId(){
+    let id = null;
+    try{ id = localStorage.getItem('nitrodrop_device_id'); }catch(e){}
+    if (!id){
+      id = (crypto.randomUUID && crypto.randomUUID()) ||
+        ('dev-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+      try{ localStorage.setItem('nitrodrop_device_id', id); }catch(e){}
+    }
+    return id;
+  }
+
+  // Applique les textes de la modale depuis la config (mêmes clés que la page d'accueil)
+  function applyModalTexts(){
+    const cfg = getActive();
+    if (!cfg || !cfg.modal) return;
+    const m = cfg.modal;
+    const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+    set('gate-tag', m.gateTag || 'Recevoir le bonus');
+    set('discord-label-text', m.discordLabel || 'Ton compte Discord');
+    set('discord-connect-btn', m.discordConnectText || '🎮 Se connecter avec Discord');
+    set('gate-yes-btn', m.gateYesText);
+    set('gate-no-btn', m.gateNoText);
+    set('form-tag-label', m.formTag);
+    set('email-label-text', m.emailLabel);
+    set('pseudo-label-text', m.pseudoLabel);
+    set('claim-submit-btn', m.submitText);
+    set('confirm-title', m.confirmTitle);
+    set('confirm-note', m.confirmNote);
+
+    const emailInput = document.getElementById('claim-email-input');
+    if (m.emailPlaceholder) emailInput.placeholder = m.emailPlaceholder;
+    const pseudoInput = document.getElementById('claim-pseudo-input');
+    if (m.pseudoPlaceholder) pseudoInput.placeholder = m.pseudoPlaceholder;
+
+    const discordNavLink = (cfg.nav && cfg.nav.links || []).find(l => (l.label || '').toLowerCase().includes('discord'));
+    const discordHref = (discordNavLink && discordNavLink.href) || '#';
+    const discordLinkText = m.discordJoinLinkText || 'serveur Discord';
+    const discordLinkHtml = `<a href="${escapeHtml(discordHref)}" target="_blank" rel="noopener" style="color:var(--gold); font-weight:800;">${escapeHtml(discordLinkText)}</a>`;
+    const joinNoteTemplate = m.discordJoinNote || `Rejoins d'abord notre {link}, sinon on ne pourra pas t'envoyer la confirmation en DM.`;
+    document.getElementById('discord-join-note').innerHTML = escapeHtml(joinNoteTemplate).replace('{link}', discordLinkHtml);
+
+    const tgBtn = document.getElementById('confirm-telegram-btn');
+    tgBtn.textContent = m.confirmTelegramText || 'Rejoindre le canal Telegram';
+    tgBtn.href = m.confirmTelegramHref || '#';
+    document.querySelectorAll('.modal-close').forEach(btn => {
+      btn.setAttribute('aria-label', m.closeAriaLabel || 'Fermer');
+    });
+  }
+
+  // Réutilise la connexion Discord déjà faite ailleurs sur le site
+  function applyDiscordIdentityToClaimForm(){
+    const saved = getSavedDiscordIdentity();
+    const input = document.getElementById('claim-discord-input');
+    const btn = document.getElementById('discord-connect-btn');
+    const info = document.getElementById('discord-connected-info');
+    if (saved && saved.discordId){
+      input.value = saved.discordId;
+      btn.style.display = 'none';
+      info.style.display = 'block';
+      const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
+      info.textContent = template.replace('{username}', saved.username || 'Discord');
+    } else {
+      input.value = '';
+      btn.style.display = '';
+      info.style.display = 'none';
+    }
+  }
+
+  function openModal(platform, code, signupUrl, codeEnabled){
+    currentSignupUrl = signupUrl || '#';
+    currentClaimCode = code || '';
+    const m = getActive().modal || {};
+
+    document.getElementById('gate-platform-name').textContent = platform;
+    const gateTemplate = (codeEnabled !== false && code)
+      ? m.gateSubTemplate
+      : (m.gateSubTemplateNoCode || m.gateSubTemplate);
+    document.getElementById('gate-sub').innerHTML =
+      fillTemplate(escapeHtml(gateTemplate || ''), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code || '')}</strong>` });
+
+    document.getElementById('modal-platform-name').textContent = platform;
+    document.getElementById('form-sub').innerHTML =
+      fillTemplate(escapeHtml(m.formSubTemplate || ''), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code || '')}</strong>` });
+    document.getElementById('confirm-text').innerHTML =
+      fillTemplate(escapeHtml(m.confirmTextTemplate || ''), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code || '')}</strong>` });
+
+    stepGate.style.display = 'block';
+    stepForm.style.display = 'none';
+    stepConfirm.style.display = 'none';
+    claimForm.reset();
+    const existingErr = document.getElementById('claim-form-error');
+    if (existingErr) existingErr.remove();
+    applyDiscordIdentityToClaimForm();
+    clearInterval(countdownInterval);
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    clearInterval(countdownInterval);
+  }
+
+  function gateYes(){
+    stepGate.style.display = 'none';
+    stepForm.style.display = 'block';
+  }
+
+  function gateNo(){
+    window.open(currentSignupUrl, '_blank', 'noopener');
+    // On reste sur l'étape « gate » : l'utilisateur revient cliquer « Oui » une fois inscrit
+  }
+
+  async function sendTelegramNotification({ platform, code, email, pseudo, discordId, deviceId }){
+    const url = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+    if (!url || url.includes('REMPLACE-MOI')){
+      console.warn('Relais Telegram non configuré.');
+      return { ok: true };
+    }
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ platform, code, email, pseudo, discordId, deviceId })
+    });
+    try{ return await resp.json(); }catch(e){ return { ok: true }; }
+  }
+
+  function showFormError(msg){
+    let errEl = document.getElementById('claim-form-error');
+    if (!errEl){
+      errEl = document.createElement('p');
+      errEl.id = 'claim-form-error';
+      errEl.style.cssText = 'color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; line-height:1.5;';
+      claimForm.appendChild(errEl);
+    }
+    errEl.textContent = msg;
+  }
+
+  async function submitClaim(e){
+    e.preventDefault();
+    const platform = document.getElementById('modal-platform-name').textContent;
+    const email = document.getElementById('claim-email-input').value;
+    const pseudo = document.getElementById('claim-pseudo-input').value;
+    const discordId = document.getElementById('claim-discord-input').value;
+    const m = getActive().modal || {};
+
+    if (!discordId){
+      showAlert(m.discordRequiredAlert || 'Connecte-toi avec Discord avant de valider ta demande.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('claim-submit-btn');
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Envoi en cours…';
+
+    let result = { ok: true };
+    try{
+      result = await sendTelegramNotification({
+        platform, code: currentClaimCode, email, pseudo, discordId, deviceId: getOrCreateDeviceId()
+      });
+    }catch(err){
+      console.error('Échec de la notification :', err);
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+
+    if (result && result.ok === false && result.reason === 'duplicate_24h'){
+      const template = m.duplicateRequestMessage ||
+        "Tu as déjà fait une demande pour ce casino récemment. Réessaie dans environ {hours}h.";
+      showFormError(fillTemplate(template, { hours: result.hoursRemaining || '24' }));
+      return;
+    }
+
+    stepForm.style.display = 'none';
+    stepConfirm.style.display = 'block';
+    startCountdown();
+  }
+
+  function startCountdown(){
+    clearInterval(countdownInterval);
+    let remaining = 24 * 3600;
+    const el = document.getElementById('countdown');
+    const render = () => {
+      const h = String(Math.floor(remaining / 3600)).padStart(2, '0');
+      const mm = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
+      const s = String(remaining % 60).padStart(2, '0');
+      el.textContent = `${h}:${mm}:${s}`;
+    };
+    render();
+    countdownInterval = setInterval(() => {
+      remaining--;
+      if (remaining <= 0){ remaining = 0; clearInterval(countdownInterval); }
+      render();
+    }, 1000);
+  }
+
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  // Ces fonctions sont appelées depuis des attributs onclick du HTML : elles doivent
+  // être accessibles globalement, alors que tout ce script tourne dans une fonction fermée.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+  window.gateYes = gateYes;
+  window.gateNo = gateNo;
+  window.submitClaim = submitClaim;
 
   // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
   document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
@@ -615,8 +958,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
     saveDiscordIdentity(event.data.discordId, event.data.username, event.data.avatarUrl);
     applyIdentity();
+    applyDiscordIdentityToClaimForm();
   });
 
+  applyModalTexts();
   renderOffers();
   applyIdentity();
 })();
