@@ -91,7 +91,8 @@
   .top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
   .live{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:800;font-size:12px;
     background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:7px 13px}
-  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.4s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
   .icon-btn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
     display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.15s}
   .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
@@ -370,7 +371,7 @@
       <h1>Blackjack</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
-        <span class="live">👀 <span id="visitor-count">—</span> visiteurs au total</span>
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> visiteurs en ligne</span>
         <button class="icon-btn" aria-label="Notifications">🔔</button>
       </div>
     </div>
@@ -829,25 +830,43 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   });
 
   // ---------------- Compteur de visiteurs (site entier) ----------------
-  async function trackVisitor(){
+  // Compteur EN DIRECT : on envoie un signal de présence toutes les 20s tant que la
+  // page reste ouverte (la clé expire côté serveur si on arrête d'en envoyer), et on
+  // rafraîchit l'affichage au même rythme pour voir le nombre monter/descendre en vrai.
+  let visitorSessionId = '';
+  try{ visitorSessionId = sessionStorage.getItem('nitrodrop_session_id') || ''; }catch(e){}
+
+  async function sendHeartbeat(){
+    if (!workerBase) return;
+    try{
+      const resp = await fetch(`${workerBase}/stats/heartbeat`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: visitorSessionId }),
+      });
+      const data = await resp.json();
+      if (data.sessionId){
+        visitorSessionId = data.sessionId;
+        try{ sessionStorage.setItem('nitrodrop_session_id', visitorSessionId); }catch(e){}
+      }
+    }catch(e){}
+  }
+
+  async function refreshVisitorCount(){
     const counterEl = document.getElementById('visitor-count');
     if (!workerBase){ counterEl.textContent = '—'; return; }
     try{
-      let total;
-      if (!sessionStorage.getItem('nitrodrop_visit_counted')){
-        const resp = await fetch(`${workerBase}/stats/visit`, { method: 'POST' });
-        const data = await resp.json();
-        total = data.total;
-        sessionStorage.setItem('nitrodrop_visit_counted', '1');
-      } else {
-        const resp = await fetch(`${workerBase}/stats/visitors`);
-        const data = await resp.json();
-        total = data.total;
-      }
-      counterEl.textContent = total.toLocaleString('fr-FR');
+      const resp = await fetch(`${workerBase}/stats/visitors`);
+      const data = await resp.json();
+      counterEl.textContent = data.total.toLocaleString('fr-FR');
     }catch(e){
       counterEl.textContent = '—';
     }
+  }
+
+  async function trackVisitor(){
+    await sendHeartbeat();
+    await refreshVisitorCount();
+    setInterval(async () => { await sendHeartbeat(); await refreshVisitorCount(); }, 20000);
   }
   trackVisitor();
 

@@ -687,13 +687,25 @@
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
   // Compteur de visiteurs total du site (une fois par session, peu importe la page)
+  // Signal de présence EN DIRECT (heartbeat) : compte cette page dans le nombre de
+  // visiteurs en ligne affiché sur Mines/Blackjack, tant que l'onglet reste ouvert.
   (function trackSiteVisit(){
     if (!workerBase) return;
-    try{
-      if (sessionStorage.getItem('nitrodrop_visit_counted')) return;
-      sessionStorage.setItem('nitrodrop_visit_counted', '1');
-    }catch(e){}
-    fetch(`${workerBase}/stats/visit`, { method: 'POST' }).catch(() => {});
+    let sessionId = '';
+    try{ sessionId = sessionStorage.getItem('nitrodrop_session_id') || ''; }catch(e){}
+    function sendHeartbeat(){
+      fetch(`${workerBase}/stats/heartbeat`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      }).then(r => r.json()).then(data => {
+        if (data.sessionId){
+          sessionId = data.sessionId;
+          try{ sessionStorage.setItem('nitrodrop_session_id', sessionId); }catch(e){}
+        }
+      }).catch(() => {});
+    }
+    sendHeartbeat();
+    setInterval(sendHeartbeat, 20000);
   })();
 
   // Idem : hideCooldown()/showCooldown() peuvent être atteintes de façon synchrone
