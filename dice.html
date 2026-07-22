@@ -327,6 +327,7 @@
     <nav class="s-nav">
       <a href="mines.html"><span class="ic">💣</span><span>Mines</span></a>
       <a href="blackjack.html"><span class="ic">🃏</span><span>Blackjack</span></a>
+      <a href="slot.html"><span class="ic">🎰</span><span>Slot</span></a>
       <a href="#"><span class="ic">🐔</span><span>Chicken</span></a>
       <a href="#"><span class="ic">🔢</span><span>Keno</span></a>
       <a href="wheel.html"><span class="ic">🎡</span><span>Wheel</span></a>
@@ -439,7 +440,7 @@
   </div>
   <div class="d-label">ORIGINALS</div>
   <div class="d-grid">
-    <a class="d-item" href="blackjack.html"><span>🃏</span>Blackjack</a><button class="d-item"><span>🔢</span>Keno</button>
+    <a class="d-item" href="blackjack.html"><span>🃏</span>Blackjack</a><a class="d-item" href="slot.html"><span>🎰</span>Slot</a>
     <button class="d-item"><span>🐔</span>Chicken</button><a class="d-item" href="wheel.html"><span>🎡</span>Wheel</a>
     <a class="d-item" href="mines.html"><span>💣</span>Mines</a><a class="d-item" href="dice.html"><span>🎲</span>Dice</a>
   </div>
@@ -647,8 +648,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       const tr=document.createElement('tr');
       const isMines = p.game === 'mines';
       const isBlackjack = p.game === 'blackjack';
-      const gameIcon = isMines ? '💣' : isBlackjack ? '🃏' : '🎲';
-      const gameName = isMines ? 'Mines' : isBlackjack ? 'Blackjack' : 'Dice';
+      const isSlot = p.game === 'slot';
+      const gameIcon = isMines ? '💣' : isBlackjack ? '🃏' : isSlot ? '🎰' : '🎲';
+      const gameName = isMines ? 'Mines' : isBlackjack ? 'Blackjack' : isSlot ? 'Slot' : 'Dice';
       let resultHtml, payout;
       if (isMines){
         const mult = p.busted ? 0 : p.multiplier;
@@ -677,17 +679,17 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (!workerBase) return;
     try{
       let lists = [];
-      const games = ['mines', 'blackjack', 'dice'];
+      const games = ['mines', 'blackjack', 'dice', 'slots'];
       if (activeTab === 'mine'){
         const discordId = getSharedDiscordId();
         if (!discordId){ renderHistoryRows([]); return; }
         const resps = await Promise.all(games.map(g => fetch(`${workerBase}/${g}/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`)));
         const datas = await Promise.all(resps.map(r => r.json()));
-        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g })));
+        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g === 'slots' ? 'slot' : g })));
       } else {
         const resps = await Promise.all(games.map(g => fetch(`${workerBase}/${g}/history?limit=10`)));
         const datas = await Promise.all(resps.map(r => r.json()));
-        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g })));
+        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g === 'slots' ? 'slot' : g })));
       }
       const merged = lists.flat().sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0)).slice(0, 10);
       renderHistoryRows(merged);

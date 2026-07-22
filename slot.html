@@ -2,911 +2,482 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="page-title">Drop Cash Originals — Drop-Cash.com</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171209">
+<title>Drop Cash — Slot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#07070C;
-    --bg-raise:#100F1C;
-    --bg-card:#131226;
-    --line:rgba(255,255,255,0.08);
-    --line-strong:rgba(255,255,255,0.16);
-    --green:#B6FF3C;
-    --green-dim:#7FCB1F;
-    --violet:#8B5CFF;
-    --violet-deep:#4B2FBF;
-    --text:#F1F0FA;
-    --text-dim:#9591B0;
-    --text-faint:#5F5C77;
-    --radius:18px;
+    --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
+    --line:rgba(232,193,104,.10); --gold:#E8C168; --gold-deep:#C79A3C;
+    --cream:#F2E9D8; --muted:#9a8b6d; --muted-2:#6f6350;
+    --red:#F26D6D; --green:#5FD68B;
+    --r-l:20px; --r-m:14px;
+    --gap:14px; --chrome:300px; --side:238px;
   }
-
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:clip;
-    min-height:100vh;
-    display:flex; flex-direction:column;
+    background:radial-gradient(1000px 500px at 70% -10%, rgba(232,193,104,.055), transparent 60%), var(--bg);
+    color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif;
   }
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size:56px 56px;
-    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
-    pointer-events:none;
-    z-index:0;
-  }
-  a{color:inherit; text-decoration:none;}
-  img{max-width:100%; display:block;}
-  :focus-visible{outline:2px solid var(--green); outline-offset:3px; border-radius:4px;}
+  h1{font-family:"Baloo 2",sans-serif}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
 
-  .wrap{max-width:1240px; margin:0 auto; padding:0 32px; position:relative; z-index:1;}
-  h1,h2,h3{font-family:'Unbounded', sans-serif; line-height:1.05; letter-spacing:-0.01em;}
-  .code-font{font-family:'JetBrains Mono', monospace; letter-spacing:0.04em;}
+  .app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
 
-  /* ---------- NAV (identique au site) ---------- */
-  nav{
-    position:sticky; top:0; z-index:50;
-    background:rgba(7,7,12,0.75);
-    backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--line);
+  /* ================= SIDEBAR ================= */
+  .side{
+    position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel) 60%,var(--bg-soft));
+    border-right:1px solid var(--line);padding:16px 12px;gap:14px;overflow-y:auto;
   }
-  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:18px 0;}
-  .logo{display:flex; align-items:center; gap:10px; font-family:'Unbounded'; font-weight:900; font-size:19px;}
-  .logo-mark{
-    width:34px; height:34px; border-radius:9px;
-    background:linear-gradient(135deg, var(--violet), var(--violet-deep));
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 22px rgba(139,92,255,0.55);
-    font-size:16px;
-  }
-  .logo .logo-accent{color:var(--green);}
-  .nav-links{display:flex; gap:34px; font-size:14.5px; color:var(--text-dim); font-weight:500;}
-  .nav-links a:hover{color:var(--text);}
-  .nav-cta{
-    background:var(--green); color:#08130a; font-weight:700; font-size:14px;
-    padding:10px 20px; border-radius:10px;
-    box-shadow:0 0 0 0 rgba(182,255,60,0.6);
-    transition:box-shadow .2s ease, transform .2s ease;
-  }
-  .nav-cta:hover{box-shadow:0 0 26px rgba(182,255,60,0.45); transform:translateY(-1px);}
-  .lang-switch{display:flex; gap:4px; background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:8px; padding:3px;}
-  .lang-switch-btn{
-    background:none; border:none; color:var(--text-dim); font-weight:700; font-size:12px;
-    padding:6px 10px; border-radius:6px; cursor:pointer; letter-spacing:0.03em;
-  }
-  .lang-switch-btn.active{background:var(--green); color:#08130a;}
-  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer;}
-  .burger span{width:22px; height:2px; background:var(--text); transition:transform .2s ease, opacity .2s ease;}
-  .mobile-nav{
-    display:none; flex-direction:column; gap:2px;
-    background:var(--bg-raise); border-bottom:1px solid var(--line);
-    padding:8px 0;
-  }
-  .mobile-nav.open{display:flex;}
-  .mobile-nav a{
-    padding:14px 32px; font-size:15px; color:var(--text-dim); font-weight:500;
-    border-bottom:1px solid var(--line);
-  }
-  .mobile-nav a:last-child{border-bottom:none;}
-  .mobile-nav a:active{color:var(--text); background:var(--bg-card);}
+  .side::-webkit-scrollbar{width:6px}
+  .side::-webkit-scrollbar-thumb{background:var(--panel-3);border-radius:6px}
 
-  /* ---------- FOOTER (identique au site) ---------- */
-  footer{border-top:1px solid var(--line); padding:56px 0 40px; margin-top:auto;}
-  .footer-top{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:32px;}
-  .footer-cols{display:flex; gap:64px; flex-wrap:wrap;}
-  .footer-col h4{font-size:12.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px;}
-  .footer-col a{display:block; font-size:14px; color:var(--text-dim); margin-bottom:10px;}
-  .footer-col a:hover{color:var(--text);}
-  .floating-widget{
-    position:fixed; bottom:24px; right:24px; z-index:200;
-    width:60px; height:60px; border-radius:50%;
-    border:3px solid var(--green); box-shadow:0 0 20px rgba(182,255,60,0.4);
-    overflow:visible; display:flex; align-items:center; justify-content:center;
-    background:var(--bg-card);
-  }
-  .floating-widget img{width:100%; height:100%; border-radius:50%; object-fit:cover;}
-  .floating-widget-badge{
-    position:absolute; bottom:-6px; left:-6px;
-    width:28px; height:28px; border-radius:50%;
-    background:#5865F2; border:2px solid var(--bg);
-    display:flex; align-items:center; justify-content:center; font-size:14px;
-  }
-  @media (max-width:960px){
-    .floating-widget{width:50px; height:50px; bottom:16px; right:16px;}
-    .floating-widget-badge{width:24px; height:24px; font-size:12px;}
-  }
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 0}
+  .brand .avatar{width:38px;height:38px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:19px;border:2px solid rgba(0,0,0,.4)}
+  .brand .name{font-family:"Baloo 2";font-weight:800;font-size:19px;line-height:1.05}
+  .beta{display:inline-block;font-size:8.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--gold);background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.32);
+    padding:1px 6px;border-radius:20px;margin-top:3px}
 
-  .modal-overlay{
-    position:fixed; inset:0; z-index:200;
-    background:rgba(4,4,8,0.72); backdrop-filter:blur(6px);
-    display:flex; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity .2s ease;
-    padding:20px;
+  .wallet{
+    background:linear-gradient(150deg,rgba(232,193,104,.14),rgba(232,193,104,.04));
+    border:1px solid rgba(232,193,104,.24);border-radius:var(--r-m);padding:11px 13px;
   }
-  .modal-overlay.active{opacity:1; pointer-events:auto;}
-  .modal{
-    position:relative; width:100%; max-width:420px;
-    background:var(--bg-card); border:1px solid var(--line-strong); border-radius:20px;
-    padding:34px; box-shadow:0 40px 100px rgba(0,0,0,0.6);
-    transform:translateY(14px); transition:transform .2s ease;
-  }
-  .modal-overlay.active .modal{transform:translateY(0);}
-  .modal-close{
-    position:absolute; top:16px; right:16px; background:none; border:none; color:var(--text-dim);
-    font-size:22px; cursor:pointer; line-height:1; padding:4px;
-  }
-  .modal-close:hover{color:var(--text);}
-  .modal-tag{color:var(--green); font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
-  .modal h3{font-family:'Unbounded'; font-size:22px; color:#fff; margin-top:10px;}
-  .modal-sub{font-size:13.5px; color:var(--text-dim); margin-top:10px; line-height:1.6;}
-  #scratch-form, #slot-form, #wheel-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
-  #scratch-form label, #slot-form label, #wheel-form label{display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
-  #scratch-form input, #slot-form input, #wheel-form input{
-    background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
-    padding:12px 14px; color:var(--text); font-size:14px; font-family:'Inter'; width:100%;
-  }
-  #scratch-form input:focus, #slot-form input:focus, #wheel-form input:focus{border-color:var(--green);}
-  .modal-submit{
-    margin-top:6px; background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
-    padding:14px; border:none; border-radius:10px; cursor:pointer; width:100%;
-  }
-  .modal-submit:hover{background:#c8ff6a;}
-  .modal-ghost{
-    background:transparent; border:1px solid var(--line-strong); color:var(--text);
-    font-weight:600; font-size:14.5px; padding:14px; border-radius:10px; cursor:pointer; width:100%;
-  }
-  .modal-ghost:hover{border-color:var(--text-dim);}
+  .wallet .k{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+  .wallet .v{display:flex;align-items:center;gap:7px;font-weight:800;font-size:21px;margin-top:3px}
+  .wallet .v .key{font-size:15px}
+  .wallet button{width:100%;margin-top:9px;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    color:#3a2a08;font-weight:800;font-size:13px;padding:8px;border-radius:10px;transition:.15s}
+  .wallet button:hover{filter:brightness(1.06)}
+  .wallet button:disabled{opacity:.5; cursor:default; filter:none;}
 
-  .scratch-card-visual{
-    width:200px; height:200px; margin:20px auto 0; border-radius:16px; position:relative; overflow:hidden;
-    border:1px solid var(--line);
+  .s-label{color:var(--muted-2);font-size:9.5px;font-weight:800;letter-spacing:2.4px;padding:0 8px;margin-top:2px}
+  .s-nav{display:flex;flex-direction:column;gap:2px}
+  .s-nav a{
+    display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--muted);
+    font-weight:800;font-size:14px;padding:10px 12px;border-radius:12px;transition:.15s;position:relative;
   }
-  .scratch-silver{
-    position:absolute; inset:0; z-index:2;
-    cursor:pointer; touch-action:none;
-    transition:opacity .4s ease, transform .4s ease;
-  }
-  .scratch-silver.revealed{opacity:0; transform:scale(1.15); pointer-events:none;}
-  .scratch-result{
-    position:absolute; inset:0; z-index:1; background:var(--bg-card);
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    font-family:'Unbounded'; font-weight:900; font-size:28px; color:var(--green);
-  }
+  .s-nav a .ic{width:20px;text-align:center;font-size:15px;opacity:.9}
+  .s-nav a:hover{background:rgba(232,193,104,.06);color:var(--cream)}
+  .s-nav a.on{background:var(--panel-3);color:var(--cream)}
+  .s-nav a.on::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--gold)}
+  .s-nav a .tag{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:1px;color:var(--gold);
+    background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.28);padding:2px 6px;border-radius:20px}
 
-  .slot-reels{
-    display:flex; gap:8px; justify-content:center; margin-top:20px;
-    background:var(--bg-raise); border:1px solid var(--line); border-radius:14px; padding:16px;
-  }
+  .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:10px;border-top:1px solid var(--line)}
+  .s-user{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:14px;padding:8px 10px}
+  .s-user .pfp{width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);object-fit:cover;}
+  .s-user .n{font-weight:800;font-size:13.5px;line-height:1.2}
+  .s-user .s{color:var(--muted);font-size:11px;font-weight:700}
+  .s-user .out{margin-left:auto;color:var(--muted-2);font-size:14px;transition:.15s}
+  .s-user .out:hover{color:var(--red)}
+  .wallet-login-btn{width:100%;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));color:#3a2a08;
+    font-family:"Baloo 2";font-weight:800;font-size:14px;padding:12px;border-radius:12px;transition:.15s}
+  .wallet-login-btn:hover{filter:brightness(1.06)}
+
+  /* ================= CONTENU ================= */
+  .main{display:flex;flex-direction:column;gap:var(--gap);padding:16px clamp(16px,2.2vw,34px) 30px;min-width:0}
+
+  .topbar{display:flex;align-items:center;gap:14px;flex:none}
+  .topbar h1{font-size:28px;font-weight:800;line-height:1}
+  .topbar .crumb{color:var(--muted-2);font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .live{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:800;font-size:12px;
+    background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:7px 13px}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.4s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .icon-btn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
+    display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.15s}
+  .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
+  .burger{display:none}
+
+  /* ---------- Panneau de jeu ---------- */
+  .game-panel{background:linear-gradient(180deg,var(--panel),var(--bg-soft));
+    border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;display:flex;flex-direction:column}
+  .game-wrap{display:grid;grid-template-columns:300px 1fr}
+
+  .controls{background:linear-gradient(180deg,var(--panel-2),rgba(34,26,16,.6));
+    border-right:1px solid var(--line);padding:20px 18px;display:flex;flex-direction:column;gap:14px}
+  .seg{display:grid;grid-template-columns:1fr;background:var(--bg-soft);border-radius:30px;padding:4px;border:1px solid var(--line)}
+  .seg button:disabled{cursor:default;}
+  .seg button{padding:10px 0;border-radius:26px;font-weight:800;letter-spacing:1.6px;font-size:12px;color:var(--muted);transition:.18s}
+  .seg button.on{background:var(--panel-3);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(232,193,104,.15)}
+  .field label{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;margin-bottom:8px}
+  .field label .bal{color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:.8px}
+  .field label .bal b{color:var(--cream)}
+  .input-row{display:flex;align-items:center;gap:6px;background:var(--bg-soft);border:1px solid var(--line);
+    border-radius:var(--r-m);padding:6px 7px 6px 13px;transition:border-color .2s}
+  .input-row.err{border-color:var(--red)}
+  .input-row .key{color:var(--gold);font-size:13px}
+  .input-row input{flex:1;background:none;border:none;outline:none;color:var(--cream);
+    font-family:"Nunito Sans";font-weight:800;font-size:15px;min-width:0}
+  .chip{background:var(--panel-3);border:1px solid var(--line);border-radius:9px;padding:7px 11px;
+    font-weight:800;font-size:12.5px;color:var(--cream);transition:.15s}
+  .chip:hover{border-color:rgba(232,193,104,.4);color:var(--gold)}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .stat{background:var(--bg-soft);border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px}
+  .stat .k{color:var(--muted);font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
+  .stat .v{font-weight:800;font-size:16px;margin-top:3px;display:flex;align-items:center;gap:5px}
+  .stat .v .key{color:var(--gold);font-size:13px}
+  .bet-btn{margin-top:auto;background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep));color:#3a2a08;
+    font-family:"Baloo 2";font-weight:800;font-size:19px;padding:14px;border-radius:var(--r-m);
+    box-shadow:0 5px 14px rgba(232,193,104,.22), inset 0 1px 0 rgba(255,255,255,.35);transition:.15s}
+  .bet-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .bet-btn:active{transform:translateY(1px)}
+  .bet-btn:disabled{opacity:.55; filter:none; cursor:default; transform:none; box-shadow:none;}
+
+  .board{background:radial-gradient(600px 320px at 50% 0%, rgba(232,193,104,.05), transparent 70%);
+    padding:20px 24px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
+  .slot-board{justify-content:center; min-height:340px;}
+  .slot-reels{display:flex; gap:16px; justify-content:center;}
   .slot-reel{
-    width:64px; height:74px; background:var(--bg-card); border-radius:8px;
-    display:flex; align-items:center; justify-content:center; font-size:30px; overflow:hidden;
+    width:110px; height:130px; border-radius:14px; background:linear-gradient(180deg,var(--panel-3),var(--panel-2));
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 3px 0 rgba(0,0,0,.35), inset 0 0 20px rgba(0,0,0,.3);
   }
-  .slot-reel.spinning .slot-sym{animation:slot-blur .07s linear infinite;}
-  @keyframes slot-blur{0%{transform:translateY(-4px);}50%{transform:translateY(4px);}100%{transform:translateY(-4px);}}
+  .slot-sym{font-size:56px; display:block; animation:reveal .3s ease;}
+  @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+  .bust-card{position:absolute;top:14px;right:14px;background:rgba(20,14,8,.93);border:1.5px solid var(--red);
+    border-radius:var(--r-m);padding:10px 18px;text-align:center;box-shadow:0 0 26px rgba(242,109,109,.25);
+    opacity:0;transform:translateY(-6px);transition:.25s;pointer-events:none;z-index:2}
+  .bust-card.show{opacity:1;transform:translateY(0)}
+  .bust-card .t{font-family:"Baloo 2";font-weight:800;font-size:21px;line-height:1.1}
+  .bust-card .v{color:var(--red);font-weight:800;font-size:13px;margin-top:4px;border-top:1px solid var(--line);padding-top:5px}
+  .bust-card .v .key{color:var(--gold)}
 
-  .wheel-wrap{position:relative; width:220px; height:220px; margin:20px auto 0;}
-  .wheel-pointer{
-    position:absolute; top:-4px; left:50%; transform:translateX(-50%); z-index:3;
-    width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent;
-    border-top:18px solid var(--green);
-  }
-  .wheel-disc{
-    width:220px; height:220px; border-radius:50%; position:relative;
-    background: conic-gradient(
-      var(--bg-card) 0deg 45deg, var(--green) 45deg 90deg,
-      var(--bg-card) 90deg 135deg, var(--green) 135deg 180deg,
-      var(--bg-card) 180deg 225deg, var(--green) 225deg 270deg,
-      var(--bg-card) 270deg 315deg, var(--green) 315deg 360deg
-    );
-    border:3px solid var(--line-strong); box-shadow:0 0 0 6px var(--bg-raise);
-  }
-  .wheel-label-pos{position:absolute; top:50%; left:50%; width:0; height:0;}
-  .wheel-label-content{position:absolute; display:block; font-size:22px; transform-origin:center; margin-left:-12px; margin-top:-12px;}
-  .wheel-center-dot{
-    position:absolute; top:50%; left:50%; width:22px; height:22px; margin:-11px 0 0 -11px;
-    background:var(--bg-raise); border:2px solid var(--line-strong); border-radius:50%; z-index:2;
-  }
-  .tg-btn{
-    display:flex; align-items:center; gap:8px; background:#3FA9F5; color:#071018;
-    font-weight:700; font-size:13px; padding:12px; border-radius:9px; text-decoration:none;
-  }
+  .win-card{position:absolute;top:50%;left:50%;background:rgba(15,11,6,.96);border:2px solid var(--green);
+    border-radius:20px;padding:22px 34px;text-align:center;box-shadow:0 0 50px rgba(95,214,139,.4), 0 20px 50px rgba(0,0,0,.5);
+    opacity:0;transform:translate(-50%,-50%) scale(.85);transition:.25s;pointer-events:none;z-index:5}
+  .win-card.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .win-card .t{font-family:"Baloo 2";font-weight:800;font-size:34px;line-height:1.1;color:var(--green)}
+  .win-card .sep{height:1px;background:var(--line);margin:10px 0}
+  .win-card .v{color:var(--green);font-weight:800;font-size:19px}
+  .win-card .v .key{color:var(--gold)}
 
-  .disclaimer{
-    margin-top:44px; padding-top:28px; border-top:1px solid var(--line);
-    font-size:12px; color:var(--text-faint); line-height:1.7; max-width:820px;
-  }
-  .age-badge{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:28px; height:28px; border:1px solid var(--line-strong); border-radius:6px;
-    font-size:11px; font-weight:800; margin-right:8px; color:var(--text-dim);
-  }
+  .game-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);
+    background:rgba(20,15,8,.5);padding:11px 16px}
+  .bar-tools{display:flex;gap:7px;flex:1}
+  .bar-tools button{width:34px;height:34px;border-radius:10px;border:1px solid transparent;
+    color:var(--muted-2);font-size:14px;display:grid;place-items:center;transition:.15s}
+  .bar-tools button:hover{color:var(--gold);border-color:var(--line);background:var(--panel-2)}
+  .bar-logo{display:flex;align-items:center;gap:7px;font-family:"Baloo 2";font-weight:800;font-size:15px;
+    color:var(--cream);opacity:.85;white-space:nowrap}
+  .bar-logo .mark{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:11px;border:1.5px solid rgba(0,0,0,.4)}
+  .bar-right{flex:1;display:flex;justify-content:flex-end}
+  .fair{display:flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:11px;padding:9px 15px;font-weight:800;font-size:13px;color:var(--cream);transition:.15s}
+  .fair:hover{border-color:rgba(232,193,104,.35);color:var(--gold)}
+  .fair .shield{color:var(--gold)}
 
-  /* ---------- VAULT ---------- */
-  .vault-section{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:64px 20px;}
+  /* ---------- Paris ---------- */
+  .bets{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+    border-radius:var(--r-l);padding:16px 18px}
+  .tabs{display:flex;gap:6px;margin-bottom:10px}
+  .tabs button{padding:9px 17px;border-radius:30px;font-weight:800;font-size:13.5px;color:var(--muted);transition:.18s}
+  .tabs button:hover{color:var(--cream)}
+  .tabs button.on{background:var(--panel-3);color:var(--cream);border:1px solid var(--line)}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:620px}
+  thead th{text-align:left;color:var(--muted-2);font-size:10.5px;letter-spacing:1.6px;font-weight:800;padding:7px 13px;text-transform:uppercase}
+  thead th:nth-child(n+3){text-align:right}
+  tbody td{padding:11px 13px;border-top:1px solid rgba(232,193,104,.05);font-weight:700;font-size:13.5px}
+  tbody td:nth-child(n+3){text-align:right}
+  tbody tr:hover{background:rgba(232,193,104,.04)}
+  tbody tr.fresh{animation:pop .5s ease}
+  @keyframes pop{from{background:rgba(232,193,104,.12)}to{background:transparent}}
+  .g{display:flex;align-items:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:14px}
+  .g .ic{width:24px;height:24px;border-radius:8px;background:var(--panel-3);border:1px solid var(--line);display:grid;place-items:center;font-size:12px}
+  .p{display:flex;align-items:center;gap:8px}
+  .p .pfp{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9aa7c7,#3c455e);object-fit:cover;flex:none;}
+  td.time{color:var(--muted)}
+  .key{color:var(--gold)}
+  .win{color:var(--green)}
+  .lose{color:var(--muted)}
+  footer{text-align:center;color:var(--muted-2);font-size:11.5px;font-weight:700;padding:4px 0 2px}
 
-  @keyframes fadeInUp{
-    from{opacity:0; transform:translateY(16px);}
-    to{opacity:1; transform:translateY(0);}
-  }
-  .fade-in-up{animation:fadeInUp 0.55s ease both;}
+  /* ================= MOBILE (identique à la version précédente) ================= */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:linear-gradient(180deg,#241c12,#191309);border-top:1px solid var(--line);
+    border-radius:24px 24px 0 0;padding:12px 14px calc(16px + env(safe-area-inset-bottom));
+    transform:translateY(105%);transition:transform .3s cubic-bezier(.22,.9,.3,1);
+    box-shadow:0 -18px 44px rgba(0,0,0,.6);max-height:88vh;overflow-y:auto}
+  .drawer.open{transform:translateY(0)}
+  .handle{width:50px;height:4px;border-radius:4px;background:#4a4032;margin:3px auto 14px}
+  .d-user{display:flex;align-items:center;gap:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:11px 12px}
+  .d-user .pfp{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);flex:none;object-fit:cover;}
+  .d-user .n{font-weight:800;font-size:17px}
+  .d-user .s{color:var(--muted);font-weight:600;font-size:13px;margin-top:1px}
+  .d-out{margin-left:auto;width:38px;height:38px;border-radius:50%;background:rgba(242,109,109,.14);
+    border:1px solid rgba(242,109,109,.3);color:var(--red);display:grid;place-items:center;font-size:15px;flex:none}
+  .d-sep{height:1px;background:var(--line);margin:14px 4px}
+  .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .d-item{background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:13px 12px;
+    font-weight:800;font-size:15px;text-align:left;display:flex;align-items:center;gap:9px}
+  .d-item:active{background:var(--panel-3)}
+  .d-label{color:var(--muted-2);font-size:10.5px;font-weight:800;letter-spacing:2.6px;margin:16px 4px 9px}
+  .d-foot{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+  .d-foot button, .d-foot a{padding:14px;border-radius:13px;font-weight:800;font-size:14.5px;display:flex;
+    align-items:center;justify-content:center;gap:8px;background:var(--panel-2);border:1px solid var(--line)}
+  .d-foot .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+  .d-foot .vault{background:rgba(232,193,104,.10);border-color:rgba(232,193,104,.35);color:var(--gold)}
+  .d-foot .vault .dot{background:var(--gold)}
 
-  .originals-section{padding:28px 20px 80px;}
-  .originals-intro{animation:fadeInUp 0.5s ease both;}
-  #identity-bar{animation:fadeInUp 0.5s ease 0.08s both;}
-  #games-container .game-card{animation:fadeInUp 0.5s ease both;}
-  #games-container .game-card:nth-child(1){animation-delay:0.05s;}
-  #games-container .game-card:nth-child(2){animation-delay:0.14s;}
-  #games-container .game-card:nth-child(3){animation-delay:0.23s;}
-  @media (prefers-reduced-motion: reduce){
-    .fade-in-up, .originals-intro, #identity-bar, #games-container .game-card{animation:none;}
+  @media(max-width:1240px){ :root{--side:76px} 
+    .brand .name,.wallet .k,.wallet .v,.wallet button,.s-label,.s-nav a span:not(.ic),.s-user .n,.s-user .s,.s-user .out{display:none}
+    .side{padding:14px 10px;align-items:center}
+    .brand{justify-content:center;padding:0}
+    .wallet{padding:8px;text-align:center;width:100%}
+    .wallet::after{content:"🔑";font-size:16px}
+    .wallet-login-btn{font-size:0;padding:12px;}
+    .wallet-login-btn::after{content:"🎮";font-size:16px}
+    .s-nav{width:100%}
+    .s-nav a{justify-content:center;padding:11px 0}
+    .s-user{padding:6px;justify-content:center}
+    .game-wrap{grid-template-columns:280px 1fr}
   }
-  .originals-intro{text-align:center; max-width:640px; margin:0 auto 36px;}
-  .originals-intro .eyebrow{
-    display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:100px;
-    border:1px solid var(--line-strong); color:var(--green); font-size:12px; font-weight:700;
-    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:20px;
+  @media(max-width:860px){
+    :root{--chrome:250px}
+    .app{grid-template-columns:1fr}
+    .side{display:none}
+    .main{padding:10px 12px 22px;gap:12px}
+    .topbar{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+      border-radius:22px;padding:7px 8px;gap:10px}
+    .topbar h1{font-size:20px;padding-left:6px}
+    .topbar .crumb,.live{display:none}
+    .burger{display:flex;width:38px;height:38px;border-radius:50%;background:var(--panel-3);
+      border:1px solid var(--line);flex-direction:column;gap:3.5px;align-items:center;justify-content:center}
+    .burger span{display:block;width:15px;height:2px;background:var(--cream);border-radius:2px}
+    .game-wrap{grid-template-columns:1fr}
+    .board{order:1;padding:12px;gap:10px}
+    .controls{order:2;border-right:none;border-top:1px solid var(--line);padding:14px;gap:10px}
+    .grid{gap:6px;width:100%}
+    .bet-btn{margin-top:2px}
+    .bar-tools button:nth-child(n+3){display:none}
+    .bets{padding:12px}
   }
-  .originals-intro h1{font-size:38px; font-weight:900; color:#fff; margin-bottom:12px;}
-  .originals-intro .lede{font-size:15px; color:var(--text-dim); line-height:1.6;}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-  /* ---- Barre d'identité partagée (une seule fois pour les 3 jeux) ---- */
-  .identity-bar{
-    display:flex; align-items:center; gap:20px; background:var(--bg-card);
-    border:1px solid var(--line-strong); border-radius:20px; padding:20px 26px;
-    margin:0 auto 40px; max-width:720px; box-shadow:0 20px 50px rgba(0,0,0,0.35);
+  /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
+  .custom-alert-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
   }
-  .identity-avatar{
-    width:52px; height:52px; border-radius:50%; flex-shrink:0;
-    background:var(--bg-raise); border:2px solid var(--line-strong);
-    display:flex; align-items:center; justify-content:center; font-size:22px; transition:border-color .2s, box-shadow .2s;
+  .custom-alert-overlay.show{display:flex;}
+  .custom-alert-box{
+    background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:18px;
+    padding:24px 26px; max-width:340px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.55);
+    animation:reveal .18s ease;
   }
-  .identity-avatar.connected{border-color:var(--green); box-shadow:0 0 0 4px rgba(182,255,60,0.12);}
-  .identity-gate-title{font-size:16px; font-weight:600; color:var(--text); margin-bottom:18px;}
-  .btn-discord-big{padding:14px 26px; font-size:14.5px; border-radius:12px;}
-  .identity-body{flex:1; min-width:0;}
-  .identity-label{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-faint); font-weight:700; margin-bottom:8px;}
-  .identity-row{display:flex; gap:10px; flex-wrap:wrap;}
-  .identity-row input{
-    flex:1; min-width:140px; background:var(--bg-raise); border:1px solid var(--line-strong);
-    border-radius:10px; padding:11px 14px; color:var(--text); font-size:14px; font-family:'Inter';
+  .custom-alert-title{font-family:"Baloo 2"; font-weight:800; font-size:15px; color:var(--gold); margin-bottom:10px;}
+  .custom-alert-msg{font-size:14.5px; color:var(--cream); line-height:1.5; margin-bottom:20px;}
+  .custom-alert-btn{
+    width:100%; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:12px; border-radius:12px; transition:.15s;
   }
-  .identity-row input:focus{border-color:var(--green); outline:none;}
-  .identity-connected{
-    display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:var(--green);
-  }
-  .identity-connected small{display:block; font-size:11.5px; font-weight:400; color:var(--text-dim); margin-top:2px;}
-  .btn-discord{
-    background:transparent; border:1px solid var(--line-strong); color:var(--text);
-    padding:11px 18px; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap;
-  }
-  .btn-discord:hover{border-color:var(--green);}
-
-  /* ---- Grille de jeux ---- */
-  .originals-grid{
-    display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; align-items:start;
-  }
-  .single-game-grid{grid-template-columns:1fr; max-width:900px; margin:0 auto;}
-  .game-card{
-    background:var(--bg-card); border:1px solid var(--line-strong); border-radius:20px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.35); position:relative; overflow:hidden;
-  }
-  .game-card::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; z-index:1;}
-  .game-card.c-ticket::before{background:#FF5C7A;}
-  .game-card.c-slot::before{background:var(--violet);}
-  .game-card.c-wheel::before{background:var(--green);}
-
-  .game-preview{
-    min-height:150px; display:flex; align-items:center; justify-content:center; padding:24px;
-  }
-  .game-card.c-ticket .game-preview{background:radial-gradient(circle at 50% 30%, rgba(255,92,122,0.14), transparent 70%);}
-  .game-card.c-slot .game-preview{
-    background:
-      radial-gradient(circle at 50% 30%, rgba(139,92,255,0.22), transparent 70%),
-      repeating-linear-gradient(135deg, rgba(139,92,255,0.05) 0 10px, transparent 10px 20px);
-  }
-  .game-card.c-wheel .game-preview{background:radial-gradient(circle at 50% 30%, rgba(182,255,60,0.14), transparent 70%);}
-
-  .game-body{padding:8px 24px 26px;}
-
-  /* ---- Machine à sous : mise en page étendue (panneau à gagner + machine) ---- */
-  .slot-expanded{overflow:visible;}
-  .slot-layout{display:grid; grid-template-columns:260px 1fr; gap:0;}
-  .slot-prizes-panel{
-    padding:22px 20px; border-right:1px solid var(--line);
-    background:radial-gradient(circle at 30% 0%, rgba(139,92,255,0.08), transparent 70%);
-    display:flex; flex-direction:column; justify-content:center;
-  }
-  .slot-prizes-eyebrow{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--violet); font-weight:700; margin-bottom:6px;}
-  .slot-prizes-title{font-family:'Unbounded'; font-weight:800; font-size:16px; color:var(--text); margin-bottom:16px; line-height:1.3;}
-  .slot-prize-row{
-    display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px;
-    background:var(--bg-raise); border:1px solid var(--line); margin-bottom:14px;
-  }
-  .slot-prize-symbol{font-size:18px; letter-spacing:1px; flex-shrink:0;}
-  .slot-prize-name{font-size:12px; color:var(--text-dim); margin-bottom:4px;}
-  .slot-prize-mystery{font-family:'Unbounded'; font-weight:700; font-size:13px; color:var(--green);}
-  .slot-divider{height:1px; background:var(--line); margin:14px 0;}
-  .slot-rules-list{margin:0; padding:0 0 0 16px; font-size:12px; color:var(--text-dim); line-height:1.7;}
-  .slot-rules-list li{margin-bottom:6px;}
-
-  .slot-history-section{margin-top:20px; text-align:left;}
-  .slot-history-title{font-family:'Unbounded'; font-size:13.5px; font-weight:700; color:var(--text); margin:0 0 10px;}
-  .slot-history-row{
-    display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:10px;
-    background:var(--bg-raise); border:1px solid var(--line); margin-bottom:6px; font-size:12.5px;
-  }
-  .slot-history-avatar{
-    width:22px; height:22px; border-radius:50%; background:var(--violet-deep); color:#fff;
-    display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0;
-  }
-  .slot-history-name{color:var(--text); font-weight:600; flex-shrink:0; width:88px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .slot-history-symbols{flex:1; font-size:13px; letter-spacing:1px; color:var(--text-dim);}
-  .slot-history-result{font-family:'Unbounded'; font-weight:700; font-size:12px; flex-shrink:0;}
-  .slot-history-win{color:var(--green);}
-  .slot-history-lose{color:var(--text-faint);}
-  .slot-history-time{color:var(--text-faint); font-size:10.5px; flex-shrink:0; width:44px; text-align:right;}
-
-  @media (max-width: 760px){
-    .slot-layout{grid-template-columns:1fr;}
-    .slot-prizes-panel{border-right:none; border-bottom:1px solid var(--line);}
-    .slot-history-name{width:64px;}
-  }
-  .game-tag{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;}
-  .game-card.c-ticket .game-tag{color:#FF5C7A;}
-  .game-card.c-slot .game-tag{color:var(--violet);}
-  .game-card.c-wheel .game-tag{color:var(--green);}
-  .game-title{font-size:19px; font-weight:700; margin-bottom:6px; color:#fff;}
-  .game-desc{font-size:13px; color:var(--text-dim); line-height:1.5; margin-bottom:14px;}
-  .game-meta{margin-bottom:14px; min-height:1px;}
-  .tries-badge{
-    font-size:11.5px; color:var(--text-faint); background:var(--bg-raise); border:1px solid var(--line);
-    padding:4px 10px; border-radius:100px;
-  }
-  .btn-play{
-    width:100%; padding:13px; border:none; border-radius:10px; font-weight:700; font-size:14px;
-    cursor:pointer; font-family:'Inter';
-  }
-  .game-card.c-ticket .btn-play{background:#FF5C7A; color:#2a0510;}
-  .game-card.c-slot .btn-play{background:var(--violet); color:#0d0620;}
-  .game-card.c-wheel .btn-play{background:var(--green); color:#08130a;}
-  .btn-play:disabled{opacity:0.55; cursor:default;}
-  .locked-note{
-    background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:13px;
-    border-radius:10px; font-weight:700; font-size:13.5px; margin-top:0;
-  }
-
-  @media (max-width:960px){
-    .originals-grid{grid-template-columns:1fr; max-width:440px; margin-left:auto; margin-right:auto;}
-    .originals-intro h1{font-size:30px;}
-    .identity-bar{flex-direction:column; align-items:stretch; text-align:center;}
-    .identity-row{flex-direction:column;}
-  }
-
-  .vault-stats-bar{display:flex; gap:12px; justify-content:center; margin-bottom:24px; flex-wrap:wrap;}
-  .vault-stat-card{
-    background:var(--bg-card); border:1px solid var(--line); border-radius:12px;
-    padding:14px 26px; text-align:center; min-width:120px;
-  }
-  .vault-stat-card .n{font-family:'Unbounded'; font-weight:900; font-size:20px; color:var(--green);}
-  .vault-stat-card .l{font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;}
-
-  .vault-columns{display:grid; grid-template-columns:1fr 360px 1fr; gap:32px; align-items:start; margin-bottom:24px;}
-
-  .telegram-panel{
-    background:radial-gradient(120% 140% at 20% 10%, rgba(63,169,245,0.14), transparent 60%), var(--bg-card);
-    border:1px solid rgba(105,175,255,0.32); border-radius:16px; padding:26px 24px; text-align:center;
-  }
-  .telegram-panel .icon{
-    width:52px; height:52px; margin:0 auto 16px; border-radius:50%;
-    background:linear-gradient(135deg,#5FC1FF,#1C6FD1); display:flex; align-items:center; justify-content:center; font-size:22px;
-    box-shadow:0 0 20px rgba(63,169,245,0.4);
-  }
-  .telegram-panel .tag{font-size:11px; color:#6FC0FF; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;}
-  .telegram-panel h4{font-size:17px; color:#fff; margin-bottom:12px; line-height:1.3;}
-  .telegram-panel p{font-size:12.5px; color:var(--text-dim); line-height:1.6; margin-bottom:20px;}
-  .telegram-panel a{
-    display:block; background:linear-gradient(135deg,#6CC4FF,#3FA9F5); color:#071018;
-    font-weight:700; font-size:13px; padding:13px; border-radius:9px; max-width:220px; margin:0 auto;
-  }
-
-  .steps-strip{display:flex; flex-direction:column; gap:10px; margin-bottom:16px;}
-  .step-chip{
-    background:linear-gradient(120deg, rgba(139,92,255,0.14), rgba(182,255,60,0.08));
-    border:1px solid rgba(139,92,255,0.25); border-radius:10px; padding:12px 18px;
-    font-size:12.5px; color:var(--text-dim);
-  }
-  .step-chip b{color:var(--green);}
-
-  .winners-panel{background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:18px 16px;}
-  .winners-panel h4{font-size:12px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; text-align:center; margin-bottom:14px; font-weight:600;}
-  .winner-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
-  .winner-row:last-child{margin-bottom:0;}
-  .winner-avatar{
-    width:26px; height:26px; border-radius:50%; background:var(--bg-raise); border:1px solid var(--line-strong);
-    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0;
-  }
-  .winner-name{flex:1; font-size:13px; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .winner-amount{font-size:13px; color:var(--green); font-weight:700; font-family:'JetBrains Mono';}
-
-  @media (max-width:900px){
-    .vault-columns{grid-template-columns:1fr; max-width:440px; margin-left:auto; margin-right:auto;}
-  }
-  .vault-card{
-    width:100%; max-width:440px; text-align:center;
-    background:var(--bg-card); border:1px solid var(--line); border-radius:24px;
-    padding:40px 32px;
-  }
-  .vault-eyebrow{
-    color:var(--green); font-size:12.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
-    margin-bottom:10px;
-  }
-  .vault-title{font-size:26px; color:#fff; margin-bottom:10px;}
-  .vault-subtitle{font-size:14px; color:var(--text-dim); line-height:1.6; margin-bottom:32px;}
-
-  .vault-visual{width:180px; height:180px; margin:0 auto 32px; position:relative;}
-  .vault-door{
-    position:absolute; inset:0; border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #2a2840, #100F1C 70%);
-    border:4px solid #3a3850;
-    display:flex; align-items:center; justify-content:center;
-    transition:opacity .4s ease, transform .4s ease;
-  }
-  .vault-door.shake{animation:vaultShake .4s ease;}
-  @keyframes vaultShake{
-    0%,100%{transform:translateX(0);}
-    20%{transform:translateX(-8px) rotate(-2deg);}
-    40%{transform:translateX(8px) rotate(2deg);}
-    60%{transform:translateX(-6px) rotate(-1deg);}
-    80%{transform:translateX(6px) rotate(1deg);}
-  }
-  .vault-dial{
-    width:84px; height:84px; border-radius:50%; border:3px solid #4a4870;
-    display:flex; align-items:center; justify-content:center;
-    transition:transform .6s cubic-bezier(.34,1.56,.64,1);
-  }
-  .vault-dial::before{content:""; width:5px; height:32px; background:var(--violet); border-radius:3px;}
-  .vault-dial.spin{transform:rotate(1080deg);}
-
-  .vault-half{
-    position:absolute; top:14px; width:66px; height:150px;
-    background:linear-gradient(135deg,#3a3850,#100F1C);
-    border:2px solid #4a4870; transition:transform .6s cubic-bezier(.6,-0.28,.4,1.3), opacity .4s ease;
-  }
-  .vault-half-left{left:2px; border-radius:14px 3px 3px 14px; transform:rotate(-18deg) translateX(-4px);}
-  .vault-half-right{right:2px; border-radius:3px 14px 14px 3px; transform:rotate(18deg) translateX(4px);}
-  .vault-half{display:none;}
-  .vault-visual.opened .vault-door{opacity:0; transform:scale(0.9);}
-  .vault-visual.opened .vault-half{display:block;}
-  .vault-visual.opened .vault-half-left{transform:rotate(-38deg) translate(-30px, -6px);}
-  .vault-visual.opened .vault-half-right{transform:rotate(38deg) translate(30px, -6px);}
-  .vault-amount{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-family:'Unbounded'; font-weight:900; font-size:26px; color:var(--green);
-    opacity:0; transition:opacity .3s ease .35s;
-  }
-  .vault-visual.opened .vault-amount{opacity:1;}
-
-  .vault-form{display:flex; flex-direction:column; gap:14px;}
-  .vault-form input{
-    background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
-    padding:14px 16px; color:var(--text); font-size:15px; text-align:center; font-family:'JetBrains Mono';
-    letter-spacing:0.05em;
-  }
-  .vault-form input:focus{border-color:var(--green); outline:none;}
-  .vault-submit{
-    background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
-    padding:14px; border:none; border-radius:10px; cursor:pointer;
-  }
-  .vault-submit:hover{background:#c8ff6a;}
-  .vault-submit:disabled{opacity:0.6; cursor:default;}
-  .vault-message{font-size:13.5px; margin-top:16px; line-height:1.6;}
-  .vault-message.error{color:#FF7A90;}
-  .vault-message.success{color:var(--green);}
-  .vault-message.info{color:var(--text-dim);}
-  .vault-history-row{
-    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px 12px;
-    background:var(--bg-raise); border:1px solid var(--line); border-radius:10px;
-    padding:10px 14px; font-size:13px;
-  }
-  .vault-history-row .name{color:var(--text); font-weight:600;}
-  .vault-history-row .amount{color:var(--green); font-family:'JetBrains Mono'; font-weight:700;}
-  .vault-history-row .participants{color:var(--text-dim); font-size:11.5px;}
-  .vault-history-row .code-used{color:var(--violet); font-size:12px; font-weight:700;}
-  .vault-history-row .date{color:var(--text-faint); font-size:11.5px;}
-
-  @media (max-width:960px){
-    .nav-links{display:none;}
-    .nav-inner > .lang-switch{display:none;}
-    .nav-inner > .nav-cta{display:none;}
-    .burger{display:flex;}
-    .wrap{padding:0 20px;}
-    .nav-inner{padding:16px 0; gap:12px;}
-    .logo{gap:8px; font-size:16px;}
-    .logo-mark{width:30px; height:30px; font-size:14px; flex-shrink:0;}
-    .burger{padding:6px; margin:-6px 0 -6px 6px;}
-  }
+  .custom-alert-btn:hover{filter:brightness(1.06);}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="wrap nav-inner">
-    <a class="logo" href="/"><div class="logo-mark">⚡</div><span id="brand-text1-nav">DROP</span><span id="brand-text2-nav" class="logo-accent">CASH</span></a>
-    <div class="nav-links" id="nav-links">
-      <a href="#" id="nav-link-0">Codes bonus</a>
-      <a href="#" id="nav-link-1">Classement</a>
-      <a href="#" id="nav-link-2">Comment ça marche</a>
-      <a href="#" id="nav-link-3">Discord</a>
-      <a href="originals.html">🎮 Originals</a>
-      <a href="ticket.html" id="nav-scratch-btn">🎫 Ticket</a>
-      <a href="slot.html" id="nav-slot-btn">🎰 Slot</a>
-      <a href="wheel.html" id="nav-wheel-btn">🎡 Roue</a>
-    </div>
-    <div class="lang-switch">
-      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
-      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
-    </div>
-    <a href="/#offres" class="nav-cta" id="nav-cta">Voir les codes</a>
-    <button class="burger" aria-label="Menu" id="burger-btn"><span></span><span></span><span></span></button>
-  </div>
-  <div class="mobile-nav" id="mobile-nav">
-    <div class="lang-switch" style="padding:14px 32px; border-bottom:1px solid var(--line);">
-      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
-      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
-    </div>
-    <div style="padding:14px 32px; border-bottom:1px solid var(--line);">
-      <a href="/#offres" class="nav-cta" id="nav-cta-mobile" style="display:block; text-align:center;">Voir les codes</a>
-    </div>
-    <a href="#" id="mobile-nav-link-0">Codes bonus</a>
-    <a href="#" id="mobile-nav-link-1">Classement</a>
-    <a href="#" id="mobile-nav-link-2">Comment ça marche</a>
-    <a href="#" id="mobile-nav-link-3">Discord</a>
-    <a href="originals.html">🎮 Originals</a>
-    <a href="ticket.html" id="mobile-nav-scratch-btn">🎫 Ticket</a>
-    <a href="slot.html" id="mobile-nav-slot-btn">🎰 Slot</a>
-    <a href="wheel.html" id="mobile-nav-wheel-btn">🎡 Roue</a>
-  </div>
-</nav>
-
-<section class="originals-section">
-  <div class="wrap" style="max-width:1240px;">
-
-    <div id="slot-gate" style="text-align:center; max-width:420px; margin:60px auto;">
-      <div class="identity-avatar" id="identity-avatar-gate" style="margin:0 auto 16px;">🎮</div>
-      <div class="identity-gate-title" id="slot-gate-title">Connecte-toi avec Discord pour jouer</div>
-      <button type="button" id="shared-discord-connect-btn" class="btn-discord btn-discord-big" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
-    </div>
-
-    <div id="games-container" style="display:none;">
-    <div class="originals-grid games-grid single-game-grid" id="games-grid">
-
-      <div class="game-card c-slot slot-expanded" id="slot-game-card">
-        <div class="slot-layout">
-
-          <div class="slot-prizes-panel">
-            <div class="slot-prizes-eyebrow" id="slot-prizes-eyebrow">Machine à sous</div>
-            <div class="slot-prizes-title" id="slot-prizes-title">Ce que tu peux gagner</div>
-            <div class="slot-prize-row">
-              <div class="slot-prize-symbol">7️⃣7️⃣7️⃣</div>
-              <div class="slot-prize-info">
-                <div class="slot-prize-name" id="slot-prize-name">Combinaison gagnante</div>
-                <div class="slot-prize-mystery" id="slot-prize-mystery">🎁 Montant surprise</div>
-              </div>
-            </div>
-            <div class="slot-divider"></div>
-            <ul class="slot-rules-list" id="slot-rules-list"></ul>
-            <div class="game-meta" style="margin:14px 0 0;">
-              <span class="tries-badge" id="slot-tries-remaining" style="display:none;"></span>
-            </div>
-          </div>
-
-          <div class="slot-machine-col">
-            <div class="game-preview">
-              <div class="slot-reels" id="slot-reels">
-                <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
-                <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
-                <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
-              </div>
-            </div>
-            <div class="game-body">
-              <div class="game-tag" id="slot-tag">Machine à sous</div>
-              <h3 class="game-title" id="slot-title">Tente ta chance</h3>
-              <p class="game-desc" id="slot-subtitle">Un spin gratuit par jour.</p>
-              <button type="button" class="btn-play" id="slot-submit-btn" onclick="submitSlot()">Spin</button>
-              <p id="slot-cooldown-message" class="locked-note" style="display:none;"></p>
-              <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-              <p id="slot-result-message" style="margin-top:14px; font-size:13.5px; color:var(--text-dim); line-height:1.6; display:none;"></p>
-              <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-              <button type="button" id="slot-play-again-btn" class="btn-play" style="display:none; margin-top:10px;" onclick="replaySlot()">Rejouer</button>
-
-              <div class="slot-history-section">
-                <h4 class="slot-history-title" id="slot-history-title">📜 Historique des mises</h4>
-                <div id="slot-history-list"></div>
-                <p id="slot-history-empty" style="font-size:12.5px; color:var(--text-faint); display:none;">Aucune mise pour l'instant.</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <div class="footer-top">
-      <a class="logo" href="/"><div class="logo-mark">⚡</div><span id="brand-text1-footer">DROP</span><span id="brand-text2-footer" class="logo-accent">CASH</span></a>
-      <div class="footer-cols">
-        <div class="footer-col">
-          <h4 id="footer-nav-title">Navigation</h4>
-          <a href="#" id="footer-nav-link-0">Codes bonus</a>
-          <a href="#" id="footer-nav-link-1">Classement</a>
-          <a href="#" id="footer-nav-link-2">Comment ça marche</a>
-        </div>
-        <div class="footer-col">
-          <h4 id="footer-community-title">Communauté</h4>
-          <a href="#" id="footer-community-link-0">Discord</a>
-          <a href="#" id="footer-community-link-1">Telegram</a>
-          <a href="#" id="footer-community-link-2">Contact</a>
-        </div>
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="brand">
+      <div class="avatar">🦁</div>
+      <div>
+        <div class="name">Drop Cash</div>
+        <span class="beta">Beta</span>
       </div>
     </div>
-    <div class="disclaimer">
-      <span class="age-badge">18+</span><span id="footer-disclaimer">Le jeu comporte des risques : endettement, isolement, dépendance.</span>
-    </div>
-  </div>
-</footer>
 
-<a href="#" id="floating-widget" class="floating-widget" target="_blank" rel="noopener" style="display:none;">
-  <img id="floating-widget-img" src="" alt="">
-  <span class="floating-widget-badge">🎮</span>
-</a>
+    <div class="wallet">
+      <div class="k">Solde</div>
+      <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
+      <button disabled title="Nouvelles clés chaque jour, automatiquement">Recharger</button>
+    </div>
+
+    <div class="s-label">MENU</div>
+    <nav class="s-nav">
+      <a href="#"><span class="ic">🏆</span><span>Leaderboard</span></a>
+      <a href="#"><span class="ic">🔮</span><span>Prediction</span></a>
+      <a href="#"><span class="ic">🎁</span><span>Bonuses</span><span class="tag">3</span></a>
+      <a href="#"><span class="ic">🎯</span><span>Challenges</span></a>
+      <a href="#"><span class="ic">🎟</span><span>Raffles</span></a>
+      <a href="vault.html"><span class="ic">🔒</span><span>Vault</span></a>
+    </nav>
+
+    <div class="s-label">ORIGINALS</div>
+    <nav class="s-nav">
+      <a href="mines.html"><span class="ic">💣</span><span>Mines</span></a>
+      <a href="blackjack.html"><span class="ic">🃏</span><span>Blackjack</span></a>
+      <a href="slot.html" class="on"><span class="ic">🎰</span><span>Slot</span></a>
+      <a href="#"><span class="ic">🐔</span><span>Chicken</span></a>
+      <a href="#"><span class="ic">🔢</span><span>Keno</span></a>
+      <a href="wheel.html"><span class="ic">🎡</span><span>Wheel</span></a>
+      <a href="dice.html"><span class="ic">🎲</span><span>Dice</span></a>
+    </nav>
+
+    <div class="side-foot">
+      <button class="wallet-login-btn" id="side-login-btn" onclick="connectDiscord()">🎮 Se connecter</button>
+      <div class="s-user" id="side-user" style="display:none;">
+        <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
+        <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
+        <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENU ============ -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+      <h1>Slot</h1>
+      <span class="crumb">Originals</span>
+      <div class="top-right">
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> visiteurs en ligne</span>
+        <button class="icon-btn" aria-label="Notifications">🔔</button>
+      </div>
+    </div>
+
+    <div class="game-panel">
+      <div class="game-wrap">
+        <aside class="controls">
+          <div class="seg">
+            <button class="on" type="button" disabled>MANUAL</button>
+          </div>
+          <div class="field">
+            <label>Bet Amount <span class="bal">🔑 <b id="balance">0</b> KEYS</span></label>
+            <div class="input-row" id="betRow">
+              <span class="key">🔑</span>
+              <input id="bet" type="number" inputmode="numeric" value="1" min="1">
+              <button class="chip" id="half">½</button>
+              <button class="chip" id="double">2×</button>
+              <button class="chip" id="maxBet">Max</button>
+            </div>
+          </div>
+          <button class="bet-btn" id="play">Bet</button>
+        </aside>
+
+        <section class="board slot-board">
+          <div class="bust-card" id="bustCard">
+            <div class="t">Perdu</div>
+            <div class="v"><span class="key">🔑</span> <span id="bustAmt">-0</span></div>
+          </div>
+          <div class="win-card" id="winCard">
+            <div class="t"><span id="winMult">1.00</span>×</div>
+            <div class="sep"></div>
+            <div class="v"><span class="key">🔑</span> <span id="winAmt">+0</span></div>
+          </div>
+          <div class="slot-reels" id="slotReels">
+            <div class="slot-reel"><span class="slot-sym" id="reel0">❔</span></div>
+            <div class="slot-reel"><span class="slot-sym" id="reel1">❔</span></div>
+            <div class="slot-reel"><span class="slot-sym" id="reel2">❔</span></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="game-bar">
+        <div class="bar-tools">
+          <button title="Paramètres">⚙</button>
+          <button title="Plein écran">⛶</button>
+          <button title="Statistiques">📈</button>
+          <button title="Partager">↗</button>
+        </div>
+        <div class="bar-logo"><span class="mark">🦁</span>Drop Cash</div>
+        <div class="bar-right"><button class="fair"><span class="shield">🛡</span>Équité</button></div>
+      </div>
+    </div>
+
+    <section class="bets">
+      <div class="tabs">
+        <button class="on">All Bets</button><button>My Bets</button>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Game</th><th>Player</th><th>Time</th><th>Bet</th><th>Result</th><th>Payout</th></tr></thead>
+          <tbody id="betRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>Drop Cash Originals — jouez de manière responsable · Monnaie virtuelle 🔑</footer>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="handle"></div>
+  <div class="d-user" id="drawer-user">
+    <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
+    <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
+  </div>
+  <div class="d-sep"></div>
+  <div class="d-grid">
+    <button class="d-item">Leaderboard</button><button class="d-item">Prediction</button>
+    <button class="d-item">Bonuses</button><button class="d-item">Challenges</button>
+    <button class="d-item">Raffles</button><a class="d-item" href="vault.html">Vault</a>
+  </div>
+  <div class="d-label">ORIGINALS</div>
+  <div class="d-grid">
+    <a class="d-item" href="blackjack.html"><span>🃏</span>Blackjack</a><a class="d-item" href="slot.html"><span>🎰</span>Slot</a>
+    <button class="d-item"><span>🐔</span>Chicken</button><a class="d-item" href="wheel.html"><span>🎡</span>Wheel</a>
+    <a class="d-item" href="mines.html"><span>💣</span>Mines</a><a class="d-item" href="dice.html"><span>🎲</span>Dice</a>
+  </div>
+  <div class="d-foot">
+    <button><span class="dot"></span>My Profile</button>
+    <a class="vault" href="vault.html"><span class="dot"></span>Open Vault</a>
+  </div>
+</div>
+
+<div class="custom-alert-overlay" id="customAlertOverlay">
+  <div class="custom-alert-box">
+    <div class="custom-alert-title">drop-cash.com</div>
+    <div class="custom-alert-msg" id="customAlertMsg"></div>
+    <button class="custom-alert-btn" id="customAlertOkBtn" type="button">OK</button>
+  </div>
+</div>
 
 <script src="nitrodrop-config.js?v=20260721a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
-
-  // Déclarée ici (avant applySharedIdentity, appelée plus bas dès le chargement)
-  // pour éviter une erreur de zone morte temporelle (TDZ) sur ce const.
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
-
-  // Idem : referencée par checkAlreadyPlayed(), appelée dès le premier
-  // applySharedIdentity() ci-dessous — doit donc être déclarée avant.
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
-  // Compteur de visiteurs total du site (une fois par session, peu importe la page)
-  // Idem : hideCooldown()/showCooldown() peuvent être atteintes de façon synchrone
-  // dès le premier applySharedIdentity() (via checkAlreadyPlayed), par précaution.
-  const cooldownIntervals = {};
-
-  (function migrateToI18n(cfg){
-    if (cfg.content) return;
-    const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
-                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine','wheelGame'];
-    const en = {};
-    textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
-    cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
-    cfg.defaultLang = cfg.defaultLang || 'en';
-  })(CONFIG);
-
-  let currentLang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
-  const urlLangParam = new URLSearchParams(location.search).get('lang');
-  if (urlLangParam && CONFIG.content[urlLangParam]) {
-    currentLang = urlLangParam;
-    localStorage.setItem('nitrodrop_lang', currentLang);
+  function formatLocalTime(dateMs){
+    if (!dateMs) return '';
+    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
   }
-  if (!CONFIG.content[currentLang]) currentLang = CONFIG.defaultLang || 'en';
-  function getActive(){ return CONFIG.content[currentLang]; }
 
   function escapeHtml(str){
-    return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-  }
-  function fillTemplate(tpl, vars){
-    return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  const SLOT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  function slotSpinText(el, finalText){
-    if (!el) return;
-    if (el.dataset.slotValue === finalText && !el.dataset.slotSpinning) return;
-    el.dataset.slotValue = finalText;
-    el.dataset.slotSpinning = '1';
-    el.innerHTML = '';
-    const letters = finalText.split('');
-    const spans = letters.map(ch => {
-      const s = document.createElement('span');
-      s.style.display = 'inline-block';
-      s.style.minWidth = '0.55em';
-      s.style.textAlign = 'center';
-      s.textContent = ch === ' ' ? '\u00A0' : ch;
-      el.appendChild(s);
-      return s;
-    });
-    let remaining = spans.length;
-    spans.forEach((span, i) => {
-      const finalChar = letters[i];
-      if (finalChar === ' '){ remaining--; if (remaining <= 0) el.dataset.slotSpinning = ''; return; }
-      const spinTime = 550 + i * 90;
-      const stepTime = 45;
-      let elapsed = 0;
-      const interval = setInterval(() => {
-        elapsed += stepTime;
-        if (elapsed >= spinTime){
-          span.textContent = finalChar;
-          clearInterval(interval);
-          remaining--;
-          if (remaining <= 0) el.dataset.slotSpinning = '';
-        } else {
-          span.textContent = SLOT_CHARS[Math.floor(Math.random() * SLOT_CHARS.length)];
-        }
-      }, stepTime);
-    });
+  function isMobileDevice(){
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
   }
 
-  // ---------- Applique nav / footer / brand / textes du coffre ----------
-  function applyChrome(cfg){
-    const brandText1 = (cfg.brand && cfg.brand.text1) || 'NITRO';
-    const brandText2 = (cfg.brand && cfg.brand.text2) || 'DROP';
-    document.getElementById('brand-text1-nav').textContent = brandText1;
-    slotSpinText(document.getElementById('brand-text2-nav'), brandText2);
-    document.getElementById('brand-text1-footer').textContent = brandText1;
-    slotSpinText(document.getElementById('brand-text2-footer'), brandText2);
-    document.getElementById('page-title').textContent = (cfg.pageTitle || 'Drop-Cash.com') + ' — Originals';
-
-    // Les liens du menu pointent vers les sections de la page d'accueil
-    cfg.nav.links.forEach((link, i) => {
-      const href = link.href && link.href.startsWith('#') ? '/' + link.href : link.href;
-      const el = document.getElementById('nav-link-' + i);
-      if (el){
-        if (link.label && link.label.trim()){
-          el.textContent = link.label; el.href = href; el.style.display = '';
-          if (link.newTab){ el.target = '_blank'; el.rel = 'noopener'; }
-          else { el.removeAttribute('target'); el.removeAttribute('rel'); }
-        }
-        else { el.style.display = 'none'; }
-      }
-      const mEl = document.getElementById('mobile-nav-link-' + i);
-      if (mEl){
-        if (link.label && link.label.trim()){
-          mEl.textContent = link.label; mEl.href = href; mEl.style.display = '';
-          if (link.newTab){ mEl.target = '_blank'; mEl.rel = 'noopener'; }
-          else { mEl.removeAttribute('target'); mEl.removeAttribute('rel'); }
-        }
-        else { mEl.style.display = 'none'; }
-      }
-    });
-
-    const ctaHref = cfg.nav.ctaHref && cfg.nav.ctaHref.startsWith('#') ? '/' + cfg.nav.ctaHref : cfg.nav.ctaHref;
-    const navCta = document.getElementById('nav-cta');
-    navCta.textContent = cfg.nav.ctaText;
-    navCta.href = ctaHref;
-    const navCtaMobile = document.getElementById('nav-cta-mobile');
-    navCtaMobile.textContent = cfg.nav.ctaText;
-    navCtaMobile.href = ctaHref;
-
-    document.getElementById('footer-nav-title').textContent = cfg.footer.navTitle;
-    cfg.footer.navLinks.forEach((link, i) => {
-      const href = link.href && link.href.startsWith('#') ? '/' + link.href : link.href;
-      const el = document.getElementById('footer-nav-link-' + i);
-      if (el){ el.textContent = link.label; el.href = href; }
-    });
-    document.getElementById('footer-community-title').textContent = cfg.footer.communityTitle;
-    cfg.footer.communityLinks.forEach((link, i) => {
-      const el = document.getElementById('footer-community-link-' + i);
-      if (el){
-        el.textContent = link.label; el.href = link.href;
-        if (link.newTab){ el.target = '_blank'; el.rel = 'noopener'; }
-        else { el.removeAttribute('target'); el.removeAttribute('rel'); }
-      }
-    });
-    document.getElementById('footer-disclaimer').textContent = cfg.footer.disclaimer;
-    document.querySelectorAll('.modal-close').forEach(btn => {
-      btn.setAttribute('aria-label', (cfg.modal && cfg.modal.closeAriaLabel) || 'Fermer');
-    });
-    const scratchNavLabel = (cfg.scratchTicket && cfg.scratchTicket.navLabel) || '🎫 Ticket';
-    document.getElementById('nav-scratch-btn').textContent = scratchNavLabel;
-    document.getElementById('mobile-nav-scratch-btn').textContent = scratchNavLabel;
-    const slotNavLabel = (cfg.slotMachine && cfg.slotMachine.navLabel) || '🎰 Slot';
-    document.getElementById('nav-slot-btn').textContent = slotNavLabel;
-    document.getElementById('mobile-nav-slot-btn').textContent = slotNavLabel;
-    const wheelNavLabel = (cfg.wheelGame && cfg.wheelGame.navLabel) || '🎡 Roue';
-    document.getElementById('nav-wheel-btn').textContent = wheelNavLabel;
-    document.getElementById('mobile-nav-wheel-btn').textContent = wheelNavLabel;
-
-    // Textes fixes (pas besoin d'un champ admin dédié) pour le panneau étendu de la machine à sous
-    const slotExtraText = currentLang === 'fr' ? {
-      eyebrow: 'Machine à sous', prizesTitle: 'Ce que tu peux gagner', prizeName: 'Combinaison gagnante',
-      mystery: '🎁 Montant surprise',
-      rulesPoints: [
-        '1 essai gratuit par jour, par compte Discord.',
-        'Aligne 3× 7️⃣ pour remporter le gain surprise.',
-        'Le résultat est déterminé côté serveur, pas dans ton navigateur.',
-      ],
-      historyTitle: '📜 Historique des mises', historyEmpty: 'Aucune mise pour l\'instant.',
-    } : {
-      eyebrow: 'Slot machine', prizesTitle: 'What you can win', prizeName: 'Winning combination',
-      mystery: '🎁 Surprise amount',
-      rulesPoints: [
-        '1 free try per day, per Discord account.',
-        'Line up 3× 7️⃣ to win the surprise amount.',
-        'The outcome is determined server-side, not in your browser.',
-      ],
-      historyTitle: '📜 Bet history', historyEmpty: 'No bets yet.',
-    };
-    document.getElementById('slot-prizes-eyebrow').textContent = slotExtraText.eyebrow;
-    document.getElementById('slot-prizes-title').textContent = slotExtraText.prizesTitle;
-    document.getElementById('slot-prize-name').textContent = slotExtraText.prizeName;
-    document.getElementById('slot-prize-mystery').textContent = slotExtraText.mystery;
-    document.getElementById('slot-rules-list').innerHTML = slotExtraText.rulesPoints.map(p => `<li>${escapeHtml(p)}</li>`).join('');
-    document.getElementById('slot-history-title').textContent = slotExtraText.historyTitle;
-    document.getElementById('slot-history-empty').textContent = slotExtraText.historyEmpty;
-  }
-
-  applyChrome(getActive());
-  applySharedIdentity();
-
-  // Bouton flottant (image + lien) — indépendant de la langue
-  (function applyFloatingWidget(){
-    const widget = CONFIG.floatingWidget || {};
-    const el = document.getElementById('floating-widget');
-    if (widget.enabled && widget.imageUrl && widget.linkUrl){
-      document.getElementById('floating-widget-img').src = widget.imageUrl;
-      el.href = widget.linkUrl;
-      el.style.display = 'flex';
-    } else {
-      el.style.display = 'none';
-    }
-  })();
-
-  function setLanguage(lang){
-    if (!CONFIG.content[lang]) return;
-    currentLang = lang;
-    localStorage.setItem('nitrodrop_lang', lang);
-    document.documentElement.lang = lang;
-    applyChrome(getActive());
-    applySharedIdentity();
-    document.querySelectorAll('.lang-switch-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.lang === lang);
-    });
-  }
-  document.querySelectorAll('.lang-switch-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === currentLang);
-    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
-  });
-
-  // ---- Menu mobile ----
-  const burgerBtn = document.getElementById('burger-btn');
-  const mobileNav = document.getElementById('mobile-nav');
-  burgerBtn.addEventListener('click', () => mobileNav.classList.toggle('open'));
-  mobileNav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => mobileNav.classList.remove('open'));
-  });
-
-  // ---------- Base commune pour les appels au Worker (mini-jeux) ----------
   function saveDiscordIdentity(discordId, username, avatarUrl){
     const payload = JSON.stringify({ discordId, username, avatarUrl });
-    try{
-      localStorage.setItem(DISCORD_STORAGE_KEY, payload);
-    }catch(e){}
-    // Filet de sécurité : certains navigateurs/réglages peuvent restreindre le localStorage
-    // sur certaines pages. Le cookie sert de repli pour ne jamais perdre la connexion.
-    try{
-      document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax';
-    }catch(e){}
+    try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
+  }
+
+  function clearDiscordIdentity(){
+    try{ localStorage.removeItem(DISCORD_STORAGE_KEY); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=; max-age=0; path=/; SameSite=Lax'; }catch(e){}
   }
 
   function getSavedDiscordIdentity(){
@@ -931,355 +502,242 @@
     return null;
   }
 
-  // Un seul bloc "identité" partagé par les 3 jeux (au lieu d'un par jeu)
-  function applySharedIdentity(){
-    const saved = getSavedDiscordIdentity();
-
-    const gate = document.getElementById('slot-gate');
-    const gamesContainer = document.getElementById('games-container');
-    if (saved && saved.discordId){
-      gate.style.display = 'none';
-      gamesContainer.style.display = 'block';
-      initSlotGame();
-    } else {
-      gate.style.display = 'block';
-      gamesContainer.style.display = 'none';
-    }
-  }
-
-  function getSharedDiscordId(){
-    const saved = getSavedDiscordIdentity();
-    return (saved && saved.discordId) || '';
-  }
-
-  function getSharedUsername(){
-    const saved = getSavedDiscordIdentity();
-    return (saved && saved.username) || '';
-  }
-
-  // ---------- Compte à rebours "déjà joué aujourd'hui" (ticket + slot) ----------
-  function msUntilNextUtcMidnight(){
-    const now = new Date();
-    const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
-    return next - now.getTime();
-  }
-
-  function formatCountdown(ms){
-    if (ms < 0) ms = 0;
-    const totalSec = Math.floor(ms / 1000);
-    const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSec % 60).padStart(2, '0');
-    return `${h}:${m}:${s}`;
-  }
-
-  function clearCooldown(prefix){
-    if (cooldownIntervals[prefix]){
-      clearInterval(cooldownIntervals[prefix]);
-      cooldownIntervals[prefix] = null;
-    }
-  }
-
-  function showCooldown(prefix, template){
-    clearCooldown(prefix);
-    const submitBtn = document.getElementById(prefix + '-submit-btn');
-    const msgEl = document.getElementById(prefix + '-cooldown-message');
-    const triesEl = document.getElementById(prefix + '-tries-remaining');
-    submitBtn.style.display = 'none';
-    msgEl.style.display = 'block';
-    if (triesEl) triesEl.style.display = 'none';
-    const tick = () => {
-      const ms = msUntilNextUtcMidnight();
-      msgEl.textContent = fillTemplate(template || 'Reviens dans {time}', { time: formatCountdown(ms) });
-      if (ms <= 1000){
-        clearCooldown(prefix);
-        hideCooldown(prefix);
-      }
-    };
-    tick();
-    cooldownIntervals[prefix] = setInterval(tick, 1000);
-  }
-
-  function hideCooldown(prefix, remaining){
-    clearCooldown(prefix);
-    const submitBtn = document.getElementById(prefix + '-submit-btn');
-    const msgEl = document.getElementById(prefix + '-cooldown-message');
-    const triesEl = document.getElementById(prefix + '-tries-remaining');
-    submitBtn.style.display = '';
-    msgEl.style.display = 'none';
-    if (triesEl){
-      if (typeof remaining === 'number'){
-        const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
-        triesEl.textContent = fillTemplate(st.triesRemainingText || '{remaining} essai(s) restant(s) aujourd\'hui', { remaining });
-        triesEl.style.display = 'block';
-      } else {
-        triesEl.style.display = 'none';
-      }
-    }
-  }
-
-  async function checkAlreadyPlayed(prefix, discordId){
-    if (!discordId){ hideCooldown(prefix); return; }
-    const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
-    const url = `${workerBase}/${prefix}/status?discordId=${encodeURIComponent(discordId)}`;
-    try{
-      const resp = await fetch(url);
-      const data = await resp.json();
-      if (data.alreadyPlayed){
-        showCooldown(prefix, st.cooldownMessage || 'Reviens dans {time}');
-      } else {
-        hideCooldown(prefix, data.remaining);
-      }
-    }catch(err){
-      hideCooldown(prefix);
-    }
-  }
-
-  function isMobileDevice(){
-    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
-  }
+  function getSharedDiscordId(){ const s = getSavedDiscordIdentity(); return s ? s.discordId : ''; }
+  function getSharedUsername(){ const s = getSavedDiscordIdentity(); return s ? s.username : ''; }
+  function getSharedAvatarUrl(){ const s = getSavedDiscordIdentity(); return s ? (s.avatarUrl || '') : ''; }
 
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){
-      alert(getActive().modal.discordNotConfiguredAlert || 'Connexion Discord non configurée par l\'administrateur du site.');
-      return;
-    }
+    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
-    const btn = document.getElementById('shared-discord-connect-btn');
-    btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
-
     if (isMobileDevice()){
-      // Sur mobile, les popups ne sont pas fiables (fenêtre séparée non supportée par les
-      // navigateurs mobiles, lien avec l'onglet d'origine parfois perdu) : on part en pleine
-      // page, et discord-callback.html se charge de nous ramener ici une fois connecté.
       try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
       window.location.href = authUrl;
       return;
     }
     window.open(authUrl, 'discord-oauth', 'width=500,height=750');
   }
+</script>
+<script>
+// Popup d'alerte maison (remplace alert() natif du navigateur) — globale, utilisée
+// aussi bien ici que dans le script d'identité partagé (connectDiscord, etc.)
+const customAlertOverlay = document.getElementById('customAlertOverlay');
+const customAlertMsg = document.getElementById('customAlertMsg');
+function showAlert(message){
+  customAlertMsg.textContent = message;
+  customAlertOverlay.classList.add('show');
+}
+document.getElementById('customAlertOkBtn').addEventListener('click', () => {
+  customAlertOverlay.classList.remove('show');
+});
+
+(async function(){
+  const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
+  const toggle=o=>{drawer.classList.toggle('open',o);scrim.classList.toggle('open',o);document.body.style.overflow=o?'hidden':''};
+  document.getElementById('burger').addEventListener('click',()=>toggle(true));
+  scrim.addEventListener('click',()=>toggle(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false)});
+  drawer.querySelectorAll('.d-item,.d-foot button').forEach(b=>b.addEventListener('click',()=>toggle(false)));
+
+  const betInput=document.getElementById('bet'), betRow=document.getElementById('betRow');
+  const balanceEl=document.getElementById('balance');
+  const balanceSidebarEl=document.getElementById('balance-sidebar');
+  const playBtn=document.getElementById('play');
+  const bustCard=document.getElementById('bustCard'), bustAmt=document.getElementById('bustAmt');
+  const winCard=document.getElementById('winCard'), winMultEl=document.getElementById('winMult'), winAmtEl=document.getElementById('winAmt');
+  const reelEls=[document.getElementById('reel0'), document.getElementById('reel1'), document.getElementById('reel2')];
+
+  let busy=false;
+
+  function setBalance(v){
+    balanceEl.textContent = v;
+    balanceSidebarEl.textContent = v;
+  }
+
+  async function spin(){
+    if (busy) return;
+    const discordId = getSharedDiscordId(), pseudo = getSharedUsername();
+    if (!discordId){ connectDiscord(); return; }
+    const bet = Math.floor(+betInput.value || 0);
+    if (!(bet>0)){ betRow.classList.add('err'); setTimeout(()=>betRow.classList.remove('err'),1200); return; }
+
+    busy=true; playBtn.disabled=true;
+    bustCard.classList.remove('show');
+    winCard.classList.remove('show');
+    reelEls.forEach(r => r.textContent = '❔');
+
+    try{
+      const resp = await fetch(`${workerBase}/slots/spin`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ discordId, pseudo, avatarUrl: getSharedAvatarUrl(), bet }),
+      });
+      const data = await resp.json();
+      if (!data.ok){
+        if (data.reason==='insufficient_keys') showAlert('Solde de clés insuffisant.');
+        else if (data.reason==='banned') showAlert('Ton compte a été banni des mini-jeux.');
+        else showAlert("Impossible de lancer la machine.");
+        playBtn.disabled=false; busy=false;
+        return;
+      }
+      setBalance(data.keys);
+      data.symbols.forEach((s, i) => { setTimeout(() => { reelEls[i].textContent = s; }, i * 180); });
+      setTimeout(() => {
+        if (data.won){
+          winMultEl.textContent = data.multiplier.toFixed(2);
+          winAmtEl.textContent = '+' + data.payout;
+          winCard.classList.add('show');
+        } else {
+          bustAmt.textContent = '-' + bet;
+          bustCard.classList.add('show');
+        }
+        loadHistory();
+      }, 700);
+    }catch(e){
+      showAlert('Erreur réseau, réessaie.');
+    }
+    setTimeout(() => { playBtn.disabled=false; busy=false; }, 750);
+  }
+
+  playBtn.addEventListener('click', spin);
+  document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(1,Math.floor((+betInput.value||0)/2)));
+  document.getElementById('double').addEventListener('click',()=>betInput.value=(+betInput.value||0)*2);
+  document.getElementById('maxBet').addEventListener('click',()=>{
+    const max = parseFloat(balanceEl.textContent) || 0;
+    betInput.value = Math.max(1, Math.floor(max));
+  });
+
+  // ---------------- Historique (public + personnel, 4 jeux) ----------------
+  const rows=document.getElementById('betRows');
+  const tabButtons = document.querySelectorAll('.tabs button');
+  let activeTab = 'all';
+
+  function renderHistoryRows(list){
+    rows.innerHTML='';
+    list.forEach(p => {
+      const tr=document.createElement('tr');
+      const isMines = p.game === 'mines';
+      const isBlackjack = p.game === 'blackjack';
+      const isDice = p.game === 'dice';
+      const gameIcon = isMines ? '💣' : isBlackjack ? '🃏' : isDice ? '🎲' : '🎰';
+      const gameName = isMines ? 'Mines' : isBlackjack ? 'Blackjack' : isDice ? 'Dice' : 'Slot';
+      let resultHtml, payout;
+      if (isMines){
+        const mult = p.busted ? 0 : p.multiplier;
+        payout = p.busted ? 0 : p.payout;
+        resultHtml = `<span class="${mult>=2?'win':mult===0?'lose':''}">${(mult.toFixed ? mult.toFixed(2) : mult)}×</span>`;
+      } else if (isBlackjack){
+        payout = p.payout;
+        const label = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Gagné' : p.result==='push' ? 'Égalité' : 'Perdu';
+        const cls = (p.result==='win'||p.result==='blackjack') ? 'win' : p.result==='push' ? '' : 'lose';
+        resultHtml = `<span class="${cls}">${label}</span>`;
+      } else {
+        payout = p.payout;
+        resultHtml = `<span class="${p.won?'win':'lose'}">${p.won ? p.multiplier.toFixed(2)+'×' : 'Perdu'}</span>`;
+      }
+      tr.innerHTML=`<td><span class="g"><span class="ic">${gameIcon}</span>${gameName}</span></td>
+        <td><span class="p"><img class="pfp" src="${escapeHtml(p.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="" referrerpolicy="no-referrer">${escapeHtml(p.pseudo||'?')}</span></td>
+        <td class="time">${formatLocalTime(p.dateMs)}</td>
+        <td><span class="key">🔑</span> ${escapeHtml(String(p.bet))}</td>
+        <td>${resultHtml}</td>
+        <td class="${payout>p.bet?'win':''}"><span class="key">🔑</span> ${escapeHtml(String(payout))}</td>`;
+      rows.appendChild(tr);
+    });
+  }
+
+  async function loadHistory(){
+    if (!workerBase) return;
+    try{
+      const games = ['mines', 'blackjack', 'dice', 'slots'];
+      let lists = [];
+      if (activeTab === 'mine'){
+        const discordId = getSharedDiscordId();
+        if (!discordId){ renderHistoryRows([]); return; }
+        const resps = await Promise.all(games.map(g => fetch(`${workerBase}/${g}/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`)));
+        const datas = await Promise.all(resps.map(r => r.json()));
+        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g === 'slots' ? 'slot' : g })));
+      } else {
+        const resps = await Promise.all(games.map(g => fetch(`${workerBase}/${g}/history?limit=10`)));
+        const datas = await Promise.all(resps.map(r => r.json()));
+        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g === 'slots' ? 'slot' : g })));
+      }
+      const merged = lists.flat().sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0)).slice(0, 10);
+      renderHistoryRows(merged);
+    }catch(e){}
+  }
+
+  tabButtons.forEach((btn, idx) => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      activeTab = idx===0 ? 'all' : 'mine';
+      loadHistory();
+    });
+  });
+
+  // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
+  document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
+
+  // ---------------- Identité ----------------
+  async function applyIdentity(){
+    const saved = getSavedDiscordIdentity();
+    const sideLoginBtn = document.getElementById('side-login-btn');
+    const sideUser = document.getElementById('side-user');
+    const sideUserPseudo = document.getElementById('side-user-pseudo');
+    const sideUserPfp = document.getElementById('side-user-pfp');
+    const drawerPseudo = document.getElementById('drawer-pseudo');
+    const drawerPfp = document.getElementById('drawer-user-pfp');
+    const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
+    const fallbackAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+    if (saved && saved.discordId){
+      sideLoginBtn.style.display = 'none';
+      sideUser.style.display = 'flex';
+      sideUserPseudo.textContent = saved.username;
+      sideUserPfp.src = saved.avatarUrl || fallbackAvatar;
+      drawerPseudo.textContent = saved.username;
+      drawerPfp.src = saved.avatarUrl || fallbackAvatar;
+      drawerLogoutBtn.style.display = 'grid';
+      const keys = await getKeysStatus(saved.discordId);
+      setBalance(keys);
+    } else {
+      sideLoginBtn.style.display = 'block';
+      sideUser.style.display = 'none';
+      drawerPseudo.textContent = 'Non connecté';
+      drawerLogoutBtn.style.display = 'none';
+      setBalance('0');
+    }
+    loadHistory();
+  }
+
+  async function getKeysStatus(discordId){
+    if (!workerBase) return '0';
+    try{
+      const resp = await fetch(`${workerBase}/mines/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      return data.keys;
+    }catch(e){ return '0'; }
+  }
+
+  document.getElementById('side-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    applyIdentity();
+  });
+  document.getElementById('drawer-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    applyIdentity();
+    toggle(false);
+  });
 
   window.addEventListener('message', (event) => {
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
-    const { discordId, username, avatarUrl } = event.data;
-    saveDiscordIdentity(discordId, username, avatarUrl);
-    applySharedIdentity();
-    // Les 3 jeux sont visibles en même temps sur cette page : la connexion
-    // doit s'appliquer partout d'un coup, pas seulement au jeu qui l'a déclenchée.
-    checkAlreadyPlayed('slot', discordId);
+    saveDiscordIdentity(event.data.discordId, event.data.username, event.data.avatarUrl);
+    applyIdentity();
   });
 
-  // ---------- Ticket à gratter : vrai geste de grattage (canvas), pas juste un clic ----------
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('scratch-game-card'); });
-  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('scratch-game-card'); });
-
-  const SLOT_SYMBOLS = ['7️⃣','🍒','💎','🔔','🍋','⭐'];
-
-  function initSlotGame(){
-    document.getElementById('slot-form-error').style.display = 'none';
-    document.getElementById('slot-result-message').style.display = 'none';
-    document.getElementById('slot-play-again-btn').style.display = 'none';
-    document.getElementById('slot-discord-claim-btn').style.display = 'none';
-    document.getElementById('slot-submit-btn').style.display = '';
-    document.querySelectorAll('#slot-reels .slot-reel').forEach(r => r.classList.remove('spinning'));
-
-    const st = getActive().slotMachine || {};
-    document.getElementById('slot-tag').textContent = st.tag || 'Machine à sous';
-    document.getElementById('slot-title').textContent = st.title || 'Tente ta chance';
-    document.getElementById('slot-subtitle').textContent = st.subtitle || 'Un spin gratuit par jour.';
-    document.getElementById('slot-submit-btn').textContent = st.spinText || 'Spin';
-    document.getElementById('slot-result-message').textContent = '';
-    checkAlreadyPlayed('slot', getSharedDiscordId());
-    loadSlotHistory();
-  }
-
-  async function loadSlotHistory(){
-    const listEl = document.getElementById('slot-history-list');
-    const emptyEl = document.getElementById('slot-history-empty');
-    if (!workerBase || !listEl) return;
-    try{
-      const resp = await fetch(`${workerBase}/slot/history?limit=8`);
-      if (!resp.ok) return;
-      const data = await resp.json();
-      const history = data.history || [];
-      if (history.length === 0){
-        if (emptyEl) emptyEl.style.display = 'block';
-        listEl.innerHTML = '';
-        return;
-      }
-      if (emptyEl) emptyEl.style.display = 'none';
-      listEl.innerHTML = history.map(h => {
-        const initial = (h.pseudo || '?').trim().charAt(0).toUpperCase() || '?';
-        const timeAgo = h.dateMs ? formatTimeAgo(h.dateMs) : '';
-        const resultHtml = h.won
-          ? `<span class="slot-history-result slot-history-win">+$${escapeHtml(String(h.amount))}</span>`
-          : `<span class="slot-history-result slot-history-lose">Perdu</span>`;
-        // On ne connaît les symboles exacts que pour une victoire (toujours 7️⃣7️⃣7️⃣) :
-        // pour une défaite, le tirage réel n'est pas stocké côté serveur, donc on
-        // n'invente rien plutôt que d'afficher une icône fixe et trompeuse.
-        const symbolsHtml = h.won ? '7️⃣ 7️⃣ 7️⃣' : '';
-        return `<div class="slot-history-row">
-          <div class="slot-history-avatar">${escapeHtml(initial)}</div>
-          <div class="slot-history-name">${escapeHtml(h.pseudo || '?')}</div>
-          <div class="slot-history-symbols">${symbolsHtml}</div>
-          ${resultHtml}
-          <div class="slot-history-time">${escapeHtml(timeAgo)}</div>
-        </div>`;
-      }).join('');
-    }catch(e){
-      // Historique non-critique : on échoue silencieusement plutôt que de bloquer le jeu
-    }
-  }
-
-  function formatTimeAgo(dateMs){
-    const diffMin = Math.max(0, Math.round((Date.now() - dateMs) / 60000));
-    if (diffMin < 1) return 'à l\'instant';
-    if (diffMin < 60) return diffMin + ' min';
-    const diffH = Math.round(diffMin / 60);
-    if (diffH < 24) return diffH + ' h';
-    return Math.round(diffH / 24) + ' j';
-  }
-
-  function showSlotFormError(msg){
-    const el = document.getElementById('slot-form-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  async function submitSlot(){
-    const pseudo = getSharedUsername();
-    const discordId = getSharedDiscordId();
-    const st = getActive().slotMachine || {};
-    if (!discordId){
-      showSlotFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
-      return;
-    }
-    document.getElementById('slot-form-error').style.display = 'none';
-
-    const submitBtn = document.getElementById('slot-submit-btn');
-    submitBtn.disabled = true;
-
-    try{
-      const resp = await fetch(`${workerBase}/slot/play`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo, discordId })
-      });
-      const data = await resp.json();
-
-      if (data.ok === false && data.reason === 'already_played_today'){
-        submitBtn.disabled = false;
-        showSlotFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
-        return;
-      }
-      if (data.ok === false && data.reason === 'banned'){
-        showSlotFormError('Ton compte a été banni des mini-jeux.');
-        return;
-      }
-      if (data.ok === false){
-        submitBtn.disabled = false;
-        showSlotFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
-        return;
-      }
-
-      const reels = document.querySelectorAll('#slot-reels .slot-reel');
-      const syms = [document.getElementById('slot-sym-0'), document.getElementById('slot-sym-1'), document.getElementById('slot-sym-2')];
-      const msgEl = document.getElementById('slot-result-message');
-      const claimBtn = document.getElementById('slot-discord-claim-btn');
-      const playAgainBtn = document.getElementById('slot-play-again-btn');
-      playAgainBtn.style.display = 'none';
-      submitBtn.textContent = st.spinningText || 'Ça tourne...';
-
-      reels.forEach(r => r.classList.add('spinning'));
-
-      // Le résultat final est déterminé AVANT le lancement de l'animation, pour que chaque
-      // rouleau s'arrête directement sur son symbole définitif (pas de changement après coup).
-      const pick = () => SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
-      let finalSyms;
-      if (data.won){
-        const winSym = SLOT_SYMBOLS[0];
-        finalSyms = [winSym, winSym, winSym];
-      } else {
-        let a = pick(), b = pick(), c = pick();
-        if (a === b && b === c){
-          do { c = pick(); } while (c === a);
-        }
-        finalSyms = [a, b, c];
-      }
-
-      syms.forEach((el, i) => {
-        let ticks = 0;
-        const maxTicks = 14 + i * 6;
-        const iv = setInterval(() => {
-          ticks++;
-          if (ticks >= maxTicks){
-            el.textContent = finalSyms[i];
-            clearInterval(iv);
-            reels[i].classList.remove('spinning');
-            if (i === syms.length - 1){
-              submitBtn.disabled = false;
-              submitBtn.style.display = 'none';
-              msgEl.style.display = 'block';
-              if (data.won){
-                msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
-                claimBtn.style.display = 'flex';
-                claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
-                claimBtn.href = (CONFIG.slotMachine && CONFIG.slotMachine.discordClaimLink) || '#';
-              } else {
-                msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
-              }
-              if (data.remaining > 0){
-                playAgainBtn.textContent = st.playAgainText || 'Rejouer';
-                playAgainBtn.style.display = 'block';
-              }
-              loadSlotHistory();
-            }
-          } else {
-            el.textContent = pick();
-          }
-        }, 70);
-      });
-    }catch(err){
-      submitBtn.disabled = false;
-      submitBtn.textContent = st.spinText || 'Spin';
-      showSlotFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
-    }
-  }
-
-  function replaySlot(){
-    initSlotGame();
-  }
-
-  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('slot-game-card'); });
-  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('slot-game-card'); });
-
-  // ---------- Roue de la fortune ----------
-  
-  
-  // Fait tourner la roue jusqu'au centre d'un secteur du bon type (gagné/perdu),
-  // choisi au hasard parmi les 4 secteurs de ce type, avec plusieurs tours complets.
-  
-  
-  
-  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('wheel-game-card'); });
-  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); showSingleGame('wheel-game-card'); });
+  applyIdentity();
+})();
 </script>
-
 </body>
 </html>
