@@ -283,11 +283,11 @@
   <!-- ============ CONTENU ============ -->
   <div class="main">
     <div class="topbar">
-      <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+      <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
       <h1>Leaderboard</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
-        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> visiteurs en ligne</span>
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> players online</span>
         <button class="icon-btn" aria-label="Notifications">🔔</button>
       </div>
     </div>
@@ -457,7 +457,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   function renderList(rest){
     if (rest.length === 0){
-      lbList.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--muted);">Pas encore assez de joueurs pour ce classement.</td></tr>';
+      lbList.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--muted);">Not enough players ranked yet.</td></tr>';
       return;
     }
     lbList.innerHTML = rest.map((p, i) => {
@@ -482,7 +482,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       renderPodium(list.slice(0, 3));
       renderList(list.slice(3, 22));
     }catch(e){
-      lbList.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--muted);">Erreur de chargement du classement.</td></tr>';
+      lbList.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--muted);">Could not load the leaderboard.</td></tr>';
     }
   }
 

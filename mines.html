@@ -330,11 +330,11 @@
   <!-- ============ CONTENU ============ -->
   <div class="main">
     <div class="topbar">
-      <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+      <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
       <h1>Mines</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
-        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> visiteurs en ligne</span>
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> players online</span>
         <button class="icon-btn" aria-label="Notifications">🔔</button>
       </div>
     </div>
@@ -738,7 +738,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   function setPlayBtnState(){
     if (alive){
-      playBtn.textContent = step>0 ? 'Cash Out' : 'En jeu…';
+      playBtn.textContent = step>0 ? 'Cash Out' : 'In play…';
       playBtn.disabled = step===0;
     } else {
       playBtn.textContent = 'Bet';

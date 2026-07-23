@@ -384,11 +384,11 @@
   <!-- ============ CONTENU ============ -->
   <div class="main">
     <div class="topbar">
-      <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+      <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
       <h1>Bonuses</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
-        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> visiteurs en ligne</span>
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> players online</span>
         <button class="icon-btn" aria-label="Notifications">🔔</button>
       </div>
     </div>
@@ -447,7 +447,7 @@
           <input type="email" required placeholder="toi@email.com" id="claim-email-input">
         </label>
         <label><span id="pseudo-label-text">Username on the platform</span>
-          <input type="text" required placeholder="Ton pseudo de compte" id="claim-pseudo-input">
+          <input type="text" required placeholder="Your account username" id="claim-pseudo-input">
         </label>
         <label><span id="discord-label-text">Your Discord account</span></label>
         <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Connect with Discord</button>
@@ -620,7 +620,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
           <span>Code</span>
           <div class="code-right">
             <span class="c">${escapeHtml(offer.code)}</span>
-            <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}" aria-label="Copier le code" title="Copier le code">
+            <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}" aria-label="Copy code" title="Copy code">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
             </button>
           </div>
@@ -711,7 +711,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const discordHref = (discordNavLink && discordNavLink.href) || '#';
     const discordLinkText = m.discordJoinLinkText || 'serveur Discord';
     const discordLinkHtml = `<a href="${escapeHtml(discordHref)}" target="_blank" rel="noopener" style="color:var(--gold); font-weight:800;">${escapeHtml(discordLinkText)}</a>`;
-    const joinNoteTemplate = m.discordJoinNote || `Rejoins d'abord notre {link}, sinon on ne pourra pas t'envoyer la confirmation en DM.`;
+    const joinNoteTemplate = m.discordJoinNote || `Join our {link} first, otherwise we won't be able to DM you the confirmation.`;
     document.getElementById('discord-join-note').innerHTML = escapeHtml(joinNoteTemplate).replace('{link}', discordLinkHtml);
 
     const tgBtn = document.getElementById('confirm-telegram-btn');
@@ -836,7 +836,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         platform, code: currentClaimCode, email, pseudo, discordId, deviceId: getOrCreateDeviceId()
       });
     }catch(err){
-      console.error('Échec de la notification :', err);
+      console.error('Notification failed:', err);
     }
 
     submitBtn.disabled = false;

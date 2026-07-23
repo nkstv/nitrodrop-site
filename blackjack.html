@@ -373,11 +373,11 @@
   <!-- ============ CONTENU ============ -->
   <div class="main">
     <div class="topbar">
-      <button class="burger" id="burger" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+      <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
       <h1>Blackjack</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
-        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> visiteurs en ligne</span>
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> players online</span>
         <button class="icon-btn" aria-label="Notifications">🔔</button>
       </div>
     </div>
@@ -770,7 +770,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         if (data.reason==='insufficient_keys') showAlert('Not enough keys.');
         else if (data.reason==='round_in_progress') showAlert('A round is already in progress. Finish it before starting a new one, or reload the page.');
         else if (data.reason==='banned') showAlert('Your account has been banned from the games.');
-        else showAlert("Impossible de lancer la donne.");
+        else showAlert("Could not deal the hand.");
         playBtn.disabled=false; busy=false;
         return;
       }
