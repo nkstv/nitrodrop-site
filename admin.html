@@ -179,6 +179,7 @@
     <nav class="side-nav">
       <button class="nav-item active" data-section="offers" onclick="showSection('offers')"><span class="ic">🎁</span><span>Offres & bonus</span></button>
       <button class="nav-item" data-section="vault" onclick="showSection('vault')"><span class="ic">🔒</span><span>Coffre-fort</span></button>
+      <button class="nav-item" data-section="drops" onclick="showSection('drops')"><span class="ic">🎁</span><span>Drops</span></button>
       <button class="nav-item" data-section="integrations" onclick="showSection('integrations')"><span class="ic">🔗</span><span>Intégrations</span></button>
       <button class="nav-item" data-section="site" onclick="showSection('site')"><span class="ic">⚙️</span><span>Réglages</span></button>
       <button class="nav-item" data-section="publish" onclick="showSection('publish')"><span class="ic">🚀</span><span>Publication</span></button>
@@ -342,6 +343,38 @@
     </div>
   </div>
   </section>
+  <section class="admin-section" id="section-drops" style="display:none;">
+    <div class="section-head">
+      <h1>🎁 Drops</h1>
+      <p>Liens de récompense à partager sur Discord — nombre de places limité</p>
+    </div>
+
+    <div class="panel">
+      <h2>Créer un drop</h2>
+      <p class="hint">Chaque joueur ne peut réclamer qu'une fois. Les clés sont créditées automatiquement.</p>
+      <div class="row">
+        <div class="field"><label>Montant en clés</label><input type="number" id="drop-amount" step="0.1" min="0.1" placeholder="Ex: 20"></div>
+        <div class="field"><label>Nombre de places</label><input type="number" id="drop-slots" step="1" min="1" placeholder="Ex: 50"></div>
+      </div>
+      <div class="field"><label>Libellé (facultatif, visible par le joueur)</label><input type="text" id="drop-label" placeholder="Ex: Weekend drop"></div>
+      <button type="button" class="btn btn-save" onclick="createDrop()">Créer le drop</button>
+      <div id="drop-created" style="display:none; margin-top:16px; padding:14px; background:var(--bg-raise); border:1px solid var(--gold); border-radius:12px;">
+        <div style="font-size:11px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Lien à partager</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <code id="drop-link" style="flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text); font-size:12.5px;"></code>
+          <button type="button" class="btn btn-open" style="padding:7px 13px; font-size:12px;" onclick="copyDropLink()">Copier</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Drops existants</h2>
+      <p class="hint">Suivi des places réclamées. Désactive un drop pour bloquer les réclamations.</p>
+      <button type="button" class="btn btn-reset" onclick="loadDrops()" style="margin-bottom:14px;">Rafraîchir</button>
+      <div id="drops-list"></div>
+    </div>
+  </section>
+
   <section class="admin-section" id="section-integrations" style="display:none;">
     <div class="section-head">
       <h1>🔗 Intégrations</h1>
@@ -999,6 +1032,132 @@ function nitrodropResetConfig() {
   }
 
   // ---------- Coffre-fort : appels directs au Worker (jamais via GitHub) ----------
+  // Échappe le texte inséré dans du HTML (libellés de drop, liens...)
+  function escapeHtml(str){
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // ---------- Drops ----------
+  // Réutilise l'URL du Worker et la clé dashboard saisies dans la section
+  // Coffre-fort, pour éviter de redemander les mêmes informations.
+  function getDropAuth(){
+    const base = getVaultWorkerBase();
+    const key = document.getElementById('vault-dashboard-key').value.trim();
+    if (!base || !key){
+      alert('Renseigne d\'abord l\'URL du Worker et la clé dashboard dans la section Coffre-fort.');
+      return null;
+    }
+    return { base, key };
+  }
+
+  let lastDropLink = '';
+
+  async function createDrop(){
+    const auth = getDropAuth();
+    if (!auth) return;
+    const amount = parseFloat(document.getElementById('drop-amount').value);
+    const slots = parseInt(document.getElementById('drop-slots').value, 10);
+    const label = document.getElementById('drop-label').value.trim();
+    if (!Number.isFinite(amount) || amount <= 0){ alert('Montant invalide.'); return; }
+    if (!Number.isFinite(slots) || slots <= 0){ alert('Nombre de places invalide.'); return; }
+
+    try{
+      const resp = await fetch(`${auth.base}/drop/admin/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': auth.key },
+        body: JSON.stringify({ amount, slots, label }),
+      });
+      if (!resp.ok){ alert('Échec : ' + await resp.text()); return; }
+      const data = await resp.json();
+      lastDropLink = `${location.origin}/?drop=${data.id}`;
+      document.getElementById('drop-link').textContent = lastDropLink;
+      document.getElementById('drop-created').style.display = '';
+      document.getElementById('drop-amount').value = '';
+      document.getElementById('drop-slots').value = '';
+      document.getElementById('drop-label').value = '';
+      showToast('Drop créé ✓');
+      loadDrops();
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
+  }
+
+  function copyDropLink(){
+    if (!lastDropLink) return;
+    navigator.clipboard.writeText(lastDropLink)
+      .then(() => showToast('Lien copié ✓'))
+      .catch(() => {});
+  }
+
+  async function loadDrops(){
+    const auth = getDropAuth();
+    if (!auth) return;
+    const container = document.getElementById('drops-list');
+    container.innerHTML = '<p class="hint">Chargement…</p>';
+    try{
+      const resp = await fetch(`${auth.base}/drop/admin/list`, {
+        headers: { 'X-Dashboard-Key': auth.key }
+      });
+      if (!resp.ok){ container.innerHTML = '<p class="hint">Erreur de chargement.</p>'; return; }
+      const data = await resp.json();
+      const drops = data.drops || [];
+      if (!drops.length){
+        container.innerHTML = '<p class="hint">Aucun drop pour l\'instant.</p>';
+        return;
+      }
+      container.innerHTML = drops.map(d => {
+        const pct = d.totalSlots ? Math.round((d.claimedSlots / d.totalSlots) * 100) : 0;
+        const link = `${location.origin}/?drop=${d.id}`;
+        return `
+          <div style="background:var(--bg-raise); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:11px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <div>
+                <div style="font-family:'Baloo 2'; font-weight:800; font-size:16px; color:var(--gold);">🔑 ${d.amount}${d.label ? ' · ' + escapeHtml(d.label) : ''}</div>
+                <div style="font-size:12px; color:var(--text-faint); margin-top:3px;">
+                  ${d.claimedSlots} / ${d.totalSlots} réclamés · ${d.remaining} restants
+                </div>
+              </div>
+              <div style="display:flex; gap:7px; align-items:center;">
+                <span class="badge" style="color:${d.active ? 'var(--accent-green)' : 'var(--text-faint)'}; border-color:${d.active ? 'var(--accent-green)' : 'var(--text-faint)'};">
+                  ${d.active ? 'Actif' : 'Désactivé'}
+                </span>
+                <button type="button" class="btn btn-reset" style="padding:6px 12px; font-size:12px;"
+                  onclick="toggleDrop('${d.id}', ${!d.active})">${d.active ? 'Désactiver' : 'Réactiver'}</button>
+              </div>
+            </div>
+            <div style="height:5px; border-radius:3px; background:var(--bg-card); margin-top:11px; overflow:hidden;">
+              <div style="height:100%; width:${pct}%; background:linear-gradient(90deg,var(--gold-deep),var(--gold));"></div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:11px;">
+              <code style="flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11.5px; color:var(--text-dim);">${escapeHtml(link)}</code>
+              <button type="button" class="btn btn-open" style="padding:5px 11px; font-size:11.5px;"
+                onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('Lien copié ✓'))">Copier</button>
+            </div>
+          </div>`;
+      }).join('');
+    }catch(e){
+      container.innerHTML = '<p class="hint">Erreur réseau.</p>';
+    }
+  }
+
+  async function toggleDrop(id, active){
+    const auth = getDropAuth();
+    if (!auth) return;
+    try{
+      const resp = await fetch(`${auth.base}/drop/admin/toggle`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': auth.key },
+        body: JSON.stringify({ id, active }),
+      });
+      if (!resp.ok){ alert('Échec de la mise à jour.'); return; }
+      loadDrops();
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
+  }
+
   function getVaultWorkerBase(){
     return document.getElementById('vault-worker-url').value.trim().replace(/\/$/, '');
   }

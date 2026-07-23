@@ -359,6 +359,47 @@
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+  /* ---------- Popup de drop (lien partagé sur Discord) ---------- */
+  .drop-overlay{
+    position:fixed; inset:0; z-index:220; background:rgba(0,0,0,.75); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  .drop-overlay.show{opacity:1; pointer-events:auto;}
+  .drop-modal{
+    position:relative; width:100%; max-width:400px; text-align:center;
+    background:linear-gradient(180deg,#241c12,#191309);
+    border:1.5px solid rgba(232,193,104,.4); border-radius:22px; padding:34px 28px;
+    box-shadow:0 30px 90px rgba(0,0,0,.6), 0 0 60px rgba(232,193,104,.12);
+    transform:translateY(16px) scale(.97); transition:transform .25s ease;
+  }
+  .drop-overlay.show .drop-modal{transform:translateY(0) scale(1);}
+  .drop-close{
+    position:absolute; top:12px; right:15px; background:none; border:none;
+    color:var(--muted); font-size:25px; line-height:1; padding:4px; cursor:pointer;
+  }
+  .drop-close:hover{color:var(--cream);}
+  .drop-gift{font-size:48px; display:block; margin-bottom:6px; animation:dropPop .5s ease;}
+  @keyframes dropPop{0%{transform:scale(.4); opacity:0;} 60%{transform:scale(1.15);} 100%{transform:scale(1); opacity:1;}}
+  .drop-tag{color:var(--gold); font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase;}
+  .drop-amount{font-family:"Baloo 2"; font-weight:800; font-size:42px; color:var(--gold); line-height:1.1; margin:8px 0 4px;}
+  .drop-label{font-size:14px; color:var(--cream); font-weight:700;}
+  .drop-slots{font-size:12.5px; color:var(--muted); margin-top:12px;}
+  .drop-slots b{color:var(--gold);}
+  .drop-msg{font-size:13.5px; color:var(--muted); line-height:1.6; margin-top:14px;}
+  .drop-msg.ok{color:var(--green); font-weight:700;}
+  .drop-msg.err{color:var(--red); font-weight:700;}
+  .drop-btn{
+    width:100%; margin-top:20px; padding:14px; border-radius:14px; border:none; cursor:pointer;
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:16px; transition:.15s;
+    box-shadow:0 5px 16px rgba(232,193,104,.25);
+  }
+  .drop-btn:hover:not(:disabled){filter:brightness(1.06); transform:translateY(-1px);}
+  .drop-btn:disabled{opacity:.5; filter:none; cursor:default; transform:none; box-shadow:none;}
+  .drop-bar{height:6px; border-radius:4px; background:var(--bg-soft); margin-top:14px; overflow:hidden;}
+  .drop-bar i{display:block; height:100%; background:linear-gradient(90deg,var(--gold-deep),var(--gold)); transition:width .4s ease;}
+
   /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
   @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
   .custom-alert-overlay{
@@ -530,6 +571,14 @@
   <div class="d-grid">
     <a class="d-item" href="/blackjack"><span>🃏</span>Blackjack</a><a class="d-item" href="/slot"><span>🎰</span>Slot</a>
     <a class="d-item" href="/mines"><span>💣</span>Mines</a><a class="d-item" href="/dice"><span>🎲</span>Dice</a>
+  </div>
+</div>
+
+<!-- Popup de drop : s'ouvre quand l'URL contient ?drop=... -->
+<div class="drop-overlay" id="dropOverlay">
+  <div class="drop-modal">
+    <button class="drop-close" id="dropClose" aria-label="Close">×</button>
+    <div class="drop-body" id="dropBody"></div>
   </div>
 </div>
 
@@ -984,6 +1033,128 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   });
 
   applyIdentity();
+
+  // ---------------- Popup de drop (lien Discord ?drop=ID) ----------------
+  (function initDrop(){
+    const dropId = new URLSearchParams(location.search).get('drop');
+    if (!dropId) return;
+
+    const overlay = document.getElementById('dropOverlay');
+    const bodyEl = document.getElementById('dropBody');
+    if (!overlay || !bodyEl) return;
+
+    const close = () => {
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+      // Retire le paramètre pour éviter de rouvrir la popup au rechargement
+      const url = new URL(location.href);
+      url.searchParams.delete('drop');
+      history.replaceState({}, '', url);
+    };
+    document.getElementById('dropClose').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    const show = html => {
+      bodyEl.innerHTML = html;
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const fmtKeys = n => (Math.round((Number(n)||0) * 100) / 100).toLocaleString('en-US');
+
+    async function load(){
+      const discordId = getSharedDiscordId();
+      try{
+        const resp = await fetch(`${workerBase}/drop/status?id=${encodeURIComponent(dropId)}` +
+          (discordId ? `&discordId=${encodeURIComponent(discordId)}` : ''));
+        const data = await resp.json();
+
+        if (!data.ok){
+          show(`<span class="drop-gift">😕</span>
+                <div class="drop-tag">Drop</div>
+                <div class="drop-label" style="margin-top:10px;">This drop doesn't exist or has expired.</div>`);
+          return;
+        }
+
+        const d = data.drop;
+        const pct = d.totalSlots ? Math.round((d.claimedSlots / d.totalSlots) * 100) : 100;
+        const head = `
+          <span class="drop-gift">🎁</span>
+          <div class="drop-tag">Drop Cash reward</div>
+          <div class="drop-amount">🔑 ${fmtKeys(d.amount)}</div>
+          ${d.label ? `<div class="drop-label">${escapeHtml(d.label)}</div>` : ''}
+          <div class="drop-slots"><b>${d.remaining}</b> of ${d.totalSlots} spots left</div>
+          <div class="drop-bar"><i style="width:${pct}%"></i></div>`;
+
+        if (!d.active){
+          show(head + `<div class="drop-msg err">This drop is closed.</div>`);
+          return;
+        }
+        if (data.alreadyClaimed){
+          show(head + `<div class="drop-msg ok">✓ You already claimed this drop.</div>`);
+          return;
+        }
+        if (d.remaining <= 0){
+          show(head + `<div class="drop-msg err">All spots have been taken. Better luck next time!</div>`);
+          return;
+        }
+        if (!discordId){
+          show(head + `<div class="drop-msg">Connect with Discord to claim your keys.</div>
+                       <button class="drop-btn" id="dropConnect">🎮 Connect with Discord</button>`);
+          document.getElementById('dropConnect').addEventListener('click', () => connectDiscord());
+          return;
+        }
+        show(head + `<button class="drop-btn" id="dropClaim">Claim ${fmtKeys(d.amount)} keys</button>`);
+        document.getElementById('dropClaim').addEventListener('click', claim);
+      }catch(e){
+        show(`<span class="drop-gift">😕</span>
+              <div class="drop-label" style="margin-top:10px;">Could not load this drop.</div>`);
+      }
+    }
+
+    async function claim(){
+      const btn = document.getElementById('dropClaim');
+      btn.disabled = true;
+      btn.textContent = 'Claiming…';
+      try{
+        const resp = await fetch(`${workerBase}/drop/claim`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            id: dropId,
+            discordId: getSharedDiscordId(),
+            pseudo: getSharedUsername(),
+            avatarUrl: getSharedAvatarUrl(),
+          }),
+        });
+        const data = await resp.json();
+        if (!data.ok){
+          const msgs = {
+            already_claimed: '✓ You already claimed this drop.',
+            no_slots_left: 'All spots have been taken. Better luck next time!',
+            inactive: 'This drop is closed.',
+            banned: 'Your account has been banned from the games.',
+            missing_discord: 'Connect with Discord to claim your keys.',
+          };
+          btn.outerHTML = `<div class="drop-msg err">${msgs[data.reason] || 'Could not claim this drop.'}</div>`;
+          return;
+        }
+        // Met à jour le solde affiché dans la barre latérale si elle existe
+        const bal = document.getElementById('balance-sidebar');
+        if (bal) bal.textContent = fmtKeys(data.keys);
+        btn.outerHTML = `<div class="drop-msg ok">✓ ${fmtKeys(data.amount)} keys added to your balance!</div>`;
+      }catch(e){
+        btn.disabled = false;
+        btn.textContent = 'Try again';
+      }
+    }
+
+    load();
+    // Si le joueur se connecte depuis la popup, on la recharge
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'nitrodrop-discord-auth') setTimeout(load, 400);
+    });
+  })();
+
 })();
 </script>
 </body>
