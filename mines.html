@@ -619,7 +619,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       const data = await resp.json();
       if (!data.ok){
         if (data.reason==='insufficient_keys') showAlert('Solde de clés insuffisant.');
-        else if (data.reason==='round_in_progress') showAlert('Une partie est déjà en cours.');
+        else if (data.reason==='round_in_progress') showAlert('Une partie est déjà en cours. Termine-la avant d\'en relancer une, ou recharge la page.');
         else if (data.reason==='banned') showAlert('Ton compte a été banni des mini-jeux.');
         else showAlert("Impossible de démarrer la partie.");
         busy=false; playBtn.disabled=false;
