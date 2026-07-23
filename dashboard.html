@@ -1584,13 +1584,17 @@
           <td><b id="user-keys-${escapeHtml(u.discordId)}">${(u.keys || 0).toFixed(2)}</b></td>
           <td class="mono">${lastSeenLabel}</td>
           <td class="mono">${createdLabel}</td>
-          <td>${u.banned ? '<span class="badge" style="color:#FF7A90; border-color:#FF7A90;">Banni</span>' : '<span class="badge" style="color:var(--green); border-color:var(--green);">Actif</span>'}</td>
+          <td>
+            ${u.banned ? '<span class="badge" style="color:#FF7A90; border-color:#FF7A90;">Banni</span>' : '<span class="badge" style="color:var(--accent-green); border-color:var(--accent-green);">Actif</span>'}
+            ${u.excluded ? '<span class="badge" style="color:var(--text-faint); border-color:var(--text-faint); margin-left:4px;">Hors stats</span>' : ''}
+          </td>
           <td>
             <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
               <input type="number" id="user-amount-${escapeHtml(u.discordId)}" placeholder="Montant" min="0" step="1" style="width:80px; padding:6px 8px;">
               <button type="button" class="btn" onclick="adjustUserKeys('${escapeHtml(u.discordId)}','add')">+ Ajouter</button>
               <button type="button" class="btn" onclick="adjustUserKeys('${escapeHtml(u.discordId)}','remove')">− Retirer</button>
               <button type="button" class="btn" onclick="toggleUserBan('${escapeHtml(u.discordId)}', ${!u.banned})">${u.banned ? 'Débannir' : 'Bannir'}</button>
+              <button type="button" class="btn" title="Retire ce compte des statistiques et du classement (comptes de test)" onclick="toggleUserExcluded('${escapeHtml(u.discordId)}', ${!u.excluded})">${u.excluded ? 'Réintégrer' : 'Exclure des stats'}</button>
             </div>
           </td>
         </tr>
@@ -1626,6 +1630,31 @@
       const keysEl = document.getElementById(`user-keys-${discordId}`);
       if (keysEl) keysEl.textContent = data.keys.toFixed(2);
       input.value = '';
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
+  }
+
+  // Exclut un compte des statistiques ET du classement (même liste partagée).
+  // Utile pour les comptes de test qui fausseraient les totaux.
+  async function toggleUserExcluded(discordId, excluded){
+    if (!confirm(excluded
+      ? 'Retirer ce compte des statistiques et du classement ?'
+      : 'Réintégrer ce compte dans les statistiques et le classement ?')) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/leaderboard/exclude`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ discordId, excluded }),
+      });
+      const data = await resp.json();
+      if (!data.ok){ alert('Échec de la mise à jour.'); return; }
+      const u = allUsers.find(x => x.discordId === discordId);
+      if (u) u.excluded = excluded;
+      // Les stats et le leaderboard doivent être rechargés pour refléter le changement
+      statsLoaded = false;
+      leaderboardLoaded = false;
+      applyUsersFilters();
     }catch(e){
       alert('Erreur réseau : ' + e.message);
     }
