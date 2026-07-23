@@ -173,6 +173,22 @@
   .bj-hand-row{display:flex;flex-direction:column;align-items:center;gap:8px;}
   .bj-hand-label{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
   .bj-hand-label .total{color:var(--cream);margin-left:6px;}
+  .bj-hand-label .breakdown{
+    color:var(--muted-2); font-weight:700; font-size:11px; letter-spacing:0;
+    text-transform:none; margin-left:7px;
+  }
+  .bj-hand-label .turn-badge{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-size:9.5px; font-weight:800; letter-spacing:1px; padding:3px 8px; border-radius:20px;
+    margin-right:5px; box-shadow:0 2px 6px rgba(0,0,0,.35);
+  }
+  /* Après un split : la main en cours ressort, l'autre est estompée */
+  .bj-hand-row.is-active-hand .bj-cards{
+    padding:8px 10px; border-radius:14px;
+    background:rgba(232,193,104,.07); border:1px solid rgba(232,193,104,.4);
+    box-shadow:0 0 22px rgba(232,193,104,.13);
+  }
+  .bj-hand-row.is-idle-hand{opacity:.45;}
   .bj-hand-label.win .total{color:var(--green);} .bj-hand-label.lose .total{color:var(--red);}
   .bj-cards{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
   .bj-card{
@@ -604,6 +620,30 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     return total;
   }
 
+  // Détaille le calcul carte par carte (ex : "3 + 11 + 10"), en tenant compte
+  // des As qui valent 1 au lieu de 11 quand la main dépasserait 21.
+  function cardValueBreakdown(cards){
+    const values = [];
+    let total = 0, aces = 0;
+    for (const c of cards){
+      let v;
+      if (c.rank==='A'){ v = 11; aces++; }
+      else if (['K','Q','J'].includes(c.rank)) v = 10;
+      else v = parseInt(c.rank,10);
+      values.push({ v, isAce: c.rank==='A' });
+      total += v;
+    }
+    // On rétrograde les As un par un tant que la main dépasse 21
+    for (let i = values.length - 1; i >= 0 && total > 21 && aces > 0; i--){
+      if (values[i].isAce && values[i].v === 11){
+        values[i].v = 1;
+        total -= 10;
+        aces--;
+      }
+    }
+    return values.map(x => x.v).join(' + ');
+  }
+
   function renderCard(card, hidden){
     if (hidden){
       return `<div class="bj-card back">?</div>`;
@@ -619,7 +659,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     winCard.classList.remove('show');
 
     const dealerVal = state.dealerHidden ? cardValueLabel([state.dealerCards[0]]) : cardValueLabel(state.dealerCards);
-    dealerLabelEl.innerHTML = `Dealer <span class="total">${state.dealerHidden ? dealerVal+' + ?' : dealerVal}</span>`;
+    const dealerBust = !state.dealerHidden && dealerVal > 21;
+    dealerLabelEl.innerHTML = `Dealer <span class="total">${state.dealerHidden ? dealerVal+' + ?' : (dealerBust?'Bust ':'')+dealerVal}</span>` +
+      (state.dealerHidden ? '' : ` <span class="breakdown">${cardValueBreakdown(state.dealerCards)}</span>`);
     dealerCardsEl.innerHTML = state.dealerCards.map((c,i) => renderCard(c, state.dealerHidden && i===1 && state.dealerCards.length===2)).join('')
       + (state.dealerHidden && state.dealerCards.length===1 ? renderCard(null, true) : '');
 
@@ -627,14 +669,21 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       if (idx > 1) return; // on ne gère qu'un split max (2 mains)
       playerRows[idx].style.display = state.hands.length>1 || idx===0 ? 'flex' : 'none';
       const val = cardValueLabel(hand.cards);
+      const breakdown = cardValueBreakdown(hand.cards);
       let cls = '';
       if (hand.result === 'win' || hand.result === 'blackjack') cls = 'win';
       else if (hand.result === 'lose') cls = 'lose';
       const isActiveHand = state.status==='playing' && idx===state.activeHandIndex;
-      playerLabelEls[idx].className = 'bj-hand-label ' + cls;
-      playerLabelEls[idx].innerHTML = (state.hands.length>1 ? `Main ${idx+1}` : 'You') +
-        ` <span class="total">${val}${hand.status==='bust'?' (Bust)':''}</span>` +
-        (isActiveHand ? ' 👈' : '');
+      // La main en cours est mise en évidence (badge + surbrillance des cartes),
+      // sinon on ne sait pas laquelle on est en train de jouer après un split.
+      playerLabelEls[idx].className = 'bj-hand-label ' + cls + (isActiveHand ? ' active-hand' : '');
+      playerRows[idx].classList.toggle('is-active-hand', isActiveHand);
+      playerRows[idx].classList.toggle('is-idle-hand', state.hands.length>1 && !isActiveHand && state.status==='playing');
+      playerLabelEls[idx].innerHTML =
+        (isActiveHand && state.hands.length>1 ? '<span class="turn-badge">À TOI</span> ' : '') +
+        (state.hands.length>1 ? `Main ${idx+1}` : 'You') +
+        ` <span class="total">${hand.status==='bust'?'Bust ':''}${val}</span>` +
+        ` <span class="breakdown">${breakdown}</span>`;
       playerCardsEls[idx].innerHTML = hand.cards.map(c => renderCard(c, false)).join('');
     });
     if (state.hands.length < 2) playerRows[1].style.display = 'none';
@@ -684,6 +733,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     bjResultEl.style.display = 'none';
     winCard.classList.remove('show');
     bjInsurance.style.display = 'none';
+    playerRows.forEach(row => row.classList.remove('is-active-hand','is-idle-hand'));
     hitBtn.disabled = true; standBtn.disabled = true; splitBtn.disabled = true; doubleBtn.disabled = true;
     playBtn.disabled = false; playBtn.textContent = 'Bet';
     betRow.querySelectorAll('input,button').forEach(el => el.disabled = false);
