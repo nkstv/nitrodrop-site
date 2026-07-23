@@ -298,6 +298,9 @@
   #claim-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
   #claim-form label{display:flex; flex-direction:column; gap:8px; font-size:11px; color:var(--muted);
     font-weight:800; text-transform:uppercase; letter-spacing:1.1px;}
+  /* Le bloc Discord disparaît entièrement une fois le compte connecté :
+     l'identité est déjà rappelée dans la sidebar, l'afficher ici est redondant. */
+  #discord-block{display:flex; flex-direction:column; gap:8px;}
   #claim-form input{
     background:var(--bg-soft); border:1px solid var(--line); border-radius:10px;
     padding:12px 14px; color:var(--cream); font-family:"Nunito Sans"; font-weight:700; font-size:14px; width:100%;
@@ -465,10 +468,10 @@
         <label><span id="pseudo-label-text">Username on the platform</span>
           <input type="text" required placeholder="Your account username" id="claim-pseudo-input">
         </label>
-        <label><span id="discord-label-text">Your Discord account</span></label>
-        <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Connect with Discord</button>
-        <p id="discord-join-note" style="font-size:11.5px; color:var(--muted-2); margin-top:-8px; line-height:1.5;"></p>
-        <div id="discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:700; text-align:center;"></div>
+        <div id="discord-block">
+          <label><span id="discord-label-text">Your Discord account</span></label>
+          <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Connect with Discord</button>
+        </div>
         <input type="hidden" id="claim-discord-input">
         <button type="submit" class="modal-submit" id="claim-submit-btn">Confirm my request</button>
       </form>
@@ -723,13 +726,6 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const pseudoInput = document.getElementById('claim-pseudo-input');
     if (m.pseudoPlaceholder) pseudoInput.placeholder = m.pseudoPlaceholder;
 
-    const discordNavLink = (cfg.nav && cfg.nav.links || []).find(l => (l.label || '').toLowerCase().includes('discord'));
-    const discordHref = (discordNavLink && discordNavLink.href) || '#';
-    const discordLinkText = m.discordJoinLinkText || 'serveur Discord';
-    const discordLinkHtml = `<a href="${escapeHtml(discordHref)}" target="_blank" rel="noopener" style="color:var(--gold); font-weight:800;">${escapeHtml(discordLinkText)}</a>`;
-    const joinNoteTemplate = m.discordJoinNote || `Join our {link} first, otherwise we won't be able to DM you the confirmation.`;
-    document.getElementById('discord-join-note').innerHTML = escapeHtml(joinNoteTemplate).replace('{link}', discordLinkHtml);
-
     const tgBtn = document.getElementById('confirm-telegram-btn');
     tgBtn.textContent = m.confirmTelegramText || 'Join the Telegram channel';
     tgBtn.href = m.confirmTelegramHref || '#';
@@ -738,22 +734,20 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     });
   }
 
-  // Réutilise la connexion Discord déjà faite ailleurs sur le site
+  // Réutilise la connexion Discord déjà faite ailleurs sur le site.
+  // Si le compte est déjà connecté, tout le bloc Discord disparaît : la connexion
+  // ajoute désormais automatiquement le joueur au serveur, et son identité est
+  // déjà visible dans la barre latérale.
   function applyDiscordIdentityToClaimForm(){
     const saved = getSavedDiscordIdentity();
     const input = document.getElementById('claim-discord-input');
-    const btn = document.getElementById('discord-connect-btn');
-    const info = document.getElementById('discord-connected-info');
+    const block = document.getElementById('discord-block');
     if (saved && saved.discordId){
       input.value = saved.discordId;
-      btn.style.display = 'none';
-      info.style.display = 'block';
-      const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connected as {username}';
-      info.textContent = template.replace('{username}', saved.username || 'Discord');
+      block.style.display = 'none';
     } else {
       input.value = '';
-      btn.style.display = '';
-      info.style.display = 'none';
+      block.style.display = '';
     }
   }
 
