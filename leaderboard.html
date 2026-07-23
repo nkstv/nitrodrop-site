@@ -20,6 +20,9 @@
   body{
     background:radial-gradient(1000px 500px at 70% -10%, rgba(232,193,104,.055), transparent 60%), var(--bg);
     color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif;
+    /* Filet de sécurité : aucun élément ne doit pouvoir créer de défilement
+       horizontal sur mobile. */
+    overflow-x:hidden; max-width:100%;
   }
   h1{font-family:"Baloo 2",sans-serif}
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}

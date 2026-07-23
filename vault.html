@@ -20,6 +20,9 @@
   body{
     background:radial-gradient(1000px 500px at 70% -10%, rgba(232,193,104,.055), transparent 60%), var(--bg);
     color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif;
+    /* Filet de sécurité : aucun élément ne doit pouvoir créer de défilement
+       horizontal sur mobile. */
+    overflow-x:hidden; max-width:100%;
   }
   h1{font-family:"Baloo 2",sans-serif}
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
@@ -267,9 +270,11 @@
   .vault-pagination button:disabled{opacity:.35; cursor:default;}
 
   @media(max-width:1100px){
-    .vault-layout{grid-template-columns:1fr;}
+    .vault-layout{grid-template-columns:1fr; min-width:0;}
+    .vault-layout > *{min-width:0; max-width:100%;}
     .vault-side{flex-direction:row; flex-wrap:wrap;}
-    .vault-side > *{flex:1; min-width:200px;}
+    /* min-width:200px faisait déborder sur les écrans étroits */
+    .vault-side > *{flex:1 1 200px; min-width:0;}
   }
   @media(max-width:600px){
     .vault-side{flex-direction:column;}
