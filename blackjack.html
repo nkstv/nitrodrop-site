@@ -227,6 +227,11 @@
     border:1.5px solid var(--green);
     box-shadow:0 0 30px rgba(95,214,139,.32);
   }
+  .bj-hand-row .bj-cards.cards-lose{
+    background:linear-gradient(180deg, rgba(242,109,109,.14), rgba(242,109,109,.04));
+    border:1.5px solid var(--red);
+    box-shadow:0 0 30px rgba(242,109,109,.28);
+  }
   .bj-hand-label.win .total{color:var(--green);} .bj-hand-label.lose .total{color:var(--red);}
   .bj-cards{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
   /* Main gagnante : les cartes elles-mêmes sont mises en valeur, au lieu d'une
@@ -238,8 +243,19 @@
     box-shadow:0 0 30px rgba(95,214,139,.32);
     animation:cardsWin .45s ease;
   }
+  /* Main perdante : même mise en valeur que le gain, en rouge. */
+  .bj-cards.cards-lose{
+    padding:9px 11px; border-radius:16px;
+    background:linear-gradient(180deg, rgba(242,109,109,.14), rgba(242,109,109,.04));
+    border:1.5px solid var(--red);
+    box-shadow:0 0 30px rgba(242,109,109,.28);
+    animation:cardsLose .45s ease;
+  }
   @keyframes cardsWin{
     0%{transform:scale(1);} 45%{transform:scale(1.04);} 100%{transform:scale(1);}
+  }
+  @keyframes cardsLose{
+    0%{transform:scale(1);} 45%{transform:scale(.97);} 100%{transform:scale(1);}
   }
   .bj-card{
     width:56px;height:78px;border-radius:9px;background:linear-gradient(180deg,#fdf8ec,#efe4c8);
@@ -734,7 +750,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     bjTable.style.display = 'flex';
     bjResultEl.style.display = 'none';
     winCard.classList.remove('show');
-    playerCardsEls.forEach(el => el.classList.remove('cards-win'));
+    playerCardsEls.forEach(el => el.classList.remove('cards-win','cards-lose'));
 
     const dealerVal = state.dealerHidden ? cardValueLabel([state.dealerCards[0]]) : cardValueLabel(state.dealerCards);
     const dealerBust = !state.dealerHidden && dealerVal > 21;
@@ -788,22 +804,21 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (state.status === 'resolved'){
       const totalBet = state.hands.reduce((s,h)=>s+h.bet,0);
       const totalPayout = state.totalPayout || 0;
-      if (totalPayout > totalBet){
-        // Gain : on colore les cartes gagnantes en vert plutôt que d'afficher une
-        // carte par-dessus, qui masquait justement la main. Avec un split, seule
-        // la (ou les) main(s) gagnante(s) est mise en valeur.
-        state.hands.forEach((h, i) => {
-          if (i > 1) return;
-          if (h.result === 'win' || h.result === 'blackjack'){
-            playerCardsEls[i].classList.add('cards-win');
-          }
-        });
-      } else {
-        // Push ou défaite : pas de carte, donc on garde un retour texte
-        const label = totalPayout === totalBet ? 'Push' : 'Lost';
-        const cls = totalPayout === totalBet ? 'push' : 'lose';
-        bjResultEl.textContent = label;
-        bjResultEl.className = 'bj-result ' + cls;
+      // Chaque main est colorée selon SON propre résultat : avec un split, on peut
+      // gagner une main et perdre l'autre, donc un verdict global serait trompeur.
+      state.hands.forEach((h, i) => {
+        if (i > 1) return;
+        if (h.result === 'win' || h.result === 'blackjack'){
+          playerCardsEls[i].classList.add('cards-win');
+        } else if (h.result === 'lose'){
+          playerCardsEls[i].classList.add('cards-lose');
+        }
+      });
+
+      // Seule l'égalité garde un texte : ni vert ni rouge ne conviendrait.
+      if (totalPayout === totalBet){
+        bjResultEl.textContent = 'Push';
+        bjResultEl.className = 'bj-result push';
         bjResultEl.style.display = 'block';
       }
       loadHistory();
@@ -815,7 +830,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     bjPlaceholder.style.display = 'flex';
     bjResultEl.style.display = 'none';
     winCard.classList.remove('show');
-    playerCardsEls.forEach(el => el.classList.remove('cards-win'));
+    playerCardsEls.forEach(el => el.classList.remove('cards-win','cards-lose'));
     bjInsurance.style.display = 'none';
     playerRows.forEach(row => row.classList.remove('is-active-hand','is-idle-hand'));
     hitBtn.disabled = true; standBtn.disabled = true; splitBtn.disabled = true; doubleBtn.disabled = true;
