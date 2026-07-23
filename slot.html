@@ -182,23 +182,19 @@
     0%{transform:scale(1);} 45%{transform:scale(1.07);} 100%{transform:scale(1);}
   }
   .slot-reels.win-glow{filter:drop-shadow(0 0 30px rgba(95,214,139,.25));}
+  /* Défaite : même traitement que le gain, en rouge. */
+  .slot-reel.reel-lose{
+    border-color:var(--red);
+    background:linear-gradient(180deg, rgba(242,109,109,.14), rgba(242,109,109,.04));
+    box-shadow:0 0 26px rgba(242,109,109,.3), inset 0 0 20px rgba(242,109,109,.1);
+    animation:reelLose .45s ease;
+  }
+  @keyframes reelLose{
+    0%{transform:scale(1);} 45%{transform:scale(.95);} 100%{transform:scale(1);}
+  }
+  .slot-reels.lose-glow{filter:drop-shadow(0 0 30px rgba(242,109,109,.2));}
   @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
-  .bust-card{position:absolute;top:14px;right:14px;background:rgba(20,14,8,.93);border:1.5px solid var(--red);
-    border-radius:var(--r-m);padding:10px 18px;text-align:center;box-shadow:0 0 26px rgba(242,109,109,.25);
-    opacity:0;transform:translateY(-6px);transition:.25s;pointer-events:none;z-index:2}
-  .bust-card.show{opacity:1;transform:translateY(0)}
-  .bust-card .t{font-family:"Baloo 2";font-weight:800;font-size:21px;line-height:1.1}
-  .bust-card .v{color:var(--red);font-weight:800;font-size:13px;margin-top:4px;border-top:1px solid var(--line);padding-top:5px}
-  .bust-card .v .key{color:var(--gold)}
 
-  .win-card{position:absolute;top:50%;left:50%;background:rgba(15,11,6,.96);border:2px solid var(--green);
-    border-radius:20px;padding:22px 34px;text-align:center;box-shadow:0 0 50px rgba(95,214,139,.4), 0 20px 50px rgba(0,0,0,.5);
-    opacity:0;transform:translate(-50%,-50%) scale(.85);transition:.25s;pointer-events:none;z-index:5}
-  .win-card.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-  .win-card .t{font-family:"Baloo 2";font-weight:800;font-size:34px;line-height:1.1;color:var(--green)}
-  .win-card .sep{height:1px;background:var(--line);margin:10px 0}
-  .win-card .v{color:var(--green);font-weight:800;font-size:19px}
-  .win-card .v .key{color:var(--gold)}
 
   .game-bar{display:flex;align-items:center;justify-content:center;border-top:1px solid var(--line);
     background:rgba(20,15,8,.5);padding:11px 16px}
@@ -403,15 +399,6 @@
         </aside>
 
         <section class="board slot-board">
-          <div class="bust-card" id="bustCard">
-            <div class="t">Lost</div>
-            <div class="v"><span class="key">🔑</span> <span id="bustAmt">-0</span></div>
-          </div>
-          <div class="win-card" id="winCard">
-            <div class="t"><span id="winMult">1.00</span>×</div>
-            <div class="sep"></div>
-            <div class="v"><span class="key">🔑</span> <span id="winAmt">+0</span></div>
-          </div>
           <div class="slot-reels" id="slotReels">
             <div class="slot-reel"><span class="slot-sym" id="reel0">❔</span></div>
             <div class="slot-reel"><span class="slot-sym" id="reel1">❔</span></div>
@@ -568,8 +555,6 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const balanceEl=document.getElementById('balance');
   const balanceSidebarEl=document.getElementById('balance-sidebar');
   const playBtn=document.getElementById('play');
-  const bustCard=document.getElementById('bustCard'), bustAmt=document.getElementById('bustAmt');
-  const winCard=document.getElementById('winCard'), winMultEl=document.getElementById('winMult'), winAmtEl=document.getElementById('winAmt');
   const reelEls=[document.getElementById('reel0'), document.getElementById('reel1'), document.getElementById('reel2')];
   const slotReels=document.getElementById('slotReels');
 
@@ -597,10 +582,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (!(bet >= MIN_BET)){ betRow.classList.add('err'); setTimeout(()=>betRow.classList.remove('err'),1200); return; }
 
     busy=true; playBtn.disabled=true;
-    bustCard.classList.remove('show');
-    winCard.classList.remove('show');
-    reelEls.forEach(r => { r.textContent = '❔'; r.parentElement.classList.remove('reel-win'); });
-    slotReels.classList.remove('win-glow');
+    reelEls.forEach(r => { r.textContent = '❔'; r.parentElement.classList.remove('reel-win','reel-lose'); });
+    slotReels.classList.remove('win-glow','lose-glow');
 
     try{
       const resp = await fetch(`${workerBase}/slots/spin`, {
@@ -623,8 +606,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
           reelEls.forEach(el => el.parentElement.classList.add('reel-win'));
           slotReels.classList.add('win-glow');
         } else {
-          bustAmt.textContent = '-' + bet;
-          bustCard.classList.add('show');
+          // Défaite : les rouleaux passent en rouge, comme le vert pour un gain
+          reelEls.forEach(el => el.parentElement.classList.add('reel-lose'));
+          slotReels.classList.add('lose-glow');
         }
         loadHistory();
       }, 700);
