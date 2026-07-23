@@ -205,6 +205,21 @@
   .pf-stat.green .v{color:var(--green);}
   .pf-stat.red .v{color:var(--red);}
 
+  .pf-ach-right{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .pf-claim-ach{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:13px; padding:9px 16px; border-radius:20px;
+    box-shadow:0 4px 12px rgba(232,193,104,.25); transition:.15s; white-space:nowrap;
+  }
+  .pf-claim-ach:hover:not(:disabled){filter:brightness(1.06); transform:translateY(-1px);}
+  .pf-claim-ach:disabled{opacity:.55; filter:none; cursor:default; transform:none; box-shadow:none;}
+  .pf-badge .r{
+    display:inline-block; margin-top:7px; font-size:10.5px; font-weight:800;
+    padding:3px 9px; border-radius:20px; white-space:nowrap;
+  }
+  .pf-badge.unlocked .r{background:rgba(232,193,104,.15); color:var(--gold); border:1px solid rgba(232,193,104,.35);}
+  .pf-badge.claimed-ach .r{background:rgba(95,214,139,.12); color:var(--green); border:1px solid rgba(95,214,139,.35);}
+  .pf-badge.locked .r{background:var(--panel-3); color:var(--muted-2); border:1px solid var(--line);}
   .pf-badges{display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:11px;}
   .pf-badge{
     background:var(--bg-soft); border:1px solid var(--line); border-radius:14px;
@@ -457,7 +472,13 @@
       </section>
 
       <section class="card">
-        <div class="card-h"><h2>Achievements</h2><span class="card-tag" id="pf-ach-count">0 / 10</span></div>
+        <div class="card-h">
+          <h2>Achievements</h2>
+          <div class="pf-ach-right">
+            <span class="card-tag" id="pf-ach-count">0 / 10</span>
+            <button class="pf-claim-ach" id="pf-claim-ach" style="display:none;"></button>
+          </div>
+        </div>
         <div class="pf-badges" id="pf-badges"></div>
       </section>
 
@@ -701,17 +722,64 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     `;
   }
 
-  function renderAchievements(list){
+  function renderAchievements(list, claimableKeys){
     const unlocked = list.filter(a => a.unlocked).length;
     document.getElementById('pf-ach-count').textContent = `${unlocked} / ${list.length}`;
-    document.getElementById('pf-badges').innerHTML = list.map(a => `
-      <div class="pf-badge ${a.unlocked ? 'unlocked' : 'locked'}" title="${escapeHtml(a.desc)}">
-        <span class="e">${a.icon}</span>
-        <div class="t">${escapeHtml(a.name)}</div>
-        <div class="d">${escapeHtml(a.desc)}</div>
-      </div>
-    `).join('');
+
+    // Bouton de réclamation : visible seulement s'il y a quelque chose à encaisser
+    const btn = document.getElementById('pf-claim-ach');
+    if (claimableKeys > 0){
+      btn.style.display = '';
+      btn.disabled = false;
+      btn.textContent = `Claim 🔑 ${fmt(claimableKeys)}`;
+    } else {
+      btn.style.display = 'none';
+    }
+
+    document.getElementById('pf-badges').innerHTML = list.map(a => {
+      // Trois états : déjà encaissé, débloqué à encaisser, encore verrouillé
+      const cls = a.claimed ? 'unlocked claimed-ach' : (a.unlocked ? 'unlocked' : 'locked');
+      const reward = a.claimed
+        ? `✓ 🔑 ${fmt(a.reward)}`
+        : `🔑 ${fmt(a.reward)}`;
+      return `
+        <div class="pf-badge ${cls}" title="${escapeHtml(a.desc)}">
+          <span class="e">${a.icon}</span>
+          <div class="t">${escapeHtml(a.name)}</div>
+          <div class="d">${escapeHtml(a.desc)}</div>
+          <span class="r">${reward}</span>
+        </div>
+      `;
+    }).join('');
   }
+
+  document.getElementById('pf-claim-ach').addEventListener('click', async () => {
+    const discordId = getSharedDiscordId();
+    if (!discordId) return;
+    const btn = document.getElementById('pf-claim-ach');
+    btn.disabled = true;
+    try{
+      const resp = await fetch(`${workerBase}/profile/claim-achievements`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ discordId }),
+      });
+      const data = await resp.json();
+      if (!data.ok){
+        if (data.reason === 'nothing_to_claim') showAlert('Nothing to claim right now.');
+        else if (data.reason === 'banned') showAlert('Your account has been banned from the games.');
+        else showAlert('Could not claim your rewards.');
+        btn.disabled = false;
+        return;
+      }
+      setBalance(fmt(data.keys));
+      const names = data.claimed.map(c => c.name).join(', ');
+      showAlert(`You claimed ${fmt(data.total)} keys!\n\n${names}`);
+      loadProfile();
+    }catch(e){
+      showAlert('Network error, please try again.');
+      btn.disabled = false;
+    }
+  });
 
   function renderRecent(list){
     const rows = document.getElementById('pf-recent');
@@ -774,7 +842,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       setBalance(fmt(data.keys));
       applyClaimState(data.claim);
       renderStats(data.stats);
-      renderAchievements(data.achievements);
+      renderAchievements(data.achievements, data.claimableKeys || 0);
       renderRecent(data.recent || []);
       setupReferral(discordId);
     }catch(e){
