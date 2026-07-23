@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#171209">
-<title>Drop Cash — Dice</title>
+<title>Drop Cash — Profile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -117,109 +117,106 @@
   .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
   .burger{display:none}
 
-  /* ---------- Panneau de jeu ---------- */
-  .game-panel{background:linear-gradient(180deg,var(--panel),var(--bg-soft));
-    border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;display:flex;flex-direction:column}
-  .game-wrap{display:grid;grid-template-columns:300px 1fr}
+  /* ---------- Profil ---------- */
+  .pf-notice{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
+    border-radius:var(--r-l); padding:44px 28px; text-align:center; max-width:440px; margin:20px auto;
+  }
+  .pf-notice-icon{font-size:38px; margin-bottom:14px;}
+  .pf-notice h2{font-family:"Baloo 2"; font-weight:800; font-size:21px; color:var(--cream);}
+  .pf-notice p{font-size:14px; color:var(--muted); line-height:1.6; margin:10px 0 22px;}
+  .pf-notice .bet-btn{font-size:15px; padding:13px;}
 
-  .controls{background:linear-gradient(180deg,var(--panel-2),rgba(34,26,16,.6));
-    border-right:1px solid var(--line);padding:20px 18px;display:flex;flex-direction:column;gap:14px}
-  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg-soft);border-radius:30px;padding:4px;border:1px solid var(--line)}
-  .seg button{padding:10px 0;border-radius:26px;font-weight:800;letter-spacing:1.6px;font-size:12px;color:var(--muted);transition:.18s}
-  .seg button.on{background:var(--panel-3);color:var(--cream);box-shadow:inset 0 0 0 1px rgba(232,193,104,.15)}
-  .field label{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;margin-bottom:8px}
-  .field label .bal{color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:.8px}
-  .field label .bal b{color:var(--cream)}
-  .input-row{display:flex;align-items:center;gap:6px;background:var(--bg-soft);border:1px solid var(--line);
-    border-radius:var(--r-m);padding:6px 7px 6px 13px;transition:border-color .2s}
-  .input-row.err{border-color:var(--red)}
-  .input-row .key{color:var(--gold);font-size:13px}
-  .input-row input{flex:1;background:none;border:none;outline:none;color:var(--cream);
-    font-family:"Nunito Sans";font-weight:800;font-size:15px;min-width:0}
-  .chip{background:var(--panel-3);border:1px solid var(--line);border-radius:9px;padding:7px 11px;
-    font-weight:800;font-size:12.5px;color:var(--cream);transition:.15s}
-  .chip:hover{border-color:rgba(232,193,104,.4);color:var(--gold)}
-  .bet-btn{margin-top:auto;background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep));color:#3a2a08;
-    font-family:"Baloo 2";font-weight:800;font-size:19px;padding:14px;border-radius:var(--r-m);
-    box-shadow:0 5px 14px rgba(232,193,104,.22), inset 0 1px 0 rgba(255,255,255,.35);transition:.15s}
-  .bet-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
-  .bet-btn:active{transform:translateY(1px)}
-  .bet-btn:disabled{opacity:.55; filter:none; cursor:default; transform:none; box-shadow:none;}
+  .pf-wrap{display:flex; flex-direction:column; gap:16px;}
 
-  .board{background:radial-gradient(600px 320px at 50% 0%, rgba(232,193,104,.05), transparent 70%);
-    padding:20px 24px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
-  .board-area{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+  .pf-hero{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
+    border-radius:var(--r-l); padding:20px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .pf-hero-pfp{
+    width:64px; height:64px; border-radius:50%; object-fit:cover; flex:none;
+    border:2px solid rgba(232,193,104,.4);
+    background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);
+  }
+  .pf-hero-text{flex:1; min-width:0;}
+  .pf-hero-name{font-family:"Baloo 2"; font-weight:800; font-size:21px; color:var(--cream);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .pf-hero-sub{font-size:12px; color:var(--muted-2); margin-top:2px;}
+  .pf-hero-balance{text-align:right;}
+  .pf-hero-balance .l{font-size:10px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; color:var(--muted);}
+  .pf-hero-balance .v{font-family:"Baloo 2"; font-weight:800; font-size:26px; color:var(--gold); margin-top:2px;}
 
+  .pf-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
 
-  .win-card{position:absolute;top:50%;left:50%;background:rgba(15,11,6,.96);border:2px solid var(--green);
-    border-radius:20px;padding:22px 34px;text-align:center;box-shadow:0 0 50px rgba(95,214,139,.4), 0 20px 50px rgba(0,0,0,.5);
-    opacity:0;transform:translate(-50%,-50%) scale(.85);transition:.25s;pointer-events:none;z-index:5}
-  .win-card.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-  .win-card .t{font-family:"Baloo 2";font-weight:800;font-size:34px;line-height:1.1;color:var(--green)}
-  .win-card .sep{height:1px;background:var(--line);margin:10px 0}
-  .win-card .v{color:var(--green);font-weight:800;font-size:19px}
-  .win-card .v .key{color:var(--gold)}
+  .card{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
+    border-radius:var(--r-l); padding:20px 22px;
+  }
+  .card-h{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px; flex-wrap:wrap;}
+  .card-h h2{font-family:"Baloo 2"; font-weight:800; font-size:17px; color:var(--cream);}
+  .card-tag{font-size:10.5px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--muted-2);}
+  .card-sub{font-size:13px; color:var(--muted); line-height:1.55; margin-bottom:16px;}
+  .card-sub b{color:var(--gold);}
+  .streak{
+    background:rgba(232,193,104,.12); border:1px solid rgba(232,193,104,.35); color:var(--gold);
+    font-size:11.5px; font-weight:800; padding:5px 11px; border-radius:20px; white-space:nowrap;
+  }
+  .pf-cooldown{
+    margin-top:12px; text-align:center; font-size:12.5px; color:var(--muted); font-weight:700;
+  }
+  .pf-cooldown b{color:var(--gold); font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 
-  /* ---------- Dice ---------- */
-  .dice-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-  .dice-stats .stat{
-    background:linear-gradient(180deg, var(--panel-3), var(--bg-soft));
-    border:1px solid var(--line); border-radius:14px; padding:13px 14px;
-    display:flex; flex-direction:column; gap:6px; transition:.18s;
+  .pf-ref{
+    display:flex; align-items:center; gap:10px; background:var(--bg-soft);
+    border:1px solid var(--line); border-radius:var(--r-m); padding:11px 13px;
   }
-  .dice-stats .stat.accent{border-color:rgba(232,193,104,.35); box-shadow:0 0 18px rgba(232,193,104,.07);}
-  .dice-stats .stat .k{
-    color:var(--muted); font-size:10px; font-weight:800; letter-spacing:1.1px;
-    text-transform:uppercase; display:flex; align-items:center; gap:5px; white-space:nowrap;
+  .pf-ref code{
+    flex:1; min-width:0; color:var(--gold); font-weight:800; font-size:12.5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
-  .dice-stats .stat .v{
-    font-family:"Baloo 2"; font-weight:800; font-size:23px; color:var(--cream);
-    display:flex; align-items:baseline; gap:2px; line-height:1;
+  .pf-ref button{
+    width:32px; height:32px; border-radius:9px; border:1px solid var(--line); background:var(--panel-3);
+    color:var(--muted); display:grid; place-items:center; flex:none; transition:.15s;
   }
-  .dice-stats .stat.accent .v{color:var(--gold);}
-  .dice-stats .stat .v .unit{font-size:14px; opacity:.65; font-weight:800;}
+  .pf-ref button:hover{color:var(--gold); border-color:rgba(232,193,104,.4);}
+  .pf-ref button.copied{background:var(--green); color:#08130a; border-color:transparent;}
 
-  .dice-slider{
-    width:100%; height:6px; border-radius:3px; appearance:none; background:var(--bg-soft);
-    outline:none; margin-top:4px;
-  }
-  .dice-slider::-webkit-slider-thumb{
-    appearance:none; width:20px; height:20px; border-radius:50%;
-    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
-    border:2px solid #191309; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.4);
-  }
-  .dice-slider::-moz-range-thumb{
-    width:20px; height:20px; border-radius:50%;
-    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
-    border:2px solid #191309; cursor:pointer;
-  }
+  .pf-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:11px;}
+  .pf-stat{background:var(--bg-soft); border:1px solid var(--line); border-radius:14px; padding:14px 16px;}
+  .pf-stat .k{font-size:10px; font-weight:800; letter-spacing:1.1px; text-transform:uppercase; color:var(--muted);}
+  .pf-stat .v{font-family:"Baloo 2"; font-weight:800; font-size:20px; color:var(--cream); margin-top:5px;
+    display:flex; align-items:center; gap:5px; line-height:1.15;}
+  .pf-stat .v .key{font-size:14px;}
+  .pf-stat .s{font-size:11px; color:var(--muted-2); margin-top:3px;}
+  .pf-stat.gold .v{color:var(--gold);}
+  .pf-stat.green .v{color:var(--green);}
+  .pf-stat.red .v{color:var(--red);}
 
-  .dice-board{justify-content:center; min-height:340px; gap:28px;}
-  .dice-result{font-family:"Baloo 2"; font-weight:800; font-size:44px;}
-  .dice-result.win{color:var(--green);} .dice-result.lose{color:var(--red);}
-  .dice-placeholder{font-family:"Baloo 2"; font-weight:800; font-size:22px; color:var(--cream);}
-  .dice-track-wrap{width:100%; max-width:520px;}
-  .dice-track{
-    position:relative; height:16px; border-radius:10px; overflow:visible;
-    background:linear-gradient(90deg, var(--green) 0%, var(--green) 50%, var(--red) 50%, var(--red) 100%);
+  .pf-badges{display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:11px;}
+  .pf-badge{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:14px;
+    padding:15px 10px; text-align:center; transition:.18s;
   }
-  .dice-marker{
-    position:absolute; top:-9px; width:5px; height:34px; background:#fff; border-radius:3px;
-    box-shadow:0 0 10px rgba(255,255,255,.7); transform:translateX(-50%); transition:left .5s cubic-bezier(.22,.9,.3,1);
-  }
-  .dice-track-labels{display:flex; justify-content:space-between; margin-top:10px; font-size:11px; color:var(--muted); font-weight:700;}
+  .pf-badge .e{font-size:26px; display:block; margin-bottom:7px;}
+  .pf-badge .t{font-family:"Baloo 2"; font-weight:800; font-size:12.5px; color:var(--cream); line-height:1.25;}
+  .pf-badge .d{font-size:10.5px; color:var(--muted-2); margin-top:4px; line-height:1.4;}
+  .pf-badge.locked{opacity:.32; filter:grayscale(1);}
+  .pf-badge.unlocked{border-color:rgba(232,193,104,.4); box-shadow:0 0 20px rgba(232,193,104,.08);}
+
+  .pf-empty{font-size:13px; color:var(--muted-2); text-align:center; padding:16px 0;}
+
   @media(max-width:860px){
-    .dice-board{min-height:260px;}
-    .dice-result{font-size:32px;}
+    .pf-grid{grid-template-columns:1fr;}
+    .pf-hero{padding:16px 18px; gap:12px;}
+    .pf-hero-pfp{width:52px; height:52px;}
+    .pf-hero-name{font-size:18px;}
+    .pf-hero-balance{text-align:left; width:100%;
+      border-top:1px solid var(--line); padding-top:12px;}
+    .pf-hero-balance .v{font-size:22px;}
+    .card{padding:16px 16px;}
+    .pf-badges{grid-template-columns:repeat(auto-fill,minmax(98px,1fr)); gap:9px;}
   }
-  @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
-
-  .game-bar{display:flex;align-items:center;justify-content:center;border-top:1px solid var(--line);
-    background:rgba(20,15,8,.5);padding:11px 16px}
-  .bar-logo{display:flex;align-items:center;gap:7px;font-family:"Baloo 2";font-weight:800;font-size:15px;
-    color:var(--cream);opacity:.85;white-space:nowrap}
-  .bar-logo .mark{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
-    display:grid;place-items:center;font-size:11px;border:1.5px solid rgba(0,0,0,.4)}
 
   /* ---------- Paris ---------- */
   .bets{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
@@ -296,37 +293,18 @@
     .burger{display:flex;width:38px;height:38px;border-radius:50%;background:var(--panel-3);
       border:1px solid var(--line);flex-direction:column;gap:3.5px;align-items:center;justify-content:center}
     .burger span{display:block;width:15px;height:2px;background:var(--cream);border-radius:2px}
-    /* En grille, un enfant garde par défaut la largeur minimale de son contenu :
-       sans min-width:0, les rouleaux / boutons débordaient hors de l'écran au
-       lieu de se compresser. */
-    .game-wrap{grid-template-columns:1fr; min-width:0}
-    .game-wrap > *{min-width:0; max-width:100%}
-    .controls, .board{min-width:0; max-width:100%}
+    .game-wrap{grid-template-columns:1fr}
     .board{order:1;padding:12px;gap:10px}
     .controls{order:2;border-right:none;border-top:1px solid var(--line);padding:14px;gap:10px}
     .grid{gap:6px;width:100%}
     .bet-btn{margin-top:2px}
+    .bar-tools button:nth-child(n+3){display:none}
     .bets{padding:12px}
-    /* Rangée de mise : sur écran étroit, l'input rétrécit et les boutons
-       (½ / 2× / Max) restent entiers au lieu d'être coupés à droite. */
-    /* Piste et statistiques du Dice : tout doit rester dans la largeur */
-    .dice-board{padding:14px 10px; gap:18px}
-    .dice-track-wrap{max-width:100%}
-    .dice-stats{gap:8px}
-    .dice-stats .stat{padding:11px 10px}
-    .dice-stats .stat .k{font-size:9px; letter-spacing:.6px}
-    .dice-stats .stat .v{font-size:19px}
-    .dice-result{font-size:28px}
-    .input-row{padding:5px 6px 5px 10px; gap:4px}
-    .input-row input{min-width:0; font-size:15px}
-    .chip{padding:7px 9px; font-size:12px; flex:none}
-    /* "0 KEYS" ne doit pas pousser la ligne hors de l'écran */
-    .field label{gap:8px}
-    .field label .bal{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
   /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
+  @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
   .custom-alert-overlay{
     position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(3px);
     display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
@@ -367,7 +345,7 @@
 
     <div class="s-label">MENU</div>
     <nav class="s-nav">
-      <a href="/profile"><span class="ic">👤</span><span>Profile</span></a>
+      <a href="/profile" class="on"><span class="ic">👤</span><span>Profile</span></a>
       <a href="/leaderboard"><span class="ic">🏆</span><span>Leaderboard</span></a>
       <a href="/bonuses"><span class="ic">🎁</span><span>Bonuses</span><span class="tag" id="bonus-count">—</span></a>
       <a href="/vault"><span class="ic">🔒</span><span>Vault</span></a>
@@ -378,7 +356,7 @@
       <a href="/mines"><span class="ic">💣</span><span>Mines</span></a>
       <a href="/blackjack"><span class="ic">🃏</span><span>Blackjack</span></a>
       <a href="/slot"><span class="ic">🎰</span><span>Slot</span></a>
-      <a href="/dice" class="on"><span class="ic">🎲</span><span>Dice</span></a>
+      <a href="/dice"><span class="ic">🎲</span><span>Dice</span></a>
     </nav>
 
     <div class="side-foot">
@@ -395,7 +373,7 @@
   <div class="main">
     <div class="topbar">
       <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
-      <h1>Dice</h1>
+      <h1>Profile</h1>
       <span class="crumb">Originals</span>
       <div class="top-right">
         <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> players online</span>
@@ -403,73 +381,76 @@
       </div>
     </div>
 
-    <div class="game-panel">
-      <div class="game-wrap bj-wrap">
-        <aside class="controls">
-          <div class="seg">
-            <button class="on" id="dirUnderBtn" type="button">ROLL UNDER</button>
-            <button id="dirOverBtn" type="button">ROLL OVER</button>
-          </div>
-          <div class="field">
-            <label>Bet Amount <span class="bal">🔑 <b id="balance">0</b> KEYS</span></label>
-            <div class="input-row" id="betRow">
-              <span class="key">🔑</span>
-              <input id="bet" type="number" inputmode="decimal" step="0.1" value="1" min="0.1">
-              <button class="chip" id="half">½</button>
-              <button class="chip" id="double">2×</button>
-              <button class="chip" id="maxBet">Max</button>
-            </div>
-          </div>
-          <div class="field">
-            <label>Target <span class="bal"><b id="targetDisplay">50.00</b></span></label>
-            <input type="range" id="targetSlider" min="2" max="98" step="0.01" value="50" class="dice-slider">
-          </div>
-          <div class="stats dice-stats">
-            <div class="stat">
-              <div class="k">🎯 Win Chance</div>
-              <div class="v"><span id="winChance">50.00</span><span class="unit">%</span></div>
-            </div>
-            <div class="stat accent">
-              <div class="k">💰 Multiplier</div>
-              <div class="v"><span id="diceMult">1.94</span><span class="unit">×</span></div>
-            </div>
-          </div>
-          <button class="bet-btn" id="play">Bet</button>
-        </aside>
-
-        <section class="board dice-board">
-          <div class="win-card" id="winCard">
-            <div class="t"><span id="winMult">1.00</span>×</div>
-            <div class="sep"></div>
-            <div class="v"><span class="key">🔑</span> <span id="winAmt">+0</span></div>
-          </div>
-          <div class="dice-result" id="diceResult" style="display:none;"></div>
-          <div class="dice-track-wrap">
-            <div class="dice-track" id="diceTrack">
-              <div class="dice-marker" id="diceMarker" style="display:none;"></div>
-            </div>
-            <div class="dice-track-labels"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
-          </div>
-          <div class="dice-placeholder" id="dicePlaceholder">Place your bet to roll</div>
-        </section>
-      </div>
-
-      <div class="game-bar">
-        <div class="bar-logo"><span class="mark">🦁</span>Drop Cash</div>
-      </div>
+    <div class="pf-notice" id="pf-notice">
+      <div class="pf-notice-icon">🔒</div>
+      <h2>Connect with Discord</h2>
+      <p>Log in to see your profile, claim your daily keys and track your achievements.</p>
+      <button class="bet-btn" onclick="connectDiscord()">🎮 Connect with Discord</button>
     </div>
 
-    <section class="bets">
-      <div class="tabs">
-        <button class="on">All Bets</button><button>My Bets</button>
+    <div class="pf-wrap" id="pf-wrap" style="display:none;">
+
+      <section class="pf-hero">
+        <img class="pf-hero-pfp" id="pf-pfp" alt="" referrerpolicy="no-referrer">
+        <div class="pf-hero-text">
+          <div class="pf-hero-name" id="pf-name">—</div>
+          <div class="pf-hero-sub">via Discord</div>
+        </div>
+        <div class="pf-hero-balance">
+          <div class="l">Balance</div>
+          <div class="v"><span class="key">🔑</span> <b id="pf-balance">0</b></div>
+        </div>
+      </section>
+
+      <div class="pf-grid">
+
+        <section class="card">
+          <div class="card-h">
+            <h2>Daily keys</h2>
+            <span class="streak" id="pf-streak" style="display:none;">🔥 <b id="pf-streak-n">0</b> day streak</span>
+          </div>
+          <p class="card-sub">Claim <b>2 keys</b> every day. Missed days are lost.</p>
+          <button class="bet-btn" id="pf-claim-btn">🔑 Claim 2 keys</button>
+          <div class="pf-cooldown" id="pf-cooldown" style="display:none;">
+            ⏳ Next claim in <b id="pf-timer">--:--:--</b>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-h"><h2>Affiliate</h2></div>
+          <p class="card-sub">Share your link with friends.</p>
+          <div class="pf-ref">
+            <code id="pf-ref-link">—</code>
+            <button id="pf-ref-copy" aria-label="Copy link" title="Copy link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+            </button>
+          </div>
+        </section>
+
       </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Game</th><th>Player</th><th>Time</th><th>Bet</th><th>Result</th><th>Payout</th></tr></thead>
-          <tbody id="betRows"></tbody>
-        </table>
-      </div>
-    </section>
+
+      <section class="card">
+        <div class="card-h"><h2>Statistics</h2><span class="card-tag">All time</span></div>
+        <div class="pf-stats" id="pf-stats"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2>Achievements</h2><span class="card-tag" id="pf-ach-count">0 / 10</span></div>
+        <div class="pf-badges" id="pf-badges"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2>Recent bets</h2></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Game</th><th>Bet</th><th>Result</th><th>Payout</th></tr></thead>
+            <tbody id="pf-recent"></tbody>
+          </table>
+        </div>
+        <p class="pf-empty" id="pf-recent-empty" style="display:none;">No bets yet.</p>
+      </section>
+
+    </div>
 
   </div>
 </div>
@@ -594,179 +575,191 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false)});
   drawer.querySelectorAll('.d-item').forEach(b=>b.addEventListener('click',()=>toggle(false)));
 
-  const betInput=document.getElementById('bet'), betRow=document.getElementById('betRow');
-  // Mise minimum alignée sur le serveur (MIN_BET_KEYS)
-  const MIN_BET = 0.1;
-  const roundBet = n => Math.round(n * 100) / 100;
-
-  const balanceEl=document.getElementById('balance');
   const balanceSidebarEl=document.getElementById('balance-sidebar');
-  const playBtn=document.getElementById('play');
-  const dirUnderBtn=document.getElementById('dirUnderBtn'), dirOverBtn=document.getElementById('dirOverBtn');
-  const targetSlider=document.getElementById('targetSlider'), targetDisplay=document.getElementById('targetDisplay');
-  const winChanceEl=document.getElementById('winChance'), diceMultEl=document.getElementById('diceMult');
-  const diceTrack=document.getElementById('diceTrack'), diceMarker=document.getElementById('diceMarker');
-  const diceResultEl=document.getElementById('diceResult'), dicePlaceholder=document.getElementById('dicePlaceholder');
-  const winCard=document.getElementById('winCard'), winMultEl=document.getElementById('winMult'), winAmtEl=document.getElementById('winAmt');
-
-  let direction = 'under'; // 'under' ou 'over'
-  let busy=false;
-  const HOUSE_EDGE = 0.97;
-  // Même plancher que le serveur : un gain doit toujours rapporter quelque chose
-  const MIN_MULTIPLIER = 1.01;
+  const pfWrap=document.getElementById('pf-wrap'), pfNotice=document.getElementById('pf-notice');
+  const claimBtn=document.getElementById('pf-claim-btn');
+  const cooldownEl=document.getElementById('pf-cooldown'), timerEl=document.getElementById('pf-timer');
+  const streakEl=document.getElementById('pf-streak'), streakN=document.getElementById('pf-streak-n');
+  let countdownInterval = null;
 
   function setBalance(v){
-    balanceEl.textContent = v;
     balanceSidebarEl.textContent = v;
+    const el = document.getElementById('pf-balance');
+    if (el) el.textContent = v;
   }
 
-  function updateDiceStats(){
-    const target = parseFloat(targetSlider.value);
-    targetDisplay.textContent = target.toFixed(2);
-    const winChance = direction === 'under' ? target : (100 - target);
-    const multiplier = Math.max(MIN_MULTIPLIER, (100 / winChance) * HOUSE_EDGE);
-    winChanceEl.textContent = winChance.toFixed(2);
-    diceMultEl.textContent = multiplier.toFixed(2);
-    diceTrack.style.background = direction === 'under'
-      ? `linear-gradient(90deg, var(--green) 0%, var(--green) ${target}%, var(--red) ${target}%, var(--red) 100%)`
-      : `linear-gradient(90deg, var(--red) 0%, var(--red) ${target}%, var(--green) ${target}%, var(--green) 100%)`;
+  function fmt(n){
+    const v = Number(n) || 0;
+    return (Math.round(v * 100) / 100).toLocaleString('en-US');
   }
 
-  dirUnderBtn.addEventListener('click', () => {
-    direction = 'under';
-    dirUnderBtn.classList.add('on'); dirOverBtn.classList.remove('on');
-    updateDiceStats();
-  });
-  dirOverBtn.addEventListener('click', () => {
-    direction = 'over';
-    dirOverBtn.classList.add('on'); dirUnderBtn.classList.remove('on');
-    updateDiceStats();
-  });
-  targetSlider.addEventListener('input', updateDiceStats);
-  updateDiceStats();
+  // ---------------- Récompense quotidienne ----------------
+  function applyClaimState(claim){
+    // La série n'apparaît qu'à partir de 2 jours (purement visuel, sans récompense)
+    if (claim.streak >= 2){
+      streakEl.style.display = '';
+      streakN.textContent = claim.streak;
+    } else {
+      streakEl.style.display = 'none';
+    }
 
-  async function rollDice(){
-    if (busy) return;
-    const discordId = getSharedDiscordId(), pseudo = getSharedUsername();
+    if (claim.claimedToday){
+      claimBtn.disabled = true;
+      claimBtn.textContent = '✓ Claimed today';
+      cooldownEl.style.display = '';
+      startCountdown();
+    } else {
+      claimBtn.disabled = false;
+      claimBtn.textContent = `🔑 Claim ${claim.amount} keys`;
+      cooldownEl.style.display = 'none';
+      clearInterval(countdownInterval);
+    }
+  }
+
+  function startCountdown(){
+    clearInterval(countdownInterval);
+    const render = () => {
+      // Le compteur repart à minuit UTC, comme la journée côté serveur
+      const now = new Date();
+      const nextUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
+      let s = Math.max(0, Math.floor((nextUtc - now.getTime()) / 1000));
+      const h = String(Math.floor(s / 3600)).padStart(2,'0');
+      const m = String(Math.floor((s % 3600) / 60)).padStart(2,'0');
+      const sec = String(s % 60).padStart(2,'0');
+      timerEl.textContent = `${h}:${m}:${sec}`;
+      if (s === 0){ clearInterval(countdownInterval); loadProfile(); }
+    };
+    render();
+    countdownInterval = setInterval(render, 1000);
+  }
+
+  claimBtn.addEventListener('click', async () => {
+    const discordId = getSharedDiscordId();
     if (!discordId){ connectDiscord(); return; }
-    const bet = roundBet(+betInput.value || 0);
-    if (!(bet >= MIN_BET)){ betRow.classList.add('err'); setTimeout(()=>betRow.classList.remove('err'),1200); return; }
-
-    busy=true; playBtn.disabled=true;
-    winCard.classList.remove('show');
+    claimBtn.disabled = true;
     try{
-      const resp = await fetch(`${workerBase}/dice/roll`, {
+      const resp = await fetch(`${workerBase}/profile/claim`, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ discordId, pseudo, avatarUrl: getSharedAvatarUrl(), bet, target: parseFloat(targetSlider.value), direction }),
+        body: JSON.stringify({ discordId }),
       });
       const data = await resp.json();
       if (!data.ok){
-        if (data.reason==='insufficient_keys') showAlert('Not enough keys.');
-        else if (data.reason==='banned') showAlert('Your account has been banned from the games.');
-        else showAlert("Could not roll the dice.");
-        playBtn.disabled=false; busy=false;
+        if (data.reason === 'already_claimed'){
+          applyClaimState(data.claim);
+          if (data.keys != null) setBalance(fmt(data.keys));
+        } else if (data.reason === 'banned'){
+          showAlert('Your account has been banned from the games.');
+        } else {
+          showAlert('Could not claim your keys.');
+          claimBtn.disabled = false;
+        }
         return;
       }
-      setBalance(data.keys);
-      dicePlaceholder.style.display = 'none';
-      diceMarker.style.display = 'block';
-      diceMarker.style.left = data.roll + '%';
-      diceResultEl.style.display = 'block';
-      diceResultEl.className = 'dice-result ' + (data.won ? 'win' : 'lose');
-      diceResultEl.textContent = data.roll.toFixed(2) + (data.won ? '' : ' (Lost)');
-      // Carte de gain centrée (même animation que Mines et Slot), affichée une fois
-      // que le marqueur a fini de glisser jusqu'à sa position.
-      if (data.won){
-        setTimeout(() => {
-          winMultEl.textContent = data.multiplier.toFixed(2);
-          winAmtEl.textContent = '+' + data.payout;
-          winCard.classList.add('show');
-        }, 550);
-      }
-      loadHistory();
+      setBalance(fmt(data.keys));
+      applyClaimState(data.claim);
+      showAlert(`You claimed ${data.claimed} keys!`);
     }catch(e){
       showAlert('Network error, please try again.');
+      claimBtn.disabled = false;
     }
-    playBtn.disabled=false; busy=false;
-  }
-
-  playBtn.addEventListener('click', rollDice);
-  document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(MIN_BET,roundBet((+betInput.value||0)/2)));
-  document.getElementById('double').addEventListener('click',()=>betInput.value=roundBet((+betInput.value||0)*2));
-  document.getElementById('maxBet').addEventListener('click',()=>{
-    // On mise tout le solde disponible, décimales comprises : sinon un joueur
-    // avec 0.80 clé ne pourrait plus jamais miser.
-    const max = parseFloat(balanceEl.textContent) || 0;
-    betInput.value = Math.max(MIN_BET, roundBet(max));
   });
 
-  // ---------------- Historique (public + personnel) ----------------
-  const rows=document.getElementById('betRows');
-  const tabButtons = document.querySelectorAll('.tabs button');
-  let activeTab = 'all';
-
-  function renderHistoryRows(list){
-    rows.innerHTML='';
-    list.forEach(p => {
-      const tr=document.createElement('tr');
-      const isMines = p.game === 'mines';
-      const isBlackjack = p.game === 'blackjack';
-      const isSlot = p.game === 'slot';
-      const gameIcon = isMines ? '💣' : isBlackjack ? '🃏' : isSlot ? '🎰' : '🎲';
-      const gameName = isMines ? 'Mines' : isBlackjack ? 'Blackjack' : isSlot ? 'Slot' : 'Dice';
-      let resultHtml, payout;
-      if (isMines){
-        const mult = p.busted ? 0 : p.multiplier;
-        payout = p.busted ? 0 : p.payout;
-        resultHtml = `<span class="${mult>=2?'win':mult===0?'lose':''}">${(mult.toFixed ? mult.toFixed(2) : mult)}×</span>`;
-      } else if (isBlackjack){
-        payout = p.payout;
-        const label = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Won' : p.result==='push' ? 'Push' : 'Lost';
-        const cls = (p.result==='win'||p.result==='blackjack') ? 'win' : p.result==='push' ? '' : 'lose';
-        resultHtml = `<span class="${cls}">${label}</span>`;
-      } else {
-        payout = p.payout;
-        resultHtml = `<span class="${p.won?'win':'lose'}">${p.won ? p.multiplier.toFixed(2)+'×' : 'Lost'}</span>`;
-      }
-      tr.innerHTML=`<td><span class="g"><span class="ic">${gameIcon}</span>${gameName}</span></td>
-        <td><span class="p"><img class="pfp" src="${escapeHtml(p.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="" referrerpolicy="no-referrer">${escapeHtml(p.pseudo||'?')}</span></td>
-        <td class="time">${formatLocalTime(p.dateMs)}</td>
-        <td><span class="key">🔑</span> ${escapeHtml(String(p.bet))}</td>
-        <td>${resultHtml}</td>
-        <td class="${payout>p.bet?'win':''}"><span class="key">🔑</span> ${escapeHtml(String(payout))}</td>`;
-      rows.appendChild(tr);
-    });
+  // ---------------- Statistiques ----------------
+  function renderStats(s){
+    const gameNames = { mines:'Mines', blackjack:'Blackjack', dice:'Dice', slots:'Slot' };
+    const netClass = s.net > 0 ? 'green' : (s.net < 0 ? 'red' : '');
+    const bestGame = s.bestMultiplierGame ? (gameNames[s.bestMultiplierGame] || s.bestMultiplierGame) : '—';
+    document.getElementById('pf-stats').innerHTML = `
+      <div class="pf-stat"><div class="k">Rounds played</div><div class="v">${fmt(s.plays)}</div></div>
+      <div class="pf-stat gold"><div class="k">Total wagered</div><div class="v"><span class="key">🔑</span>${fmt(s.wagered)}</div></div>
+      <div class="pf-stat gold"><div class="k">Total won</div><div class="v"><span class="key">🔑</span>${fmt(s.won)}</div></div>
+      <div class="pf-stat ${netClass}"><div class="k">Net result</div><div class="v"><span class="key">🔑</span>${s.net > 0 ? '+' : ''}${fmt(s.net)}</div></div>
+      <div class="pf-stat"><div class="k">Best multiplier</div><div class="v">${s.bestMultiplier ? fmt(s.bestMultiplier) + '×' : '—'}</div><div class="s">${escapeHtml(bestGame)}</div></div>
+      <div class="pf-stat"><div class="k">Biggest bet</div><div class="v"><span class="key">🔑</span>${fmt(s.biggestBet)}</div></div>
+    `;
   }
 
-  async function loadHistory(){
-    if (!workerBase) return;
+  function renderAchievements(list){
+    const unlocked = list.filter(a => a.unlocked).length;
+    document.getElementById('pf-ach-count').textContent = `${unlocked} / ${list.length}`;
+    document.getElementById('pf-badges').innerHTML = list.map(a => `
+      <div class="pf-badge ${a.unlocked ? 'unlocked' : 'locked'}" title="${escapeHtml(a.desc)}">
+        <span class="e">${a.icon}</span>
+        <div class="t">${escapeHtml(a.name)}</div>
+        <div class="d">${escapeHtml(a.desc)}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderRecent(list){
+    const rows = document.getElementById('pf-recent');
+    const empty = document.getElementById('pf-recent-empty');
+    if (!list.length){
+      rows.innerHTML = ''; empty.style.display = ''; return;
+    }
+    empty.style.display = 'none';
+    const meta = { mines:['💣','Mines'], blackjack:['🃏','Blackjack'], dice:['🎲','Dice'], slot:['🎰','Slot'] };
+    rows.innerHTML = list.map(p => {
+      const [icon, name] = meta[p.game] || ['🎮', p.game];
+      const result = p.won
+        ? `<span class="win">${p.multiplier ? fmt(p.multiplier) + '×' : 'Won'}</span>`
+        : `<span class="lose">Lost</span>`;
+      return `<tr>
+        <td><span class="g"><span class="ic">${icon}</span>${escapeHtml(name)}</span></td>
+        <td><span class="key">🔑</span> ${fmt(p.bet)}</td>
+        <td>${result}</td>
+        <td class="${p.payout > p.bet ? 'win' : ''}"><span class="key">🔑</span> ${fmt(p.payout)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ---------------- Lien d'affiliation ----------------
+  function setupReferral(discordId){
+    const link = `${location.origin}/?ref=${encodeURIComponent(discordId)}`;
+    document.getElementById('pf-ref-link').textContent = link;
+    const btn = document.getElementById('pf-ref-copy');
+    btn.onclick = () => {
+      navigator.clipboard.writeText(link).then(() => {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M20 6 9 17l-5-5"></path></svg>';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = original; btn.classList.remove('copied'); }, 1600);
+      }).catch(() => {});
+    };
+  }
+
+  // ---------------- Chargement ----------------
+  async function loadProfile(){
+    const discordId = getSharedDiscordId();
+    if (!discordId || !workerBase){
+      pfNotice.style.display = '';
+      pfWrap.style.display = 'none';
+      return;
+    }
     try{
-      let lists = [];
-      const games = ['mines', 'blackjack', 'dice', 'slots'];
-      if (activeTab === 'mine'){
-        const discordId = getSharedDiscordId();
-        if (!discordId){ renderHistoryRows([]); return; }
-        const resps = await Promise.all(games.map(g => fetch(`${workerBase}/${g}/my-history?discordId=${encodeURIComponent(discordId)}&limit=10`)));
-        const datas = await Promise.all(resps.map(r => r.json()));
-        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g === 'slots' ? 'slot' : g })));
-      } else {
-        const resps = await Promise.all(games.map(g => fetch(`${workerBase}/${g}/history?limit=10`)));
-        const datas = await Promise.all(resps.map(r => r.json()));
-        lists = games.map((g, i) => (datas[i].history || []).map(p => ({ ...p, game: g === 'slots' ? 'slot' : g })));
-      }
-      const merged = lists.flat().sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0)).slice(0, 10);
-      renderHistoryRows(merged);
-    }catch(e){}
-  }
+      const resp = await fetch(`${workerBase}/profile/summary?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      if (!data.ok){ pfNotice.style.display = ''; pfWrap.style.display = 'none'; return; }
 
-  tabButtons.forEach((btn, idx) => {
-    btn.addEventListener('click', () => {
-      tabButtons.forEach(b => b.classList.remove('on'));
-      btn.classList.add('on');
-      activeTab = idx===0 ? 'all' : 'mine';
-      loadHistory();
-    });
-  });
+      pfNotice.style.display = 'none';
+      pfWrap.style.display = '';
+
+      const saved = getSavedDiscordIdentity() || {};
+      const fallback = 'https://cdn.discordapp.com/embed/avatars/0.png';
+      document.getElementById('pf-name').textContent = data.profile.pseudo || saved.username || '—';
+      document.getElementById('pf-pfp').src = data.profile.avatarUrl || saved.avatarUrl || fallback;
+
+      setBalance(fmt(data.keys));
+      applyClaimState(data.claim);
+      renderStats(data.stats);
+      renderAchievements(data.achievements);
+      renderRecent(data.recent || []);
+      setupReferral(discordId);
+    }catch(e){
+      pfNotice.style.display = '';
+      pfWrap.style.display = 'none';
+    }
+  }
 
   // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
   document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
@@ -779,14 +772,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       let lang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
       if (!CONFIG.content || !CONFIG.content[lang]) lang = CONFIG.defaultLang || 'en';
       const offers = CONFIG.content && CONFIG.content[lang] && CONFIG.content[lang].offers;
-      if (offers && offers.length){
-        el.textContent = String(offers.length);
-      } else {
-        el.style.display = 'none';
-      }
-    }catch(e){
-      el.style.display = 'none';
-    }
+      if (offers && offers.length) el.textContent = String(offers.length);
+      else el.style.display = 'none';
+    }catch(e){ el.style.display = 'none'; }
   })();
 
   // ---------------- Identité ----------------
@@ -809,8 +797,6 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       drawerPseudo.textContent = saved.username;
       drawerPfp.src = saved.avatarUrl || fallbackAvatar;
       drawerLogoutBtn.style.display = 'grid';
-      const config = await getKeysStatus(saved.discordId);
-      setBalance(config);
     } else {
       sideLoginBtn.style.display = 'block';
       sideUser.style.display = 'none';
@@ -818,16 +804,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       drawerLogoutBtn.style.display = 'none';
       setBalance('0');
     }
-    loadHistory();
-  }
-
-  async function getKeysStatus(discordId){
-    if (!workerBase) return '0';
-    try{
-      const resp = await fetch(`${workerBase}/mines/status?discordId=${encodeURIComponent(discordId)}`);
-      const data = await resp.json();
-      return data.keys;
-    }catch(e){ return '0'; }
+    loadProfile();
   }
 
   document.getElementById('side-logout-btn').addEventListener('click', () => {
