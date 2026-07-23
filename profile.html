@@ -190,21 +190,28 @@
   }
   .pf-cooldown b{color:var(--gold); font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
 
-  .pf-ref{
-    display:flex; align-items:center; gap:10px; background:var(--bg-soft);
-    border:1px solid var(--line); border-radius:var(--r-m); padding:11px 13px;
+  /* ---------- Suivi des demandes de bonus ---------- */
+  .bt-row{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--r-m);
+    padding:12px 14px; margin-bottom:9px;
   }
-  .pf-ref code{
-    flex:1; min-width:0; color:var(--gold); font-weight:800; font-size:12.5px;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  .bt-row:last-child{margin-bottom:0;}
+  .bt-top{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .bt-platform{font-family:"Baloo 2"; font-weight:800; font-size:14px; color:var(--cream);}
+  .bt-date{font-size:11px; color:var(--muted-2); margin-top:2px;}
+  .bt-badge{
+    font-size:10.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase;
+    padding:5px 11px; border-radius:20px; white-space:nowrap;
   }
-  .pf-ref button{
-    width:32px; height:32px; border-radius:9px; border:1px solid var(--line); background:var(--panel-3);
-    color:var(--muted); display:grid; place-items:center; flex:none; transition:.15s;
+  .bt-badge.pending{background:rgba(232,193,104,.14); color:var(--gold); border:1px solid rgba(232,193,104,.35);}
+  .bt-badge.sent{background:rgba(95,214,139,.12); color:var(--green); border:1px solid rgba(95,214,139,.35);}
+  .bt-badge.declined{background:rgba(242,109,109,.12); color:var(--red); border:1px solid rgba(242,109,109,.35);}
+  .bt-reason{
+    font-size:12px; color:var(--muted); line-height:1.5; margin-top:9px;
+    padding-top:9px; border-top:1px solid var(--line);
   }
-  .pf-ref button:hover{color:var(--gold); border-color:rgba(232,193,104,.4);}
-  .pf-ref button.copied{background:var(--green); color:#08130a; border-color:transparent;}
+  .bt-reason b{color:var(--red);}
+  .bt-pending-note{font-size:11.5px; color:var(--muted-2); margin-top:7px; line-height:1.45;}
 
   .pf-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:11px;}
   .pf-stat{background:var(--bg-soft); border:1px solid var(--line); border-radius:14px; padding:14px 16px;}
@@ -466,14 +473,10 @@
         </section>
 
         <section class="card">
-          <div class="card-h"><h2>Affiliate</h2></div>
-          <p class="card-sub">Share your link with friends.</p>
-          <div class="pf-ref">
-            <code id="pf-ref-link">—</code>
-            <button id="pf-ref-copy" aria-label="Copy link" title="Copy link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
-            </button>
-          </div>
+          <div class="card-h"><h2>Bonus tracking</h2><span class="card-tag" id="pf-bt-count"></span></div>
+          <p class="card-sub">Follow your bonus requests here.</p>
+          <div id="pf-bonus-list"></div>
+          <p class="pf-empty" id="pf-bonus-empty" style="display:none;">No bonus request yet.</p>
         </section>
 
       </div>
@@ -824,19 +827,57 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     }).join('');
   }
 
-  // ---------------- Lien d'affiliation ----------------
-  function setupReferral(discordId){
-    const link = `${location.origin}/?ref=${encodeURIComponent(discordId)}`;
-    document.getElementById('pf-ref-link').textContent = link;
-    const btn = document.getElementById('pf-ref-copy');
-    btn.onclick = () => {
-      navigator.clipboard.writeText(link).then(() => {
-        const original = btn.innerHTML;
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M20 6 9 17l-5-5"></path></svg>';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.innerHTML = original; btn.classList.remove('copied'); }, 1600);
-      }).catch(() => {});
-    };
+  // ---------------- Suivi des demandes de bonus ----------------
+  const DECLINE_LABELS = {
+    duplicate_account: 'Duplicate account',
+    rules_not_respected: 'Rules not respected',
+    other: 'Other',
+  };
+
+  async function loadBonusRequests(discordId){
+    const list = document.getElementById('pf-bonus-list');
+    const empty = document.getElementById('pf-bonus-empty');
+    const count = document.getElementById('pf-bt-count');
+    if (!workerBase){ list.innerHTML = ''; empty.style.display = ''; return; }
+    try{
+      const resp = await fetch(`${workerBase}/profile/bonus-requests?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      const reqs = data.requests || [];
+
+      const pending = reqs.filter(r => r.status === 'pending').length;
+      count.textContent = pending ? `${pending} pending` : '';
+
+      if (!reqs.length){
+        list.innerHTML = ''; empty.style.display = ''; return;
+      }
+      empty.style.display = 'none';
+
+      list.innerHTML = reqs.map(r => {
+        const date = r.dateMs ? new Date(r.dateMs).toLocaleDateString('en-US', {day:'2-digit', month:'short'}) : '';
+        const labels = { pending: 'Pending', sent: 'Sent ✓', declined: 'Declined' };
+        let extra = '';
+        if (r.status === 'declined'){
+          const reason = DECLINE_LABELS[r.declineReason] || 'Other';
+          extra = `<div class="bt-reason">Reason: <b>${escapeHtml(reason)}</b>` +
+                  (r.declineNote ? ` — ${escapeHtml(r.declineNote)}` : '') + `</div>`;
+        } else if (r.status === 'pending'){
+          extra = `<div class="bt-pending-note">Your request is being reviewed. Bonuses are usually delivered within 24 hours.</div>`;
+        }
+        return `
+          <div class="bt-row">
+            <div class="bt-top">
+              <div>
+                <div class="bt-platform">${escapeHtml(r.platform || '?')}</div>
+                <div class="bt-date">${escapeHtml(date)}</div>
+              </div>
+              <span class="bt-badge ${r.status}">${labels[r.status] || r.status}</span>
+            </div>
+            ${extra}
+          </div>`;
+      }).join('');
+    }catch(e){
+      list.innerHTML = ''; empty.style.display = '';
+    }
   }
 
   // ---------------- Chargement ----------------
@@ -870,7 +911,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       renderStats(data.stats);
       renderAchievements(data.achievements, data.claimableKeys || 0);
       renderRecent(data.recent || []);
-      setupReferral(discordId);
+      loadBonusRequests(discordId);
     }catch(e){
       pfNotice.style.display = '';
       pfWrap.style.display = 'none';

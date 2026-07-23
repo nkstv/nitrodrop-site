@@ -643,7 +643,7 @@
         <td>${renderQualifiedBadge(s)}</td>
         <td>${renderAffiliateBadge(s)}</td>
         <td style="text-align:center;">
-          <input type="checkbox" ${s.tipped ? 'checked' : ''} onchange="toggleTipped('${s.id}', this.checked)">
+          ${renderStatusCell(s)}
         </td>
         <td style="text-align:center;">
           <button class="btn" style="padding:5px 10px; font-size:11.5px; white-space:nowrap;" onclick="toggleArchived('${s.id}', ${!s.archived})">
@@ -685,6 +685,72 @@
     renderPagination();
   }
 
+  // ---------- Suivi des demandes : Tipsé / Refusé ----------
+  const DECLINE_REASONS = [
+    { id: 'duplicate_account',   label: 'Double compte' },
+    { id: 'rules_not_respected', label: 'Règles non respectées' },
+    { id: 'other',               label: 'Autre (préciser)' },
+  ];
+
+  function renderStatusCell(s){
+    const status = s.status || (s.tipped ? 'sent' : 'pending');
+    if (status === 'sent'){
+      return `<span class="badge" style="color:var(--accent-green); border-color:var(--accent-green);">Tipsé ✓</span>
+              <button class="btn" style="padding:4px 8px; font-size:11px; margin-top:5px;"
+                onclick="toggleTipped('${s.id}', false)">Annuler</button>`;
+    }
+    if (status === 'declined'){
+      const label = (DECLINE_REASONS.find(r => r.id === s.declineReason) || {}).label || 'Refusé';
+      return `<span class="badge" style="color:#FF7A90; border-color:#FF7A90;" title="${escapeHtml(s.declineNote || '')}">${escapeHtml(label)}</span>
+              <button class="btn" style="padding:4px 8px; font-size:11px; margin-top:5px;"
+                onclick="toggleTipped('${s.id}', false)">Annuler</button>`;
+    }
+    return `<div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
+              <button class="btn btn-save" style="padding:5px 12px; font-size:11.5px; white-space:nowrap;"
+                onclick="toggleTipped('${s.id}', true)">Tipsé</button>
+              <button class="btn" style="padding:5px 12px; font-size:11.5px; white-space:nowrap; border:1px solid #FF7A90; color:#FF7A90; background:transparent;"
+                onclick="openDeclineDialog('${s.id}')">Refusé</button>
+            </div>`;
+  }
+
+  // Refus : on demande le motif, puis le Worker envoie le DM correspondant
+  async function openDeclineDialog(id){
+    const choices = DECLINE_REASONS.map((r, i) => `${i + 1}. ${r.label}`).join('\n');
+    const answer = prompt(`Motif du refus :\n\n${choices}\n\nEntre le numéro (1-${DECLINE_REASONS.length}) :`);
+    if (answer === null) return;
+    const idx = parseInt(answer, 10) - 1;
+    if (!(idx >= 0 && idx < DECLINE_REASONS.length)){
+      alert('Numéro invalide.');
+      return;
+    }
+    const reason = DECLINE_REASONS[idx];
+    let note = '';
+    if (reason.id === 'other'){
+      note = prompt('Précise le motif (il sera envoyé au joueur) :') || '';
+      if (!note.trim()){ alert('Un motif est nécessaire pour "Autre".'); return; }
+    }
+    try{
+      const resp = await fetch(`${workerBaseUrl}/submissions/decline`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ id, reason: reason.id, note }),
+      });
+      const data = await resp.json();
+      if (!data.ok){ alert('Échec du refus.'); return; }
+      const s = allSubmissions.find(x => x.id === id);
+      if (s){
+        s.status = 'declined'; s.tipped = false;
+        s.declineReason = reason.id; s.declineNote = note;
+      }
+      if (data.discord && data.discord.attempted && !data.discord.ok){
+        alert('Refus enregistré, mais le message Discord n\'a pas pu être envoyé : ' + (data.discord.error || ''));
+      }
+      applyFilters();
+    }catch(e){
+      alert('Erreur réseau : ' + e.message);
+    }
+  }
+
   async function toggleTipped(id, tipped){
     try{
       const resp = await fetch(`${workerBaseUrl}/submissions/tip`, {
@@ -695,8 +761,13 @@
       if (!resp.ok) throw new Error('Échec de la sauvegarde');
       const data = await resp.json();
       const entry = allSubmissions.find(s => s.id === id);
-      if (entry) entry.tipped = tipped;
+      if (entry){
+        entry.tipped = tipped;
+        entry.status = tipped ? 'sent' : 'pending';
+        if (tipped){ entry.declineReason = ''; entry.declineNote = ''; }
+      }
       renderStats();
+      applyFilters(); // redessine la ligne avec son nouveau statut
 
       if (tipped && data.discord && data.discord.attempted){
         if (data.discord.ok){

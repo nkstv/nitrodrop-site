@@ -350,6 +350,46 @@
   }
   .modal-note{font-size:12px; color:var(--muted-2); margin-top:14px;}
 
+  /* ---------- Conditions du bonus + écran de livraison ---------- */
+  .terms-list{list-style:none; margin:20px 0 24px; display:flex; flex-direction:column; gap:13px;}
+  .terms-list li{
+    display:flex; gap:11px; align-items:flex-start;
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:12px; padding:13px 14px;
+    font-size:13px; color:var(--muted); line-height:1.55;
+  }
+  .terms-list li b{color:var(--cream);}
+  .terms-list .ic{font-size:15px; flex:none; line-height:1.4;}
+
+  .delivery-anim{position:relative; width:96px; height:96px; margin:6px auto 22px;}
+  .delivery-icon{
+    position:absolute; inset:0; display:grid; place-items:center; font-size:36px;
+    animation:deliveryPulse 1.8s ease-in-out infinite;
+  }
+  .delivery-ring{
+    position:absolute; inset:0; border-radius:50%;
+    border:2px solid rgba(232,193,104,.35); border-top-color:var(--gold);
+    animation:deliverySpin 1.1s linear infinite;
+  }
+  .delivery-ring.d2{
+    inset:12px; border-color:rgba(232,193,104,.18); border-bottom-color:var(--gold);
+    animation:deliverySpin 1.6s linear infinite reverse;
+  }
+  @keyframes deliverySpin{to{transform:rotate(360deg);}}
+  @keyframes deliveryPulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.12);}}
+
+  .delivery-steps{display:flex; flex-direction:column; gap:10px; margin-top:22px;}
+  .dstep{
+    display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:700;
+    color:var(--muted-2); transition:.3s;
+  }
+  .dstep .dot{
+    width:8px; height:8px; border-radius:50%; background:var(--line); flex:none; transition:.3s;
+  }
+  .dstep.active{color:var(--cream);}
+  .dstep.active .dot{background:var(--gold); box-shadow:0 0 10px rgba(232,193,104,.6);}
+  .dstep.done{color:var(--green);}
+  .dstep.done .dot{background:var(--green); box-shadow:none;}
+
   /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
   @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
   .custom-alert-overlay{
@@ -491,6 +531,34 @@
         <input type="hidden" id="claim-discord-input">
         <button type="submit" class="modal-submit" id="claim-submit-btn">Confirm my request</button>
       </form>
+    </div>
+
+    <div id="modal-step-terms" style="display:none;">
+      <div class="modal-tag">Before we send it</div>
+      <h3>Bonus conditions</h3>
+      <p class="modal-sub">Please read carefully — these rules decide whether you stay eligible for future offers.</p>
+      <ul class="terms-list">
+        <li><span class="ic">⚠️</span><div><b>Don't all-in your welcome bonus.</b> If you bet everything in one go, you won't be eligible for the next reload.</div></li>
+        <li><span class="ic">⚠️</span><div><b>Don't withdraw straight away.</b> If you cash out the bonus money immediately, you won't be eligible for the next reload.</div></li>
+        <li><span class="ic">✅</span><div>Play reasonably and you'll keep getting our offers.</div></li>
+      </ul>
+      <button type="button" class="modal-submit" id="terms-accept-btn">I accept — send my bonus</button>
+      <button type="button" class="modal-ghost" id="terms-back-btn" style="margin-top:10px;">Go back</button>
+    </div>
+
+    <div id="modal-step-delivery" style="display:none;">
+      <div class="delivery-anim">
+        <div class="delivery-ring"></div>
+        <div class="delivery-ring d2"></div>
+        <div class="delivery-icon">🎁</div>
+      </div>
+      <h3 style="text-align:center;">Delivery in progress…</h3>
+      <p class="modal-sub" style="text-align:center;" id="delivery-step-text">Sending your request…</p>
+      <div class="delivery-steps" id="delivery-steps">
+        <div class="dstep" data-i="0"><span class="dot"></span>Request received</div>
+        <div class="dstep" data-i="1"><span class="dot"></span>Checking your account</div>
+        <div class="dstep" data-i="2"><span class="dot"></span>Bonus queued for delivery</div>
+      </div>
     </div>
 
     <div id="modal-step-confirm" style="display:none;">
@@ -708,6 +776,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const stepGate = document.getElementById('modal-step-gate');
   const stepForm = document.getElementById('modal-step-form');
   const stepConfirm = document.getElementById('modal-step-confirm');
+  const stepTerms = document.getElementById('modal-step-terms');
+  const stepDelivery = document.getElementById('modal-step-delivery');
   const claimForm = document.getElementById('claim-form');
   let countdownInterval = null;
   let currentSignupUrl = '#';
@@ -796,6 +866,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
     stepGate.style.display = 'block';
     stepForm.style.display = 'none';
+    stepTerms.style.display = 'none';
+    stepDelivery.style.display = 'none';
     stepConfirm.style.display = 'none';
     claimForm.reset();
     const existingErr = document.getElementById('claim-form-error');
@@ -847,23 +919,31 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     errEl.textContent = msg;
   }
 
-  async function submitClaim(e){
+  // Le formulaire ne déclenche plus l'envoi directement : le joueur doit d'abord
+  // accepter les conditions du bonus.
+  function submitClaim(e){
     e.preventDefault();
+    const discordId = document.getElementById('claim-discord-input').value;
+    const m = getActive().modal || {};
+    if (!discordId){
+      showAlert(m.discordRequiredAlert || 'Connect with Discord before submitting your request.');
+      return;
+    }
+    stepForm.style.display = 'none';
+    stepTerms.style.display = 'block';
+  }
+
+  // Après acceptation : envoi réel, puis écran de livraison animé
+  async function confirmAndSend(){
     const platform = document.getElementById('modal-platform-name').textContent;
     const email = document.getElementById('claim-email-input').value;
     const pseudo = document.getElementById('claim-pseudo-input').value;
     const discordId = document.getElementById('claim-discord-input').value;
     const m = getActive().modal || {};
 
-    if (!discordId){
-      showAlert(m.discordRequiredAlert || 'Connect with Discord before submitting your request.');
-      return;
-    }
-
-    const submitBtn = document.getElementById('claim-submit-btn');
-    const originalLabel = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending…';
+    const acceptBtn = document.getElementById('terms-accept-btn');
+    acceptBtn.disabled = true;
+    acceptBtn.textContent = 'Sending…';
 
     let result = { ok: true };
     try{
@@ -874,19 +954,51 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       console.error('Notification failed:', err);
     }
 
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalLabel;
+    acceptBtn.disabled = false;
+    acceptBtn.textContent = 'I accept — send my bonus';
 
+    // Demande déjà faite récemment : on revient au formulaire avec l'explication
     if (result && result.ok === false && result.reason === 'duplicate_24h'){
+      stepTerms.style.display = 'none';
+      stepForm.style.display = 'block';
       const template = m.duplicateRequestMessage ||
         "You already submitted a request for this casino recently. Try again in about {hours}h.";
       showFormError(fillTemplate(template, { hours: result.hoursRemaining || '24' }));
       return;
     }
 
-    stepForm.style.display = 'none';
-    stepConfirm.style.display = 'block';
-    startCountdown();
+    stepTerms.style.display = 'none';
+    stepDelivery.style.display = 'block';
+    runDeliveryAnimation();
+  }
+
+  // Animation d'attente : purement visuelle, elle rassure le joueur pendant que
+  // la demande part. Le traitement réel se fait ensuite côté dashboard.
+  function runDeliveryAnimation(){
+    const steps = document.querySelectorAll('#delivery-steps .dstep');
+    const labels = [
+      'Sending your request…',
+      'Checking your account…',
+      'Almost there…',
+    ];
+    const textEl = document.getElementById('delivery-step-text');
+    steps.forEach(s => s.classList.remove('active','done'));
+    let i = 0;
+    const advance = () => {
+      if (i > 0) steps[i-1].classList.replace('active','done');
+      if (i < steps.length){
+        steps[i].classList.add('active');
+        textEl.textContent = labels[i];
+        i++;
+        setTimeout(advance, 1100);
+      } else {
+        // Fin de l'animation : on montre la confirmation
+        stepDelivery.style.display = 'none';
+        stepConfirm.style.display = 'block';
+        startCountdown();
+      }
+    };
+    advance();
   }
 
   function startCountdown(){
@@ -906,6 +1018,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       render();
     }, 1000);
   }
+
+  document.getElementById('terms-accept-btn').addEventListener('click', confirmAndSend);
+  document.getElementById('terms-back-btn').addEventListener('click', () => {
+    stepTerms.style.display = 'none';
+    stepForm.style.display = 'block';
+  });
 
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
