@@ -436,6 +436,10 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- La configuration (et ses fonctions de stockage) vient de ce fichier :
+     sans lui, admin.html n'a aucune donnée à afficher. -->
+<script src="nitrodrop-config.js?v=20260721a"></script>
+
 <script>
   // Navigation entre les sections. Tout reste dans la page : les champs cachés
   // conservent leur valeur, donc un seul « Enregistrer » suffit pour l'ensemble.
@@ -450,13 +454,14 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Rouvre la dernière section consultée
-  window.addEventListener('DOMContentLoaded', () => {
+  // Rouvre la dernière section consultée. Le script étant placé après le HTML,
+  // on l'exécute directement : attendre DOMContentLoaded serait trop tard.
+  (function restoreLastSection(){
     try{
       const last = localStorage.getItem('nitrodrop_admin_section');
       if (last && document.getElementById('section-' + last)) showSection(last);
     }catch(e){}
-  });
+  })();
 
   // ---------- Verrou d'accès (dissuasif, pas une vraie sécurité) ----------
   // Change ce mot de passe avant de publier. N'importe qui sait lire du code
