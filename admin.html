@@ -121,194 +121,15 @@
     <div class="field"><label>Titre de l'onglet du navigateur</label><input type="text" id="page-title"></div>
   </div>
 
-  <!-- BANNIÈRE HERO -->
-  <div class="panel">
-    <h2>Bannière du header (image de fond)</h2>
-    <div class="sub">Affiche une image en fond du bloc principal, avec un filtre sombre automatique pour garder les textes et boutons bien lisibles. Désactivée = rendu actuel (fond uni).</div>
-    <div class="checkbox-row">
-      <input type="checkbox" id="hero-banner-enabled">
-      <label for="hero-banner-enabled">Activer la bannière</label>
-    </div>
-    <div class="field"><label>Nom du fichier image (doit être uploadé à la racine du repo GitHub)</label><input type="text" id="hero-banner-url" placeholder="hero-banner.jpg"></div>
-    <div class="checkbox-row" style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line);">
-      <input type="checkbox" id="foil-pack-enabled">
-      <label for="foil-pack-enabled">Afficher le pack "foil" décoratif (visuel à droite du hero, sur PC et mobile)</label>
-    </div>
-    <div class="field" style="margin-top:14px;">
-      <label>Position du bandeau Telegram</label>
-      <select id="telegram-position">
-        <option value="above">Au-dessus des offres</option>
-        <option value="below">En dessous des offres</option>
-      </select>
-    </div>
-  </div>
+  
 
-  <!-- BOUTON FLOTTANT -->
-  <div class="panel">
-    <h2>Bouton flottant (bas à droite, sur toutes les pages)</h2>
-    <div class="sub">Une icône ronde flottante en bas à droite (index.html et vault.html), avec un badge Discord en superposition. Clique dessus pour aller vers un lien de ton choix, ouvert dans un nouvel onglet.</div>
-    <div class="checkbox-row">
-      <input type="checkbox" id="floating-widget-enabled">
-      <label for="floating-widget-enabled">Activer le bouton flottant</label>
-    </div>
-    <div class="field"><label>Nom du fichier image (doit être uploadé à la racine du repo GitHub)</label><input type="text" id="floating-widget-image" placeholder="floating-icon.png"></div>
-    <div class="field"><label>Lien de redirection (s'ouvre dans un nouvel onglet)</label><input type="text" id="floating-widget-link" placeholder="https://discord.gg/..."></div>
-  </div>
+  
 
-  <!-- TICKET À GRATTER -->
-  <div class="panel" style="border-color:rgba(139,92,255,0.4);">
-    <h2>Ticket à gratter (bouton "🎫 Ticket" dans le menu)</h2>
-    <div class="sub">Le tirage se fait uniquement sur le Worker (impossible à truquer côté visiteur). La chance de gain et le montant ne sont <strong>jamais</strong> publiés sur GitHub — ils sont envoyés directement au Worker, protégés par ta clé de dashboard.</div>
+  
 
-    <div class="row">
-      <div class="field"><label>URL de ton Worker (sans /notify à la fin)</label><input type="text" id="scratch-worker-url" placeholder="https://nitrodrop-relay.tonpseudo.workers.dev"></div>
-      <div class="field"><label>Clé du dashboard (X-Dashboard-Key)</label><input type="password" id="scratch-dashboard-key" placeholder="Ta clé DASHBOARD_KEY"></div>
-    </div>
+  
 
-    <button type="button" class="btn" onclick="loadScratchState()">Charger les réglages actuels</button>
-    <div id="scratch-current-state" style="margin-top:10px; font-size:12.5px; color:var(--text-dim);"></div>
-
-    <div class="subheading">Réglages du tirage</div>
-    <div class="row">
-      <div class="field"><label>Chance de gagner (%)</label><input type="text" id="scratch-win-chance" placeholder="0.5"></div>
-      <div class="field"><label>Montant gagné ($)</label><input type="text" id="scratch-win-amount" placeholder="2"></div>
-      <div class="field"><label>Essais autorisés par jour</label><input type="text" id="scratch-max-plays" placeholder="2"></div>
-    </div>
-    <button type="button" class="btn btn-save" onclick="setScratchConfig()">Enregistrer ces réglages</button>
-    <div id="scratch-set-status" style="margin-top:10px; font-size:12.5px;"></div>
-
-    <div class="subheading">Lien de réclamation (partagé, pas besoin de le traduire)</div>
-    <div class="field"><label>Lien Discord pour réclamer un gain</label><input type="text" id="scratch-discord-claim-link" placeholder="https://discord.gg/..."></div>
-
-    <div class="subheading">Textes (EN / FR séparément, comme le reste)</div>
-    <div class="field"><label>Texte du bouton dans le menu</label><input type="text" id="scratch-navLabel" placeholder="🎫 Ticket"></div>
-    <div class="field"><label>Étiquette</label><input type="text" id="scratch-tag" placeholder="Ticket à gratter"></div>
-    <div class="field"><label>Titre</label><input type="text" id="scratch-title" placeholder="Tente ta chance"></div>
-    <div class="field"><label>Sous-titre</label><input type="text" id="scratch-subtitle" placeholder="Un essai gratuit par jour."></div>
-    <div class="row">
-      <div class="field"><label>Libellé du champ pseudo</label><input type="text" id="scratch-usernameLabel" placeholder="Pseudo"></div>
-      <div class="field"><label>Placeholder du champ pseudo</label><input type="text" id="scratch-usernamePlaceholder" placeholder="Ton pseudo"></div>
-    </div>
-    <div class="field"><label>Note sous le bouton Discord</label><input type="text" id="scratch-discordNote" placeholder="Connexion Discord requise pour participer (1 essai par jour)."></div>
-    <div class="field"><label>Libellé "Ton compte Discord"</label><input type="text" id="scratch-discordAccountLabel" placeholder="Ton compte Discord"></div>
-    <div class="field"><label>Texte du bouton "Se connecter avec Discord"</label><input type="text" id="scratch-discordConnectText" placeholder="🎮 Se connecter avec Discord"></div>
-    <div class="field"><label>Titre de l'écran de résultat</label><input type="text" id="scratch-resultTitle" placeholder="Ton ticket"></div>
-    <div class="field"><label>Texte du bouton "Gratter"</label><input type="text" id="scratch-submitText" placeholder="Gratter le ticket"></div>
-    <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="scratch-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
-    <div class="field"><label>Message du compte à rebours (utilise <code>{time}</code>, affiché avant même de cliquer)</label><input type="text" id="scratch-cooldownMessage" placeholder="Reviens dans {time}"></div>
-    <div class="field"><label>Texte "essais restants" (utilise <code>{remaining}</code>)</label><input type="text" id="scratch-triesRemainingText" placeholder="{remaining} essai(s) restant(s) aujourd'hui"></div>
-    <div class="field"><label>Texte du bouton "Rejouer"</label><input type="text" id="scratch-playAgainText" placeholder="Rejouer"></div>
-    <div class="field"><label>Message si on essaie de gratter sans être connecté à Discord</label><input type="text" id="scratch-discordRequiredMessage" placeholder="Connecte-toi avec Discord avant de continuer."></div>
-    <div class="field"><label>Message d'erreur générique (réponse inattendue du serveur)</label><input type="text" id="scratch-genericErrorMessage" placeholder="Une erreur est survenue, réessaie."></div>
-    <div class="field"><label>Message d'erreur réseau (connexion au serveur impossible)</label><input type="text" id="scratch-networkErrorMessage" placeholder="Erreur de connexion, réessaie."></div>
-    <div class="field"><label>Message de victoire (utilise <code>{amount}</code>)</label><input type="text" id="scratch-winMessage" placeholder="Félicitations, tu remportes {amount} !"></div>
-    <div class="field"><label>Message de défaite</label><input type="text" id="scratch-loseMessage" placeholder="Pas de chance cette fois, reviens demain !"></div>
-    <div class="field"><label>Texte du bouton de réclamation</label><input type="text" id="scratch-discordButtonText" placeholder="Réclamer sur Discord"></div>
-  </div>
-
-  <!-- MACHINE À SOUS -->
-  <div class="panel" style="border-color:rgba(139,92,255,0.4);">
-    <h2>Machine à sous (bouton "🎰 Slot" dans le menu)</h2>
-    <div class="sub">Le tirage se fait uniquement sur le Worker (impossible à truquer côté visiteur). La chance de gain et le montant ne sont <strong>jamais</strong> publiés sur GitHub — ils sont envoyés directement au Worker, protégés par ta clé de dashboard.</div>
-
-    <div class="row">
-      <div class="field"><label>URL de ton Worker (sans /notify à la fin)</label><input type="text" id="slot-worker-url" placeholder="https://nitrodrop-relay.tonpseudo.workers.dev"></div>
-      <div class="field"><label>Clé du dashboard (X-Dashboard-Key)</label><input type="password" id="slot-dashboard-key" placeholder="Ta clé DASHBOARD_KEY"></div>
-    </div>
-
-    <button type="button" class="btn" onclick="loadSlotState()">Charger les réglages actuels</button>
-    <div id="slot-current-state" style="margin-top:10px; font-size:12.5px; color:var(--text-dim);"></div>
-
-    <div class="subheading">Réglages du tirage</div>
-    <div class="row">
-      <div class="field"><label>Chance de gagner (%)</label><input type="text" id="slot-win-chance" placeholder="0.5"></div>
-      <div class="field"><label>Montant gagné ($)</label><input type="text" id="slot-win-amount" placeholder="2"></div>
-      <div class="field"><label>Essais autorisés par jour</label><input type="text" id="slot-max-plays" placeholder="2"></div>
-    </div>
-    <button type="button" class="btn btn-save" onclick="setSlotConfig()">Enregistrer ces réglages</button>
-    <div id="slot-set-status" style="margin-top:10px; font-size:12.5px;"></div>
-
-    <div class="subheading">Lien de réclamation (partagé, pas besoin de le traduire)</div>
-    <div class="field"><label>Lien Discord pour réclamer un gain</label><input type="text" id="slot-discord-claim-link" placeholder="https://discord.gg/..."></div>
-
-    <div class="subheading">Textes (EN / FR séparément, comme le reste)</div>
-    <div class="field"><label>Texte du bouton dans le menu</label><input type="text" id="slot-navLabel" placeholder="🎰 Slot"></div>
-    <div class="field"><label>Étiquette</label><input type="text" id="slot-tag" placeholder="Machine à sous"></div>
-    <div class="field"><label>Titre</label><input type="text" id="slot-title" placeholder="Tente ta chance"></div>
-    <div class="field"><label>Sous-titre</label><input type="text" id="slot-subtitle" placeholder="Un spin gratuit par jour."></div>
-    <div class="row">
-      <div class="field"><label>Libellé du champ pseudo</label><input type="text" id="slot-usernameLabel" placeholder="Pseudo"></div>
-      <div class="field"><label>Placeholder du champ pseudo</label><input type="text" id="slot-usernamePlaceholder" placeholder="Ton pseudo"></div>
-    </div>
-    <div class="field"><label>Note sous le bouton Discord</label><input type="text" id="slot-discordNote" placeholder="Connexion Discord requise pour participer (1 spin par jour)."></div>
-    <div class="field"><label>Libellé "Ton compte Discord"</label><input type="text" id="slot-discordAccountLabel" placeholder="Ton compte Discord"></div>
-    <div class="field"><label>Texte du bouton "Se connecter avec Discord"</label><input type="text" id="slot-discordConnectText" placeholder="🎮 Se connecter avec Discord"></div>
-    <div class="field"><label>Titre de l'écran de résultat</label><input type="text" id="slot-resultTitle" placeholder="Résultat"></div>
-    <div class="field"><label>Texte du bouton "Spin"</label><input type="text" id="slot-spinText" placeholder="Spin"></div>
-    <div class="field"><label>Texte pendant le tirage</label><input type="text" id="slot-spinningText" placeholder="Ça tourne..."></div>
-    <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="slot-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
-    <div class="field"><label>Message du compte à rebours (utilise <code>{time}</code>, affiché avant même de cliquer)</label><input type="text" id="slot-cooldownMessage" placeholder="Reviens dans {time}"></div>
-    <div class="field"><label>Texte "essais restants" (utilise <code>{remaining}</code>)</label><input type="text" id="slot-triesRemainingText" placeholder="{remaining} essai(s) restant(s) aujourd'hui"></div>
-    <div class="field"><label>Texte du bouton "Rejouer"</label><input type="text" id="slot-playAgainText" placeholder="Rejouer"></div>
-    <div class="field"><label>Message si on essaie de jouer sans être connecté à Discord</label><input type="text" id="slot-discordRequiredMessage" placeholder="Connecte-toi avec Discord avant de continuer."></div>
-    <div class="field"><label>Message d'erreur générique (réponse inattendue du serveur)</label><input type="text" id="slot-genericErrorMessage" placeholder="Une erreur est survenue, réessaie."></div>
-    <div class="field"><label>Message d'erreur réseau (connexion au serveur impossible)</label><input type="text" id="slot-networkErrorMessage" placeholder="Erreur de connexion, réessaie."></div>
-    <div class="field"><label>Message de victoire (utilise <code>{amount}</code>)</label><input type="text" id="slot-winMessage" placeholder="Félicitations, tu remportes {amount} !"></div>
-    <div class="field"><label>Message de défaite</label><input type="text" id="slot-loseMessage" placeholder="Pas de chance cette fois, reviens demain !"></div>
-    <div class="field"><label>Texte du bouton de réclamation</label><input type="text" id="slot-discordButtonText" placeholder="Réclamer sur Discord"></div>
-  </div>
-
-  <!-- ROUE DE LA FORTUNE -->
-  <div class="panel" style="border-color:rgba(139,92,255,0.4);">
-    <h2>Roue de la fortune (bouton "🎡 Roue" dans le menu)</h2>
-    <div class="sub">Le tirage se fait uniquement sur le Worker (impossible à truquer côté visiteur). La chance de gain et le montant ne sont <strong>jamais</strong> publiés sur GitHub — ils sont envoyés directement au Worker, protégés par ta clé de dashboard.</div>
-
-    <div class="row">
-      <div class="field"><label>URL de ton Worker (sans /notify à la fin)</label><input type="text" id="wheel-worker-url" placeholder="https://nitrodrop-relay.tonpseudo.workers.dev"></div>
-      <div class="field"><label>Clé du dashboard (X-Dashboard-Key)</label><input type="password" id="wheel-dashboard-key" placeholder="Ta clé DASHBOARD_KEY"></div>
-    </div>
-
-    <button type="button" class="btn" onclick="loadWheelState()">Charger les réglages actuels</button>
-    <div id="wheel-current-state" style="margin-top:10px; font-size:12.5px; color:var(--text-dim);"></div>
-
-    <div class="subheading">Réglages du tirage</div>
-    <div class="row">
-      <div class="field"><label>Chance de gagner (%)</label><input type="text" id="wheel-win-chance" placeholder="0.5"></div>
-      <div class="field"><label>Montant gagné ($)</label><input type="text" id="wheel-win-amount" placeholder="2"></div>
-      <div class="field"><label>Essais autorisés par jour</label><input type="text" id="wheel-max-plays" placeholder="2"></div>
-    </div>
-    <button type="button" class="btn btn-save" onclick="setWheelConfig()">Enregistrer ces réglages</button>
-    <div id="wheel-set-status" style="margin-top:10px; font-size:12.5px;"></div>
-
-    <div class="subheading">Lien de réclamation (partagé, pas besoin de le traduire)</div>
-    <div class="field"><label>Lien Discord pour réclamer un gain</label><input type="text" id="wheel-discord-claim-link" placeholder="https://discord.gg/..."></div>
-
-    <div class="subheading">Textes (EN / FR séparément, comme le reste)</div>
-    <div class="field"><label>Texte du bouton dans le menu</label><input type="text" id="wheel-navLabel" placeholder="🎡 Roue"></div>
-    <div class="field"><label>Étiquette</label><input type="text" id="wheel-tag" placeholder="Roue de la fortune"></div>
-    <div class="field"><label>Titre</label><input type="text" id="wheel-title" placeholder="Fais tourner la roue"></div>
-    <div class="field"><label>Sous-titre</label><input type="text" id="wheel-subtitle" placeholder="Tente ta chance chaque jour."></div>
-    <div class="row">
-      <div class="field"><label>Libellé du champ pseudo</label><input type="text" id="wheel-usernameLabel" placeholder="Pseudo"></div>
-      <div class="field"><label>Placeholder du champ pseudo</label><input type="text" id="wheel-usernamePlaceholder" placeholder="Ton pseudo"></div>
-    </div>
-    <div class="field"><label>Note sous le bouton Discord</label><input type="text" id="wheel-discordNote" placeholder="Connexion Discord requise pour participer."></div>
-    <div class="field"><label>Libellé "Ton compte Discord"</label><input type="text" id="wheel-discordAccountLabel" placeholder="Ton compte Discord"></div>
-    <div class="field"><label>Texte du bouton "Se connecter avec Discord"</label><input type="text" id="wheel-discordConnectText" placeholder="🎮 Se connecter avec Discord"></div>
-    <div class="field"><label>Titre de l'écran de résultat</label><input type="text" id="wheel-resultTitle" placeholder="Résultat"></div>
-    <div class="field"><label>Texte du bouton "Faire tourner la roue"</label><input type="text" id="wheel-spinText" placeholder="Faire tourner la roue"></div>
-    <div class="field"><label>Texte pendant le tirage</label><input type="text" id="wheel-spinningText" placeholder="Ça tourne..."></div>
-    <div class="field"><label>Message si déjà joué aujourd'hui</label><input type="text" id="wheel-alreadyPlayedMessage" placeholder="Tu as déjà joué aujourd'hui, reviens demain !"></div>
-    <div class="field"><label>Message du compte à rebours (utilise <code>{time}</code>, affiché avant même de cliquer)</label><input type="text" id="wheel-cooldownMessage" placeholder="Reviens dans {time}"></div>
-    <div class="field"><label>Texte "essais restants" (utilise <code>{remaining}</code>)</label><input type="text" id="wheel-triesRemainingText" placeholder="{remaining} essai(s) restant(s) aujourd'hui"></div>
-    <div class="field"><label>Texte du bouton "Rejouer"</label><input type="text" id="wheel-playAgainText" placeholder="Rejouer"></div>
-    <div class="field"><label>Message si on essaie de jouer sans être connecté à Discord</label><input type="text" id="wheel-discordRequiredMessage" placeholder="Connecte-toi avec Discord avant de continuer."></div>
-    <div class="field"><label>Message d'erreur générique (réponse inattendue du serveur)</label><input type="text" id="wheel-genericErrorMessage" placeholder="Une erreur est survenue, réessaie."></div>
-    <div class="field"><label>Message d'erreur réseau (connexion au serveur impossible)</label><input type="text" id="wheel-networkErrorMessage" placeholder="Erreur de connexion, réessaie."></div>
-    <div class="field"><label>Message de victoire (utilise <code>{amount}</code>)</label><input type="text" id="wheel-winMessage" placeholder="Félicitations, tu remportes {amount} !"></div>
-    <div class="field"><label>Message de défaite</label><input type="text" id="wheel-loseMessage" placeholder="Pas de chance cette fois, reviens demain !"></div>
-    <div class="field"><label>Texte du bouton de réclamation</label><input type="text" id="wheel-discordButtonText" placeholder="Réclamer sur Discord"></div>
-  </div>
+  
 
   <!-- MENU / HEADER -->
   <div class="panel">
@@ -325,33 +146,7 @@
     </div>
   </div>
 
-  <!-- HERO -->
-  <div class="panel">
-    <h2>Bloc principal (hero)</h2>
-    <div class="sub">Le gros message d'accueil en haut de page.</div>
-
-    <div class="field"><label>Étiquette (eyebrow)</label><input type="text" id="hero-eyebrow"></div>
-    <div class="row">
-      <div class="field"><label>Titre — ligne 1</label><input type="text" id="hero-titleLine1"></div>
-      <div class="field"><label>Titre — ligne 2 (en vert)</label><input type="text" id="hero-titleEm"></div>
-    </div>
-    <div class="field"><label>Texte descriptif</label><textarea id="hero-lede"></textarea></div>
-    <div class="field"><label>Code promo affiché</label><input type="text" id="hero-code"></div>
-    <div class="checkbox-row">
-      <input type="checkbox" id="hero-codeWidgetEnabled">
-      <label for="hero-codeWidgetEnabled">Afficher le bloc "Code / Copier"</label>
-    </div>
-
-    <div class="subheading">Boutons du hero</div>
-    <div class="row">
-      <div class="field"><label>Bouton 1 — texte</label><input type="text" id="hero-btnPrimaryText"></div>
-      <div class="field"><label>Bouton 1 — lien</label><input type="text" id="hero-btnPrimaryHref"></div>
-    </div>
-    <div class="row">
-      <div class="field"><label>Bouton 2 — texte</label><input type="text" id="hero-btnGhostText"></div>
-      <div class="field"><label>Bouton 2 — lien</label><input type="text" id="hero-btnGhostHref"></div>
-    </div>
-  </div>
+  
 
   <!-- TELEGRAM -->
   <div class="panel">
@@ -421,24 +216,9 @@
     <div class="field"><label>Description</label><textarea id="step-desc-2"></textarea></div>
   </div>
 
-  <!-- TICKER -->
-  <div class="panel">
-    <h2>Bandeau défilant (notifications)</h2>
-    <div class="sub">Les messages qui défilent en boucle sous le hero (pseudo + montant réclamé).</div>
-    <div class="field"><label>Texte de liaison (entre le pseudo et le montant)</label><input type="text" id="ticker-verbText"></div>
-    <div id="ticker-fields"></div>
-  </div>
+  
 
-  <!-- FOOTER -->
-  <div class="panel">
-    <h2>Pied de page</h2>
-    <div class="row">
-      <div class="field"><label>Titre colonne 1</label><input type="text" id="footer-navTitle"></div>
-      <div class="field"><label>Titre colonne 2</label><input type="text" id="footer-communityTitle"></div>
-    </div>
-    <div id="footer-links-fields"></div>
-    <div class="field"><label>Texte du disclaimer (bas de page)</label><textarea id="footer-disclaimer" style="min-height:100px;"></textarea></div>
-  </div>
+  
 
   <!-- MODAL / POPUP -->
   <div class="panel">
@@ -831,51 +611,6 @@
     });
   }
 
-  function renderTickerFields(){
-    const container = document.getElementById('ticker-fields');
-    container.innerHTML = '';
-    content.ticker.forEach((item, i) => {
-      const row = el('div', {class:'ticker-row'});
-      const in1 = el('input', {type:'text', id:`ticker-name-${i}`, value: item.name});
-      const in2 = el('input', {type:'text', id:`ticker-message-${i}`, value: item.message});
-      row.appendChild(in1); row.appendChild(in2);
-      container.appendChild(row);
-    });
-  }
-
-  function renderFooterLinks(){
-    const container = document.getElementById('footer-links-fields');
-    container.innerHTML = '';
-    const rowNav = el('div', {class:'row'});
-    content.footer.navLinks.forEach((link, i) => {
-      const f = el('div', {class:'field'});
-      f.appendChild(el('label', {text:`Colonne 1 — lien ${i+1}`}));
-      const wrap = el('div', {style:'display:flex; gap:6px;'});
-      const in1 = el('input', {type:'text', id:`footer-nav-label-${i}`, value: link.label, style:'flex:1;'});
-      const in2 = el('input', {type:'text', id:`footer-nav-href-${i}`, value: link.href, style:'flex:1;'});
-      wrap.appendChild(in1); wrap.appendChild(in2);
-      f.appendChild(wrap);
-      rowNav.appendChild(f);
-    });
-    container.appendChild(rowNav);
-
-    const rowCom = el('div', {class:'row'});
-    content.footer.communityLinks.forEach((link, i) => {
-      const f = el('div', {class:'field'});
-      f.appendChild(el('label', {text:`Colonne 2 — lien ${i+1}`}));
-      const wrap = el('div', {style:'display:flex; gap:6px; align-items:center;'});
-      const in1 = el('input', {type:'text', id:`footer-community-label-${i}`, value: link.label, style:'flex:1;'});
-      const in2 = el('input', {type:'text', id:`footer-community-href-${i}`, value: link.href, style:'flex:1;'});
-      const chk = el('input', {type:'checkbox', id:`footer-community-newtab-${i}`});
-      chk.checked = link.newTab === true;
-      const chkLabel = el('label', {for:`footer-community-newtab-${i}`, text:'Nouvel onglet', style:'margin:0; text-transform:none; font-weight:400; white-space:nowrap;'});
-      wrap.appendChild(in1); wrap.appendChild(in2); wrap.appendChild(chk); wrap.appendChild(chkLabel);
-      f.appendChild(wrap);
-      rowCom.appendChild(f);
-    });
-    container.appendChild(rowCom);
-  }
-
   // ---------- Remplit tous les champs simples depuis cfg ----------
   function fillForm(){
     document.getElementById('defaultLang').value = cfg.defaultLang || 'en';
@@ -883,28 +618,11 @@
     document.getElementById('brand-text2').value = (content.brand && content.brand.text2) || 'DROP';
     document.getElementById('page-title').value = content.pageTitle || 'NITRODROP — Codes bonus crypto vérifiés';
     cfg.heroBanner = cfg.heroBanner || {};
-    document.getElementById('hero-banner-enabled').checked = !!cfg.heroBanner.enabled;
-    document.getElementById('hero-banner-url').value = cfg.heroBanner.imageUrl || 'hero-banner.jpg';
-    document.getElementById('foil-pack-enabled').checked = cfg.foilPackEnabled !== false;
-    document.getElementById('telegram-position').value = cfg.telegramPosition || 'above';
     cfg.floatingWidget = cfg.floatingWidget || {};
-    document.getElementById('floating-widget-enabled').checked = !!cfg.floatingWidget.enabled;
-    document.getElementById('floating-widget-image').value = cfg.floatingWidget.imageUrl || '';
-    document.getElementById('floating-widget-link').value = cfg.floatingWidget.linkUrl || '';
 
     document.getElementById('nav-ctaText').value = content.nav.ctaText;
     document.getElementById('nav-ctaHref').value = content.nav.ctaHref;
 
-    document.getElementById('hero-eyebrow').value = content.hero.eyebrow;
-    document.getElementById('hero-titleLine1').value = content.hero.titleLine1;
-    document.getElementById('hero-titleEm').value = content.hero.titleEm;
-    document.getElementById('hero-lede').value = content.hero.lede;
-    document.getElementById('hero-code').value = content.hero.code;
-    document.getElementById('hero-codeWidgetEnabled').checked = content.hero.codeWidgetEnabled !== false;
-    document.getElementById('hero-btnPrimaryText').value = content.hero.btnPrimaryText;
-    document.getElementById('hero-btnPrimaryHref').value = content.hero.btnPrimaryHref;
-    document.getElementById('hero-btnGhostText').value = content.hero.btnGhostText;
-    document.getElementById('hero-btnGhostHref').value = content.hero.btnGhostHref;
 
     document.getElementById('tg-tag').value = content.telegram.tag;
     document.getElementById('tg-title').value = content.telegram.title;
@@ -931,9 +649,6 @@
       document.getElementById(`step-desc-${i}`).value = step.desc;
     });
 
-    document.getElementById('footer-navTitle').value = content.footer.navTitle;
-    document.getElementById('footer-communityTitle').value = content.footer.communityTitle;
-    document.getElementById('footer-disclaimer').value = content.footer.disclaimer;
 
     document.getElementById('modal-gateTag').value = content.modal.gateTag || '';
     document.getElementById('modal-gateSubTemplate').value = content.modal.gateSubTemplate;
@@ -989,87 +704,19 @@
     document.getElementById('vault-notConfiguredMessage').value = content.vault.notConfiguredMessage || '';
 
     content.scratchTicket = content.scratchTicket || {};
-    document.getElementById('scratch-navLabel').value = content.scratchTicket.navLabel || '';
-    document.getElementById('scratch-tag').value = content.scratchTicket.tag || '';
-    document.getElementById('scratch-title').value = content.scratchTicket.title || '';
-    document.getElementById('scratch-subtitle').value = content.scratchTicket.subtitle || '';
-    document.getElementById('scratch-usernameLabel').value = content.scratchTicket.usernameLabel || '';
-    document.getElementById('scratch-usernamePlaceholder').value = content.scratchTicket.usernamePlaceholder || '';
-    document.getElementById('scratch-discordNote').value = content.scratchTicket.discordNote || '';
-    document.getElementById('scratch-discordAccountLabel').value = content.scratchTicket.discordAccountLabel || '';
-    document.getElementById('scratch-discordConnectText').value = content.scratchTicket.discordConnectText || '';
-    document.getElementById('scratch-resultTitle').value = content.scratchTicket.resultTitle || '';
-    document.getElementById('scratch-submitText').value = content.scratchTicket.submitText || '';
-    document.getElementById('scratch-alreadyPlayedMessage').value = content.scratchTicket.alreadyPlayedMessage || '';
-    document.getElementById('scratch-cooldownMessage').value = content.scratchTicket.cooldownMessage || '';
-    document.getElementById('scratch-triesRemainingText').value = content.scratchTicket.triesRemainingText || '';
-    document.getElementById('scratch-playAgainText').value = content.scratchTicket.playAgainText || '';
-    document.getElementById('scratch-discordRequiredMessage').value = content.scratchTicket.discordRequiredMessage || '';
-    document.getElementById('scratch-genericErrorMessage').value = content.scratchTicket.genericErrorMessage || '';
-    document.getElementById('scratch-networkErrorMessage').value = content.scratchTicket.networkErrorMessage || '';
-    document.getElementById('scratch-winMessage').value = content.scratchTicket.winMessage || '';
-    document.getElementById('scratch-loseMessage').value = content.scratchTicket.loseMessage || '';
-    document.getElementById('scratch-discordButtonText').value = content.scratchTicket.discordButtonText || '';
 
     cfg.scratchTicket = cfg.scratchTicket || {};
-    document.getElementById('scratch-discord-claim-link').value = cfg.scratchTicket.discordClaimLink || '';
 
     cfg.vault = cfg.vault || {};
     document.getElementById('vault-discord-message').value = cfg.vault.discordNewRoundMessage || '';
 
     content.slotMachine = content.slotMachine || {};
-    document.getElementById('slot-navLabel').value = content.slotMachine.navLabel || '';
-    document.getElementById('slot-tag').value = content.slotMachine.tag || '';
-    document.getElementById('slot-title').value = content.slotMachine.title || '';
-    document.getElementById('slot-subtitle').value = content.slotMachine.subtitle || '';
-    document.getElementById('slot-usernameLabel').value = content.slotMachine.usernameLabel || '';
-    document.getElementById('slot-usernamePlaceholder').value = content.slotMachine.usernamePlaceholder || '';
-    document.getElementById('slot-discordNote').value = content.slotMachine.discordNote || '';
-    document.getElementById('slot-discordAccountLabel').value = content.slotMachine.discordAccountLabel || '';
-    document.getElementById('slot-discordConnectText').value = content.slotMachine.discordConnectText || '';
-    document.getElementById('slot-resultTitle').value = content.slotMachine.resultTitle || '';
-    document.getElementById('slot-spinText').value = content.slotMachine.spinText || '';
-    document.getElementById('slot-spinningText').value = content.slotMachine.spinningText || '';
-    document.getElementById('slot-alreadyPlayedMessage').value = content.slotMachine.alreadyPlayedMessage || '';
-    document.getElementById('slot-cooldownMessage').value = content.slotMachine.cooldownMessage || '';
-    document.getElementById('slot-triesRemainingText').value = content.slotMachine.triesRemainingText || '';
-    document.getElementById('slot-playAgainText').value = content.slotMachine.playAgainText || '';
-    document.getElementById('slot-discordRequiredMessage').value = content.slotMachine.discordRequiredMessage || '';
-    document.getElementById('slot-genericErrorMessage').value = content.slotMachine.genericErrorMessage || '';
-    document.getElementById('slot-networkErrorMessage').value = content.slotMachine.networkErrorMessage || '';
-    document.getElementById('slot-winMessage').value = content.slotMachine.winMessage || '';
-    document.getElementById('slot-loseMessage').value = content.slotMachine.loseMessage || '';
-    document.getElementById('slot-discordButtonText').value = content.slotMachine.discordButtonText || '';
 
     cfg.slotMachine = cfg.slotMachine || {};
-    document.getElementById('slot-discord-claim-link').value = cfg.slotMachine.discordClaimLink || '';
 
     content.wheelGame = content.wheelGame || {};
-    document.getElementById('wheel-navLabel').value = content.wheelGame.navLabel || '';
-    document.getElementById('wheel-tag').value = content.wheelGame.tag || '';
-    document.getElementById('wheel-title').value = content.wheelGame.title || '';
-    document.getElementById('wheel-subtitle').value = content.wheelGame.subtitle || '';
-    document.getElementById('wheel-usernameLabel').value = content.wheelGame.usernameLabel || '';
-    document.getElementById('wheel-usernamePlaceholder').value = content.wheelGame.usernamePlaceholder || '';
-    document.getElementById('wheel-discordNote').value = content.wheelGame.discordNote || '';
-    document.getElementById('wheel-discordAccountLabel').value = content.wheelGame.discordAccountLabel || '';
-    document.getElementById('wheel-discordConnectText').value = content.wheelGame.discordConnectText || '';
-    document.getElementById('wheel-resultTitle').value = content.wheelGame.resultTitle || '';
-    document.getElementById('wheel-spinText').value = content.wheelGame.spinText || '';
-    document.getElementById('wheel-spinningText').value = content.wheelGame.spinningText || '';
-    document.getElementById('wheel-alreadyPlayedMessage').value = content.wheelGame.alreadyPlayedMessage || '';
-    document.getElementById('wheel-cooldownMessage').value = content.wheelGame.cooldownMessage || '';
-    document.getElementById('wheel-triesRemainingText').value = content.wheelGame.triesRemainingText || '';
-    document.getElementById('wheel-playAgainText').value = content.wheelGame.playAgainText || '';
-    document.getElementById('wheel-discordRequiredMessage').value = content.wheelGame.discordRequiredMessage || '';
-    document.getElementById('wheel-genericErrorMessage').value = content.wheelGame.genericErrorMessage || '';
-    document.getElementById('wheel-networkErrorMessage').value = content.wheelGame.networkErrorMessage || '';
-    document.getElementById('wheel-winMessage').value = content.wheelGame.winMessage || '';
-    document.getElementById('wheel-loseMessage').value = content.wheelGame.loseMessage || '';
-    document.getElementById('wheel-discordButtonText').value = content.wheelGame.discordButtonText || '';
 
     cfg.wheelGame = cfg.wheelGame || {};
-    document.getElementById('wheel-discord-claim-link').value = cfg.wheelGame.discordClaimLink || '';
     document.getElementById('vault-usernamePlaceholder').value = content.vault.usernamePlaceholder || '';
     document.getElementById('vault-historyTitle').value = content.vault.historyTitle || '';
     document.getElementById('vault-historyEmpty').value = content.vault.historyEmpty || '';
@@ -1085,7 +732,6 @@
     document.getElementById('discord-redirect-hint').textContent =
       `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
 
-    document.getElementById('ticker-verbText').value = content.tickerSettings.verbText;
 
     renderNavLinks();
     renderOffersFields();
@@ -1100,14 +746,7 @@
     content.brand.text2 = document.getElementById('brand-text2').value;
     content.pageTitle = document.getElementById('page-title').value;
     cfg.heroBanner = cfg.heroBanner || {};
-    cfg.heroBanner.enabled = document.getElementById('hero-banner-enabled').checked;
-    cfg.heroBanner.imageUrl = document.getElementById('hero-banner-url').value;
-    cfg.foilPackEnabled = document.getElementById('foil-pack-enabled').checked;
-    cfg.telegramPosition = document.getElementById('telegram-position').value;
     cfg.floatingWidget = cfg.floatingWidget || {};
-    cfg.floatingWidget.enabled = document.getElementById('floating-widget-enabled').checked;
-    cfg.floatingWidget.imageUrl = document.getElementById('floating-widget-image').value;
-    cfg.floatingWidget.linkUrl = document.getElementById('floating-widget-link').value;
 
     content.nav.links = content.nav.links.map((link, i) => ({
       label: document.getElementById(`nav-link-label-${i}`).value,
@@ -1117,16 +756,6 @@
     content.nav.ctaText = document.getElementById('nav-ctaText').value;
     content.nav.ctaHref = document.getElementById('nav-ctaHref').value;
 
-    content.hero.eyebrow = document.getElementById('hero-eyebrow').value;
-    content.hero.titleLine1 = document.getElementById('hero-titleLine1').value;
-    content.hero.titleEm = document.getElementById('hero-titleEm').value;
-    content.hero.lede = document.getElementById('hero-lede').value;
-    content.hero.code = document.getElementById('hero-code').value;
-    content.hero.codeWidgetEnabled = document.getElementById('hero-codeWidgetEnabled').checked;
-    content.hero.btnPrimaryText = document.getElementById('hero-btnPrimaryText').value;
-    content.hero.btnPrimaryHref = document.getElementById('hero-btnPrimaryHref').value;
-    content.hero.btnGhostText = document.getElementById('hero-btnGhostText').value;
-    content.hero.btnGhostHref = document.getElementById('hero-btnGhostHref').value;
 
     content.telegram.tag = document.getElementById('tg-tag').value;
     content.telegram.title = document.getElementById('tg-title').value;
@@ -1174,25 +803,21 @@
       badge: document.getElementById(`offer-featured-${i}`).checked ? (offer.badge || 'TOP') : offer.badge
     }));
 
-    content.tickerSettings.verbText = document.getElementById('ticker-verbText').value;
 
     content.ticker = content.ticker.map((item, i) => ({
       name: document.getElementById(`ticker-name-${i}`).value,
       message: document.getElementById(`ticker-message-${i}`).value
     }));
 
-    content.footer.navTitle = document.getElementById('footer-navTitle').value;
     content.footer.navLinks = content.footer.navLinks.map((link, i) => ({
       label: document.getElementById(`footer-nav-label-${i}`).value,
       href: document.getElementById(`footer-nav-href-${i}`).value
     }));
-    content.footer.communityTitle = document.getElementById('footer-communityTitle').value;
     content.footer.communityLinks = content.footer.communityLinks.map((link, i) => ({
       label: document.getElementById(`footer-community-label-${i}`).value,
       href: document.getElementById(`footer-community-href-${i}`).value,
       newTab: document.getElementById(`footer-community-newtab-${i}`).checked
     }));
-    content.footer.disclaimer = document.getElementById('footer-disclaimer').value;
 
     content.modal.gateTag = document.getElementById('modal-gateTag').value;
     content.modal.gateSubTemplate = document.getElementById('modal-gateSubTemplate').value;
@@ -1248,86 +873,18 @@
     content.vault.notConfiguredMessage = document.getElementById('vault-notConfiguredMessage').value;
 
     content.scratchTicket = content.scratchTicket || {};
-    content.scratchTicket.navLabel = document.getElementById('scratch-navLabel').value;
-    content.scratchTicket.tag = document.getElementById('scratch-tag').value;
-    content.scratchTicket.title = document.getElementById('scratch-title').value;
-    content.scratchTicket.subtitle = document.getElementById('scratch-subtitle').value;
-    content.scratchTicket.usernameLabel = document.getElementById('scratch-usernameLabel').value;
-    content.scratchTicket.usernamePlaceholder = document.getElementById('scratch-usernamePlaceholder').value;
-    content.scratchTicket.discordNote = document.getElementById('scratch-discordNote').value;
-    content.scratchTicket.discordAccountLabel = document.getElementById('scratch-discordAccountLabel').value;
-    content.scratchTicket.discordConnectText = document.getElementById('scratch-discordConnectText').value;
-    content.scratchTicket.resultTitle = document.getElementById('scratch-resultTitle').value;
-    content.scratchTicket.submitText = document.getElementById('scratch-submitText').value;
-    content.scratchTicket.alreadyPlayedMessage = document.getElementById('scratch-alreadyPlayedMessage').value;
-    content.scratchTicket.cooldownMessage = document.getElementById('scratch-cooldownMessage').value;
-    content.scratchTicket.triesRemainingText = document.getElementById('scratch-triesRemainingText').value;
-    content.scratchTicket.playAgainText = document.getElementById('scratch-playAgainText').value;
-    content.scratchTicket.discordRequiredMessage = document.getElementById('scratch-discordRequiredMessage').value;
-    content.scratchTicket.genericErrorMessage = document.getElementById('scratch-genericErrorMessage').value;
-    content.scratchTicket.networkErrorMessage = document.getElementById('scratch-networkErrorMessage').value;
-    content.scratchTicket.winMessage = document.getElementById('scratch-winMessage').value;
-    content.scratchTicket.loseMessage = document.getElementById('scratch-loseMessage').value;
-    content.scratchTicket.discordButtonText = document.getElementById('scratch-discordButtonText').value;
 
     cfg.scratchTicket = cfg.scratchTicket || {};
-    cfg.scratchTicket.discordClaimLink = document.getElementById('scratch-discord-claim-link').value;
 
     cfg.vault = cfg.vault || {};
     cfg.vault.discordNewRoundMessage = document.getElementById('vault-discord-message').value;
 
     content.slotMachine = content.slotMachine || {};
-    content.slotMachine.navLabel = document.getElementById('slot-navLabel').value;
-    content.slotMachine.tag = document.getElementById('slot-tag').value;
-    content.slotMachine.title = document.getElementById('slot-title').value;
-    content.slotMachine.subtitle = document.getElementById('slot-subtitle').value;
-    content.slotMachine.usernameLabel = document.getElementById('slot-usernameLabel').value;
-    content.slotMachine.usernamePlaceholder = document.getElementById('slot-usernamePlaceholder').value;
-    content.slotMachine.discordNote = document.getElementById('slot-discordNote').value;
-    content.slotMachine.discordAccountLabel = document.getElementById('slot-discordAccountLabel').value;
-    content.slotMachine.discordConnectText = document.getElementById('slot-discordConnectText').value;
-    content.slotMachine.resultTitle = document.getElementById('slot-resultTitle').value;
-    content.slotMachine.spinText = document.getElementById('slot-spinText').value;
-    content.slotMachine.spinningText = document.getElementById('slot-spinningText').value;
-    content.slotMachine.alreadyPlayedMessage = document.getElementById('slot-alreadyPlayedMessage').value;
-    content.slotMachine.cooldownMessage = document.getElementById('slot-cooldownMessage').value;
-    content.slotMachine.triesRemainingText = document.getElementById('slot-triesRemainingText').value;
-    content.slotMachine.playAgainText = document.getElementById('slot-playAgainText').value;
-    content.slotMachine.discordRequiredMessage = document.getElementById('slot-discordRequiredMessage').value;
-    content.slotMachine.genericErrorMessage = document.getElementById('slot-genericErrorMessage').value;
-    content.slotMachine.networkErrorMessage = document.getElementById('slot-networkErrorMessage').value;
-    content.slotMachine.winMessage = document.getElementById('slot-winMessage').value;
-    content.slotMachine.loseMessage = document.getElementById('slot-loseMessage').value;
-    content.slotMachine.discordButtonText = document.getElementById('slot-discordButtonText').value;
 
     cfg.slotMachine = cfg.slotMachine || {};
-    cfg.slotMachine.discordClaimLink = document.getElementById('slot-discord-claim-link').value;
 
-    content.wheelGame.navLabel = document.getElementById('wheel-navLabel').value;
-    content.wheelGame.tag = document.getElementById('wheel-tag').value;
-    content.wheelGame.title = document.getElementById('wheel-title').value;
-    content.wheelGame.subtitle = document.getElementById('wheel-subtitle').value;
-    content.wheelGame.usernameLabel = document.getElementById('wheel-usernameLabel').value;
-    content.wheelGame.usernamePlaceholder = document.getElementById('wheel-usernamePlaceholder').value;
-    content.wheelGame.discordNote = document.getElementById('wheel-discordNote').value;
-    content.wheelGame.discordAccountLabel = document.getElementById('wheel-discordAccountLabel').value;
-    content.wheelGame.discordConnectText = document.getElementById('wheel-discordConnectText').value;
-    content.wheelGame.resultTitle = document.getElementById('wheel-resultTitle').value;
-    content.wheelGame.spinText = document.getElementById('wheel-spinText').value;
-    content.wheelGame.spinningText = document.getElementById('wheel-spinningText').value;
-    content.wheelGame.alreadyPlayedMessage = document.getElementById('wheel-alreadyPlayedMessage').value;
-    content.wheelGame.cooldownMessage = document.getElementById('wheel-cooldownMessage').value;
-    content.wheelGame.triesRemainingText = document.getElementById('wheel-triesRemainingText').value;
-    content.wheelGame.playAgainText = document.getElementById('wheel-playAgainText').value;
-    content.wheelGame.discordRequiredMessage = document.getElementById('wheel-discordRequiredMessage').value;
-    content.wheelGame.genericErrorMessage = document.getElementById('wheel-genericErrorMessage').value;
-    content.wheelGame.networkErrorMessage = document.getElementById('wheel-networkErrorMessage').value;
-    content.wheelGame.winMessage = document.getElementById('wheel-winMessage').value;
-    content.wheelGame.loseMessage = document.getElementById('wheel-loseMessage').value;
-    content.wheelGame.discordButtonText = document.getElementById('wheel-discordButtonText').value;
 
     cfg.wheelGame = cfg.wheelGame || {};
-    cfg.wheelGame.discordClaimLink = document.getElementById('wheel-discord-claim-link').value;
     content.vault.usernamePlaceholder = document.getElementById('vault-usernamePlaceholder').value;
     content.vault.historyTitle = document.getElementById('vault-historyTitle').value;
     content.vault.historyEmpty = document.getElementById('vault-historyEmpty').value;
@@ -1493,213 +1050,8 @@ function nitrodropResetConfig() {
   }
 
   // ---------- Ticket à gratter : appels directs au Worker (jamais via GitHub) ----------
-  function getScratchWorkerBase(){
-    return document.getElementById('scratch-worker-url').value.trim().replace(/\/$/, '');
-  }
-
-  async function loadScratchState(){
-    const base = getScratchWorkerBase();
-    const key = document.getElementById('scratch-dashboard-key').value.trim();
-    const statusEl = document.getElementById('scratch-current-state');
-    if (!base || !key){
-      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-    statusEl.textContent = 'Chargement…';
-    statusEl.style.color = 'var(--text-dim)';
-    try{
-      const resp = await fetch(`${base}/scratch/admin-state`, {
-        headers: { 'X-Dashboard-Key': key }
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const data = await resp.json();
-      document.getElementById('scratch-win-chance').value = data.winChancePercent != null ? data.winChancePercent : '';
-      document.getElementById('scratch-win-amount').value = data.winAmount != null ? data.winAmount : '';
-      document.getElementById('scratch-max-plays').value = data.maxPlaysPerDay != null ? data.maxPlaysPerDay : 2;
-      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'} — ${data.maxPlaysPerDay ?? 2} essai(s)/jour`;
-      statusEl.style.color = 'var(--text-dim)';
-    }catch(err){
-      statusEl.textContent = 'Erreur : ' + err.message;
-      statusEl.style.color = '#FF7A90';
-    }
-  }
-
-  async function setScratchConfig(){
-    const base = getScratchWorkerBase();
-    const key = document.getElementById('scratch-dashboard-key').value.trim();
-    const winChancePercent = document.getElementById('scratch-win-chance').value.trim();
-    const winAmount = document.getElementById('scratch-win-amount').value.trim();
-    const maxPlaysPerDay = document.getElementById('scratch-max-plays').value.trim();
-    const statusEl = document.getElementById('scratch-set-status');
-
-    if (!base || !key){
-      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-    if (winChancePercent === '' || winAmount === ''){
-      statusEl.textContent = 'Renseigne la chance de gain et le montant.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-
-    statusEl.textContent = 'Envoi…';
-    statusEl.style.color = 'var(--text-dim)';
-    try{
-      const resp = await fetch(`${base}/scratch/set`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': key },
-        body: JSON.stringify({ winChancePercent, winAmount, maxPlaysPerDay: maxPlaysPerDay || 2 })
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      statusEl.textContent = 'Réglages enregistrés ✓';
-      statusEl.style.color = 'var(--green)';
-      loadScratchState();
-    }catch(err){
-      statusEl.textContent = 'Erreur : ' + err.message;
-      statusEl.style.color = '#FF7A90';
-    }
-  }
 
   // ---------- Machine à sous : appels directs au Worker (jamais via GitHub) ----------
-  function getSlotWorkerBase(){
-    return document.getElementById('slot-worker-url').value.trim().replace(/\/$/, '');
-  }
-
-  async function loadSlotState(){
-    const base = getSlotWorkerBase();
-    const key = document.getElementById('slot-dashboard-key').value.trim();
-    const statusEl = document.getElementById('slot-current-state');
-    if (!base || !key){
-      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-    statusEl.textContent = 'Chargement…';
-    statusEl.style.color = 'var(--text-dim)';
-    try{
-      const resp = await fetch(`${base}/slot/admin-state`, {
-        headers: { 'X-Dashboard-Key': key }
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const data = await resp.json();
-      document.getElementById('slot-win-chance').value = data.winChancePercent != null ? data.winChancePercent : '';
-      document.getElementById('slot-win-amount').value = data.winAmount != null ? data.winAmount : '';
-      document.getElementById('slot-max-plays').value = data.maxPlaysPerDay != null ? data.maxPlaysPerDay : 2;
-      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'} — ${data.maxPlaysPerDay ?? 2} essai(s)/jour`;
-      statusEl.style.color = 'var(--text-dim)';
-    }catch(err){
-      statusEl.textContent = 'Erreur : ' + err.message;
-      statusEl.style.color = '#FF7A90';
-    }
-  }
-
-  async function setSlotConfig(){
-    const base = getSlotWorkerBase();
-    const key = document.getElementById('slot-dashboard-key').value.trim();
-    const winChancePercent = document.getElementById('slot-win-chance').value.trim();
-    const winAmount = document.getElementById('slot-win-amount').value.trim();
-    const maxPlaysPerDay = document.getElementById('slot-max-plays').value.trim();
-    const statusEl = document.getElementById('slot-set-status');
-
-    if (!base || !key){
-      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-    if (winChancePercent === '' || winAmount === ''){
-      statusEl.textContent = 'Renseigne la chance de gain et le montant.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-
-    statusEl.textContent = 'Envoi…';
-    statusEl.style.color = 'var(--text-dim)';
-    try{
-      const resp = await fetch(`${base}/slot/set`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': key },
-        body: JSON.stringify({ winChancePercent, winAmount, maxPlaysPerDay: maxPlaysPerDay || 2 })
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      statusEl.textContent = 'Réglages enregistrés ✓';
-      statusEl.style.color = 'var(--green)';
-      loadSlotState();
-    }catch(err){
-      statusEl.textContent = 'Erreur : ' + err.message;
-      statusEl.style.color = '#FF7A90';
-    }
-  }
-
-  function getWheelWorkerBase(){
-    return document.getElementById('wheel-worker-url').value.trim().replace(/\/$/, '');
-  }
-
-  async function loadWheelState(){
-    const base = getWheelWorkerBase();
-    const key = document.getElementById('wheel-dashboard-key').value.trim();
-    const statusEl = document.getElementById('wheel-current-state');
-    if (!base || !key){
-      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-    statusEl.textContent = 'Chargement…';
-    statusEl.style.color = 'var(--text-dim)';
-    try{
-      const resp = await fetch(`${base}/wheel/admin-state`, {
-        headers: { 'X-Dashboard-Key': key }
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const data = await resp.json();
-      document.getElementById('wheel-win-chance').value = data.winChancePercent != null ? data.winChancePercent : '';
-      document.getElementById('wheel-win-amount').value = data.winAmount != null ? data.winAmount : '';
-      document.getElementById('wheel-max-plays').value = data.maxPlaysPerDay != null ? data.maxPlaysPerDay : 2;
-      statusEl.textContent = `Réglages actuels : ${data.winChancePercent ?? '?'}% de chance de gagner $${data.winAmount ?? '?'} — ${data.maxPlaysPerDay ?? 2} essai(s)/jour`;
-      statusEl.style.color = 'var(--text-dim)';
-    }catch(err){
-      statusEl.textContent = 'Erreur : ' + err.message;
-      statusEl.style.color = '#FF7A90';
-    }
-  }
-
-  async function setWheelConfig(){
-    const base = getWheelWorkerBase();
-    const key = document.getElementById('wheel-dashboard-key').value.trim();
-    const winChancePercent = document.getElementById('wheel-win-chance').value.trim();
-    const winAmount = document.getElementById('wheel-win-amount').value.trim();
-    const maxPlaysPerDay = document.getElementById('wheel-max-plays').value.trim();
-    const statusEl = document.getElementById('wheel-set-status');
-
-    if (!base || !key){
-      statusEl.textContent = 'Renseigne l\'URL du Worker et la clé du dashboard.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-    if (winChancePercent === '' || winAmount === ''){
-      statusEl.textContent = 'Renseigne la chance de gain et le montant.';
-      statusEl.style.color = '#FF7A90';
-      return;
-    }
-
-    statusEl.textContent = 'Envoi…';
-    statusEl.style.color = 'var(--text-dim)';
-    try{
-      const resp = await fetch(`${base}/wheel/set`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': key },
-        body: JSON.stringify({ winChancePercent, winAmount, maxPlaysPerDay: maxPlaysPerDay || 2 })
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      statusEl.textContent = 'Réglages enregistrés ✓';
-      statusEl.style.color = 'var(--green)';
-      loadWheelState();
-    }catch(err){
-      statusEl.textContent = 'Erreur : ' + err.message;
-      statusEl.style.color = '#FF7A90';
-    }
-  }
 
   async function loadVaultState(){
     const base = getVaultWorkerBase();
