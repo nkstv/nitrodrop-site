@@ -117,6 +117,18 @@
   .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
   .burger{display:none}
 
+  /* Bouton principal, identique au « Bet » des jeux. Sa définition manquait sur
+     cette page : les boutons Claim et Connexion s'affichaient donc sans style. */
+  .bet-btn{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:16px; padding:13px 16px; border-radius:var(--r-m);
+    box-shadow:0 5px 14px rgba(232,193,104,.22), inset 0 1px 0 rgba(255,255,255,.35);
+    transition:.15s; width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .bet-btn:hover:not(:disabled){filter:brightness(1.06); transform:translateY(-1px);}
+  .bet-btn:active:not(:disabled){transform:translateY(1px);}
+  .bet-btn:disabled{opacity:.55; filter:none; cursor:default; transform:none; box-shadow:none;}
+
   /* ---------- Profil ---------- */
   .pf-notice{
     background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
@@ -216,6 +228,16 @@
     .pf-hero-balance .v{font-size:22px;}
     .card{padding:16px 16px;}
     .pf-badges{grid-template-columns:repeat(auto-fill,minmax(98px,1fr)); gap:9px;}
+    /* Rien ne doit dépasser la largeur de l'écran : le lien d'affiliation
+       (long) et les grands nombres poussaient les cartes hors cadre. */
+    .pf-wrap, .pf-wrap > *, .card, .pf-hero{min-width:0; max-width:100%;}
+    .pf-stats{grid-template-columns:1fr 1fr; gap:9px;}
+    .pf-stat{padding:12px 13px; min-width:0;}
+    .pf-stat .v{font-size:17px; flex-wrap:wrap; word-break:break-word;}
+    .pf-stat .k{font-size:9.5px; letter-spacing:.8px;}
+    .pf-ref{padding:9px 10px; gap:8px;}
+    .pf-ref code{font-size:11px;}
+    .card-h{gap:8px;}
   }
 
   /* ---------- Paris ---------- */
@@ -360,7 +382,7 @@
     </nav>
 
     <div class="side-foot">
-      <button class="wallet-login-btn" id="side-login-btn" onclick="connectDiscord()">🎮 Se connecter</button>
+      <button class="wallet-login-btn" id="side-login-btn" onclick="connectDiscord()">🎮 Log in</button>
       <div class="s-user" id="side-user" style="display:none;">
         <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
         <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
