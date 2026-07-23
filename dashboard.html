@@ -65,6 +65,13 @@
     padding:9px 10px; background:var(--bg-raise); border-bottom:1px solid var(--line-strong); white-space:nowrap;
   }
   td{padding:8px 10px; font-size:12px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  /* Pseudo cliquable (profil casino) : discret, souligné au survol seulement */
+  .pseudo-link{
+    color:var(--gold); text-decoration:none; border-bottom:1px dotted rgba(232,193,104,.4);
+    transition:.15s; cursor:pointer;
+  }
+  .pseudo-link:hover{color:#F0D08A; border-bottom-style:solid;}
+
   /* ---------- Modale de refus ---------- */
   .dl-overlay{
     position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.72); backdrop-filter:blur(6px);
@@ -702,7 +709,7 @@
       <tr style="${s.archived ? 'opacity:0.45;' : ''}">
         <td class="mono">${escapeHtml(formatLocalDate(s))}</td>
         <td><span class="badge">${escapeHtml(s.platform || '')}</span></td>
-        <td><span class="cell-truncate" style="max-width:100px;" title="${escapeHtml(s.pseudo || '')}">${escapeHtml(s.pseudo || '')}</span></td>
+        <td>${renderPseudoCell(s)}</td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.email || '')}">${escapeHtml(s.email || '')}</span></td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}">${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}</span></td>
         <td class="mono"><span class="cell-truncate" style="max-width:110px;" title="${escapeHtml(s.discordId || '—')}">${escapeHtml(s.discordId || '—')}</span></td>
@@ -764,6 +771,29 @@
     { id: 'discord_too_young', label: 'Your Discord account is not old enough.' },
     { id: 'other',             label: 'Other' },
   ];
+
+  // Pseudo cliquable vers le profil du casino, quand on connaît le format d'URL.
+  // Pour l'instant seul Duel.com est géré ; les autres restent en texte simple.
+  const CASINO_PROFILE_URLS = {
+    duelcom: pseudo => `https://duel.com/#profile=${encodeURIComponent(pseudo)}`,
+  };
+
+  function renderPseudoCell(s){
+    const pseudo = s.pseudo || '';
+    const safe = escapeHtml(pseudo);
+    const builder = CASINO_PROFILE_URLS[slugifyCasinoClient(s.platform)];
+    if (!pseudo || !builder){
+      return `<span class="cell-truncate" style="max-width:100px;" title="${safe}">${safe}</span>`;
+    }
+    return `<a class="cell-truncate pseudo-link" style="max-width:100px;"
+              href="${escapeHtml(builder(pseudo))}" target="_blank" rel="noopener"
+              title="Ouvrir le profil de ${safe} sur ${escapeHtml(s.platform)}">${safe}</a>`;
+  }
+
+  // Même normalisation que côté Worker ("Duel.com" -> "duelcom")
+  function slugifyCasinoClient(name){
+    return String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+  }
 
   function renderStatusCell(s){
     const status = s.status || (s.tipped ? 'sent' : 'pending');
