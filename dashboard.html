@@ -140,9 +140,12 @@
     <div class="dash-tabs">
       <button class="dash-tab active" id="tab-btn-bonus" onclick="switchDashTab('bonus')">Demandes de bonus</button>
       <button class="dash-tab" id="tab-btn-stats" onclick="switchDashTab('stats')">📈 Statistiques</button>
-      <button class="dash-tab" id="tab-btn-scratch" onclick="switchDashTab('scratch')">🎫 Ticket à gratter</button>
-      <button class="dash-tab" id="tab-btn-slot" onclick="switchDashTab('slot')">🎰 Machine à sous</button>
-      <button class="dash-tab" id="tab-btn-wheel" onclick="switchDashTab('wheel')">🎡 Roue</button>
+      <!-- Ticket / Machine à sous / Roue : jeux en dollars retirés du site au profit
+           du système de clés. Les onglets sont masqués mais le code reste en place,
+           pour pouvoir consulter l'historique de ces parties si besoin. -->
+      <button class="dash-tab" id="tab-btn-scratch" onclick="switchDashTab('scratch')" style="display:none;">🎫 Ticket à gratter</button>
+      <button class="dash-tab" id="tab-btn-slot" onclick="switchDashTab('slot')" style="display:none;">🎰 Machine à sous</button>
+      <button class="dash-tab" id="tab-btn-wheel" onclick="switchDashTab('wheel')" style="display:none;">🎡 Roue</button>
       <button class="dash-tab" id="tab-btn-affiliates" onclick="switchDashTab('affiliates')">📊 Affiliés</button>
       <button class="dash-tab" id="tab-btn-users" onclick="switchDashTab('users')">👥 Utilisateurs</button>
       <button class="dash-tab" id="tab-btn-leaderboard" onclick="switchDashTab('leaderboard')">🏆 Leaderboard</button>

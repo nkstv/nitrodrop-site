@@ -1,1303 +1,534 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="page-title">Drop-Cash.com - Claim your free bonus with no deposit required</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171209">
+<title>Drop Cash — Bonuses</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#07070C;
-    --bg-raise:#100F1C;
-    --bg-card:#131226;
-    --line:rgba(255,255,255,0.08);
-    --line-strong:rgba(255,255,255,0.16);
-    --green:#B6FF3C;
-    --green-dim:#7FCB1F;
-    --violet:#8B5CFF;
-    --violet-deep:#4B2FBF;
-    --text:#F1F0FA;
-    --text-dim:#9591B0;
-    --text-faint:#5F5C77;
-    --radius:18px;
+    --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
+    --line:rgba(232,193,104,.10); --gold:#E8C168; --gold-deep:#C79A3C;
+    --cream:#F2E9D8; --muted:#9a8b6d; --muted-2:#6f6350;
+    --red:#F26D6D; --green:#5FD68B;
+    --r-l:20px; --r-m:14px;
+    --gap:14px; --chrome:300px; --side:238px;
   }
-
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:clip;
+    background:radial-gradient(1000px 500px at 70% -10%, rgba(232,193,104,.055), transparent 60%), var(--bg);
+    color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif;
+    /* Filet de sécurité : aucun élément ne doit pouvoir créer de défilement
+       horizontal sur mobile. */
+    overflow-x:hidden; max-width:100%;
   }
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size:56px 56px;
-    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
-    pointer-events:none;
-    z-index:0;
+  h1{font-family:"Baloo 2",sans-serif}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  /* Empêche le zoom au double-tap sur mobile quand on appuie vite plusieurs fois
+     (Max, ½, 2×, cases du plateau...). Le zoom au pincement reste possible. */
+  button, a, input, select, label, .tile, .chip, .d-item, .offer-copy-btn, .mult{
+    touch-action:manipulation;
   }
-  a{color:inherit; text-decoration:none;}
-  img{max-width:100%; display:block;}
-  :focus-visible{outline:2px solid var(--green); outline-offset:3px; border-radius:4px;}
+  /* Évite le surlignage bleu et le menu contextuel quand on tape vite sur un
+     bouton. Le texte des pages reste sélectionnable normalement. */
+  button, .tile, .chip, .mult, .bet-btn, .d-item{
+    -webkit-user-select:none; user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* iOS zoome automatiquement sur un champ dont la police fait moins de 16px.
+     On force 16px sur mobile uniquement : l'apparence sur ordinateur ne change pas. */
+  @media(max-width:860px){
+    input, select, textarea{font-size:16px !important;}
+  }
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
 
-  .wrap{max-width:1240px; margin:0 auto; padding:0 32px; position:relative; z-index:1;}
-  h1,h2,h3{font-family:'Unbounded', sans-serif; line-height:1.05; letter-spacing:-0.01em;}
+  .app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
 
-  .code-font{font-family:'JetBrains Mono', monospace; letter-spacing:0.04em;}
+  /* ================= SIDEBAR ================= */
+  .side{
+    position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel) 60%,var(--bg-soft));
+    border-right:1px solid var(--line);padding:16px 12px;gap:14px;overflow-y:auto;
+  }
+  .side::-webkit-scrollbar{width:6px}
+  .side::-webkit-scrollbar-thumb{background:var(--panel-3);border-radius:6px}
 
-  /* ---------- NAV ---------- */
-  nav{
-    position:sticky; top:0; z-index:50;
-    background:rgba(7,7,12,0.75);
-    backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--line);
-  }
-  .nav-inner{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 0;
-  }
-  .logo{display:flex; align-items:center; gap:10px; font-family:'Unbounded'; font-weight:900; font-size:19px;}
-  .logo-mark{
-    width:34px; height:34px; border-radius:9px;
-    background:linear-gradient(135deg, var(--violet), var(--violet-deep));
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 22px rgba(139,92,255,0.55);
-    font-size:16px;
-  }
-  .logo .logo-accent{color:var(--green);}
-  .nav-links{display:flex; gap:34px; font-size:14.5px; color:var(--text-dim); font-weight:500;}
-  .nav-links a:hover{color:var(--text);}
-  .nav-cta{
-    background:var(--green); color:#08130a; font-weight:700; font-size:14px;
-    padding:10px 20px; border-radius:10px;
-    box-shadow:0 0 0 0 rgba(182,255,60,0.6);
-    transition:box-shadow .2s ease, transform .2s ease;
-  }
-  .nav-cta:hover{box-shadow:0 0 26px rgba(182,255,60,0.45); transform:translateY(-1px);}
-  .lang-switch{display:flex; gap:4px; background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:8px; padding:3px;}
-  .lang-switch-btn{
-    background:none; border:none; color:var(--text-dim); font-weight:700; font-size:12px;
-    padding:6px 10px; border-radius:6px; cursor:pointer; letter-spacing:0.03em;
-  }
-  .lang-switch-btn.active{background:var(--green); color:#08130a;}
-  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer;}
-  .burger span{width:22px; height:2px; background:var(--text); transition:transform .2s ease, opacity .2s ease;}
-  .mobile-nav{
-    display:none; flex-direction:column; gap:2px;
-    background:var(--bg-raise); border-bottom:1px solid var(--line);
-    padding:8px 0;
-  }
-  .mobile-nav.open{display:flex;}
-  .mobile-nav a{
-    padding:14px 32px; font-size:15px; color:var(--text-dim); font-weight:500;
-    border-bottom:1px solid var(--line);
-  }
-  .mobile-nav a:last-child{border-bottom:none;}
-  .mobile-nav a:active{color:var(--text); background:var(--bg-card);}
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 0}
+  .brand .avatar{width:38px;height:38px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 35% 30%,#d8a25c,#7a4b23 70%);
+    display:grid;place-items:center;font-size:19px;border:2px solid rgba(0,0,0,.4)}
+  .brand .name{font-family:"Baloo 2";font-weight:800;font-size:19px;line-height:1.05}
+  .beta{display:inline-block;font-size:8.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--gold);background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.32);
+    padding:1px 6px;border-radius:20px;margin-top:3px}
 
-  /* ---------- HERO ---------- */
-  @keyframes fadeInUp{
-    from{opacity:0; transform:translateY(20px);}
-    to{opacity:1; transform:translateY(0);}
+  .wallet{
+    background:linear-gradient(150deg,rgba(232,193,104,.14),rgba(232,193,104,.04));
+    border:1px solid rgba(232,193,104,.24);border-radius:var(--r-m);padding:11px 13px;
   }
-  .reveal-on-scroll{opacity:0; transform:translateY(24px); transition:opacity 0.6s ease, transform 0.6s ease;}
-  .reveal-on-scroll.revealed{opacity:1; transform:translateY(0);}
-  @media (prefers-reduced-motion: reduce){
-    .reveal-on-scroll{opacity:1; transform:none; transition:none;}
-  }
+  .wallet .k{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+  .wallet .v{display:flex;align-items:center;gap:7px;font-weight:800;font-size:21px;margin-top:3px}
+  .wallet .v .key{font-size:15px}
+  .wallet button{width:100%;margin-top:9px;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    color:#3a2a08;font-weight:800;font-size:13px;padding:8px;border-radius:10px;transition:.15s}
+  .wallet button:hover{filter:brightness(1.06)}
+  .wallet button:disabled{opacity:.5; cursor:default; filter:none;}
 
-  .hero{
-    padding:96px 0 80px;
-    position:relative;
-    background-size:cover; background-position:center 30%; background-repeat:no-repeat;
-    transition:background-image .2s ease;
-    animation:fadeInUp 0.6s ease both;
+  .s-label{color:var(--muted-2);font-size:9.5px;font-weight:800;letter-spacing:2.4px;padding:0 8px;margin-top:2px}
+  .s-nav{display:flex;flex-direction:column;gap:2px}
+  .s-nav a{
+    display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--muted);
+    font-weight:800;font-size:14px;padding:10px 12px;border-radius:12px;transition:.15s;position:relative;
   }
-  .hero::after{
-    content:"";
-    position:absolute; inset:0;
-    background:
-      linear-gradient(180deg, rgba(7,7,12,0.55) 0%, rgba(7,7,12,0.75) 55%, var(--bg) 100%),
-      linear-gradient(90deg, rgba(7,7,12,0.75) 0%, rgba(7,7,12,0.25) 55%, rgba(7,7,12,0.75) 100%);
-    pointer-events:none; z-index:0; display:none;
-  }
-  .hero.has-banner::after{display:block;}
-  .hero.has-banner .wrap{position:relative; z-index:1;}
-  .hero-grid{
-    display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;
-  }
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:8px;
-    border:1px solid var(--line-strong); border-radius:999px;
-    padding:7px 16px; font-size:12.5px; color:var(--text-dim); font-weight:600;
-    letter-spacing:0.06em; text-transform:uppercase;
-    margin-bottom:26px;
-  }
-  .eyebrow::before{
-    content:""; width:7px; height:7px; border-radius:50%;
-    background:var(--green); box-shadow:0 0 10px var(--green);
-  }
-  .hero h1{font-size:58px; font-weight:900; color:#fff;}
-  .hero h1 em{
-    font-style:normal;
-    background:linear-gradient(100deg, var(--green), #DFFF9E);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .hero p.lede{
-    margin-top:22px; font-size:16.5px; line-height:1.7; color:var(--text-dim); max-width:480px;
-  }
+  .s-nav a .ic{width:20px;text-align:center;font-size:15px;opacity:.9}
+  .s-nav a:hover{background:rgba(232,193,104,.06);color:var(--cream)}
+  .s-nav a.on{background:var(--panel-3);color:var(--cream)}
+  .s-nav a.on::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--gold)}
+  .s-nav a .tag{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:1px;color:var(--gold);
+    background:rgba(232,193,104,.12);border:1px solid rgba(232,193,104,.28);padding:2px 6px;border-radius:20px}
 
-  .code-widget{
-    margin-top:34px; display:inline-flex; align-items:center; gap:0;
-    border:1px dashed var(--green-dim); border-radius:14px; overflow:hidden;
-    background:rgba(182,255,60,0.04);
-  }
-  .code-widget .label{
-    font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em;
-    padding:0 8px 0 18px;
-  }
-  .code-widget .code{
-    font-size:18px; font-weight:700; color:var(--green); padding:14px 6px;
-  }
-  .code-widget button{
-    background:var(--green); color:#08130a; border:none; font-weight:700; font-size:13.5px;
-    padding:14px 18px; cursor:pointer; align-self:stretch;
-    display:flex; align-items:center; justify-content:center;
-    transition:background .15s ease;
-  }
-  .code-widget button:hover{background:#c8ff6a;}
-  .code-widget button.copied{background:#DFFF9E;}
+  .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:10px;border-top:1px solid var(--line)}
+  .s-user{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:14px;padding:8px 10px}
+  .s-user .pfp{width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);object-fit:cover;}
+  .s-user .n{font-weight:800;font-size:13.5px;line-height:1.2}
+  .s-user .s{color:var(--muted);font-size:11px;font-weight:700}
+  .s-user .out{margin-left:auto;color:var(--muted-2);font-size:14px;transition:.15s}
+  .s-user .out:hover{color:var(--red)}
+  .wallet-login-btn{width:100%;background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));color:#3a2a08;
+    font-family:"Baloo 2";font-weight:800;font-size:14px;padding:12px;border-radius:12px;transition:.15s}
+  .wallet-login-btn:hover{filter:brightness(1.06)}
 
-  .hero-actions{margin-top:26px; display:flex; gap:14px; flex-wrap:wrap;}
-  .btn-primary{
-    background:linear-gradient(120deg, var(--violet), #6C3FFF);
-    color:#fff; font-weight:700; font-size:14.5px; padding:14px 26px; border-radius:12px;
-    box-shadow:0 8px 30px rgba(139,92,255,0.35);
-  }
-  .btn-ghost{
-    border:1px solid var(--line-strong); color:var(--text); font-weight:600; font-size:14.5px;
-    padding:14px 26px; border-radius:12px;
-  }
-  .btn-ghost:hover{border-color:var(--text-dim);}
+  /* ================= CONTENU ================= */
+  .main{display:flex;flex-direction:column;gap:var(--gap);padding:16px clamp(16px,2.2vw,34px) 30px;min-width:0}
 
-  /* ---- signature: torn foil pack ---- */
-  .foil-stage{position:relative; height:460px; display:flex; align-items:center; justify-content:center;}
-  .foil-glow{
-    position:absolute; width:420px; height:420px; border-radius:50%;
-    background:radial-gradient(circle, rgba(139,92,255,0.55), rgba(139,92,255,0) 70%);
-    filter:blur(10px); z-index:0;
-  }
-  .foil-pack{
-    position:relative; width:300px; height:400px; z-index:1;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .foil-left, .foil-right{
-    position:absolute; top:0; height:100%; width:50%;
-    background:
-      repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 14px),
-      linear-gradient(160deg, #1a1830, #0a0916 70%);
-    border:1px solid var(--line-strong);
-    box-shadow:0 30px 60px rgba(0,0,0,0.55);
-  }
-  .foil-left{
-    left:0; border-radius:20px 4px 4px 20px;
-    transform:translateX(-26px) rotate(-2.5deg);
-    clip-path:polygon(0% 0%, 100% 0%, 78% 9%, 94% 20%, 70% 30%, 92% 42%, 66% 53%, 90% 64%, 72% 75%, 94% 86%, 100% 97%, 100% 100%, 0% 100%);
-  }
-  .foil-right{
-    right:0; border-radius:4px 20px 20px 4px;
-    transform:translateX(26px) rotate(2.5deg);
-    clip-path:polygon(100% 0%, 0% 0%, 22% 9%, 6% 20%, 30% 30%, 8% 42%, 34% 53%, 10% 64%, 28% 75%, 6% 86%, 0% 97%, 0% 100%, 100% 100%);
-  }
-  .foil-code{
-    position:relative; z-index:2; text-align:center;
-    padding:14px 10px; max-width:150px;
-  }
-  .foil-code .k{font-size:11px; letter-spacing:0.16em; color:var(--text-dim); text-transform:uppercase;}
-  .foil-code .v{
-    font-family:'Unbounded'; font-weight:900; font-size:22px; margin-top:8px; line-height:1.15;
-    background:linear-gradient(100deg, var(--green), var(--violet) 90%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .foil-spark{position:absolute; border-radius:50%; background:var(--green); filter:blur(0.5px); opacity:0.9;}
+  .topbar{display:flex;align-items:center;gap:14px;flex:none}
+  .topbar h1{font-size:28px;font-weight:800;line-height:1}
+  .topbar .crumb{color:var(--muted-2);font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .live{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:800;font-size:12px;
+    background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:7px 13px}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.4s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .icon-btn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
+    display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.15s}
+  .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
+  .burger{display:none}
 
-  /* ---------- TICKER ---------- */
-  .ticker-section{border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--bg-raise); overflow:hidden;}
-  .ticker-track{display:flex; gap:44px; padding:16px 0; white-space:nowrap; width:max-content; animation:scroll-left 32s linear infinite;}
-  @keyframes scroll-left{from{transform:translateX(0);} to{transform:translateX(-50%);}}
-  .ticker-item{display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--text-dim);}
-  .ticker-item b{color:var(--green); font-weight:700;}
-  .ticker-dot{width:5px; height:5px; border-radius:50%; background:var(--text-faint);}
-  @media (prefers-reduced-motion: reduce){.ticker-track{animation:none;}}
-
-  /* ---------- TELEGRAM BANNER ---------- */
-  .tg-section{padding:64px 0 0;}
-  .tg-card{
-    position:relative; border-radius:22px; padding:34px 40px;
-    display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap;
-    background:
-      radial-gradient(120% 160% at 12% 15%, rgba(63,169,245,0.16), transparent 60%),
-      var(--bg-card);
-    border:1px solid rgba(105,175,255,0.32);
-    box-shadow:0 0 70px rgba(63,169,245,0.10);
+  /* ---------- Offres / Bonus ---------- */
+  .offers-intro{text-align:center; max-width:640px; margin:0 auto 4px;}
+  .offers-tag{
+    display:inline-block; background:var(--panel-3); border:1px solid var(--line); color:var(--gold);
+    font-size:10.5px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+    padding:7px 15px; border-radius:30px; margin-bottom:14px;
   }
-  .tg-left{display:flex; align-items:flex-start; gap:20px;}
-  .tg-icon{
-    width:52px; height:52px; border-radius:50%; flex-shrink:0;
-    background:linear-gradient(135deg,#5FC1FF,#1C6FD1);
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 26px rgba(63,169,245,0.55);
-  }
-  .tg-icon svg{width:22px; height:22px;}
-  .tg-tag{color:#6FC0FF; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
-  .tg-left h3{font-family:'Unbounded'; font-weight:700; font-size:21px; color:#fff; margin-top:9px;}
-  .tg-left p{font-size:14px; color:var(--text-dim); margin-top:10px; line-height:1.65; max-width:560px;}
-  .tg-btn{
-    background:linear-gradient(135deg,#6CC4FF,#3FA9F5); color:#071018; font-weight:700; font-size:14.5px;
-    padding:16px 26px; border-radius:12px; white-space:nowrap;
-    display:inline-flex; align-items:center; gap:8px;
-    box-shadow:0 10px 30px rgba(63,169,245,0.35);
-    transition:filter .15s ease, transform .15s ease;
-  }
-  .tg-btn:hover{filter:brightness(1.08); transform:translateY(-1px);}
+  .offers-title{font-family:"Baloo 2"; font-weight:800; font-size:27px; color:var(--cream); line-height:1.25;}
+  .offers-desc{color:var(--muted); font-size:14px; line-height:1.65; margin-top:10px;}
 
-
-  .section{padding:96px 0;}
-  .section-head{max-width:560px; margin-bottom:52px;}
-  .section-tag{color:var(--green); font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
-  .section-head h2{font-size:36px; color:#fff; margin-top:12px;}
-  .section-head p{color:var(--text-dim); margin-top:14px; font-size:15.5px; line-height:1.6;}
-
-  .offers-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;}
+  .offers-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:18px;}
   .offer-card{
-    background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius);
-    padding:26px; display:flex; flex-direction:column; gap:18px;
-    transition:border-color .2s ease, transform .2s ease;
-    position:relative; overflow:hidden;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:1px solid var(--line); border-radius:var(--r-l); padding:22px 20px 20px;
+    display:flex; flex-direction:column; gap:15px; position:relative; transition:.18s;
   }
-  .offer-card:hover{border-color:var(--line-strong); transform:translateY(-3px);}
-  .offer-card.featured{border-color:rgba(182,255,60,0.4); box-shadow:0 0 0 1px rgba(182,255,60,0.12) inset;}
+  .offer-card:hover{border-color:rgba(232,193,104,.3); transform:translateY(-3px);}
+  .offer-card.featured{
+    border-color:rgba(232,193,104,.45);
+    box-shadow:0 0 40px rgba(232,193,104,.10);
+  }
   .featured-tag{
     position:absolute; top:16px; right:16px;
-    display:inline-flex; align-items:center; gap:5px;
-    background:linear-gradient(135deg, var(--green), #DFFF9E);
-    color:#08130a; font-family:'Unbounded', sans-serif; font-weight:800; font-size:10.5px;
-    padding:6px 13px; border-radius:999px; letter-spacing:0.04em;
-    box-shadow:0 6px 16px rgba(182,255,60,0.32);
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-size:10px; font-weight:800; letter-spacing:1.4px; text-transform:uppercase;
+    padding:6px 12px; border-radius:30px; box-shadow:0 3px 10px rgba(0,0,0,.35);
   }
-  .featured-tag::before{content:"★"; font-size:9px;}
   .offer-top{display:flex; align-items:center; gap:12px;}
   .offer-mark{
-    width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center;
-    font-family:'Unbounded'; font-weight:800; font-size:16px; color:#fff;
+    width:42px; height:42px; border-radius:12px; flex:none;
+    display:grid; place-items:center; font-family:"Baloo 2"; font-weight:800; font-size:19px; color:#fff;
+    box-shadow:0 3px 10px rgba(0,0,0,.35);
   }
-  .mark-1{background:linear-gradient(135deg,#6C3FFF,#2A1A66);}
-  .mark-2{background:linear-gradient(135deg,#1FB6A6,#0B4A44);}
-  .mark-3{background:linear-gradient(135deg,#FF5C7A,#5E1A2C);}
-  .offer-name{font-family:'Unbounded'; font-weight:700; font-size:16.5px; color:#fff;}
-  .offer-sub{font-size:12.5px; color:var(--text-faint);}
-  .offer-bonus{font-family:'Unbounded'; font-weight:900; font-size:30px; color:var(--green);}
-  .offer-bonus small{font-family:'Inter'; font-weight:600; font-size:13px; color:var(--text-dim); margin-left:6px;}
-  .offer-desc{font-size:13.5px; color:var(--text-dim); line-height:1.6;}
+  .offer-name{font-family:"Baloo 2"; font-weight:800; font-size:16.5px; color:var(--cream);}
+  .offer-sub{font-size:12px; color:var(--muted-2); margin-top:1px;}
+  .offer-bonus{font-family:"Baloo 2"; font-weight:800; font-size:30px; color:var(--gold); line-height:1.1;}
+  .offer-bonus small{font-family:"Nunito Sans"; font-weight:700; font-size:13px; color:var(--muted); margin-left:7px;}
+  .offer-desc{font-size:13.5px; color:var(--muted); line-height:1.6;}
+  .offer-desc strong{color:var(--cream); font-weight:800;}
   .offer-code-row{
-    display:flex; align-items:center; justify-content:space-between;
-    border:1px solid var(--line-strong); border-radius:10px; padding:10px 14px;
-    font-size:13px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--r-m); padding:11px 13px;
+    font-size:13px; color:var(--muted); font-weight:700;
   }
-  .offer-code-row .c{color:var(--green); font-weight:700;}
   .offer-code-row .code-right{display:flex; align-items:center; gap:10px;}
+  .offer-code-row .c{color:var(--gold); font-weight:800; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px;}
   .offer-copy-btn{
-    background:var(--bg-raise); border:1px solid var(--line-strong); color:var(--text-dim);
-    font-size:11.5px; font-weight:700; padding:7px 9px; border-radius:7px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    transition:background .15s ease, color .15s ease;
+    width:30px; height:30px; border-radius:9px; border:1px solid var(--line); background:var(--panel-3);
+    color:var(--muted); display:grid; place-items:center; transition:.15s; flex:none;
   }
-  .offer-copy-btn:hover{color:var(--text); border-color:var(--green);}
+  .offer-copy-btn:hover{color:var(--gold); border-color:rgba(232,193,104,.4);}
   .offer-copy-btn.copied{background:var(--green); color:#08130a; border-color:transparent;}
-  .offer-btns{display:flex; flex-direction:column; gap:10px;}
+  .offer-btns{display:flex; flex-direction:column; gap:9px; margin-top:auto;}
   .offer-cta{
-    text-align:center; padding:13px; border-radius:10px; font-weight:700; font-size:14px;
-    background:var(--bg-raise); border:1px solid var(--line-strong); color:var(--text);
-    transition:background .15s ease, border-color .15s ease;
+    display:block; text-align:center; padding:13px; border-radius:var(--r-m);
+    font-family:"Baloo 2"; font-weight:800; font-size:14.5px;
+    background:var(--panel-3); border:1px solid var(--line); color:var(--cream);
+    text-decoration:none; transition:.15s;
   }
-  .offer-cta.secondary{background:transparent;}
-  .offer-cta.accent{background:var(--green); color:#08130a; border-color:transparent;}
-  .offer-cta:hover{border-color:var(--green);}
-
-  /* ---------- LEADERBOARD ---------- */
-  .leaderboard{
-    background:var(--bg-raise); border:1px solid var(--line); border-radius:24px;
-    padding:48px; display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+  .offer-cta:hover{border-color:rgba(232,193,104,.4);}
+  .offer-cta.accent{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#3a2a08;
+    border-color:transparent; box-shadow:0 4px 12px rgba(232,193,104,.2);
   }
-  .leaderboard h2{font-size:30px; color:#fff;}
-  .leaderboard p{color:var(--text-dim); margin-top:14px; font-size:15px; line-height:1.65;}
-  .pool-figure{
-    font-family:'Unbounded'; font-weight:900; font-size:44px; margin-top:22px;
-    color:var(--green);
-  }
-  .pool-figure span{font-size:15px; color:var(--text-dim); font-weight:500; font-family:'Inter'; display:block; margin-top:4px;}
-  .rank-list{display:flex; flex-direction:column; gap:10px;}
-  .rank-row{
-    display:flex; align-items:center; gap:14px;
-    background:var(--bg-card); border:1px solid var(--line); border-radius:12px; padding:14px 18px;
-  }
-  .rank-num{
-    font-family:'Unbounded'; font-weight:800; font-size:15px; width:26px; color:var(--text-faint);
-  }
-  .rank-row.gold .rank-num{color:var(--green);}
-  .rank-name{flex:1; font-size:14px; font-weight:600;}
-  .rank-amt{font-family:'JetBrains Mono'; font-size:13.5px; color:var(--text-dim);}
-  .rank-row.gold .rank-amt{color:var(--green);}
-
-  /* ---------- STEPS ---------- */
-  .steps-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
-  .step-card{padding:28px 0; border-top:1px solid var(--line-strong);}
-  .step-num{font-family:'JetBrains Mono'; font-size:13px; color:var(--green); font-weight:700;}
-  .step-card h3{font-size:19px; color:#fff; margin-top:14px;}
-  .step-card p{font-size:14px; color:var(--text-dim); margin-top:10px; line-height:1.6;}
-
-  /* ---------- FOOTER ---------- */
-  footer{border-top:1px solid var(--line); padding:56px 0 40px;}
-  .footer-top{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:32px;}
-  .footer-cols{display:flex; gap:64px; flex-wrap:wrap;}
-  .footer-col h4{font-size:12.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px;}
-  .footer-col a{display:block; font-size:14px; color:var(--text-dim); margin-bottom:10px;}
-  .footer-col a:hover{color:var(--text);}
-  .floating-widget{
-    position:fixed; bottom:24px; right:24px; z-index:200;
-    width:60px; height:60px; border-radius:50%;
-    border:3px solid var(--green); box-shadow:0 0 20px rgba(182,255,60,0.4);
-    overflow:visible; display:flex; align-items:center; justify-content:center;
-    background:var(--bg-card);
-  }
-  .floating-widget img{width:100%; height:100%; border-radius:50%; object-fit:cover;}
-  .floating-widget-badge{
-    position:absolute; bottom:-6px; left:-6px;
-    width:28px; height:28px; border-radius:50%;
-    background:#5865F2; border:2px solid var(--bg);
-    display:flex; align-items:center; justify-content:center; font-size:14px;
-  }
-  @media (max-width:960px){
-    .floating-widget{width:50px; height:50px; bottom:16px; right:16px;}
-    .floating-widget-badge{width:24px; height:24px; font-size:12px;}
+  .offer-cta.accent:hover{filter:brightness(1.06);}
+  @media(max-width:1100px){ .offers-grid{grid-template-columns:repeat(2, 1fr);} }
+  @media(max-width:860px){
+    .offers-grid{grid-template-columns:1fr;}
+    .offers-title{font-size:22px;}
   }
 
-  .disclaimer{
-    margin-top:44px; padding-top:28px; border-top:1px solid var(--line);
-    font-size:12px; color:var(--text-faint); line-height:1.7; max-width:820px;
-  }
-  .age-badge{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:28px; height:28px; border:1px solid var(--line-strong); border-radius:6px;
-    font-size:11px; font-weight:800; margin-right:8px; color:var(--text-dim);
-  }
+  /* ---------- Paris ---------- */
+  .bets{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+    border-radius:var(--r-l);padding:16px 18px}
+  .tabs{display:flex;gap:6px;margin-bottom:10px}
+  .tabs button{padding:9px 17px;border-radius:30px;font-weight:800;font-size:13.5px;color:var(--muted);transition:.18s}
+  .tabs button:hover{color:var(--cream)}
+  .tabs button.on{background:var(--panel-3);color:var(--cream);border:1px solid var(--line)}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:620px}
+  thead th{text-align:left;color:var(--muted-2);font-size:10.5px;letter-spacing:1.6px;font-weight:800;padding:7px 13px;text-transform:uppercase}
+  thead th:nth-child(n+3){text-align:right}
+  tbody td{padding:11px 13px;border-top:1px solid rgba(232,193,104,.05);font-weight:700;font-size:13.5px}
+  tbody td:nth-child(n+3){text-align:right}
+  tbody tr:hover{background:rgba(232,193,104,.04)}
+  tbody tr.fresh{animation:pop .5s ease}
+  @keyframes pop{from{background:rgba(232,193,104,.12)}to{background:transparent}}
+  .g{display:flex;align-items:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:14px}
+  .g .ic{width:24px;height:24px;border-radius:8px;background:var(--panel-3);border:1px solid var(--line);display:grid;place-items:center;font-size:12px}
+  .p{display:flex;align-items:center;gap:8px}
+  .p .pfp{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9aa7c7,#3c455e);object-fit:cover;flex:none;}
+  td.time{color:var(--muted)}
+  .key{color:var(--gold)}
+  .win{color:var(--green)}
+  .lose{color:var(--muted)}
 
-  /* ---------- CLAIM MODAL ---------- */
+  /* ================= MOBILE (identique à la version previouse) ================= */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:linear-gradient(180deg,#241c12,#191309);border-top:1px solid var(--line);
+    border-radius:24px 24px 0 0;padding:12px 14px calc(16px + env(safe-area-inset-bottom));
+    transform:translateY(105%);transition:transform .3s cubic-bezier(.22,.9,.3,1);
+    box-shadow:0 -18px 44px rgba(0,0,0,.6);max-height:88vh;overflow-y:auto}
+  .drawer.open{transform:translateY(0)}
+  .handle{width:50px;height:4px;border-radius:4px;background:#4a4032;margin:3px auto 14px}
+  .d-user{display:flex;align-items:center;gap:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:11px 12px}
+  .d-user .pfp{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6b7c9,#6d3e57);flex:none;object-fit:cover;}
+  .d-user .n{font-weight:800;font-size:17px}
+  .d-user .s{color:var(--muted);font-weight:600;font-size:13px;margin-top:1px}
+  .d-out{margin-left:auto;width:38px;height:38px;border-radius:50%;background:rgba(242,109,109,.14);
+    border:1px solid rgba(242,109,109,.3);color:var(--red);display:grid;place-items:center;font-size:15px;flex:none}
+  .d-sep{height:1px;background:var(--line);margin:14px 4px}
+  .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .d-item{background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:13px 12px;
+    font-weight:800;font-size:15px;text-align:left;display:flex;align-items:center;gap:9px;
+    color:var(--cream);text-decoration:none}
+  .d-item:active{background:var(--panel-3)}
+  .d-label{color:var(--muted-2);font-size:10.5px;font-weight:800;letter-spacing:2.6px;margin:16px 4px 9px}
+
+  @media(max-width:1240px){ :root{--side:76px} 
+    .brand .name,.wallet .k,.wallet .v,.wallet button,.s-label,.s-nav a span:not(.ic),.s-user .n,.s-user .s,.s-user .out{display:none}
+    .side{padding:14px 10px;align-items:center}
+    .brand{justify-content:center;padding:0}
+    .wallet{padding:8px;text-align:center;width:100%}
+    .wallet::after{content:"🔑";font-size:16px}
+    .wallet-login-btn{font-size:0;padding:12px;}
+    .wallet-login-btn::after{content:"🎮";font-size:16px}
+    .s-nav{width:100%}
+    .s-nav a{justify-content:center;padding:11px 0}
+    .s-user{padding:6px;justify-content:center}
+    .game-wrap{grid-template-columns:280px 1fr}
+  }
+  @media(max-width:860px){
+    :root{--chrome:250px}
+    .app{grid-template-columns:1fr}
+    .side{display:none}
+    .main{padding:10px 12px 22px;gap:12px}
+    .topbar{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);
+      border-radius:22px;padding:7px 8px;gap:10px}
+    .topbar h1{font-size:20px;padding-left:6px}
+    .topbar .crumb,.live{display:none}
+    .burger{display:flex;width:38px;height:38px;border-radius:50%;background:var(--panel-3);
+      border:1px solid var(--line);flex-direction:column;gap:3.5px;align-items:center;justify-content:center}
+    .burger span{display:block;width:15px;height:2px;background:var(--cream);border-radius:2px}
+    .game-wrap{grid-template-columns:1fr}
+    .board{order:1;padding:12px;gap:10px}
+    .controls{order:2;border-right:none;border-top:1px solid var(--line);padding:14px;gap:10px}
+    .grid{gap:6px;width:100%}
+    .bet-btn{margin-top:2px}
+    .bar-tools button:nth-child(n+3){display:none}
+    .bets{padding:12px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- Modale de réclamation de bonus ---------- */
   .modal-overlay{
-    position:fixed; inset:0; z-index:100;
-    background:rgba(4,4,8,0.72); backdrop-filter:blur(6px);
+    position:fixed; inset:0; z-index:150;
+    background:rgba(0,0,0,.72); backdrop-filter:blur(6px);
     display:flex; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity .2s ease;
-    padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .2s ease; padding:20px;
+    overflow-y:auto;
   }
   .modal-overlay.active{opacity:1; pointer-events:auto;}
   .modal{
     position:relative; width:100%; max-width:420px;
-    background:var(--bg-card); border:1px solid var(--line-strong); border-radius:20px;
-    padding:34px; box-shadow:0 40px 100px rgba(0,0,0,0.6);
-    transform:translateY(14px); transition:transform .2s ease;
+    background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:20px;
+    padding:34px; box-shadow:0 40px 100px rgba(0,0,0,.6);
+    transform:translateY(14px); transition:transform .2s ease; margin:auto;
   }
   .modal-overlay.active .modal{transform:translateY(0);}
   .modal-close{
-    position:absolute; top:16px; right:16px; background:none; border:none; color:var(--text-dim);
-    font-size:22px; cursor:pointer; line-height:1; padding:4px;
+    position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted);
+    font-size:24px; line-height:1; padding:4px; cursor:pointer;
   }
-  .modal-close:hover{color:var(--text);}
-  .modal-tag{color:var(--green); font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
-  #modal-step-form h3{font-family:'Unbounded'; font-size:22px; color:#fff; margin-top:10px;}
-  .modal-sub{font-size:13.5px; color:var(--text-dim); margin-top:10px; line-height:1.6;}
-  .modal-sub strong{color:var(--green);}
-  #claim-form, #scratch-form, #slot-form, #wheel-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
-  #claim-form label, #scratch-form label, #slot-form label, #wheel-form label{display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
-  #claim-form input, #scratch-form input, #slot-form input, #wheel-form input{
-    background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:10px;
-    padding:12px 14px; color:var(--text); font-size:14px; font-family:'Inter'; width:100%;
+  .modal-close:hover{color:var(--cream);}
+  .modal-tag{color:var(--gold); font-size:11px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase;}
+  .modal h3{font-family:"Baloo 2"; font-weight:800; font-size:22px; color:var(--cream); margin-top:10px;}
+  .modal-sub{font-size:13.5px; color:var(--muted); margin-top:10px; line-height:1.6;}
+  .modal-sub strong{color:var(--gold); font-weight:800;}
+  #claim-form{margin-top:22px; display:flex; flex-direction:column; gap:16px;}
+  #claim-form label{display:flex; flex-direction:column; gap:8px; font-size:11px; color:var(--muted);
+    font-weight:800; text-transform:uppercase; letter-spacing:1.1px;}
+  /* Le bloc Discord disparaît entièrement une fois le compte connecté :
+     l'identité est déjà rappelée dans la sidebar, l'afficher ici est redondant. */
+  #discord-block{display:flex; flex-direction:column; gap:8px;}
+  #claim-form input{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:10px;
+    padding:12px 14px; color:var(--cream); font-family:"Nunito Sans"; font-weight:700; font-size:14px; width:100%;
+    outline:none; transition:border-color .15s;
   }
-  #claim-form input:focus, #scratch-form input:focus, #slot-form input:focus, #wheel-form input:focus{border-color:var(--green);}
+  #claim-form input:focus{border-color:rgba(232,193,104,.5);}
   .modal-submit{
-    margin-top:6px; background:var(--green); color:#08130a; font-weight:700; font-size:14.5px;
-    padding:14px; border:none; border-radius:10px; cursor:pointer; width:100%;
+    margin-top:6px; background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:14px; border:none; border-radius:12px;
+    cursor:pointer; width:100%; transition:.15s;
   }
-  .modal-submit:hover{background:#c8ff6a;}
+  .modal-submit:hover{filter:brightness(1.06);}
+  .modal-submit:disabled{opacity:.55; filter:none; cursor:default;}
   .gate-actions{display:flex; flex-direction:column; gap:12px; margin-top:26px;}
   .modal-ghost{
-    background:transparent; border:1px solid var(--line-strong); color:var(--text);
-    font-weight:600; font-size:14.5px; padding:14px; border-radius:10px; cursor:pointer; width:100%;
+    background:var(--panel-3); border:1px solid var(--line); color:var(--cream);
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:14px; border-radius:12px; cursor:pointer; width:100%;
+    transition:.15s;
   }
-  .modal-ghost:hover{border-color:var(--text-dim);}
-
+  .modal-ghost:hover{border-color:rgba(232,193,104,.4);}
   #modal-step-confirm{text-align:center;}
   .confirm-icon{
-    width:56px; height:56px; border-radius:50%; background:rgba(182,255,60,0.12); border:1px solid var(--green);
-    display:flex; align-items:center; justify-content:center; margin:0 auto 18px; color:var(--green); font-size:26px; font-weight:800;
+    width:56px; height:56px; border-radius:50%; background:rgba(95,214,139,.12); border:1px solid var(--green);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 18px; color:var(--green);
+    font-size:26px; font-weight:800;
   }
-  #modal-step-confirm h3{font-family:'Unbounded'; font-size:21px; color:#fff;}
-  #modal-step-confirm p{font-size:13.5px; color:var(--text-dim); margin-top:10px; line-height:1.6;}
-  #modal-step-confirm p strong{color:var(--green);}
+  #modal-step-confirm p{font-size:13.5px; color:var(--muted); margin-top:10px; line-height:1.6;}
+  #modal-step-confirm p strong{color:var(--gold); font-weight:800;}
   .countdown{
-    font-family:'JetBrains Mono'; font-weight:700; font-size:34px; color:var(--green);
-    margin:22px 0 10px; letter-spacing:0.04em;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-weight:800; font-size:32px; color:var(--gold);
+    margin:22px 0 10px; letter-spacing:1px;
   }
-  .modal-note{font-size:12px; color:var(--text-faint); margin-top:14px;}
+  .modal-note{font-size:12px; color:var(--muted-2); margin-top:14px;}
 
-  .scratch-card-visual{
-    width:200px; height:200px; margin:20px auto 0; border-radius:16px; position:relative; overflow:hidden;
-    border:1px solid var(--line);
+  /* ---------- Popup d'alerte (remplace alert() natif) ---------- */
+  @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+  .custom-alert-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
   }
-  .scratch-silver{
-    position:absolute; inset:0; z-index:2;
-    background:repeating-linear-gradient(135deg,#9a99a8,#9a99a8 8px,#8685934a 8px,#8685934a 16px);
-    display:flex; align-items:center; justify-content:center; font-size:30px; cursor:pointer;
-    transition:opacity .4s ease, transform .4s ease;
+  .custom-alert-overlay.show{display:flex;}
+  .custom-alert-box{
+    background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:18px;
+    padding:24px 26px; max-width:340px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.55);
+    animation:reveal .18s ease;
   }
-  .scratch-silver.revealed{opacity:0; transform:scale(1.15); pointer-events:none;}
-  .scratch-result{
-    position:absolute; inset:0; z-index:1; background:var(--bg-card);
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    font-family:'Unbounded'; font-weight:900; font-size:28px; color:var(--green);
+  .custom-alert-title{font-family:"Baloo 2"; font-weight:800; font-size:15px; color:var(--gold); margin-bottom:10px;}
+  .custom-alert-msg{font-size:14.5px; color:var(--cream); line-height:1.5; margin-bottom:20px;}
+  .custom-alert-btn{
+    width:100%; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:12px; border-radius:12px; transition:.15s;
   }
-
-  .slot-reels{
-    display:flex; gap:8px; justify-content:center; margin-top:20px;
-    background:var(--bg-raise); border:1px solid var(--line); border-radius:14px; padding:16px;
-  }
-  .slot-reel{
-    width:64px; height:74px; background:var(--bg-card); border-radius:8px;
-    display:flex; align-items:center; justify-content:center; font-size:30px; overflow:hidden;
-  }
-  .slot-reel.spinning .slot-sym{animation:slot-blur .07s linear infinite;}
-  @keyframes slot-blur{0%{transform:translateY(-4px);}50%{transform:translateY(4px);}100%{transform:translateY(-4px);}}
-
-  .wheel-wrap{position:relative; width:220px; height:220px; margin:20px auto 0;}
-  .wheel-pointer{
-    position:absolute; top:-4px; left:50%; transform:translateX(-50%); z-index:3;
-    width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent;
-    border-top:18px solid var(--green);
-  }
-  .wheel-disc{
-    width:220px; height:220px; border-radius:50%; position:relative;
-    background: conic-gradient(
-      var(--bg-card) 0deg 45deg, var(--green) 45deg 90deg,
-      var(--bg-card) 90deg 135deg, var(--green) 135deg 180deg,
-      var(--bg-card) 180deg 225deg, var(--green) 225deg 270deg,
-      var(--bg-card) 270deg 315deg, var(--green) 315deg 360deg
-    );
-    border:3px solid var(--line-strong); box-shadow:0 0 0 6px var(--bg-raise);
-  }
-  .wheel-label-pos{position:absolute; top:50%; left:50%; width:0; height:0;}
-  .wheel-label-content{position:absolute; display:block; font-size:22px; transform-origin:center; margin-left:-12px; margin-top:-12px;}
-  .wheel-center-dot{
-    position:absolute; top:50%; left:50%; width:22px; height:22px; margin:-11px 0 0 -11px;
-    background:var(--bg-raise); border:2px solid var(--line-strong); border-radius:50%; z-index:2;
-  }
-
-  /* ---------- ADMIN BAR ---------- */
-  .admin-bar{
-    position:fixed; bottom:18px; right:18px; z-index:200;
-    background:var(--bg-card); border:1px solid var(--line-strong); border-radius:12px;
-    padding:10px 14px; font-size:12.5px; color:var(--text-dim);
-    display:flex; align-items:center; gap:10px; box-shadow:0 10px 30px rgba(0,0,0,0.5);
-  }
-  .admin-bar a{color:var(--green); font-weight:700;}
-
-  /* ---------- RESPONSIVE ---------- */
-  @media (max-width:960px){
-    .nav-links{display:none;}
-    .nav-inner > .lang-switch{display:none;}
-    .nav-inner > .nav-cta{display:none;}
-    .burger{display:flex;}
-    .hero{padding-top:56px;}
-    .hero-grid{grid-template-columns:1fr;}
-    .hero h1{font-size:42px;}
-    .foil-stage{height:320px;}
-    .offers-grid{grid-template-columns:1fr;}
-    .leaderboard{grid-template-columns:1fr; padding:32px;}
-    .steps-grid{grid-template-columns:1fr;}
-    .tg-card{flex-direction:column; align-items:flex-start; padding:28px;}
-    .tg-btn{width:100%; justify-content:center;}
-    .wrap{padding:0 20px;}
-    .nav-inner{padding:16px 0; gap:12px;}
-    .logo{gap:8px; font-size:16px;}
-    .logo-mark{width:30px; height:30px; font-size:14px; flex-shrink:0;}
-    .burger{padding:6px; margin:-6px 0 -6px 6px;}
-  }
+  .custom-alert-btn:hover{filter:brightness(1.06);}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="wrap nav-inner">
-    <a class="logo" href="/"><div class="logo-mark">⚡</div><span id="brand-text1-nav">DROP</span><span id="brand-text2-nav" class="logo-accent">CASH</span></a>
-    <div class="nav-links" id="nav-links">
-      <a href="#offres" id="nav-link-0">Codes bonus</a>
-      <a href="#classement" id="nav-link-1">Classement</a>
-      <a href="#etapes" id="nav-link-2">Comment ça marche</a>
-      <a href="#" id="nav-link-3">Discord</a>
-      <a href="#" id="nav-scratch-btn">🎫 Ticket</a>
-      <a href="#" id="nav-slot-btn">🎰 Slot</a>
-      <a href="#" id="nav-wheel-btn">🎡 Roue</a>
-      <a href="/originals" id="nav-originals-btn">🎮 Originals</a>
-    </div>
-    <div class="lang-switch">
-      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
-      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
-    </div>
-    <a href="#offres" class="nav-cta" id="nav-cta">Voir les codes</a>
-    <button class="burger" aria-label="Menu" id="burger-btn"><span></span><span></span><span></span></button>
-  </div>
-  <div class="mobile-nav" id="mobile-nav">
-    <div class="lang-switch" style="padding:14px 32px; border-bottom:1px solid var(--line);">
-      <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
-      <button type="button" class="lang-switch-btn" data-lang="fr">FR</button>
-    </div>
-    <div style="padding:14px 32px; border-bottom:1px solid var(--line);">
-      <a href="#offres" class="nav-cta" id="nav-cta-mobile" style="display:block; text-align:center;">Voir les codes</a>
-    </div>
-    <a href="#offres" id="mobile-nav-link-0">Codes bonus</a>
-    <a href="#classement" id="mobile-nav-link-1">Classement</a>
-    <a href="#etapes" id="mobile-nav-link-2">Comment ça marche</a>
-    <a href="#" id="mobile-nav-link-3">Discord</a>
-    <a href="#" id="mobile-nav-scratch-btn">🎫 Ticket</a>
-    <a href="#" id="mobile-nav-slot-btn">🎰 Slot</a>
-    <a href="#" id="mobile-nav-wheel-btn">🎡 Roue</a>
-    <a href="/originals" id="mobile-nav-originals-btn">🎮 Originals</a>
-  </div>
-</nav>
-
-<header class="hero" id="hero-header">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="eyebrow" id="hero-eyebrow">Codes vérifiés · Mis à jour aujourd'hui</div>
-      <h1><span id="hero-title-line1">Ton dépôt mérite</span><br><em id="hero-title-em">un vrai bonus.</em></h1>
-      <p class="lede" id="hero-lede">NITRODROP tipe directement les joueurs qui s'inscrivent avec son code. Pas de dépôt requis : renseigne ton pseudo, et ton bonus est envoyé sous 24h.</p>
-
-      <div class="code-widget" id="hero-code-widget">
-        <span class="label">Code</span>
-        <span class="code code-font" id="promo-code">NITRO200</span>
-        <button id="copy-btn" onclick="copyCode()" aria-label="Copier le code" title="Copier le code">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
-        </button>
-      </div>
-
-      <div class="hero-actions">
-        <a href="#offres" class="btn-primary" id="hero-btn-primary">Voir les offres</a>
-        <a href="#etapes" class="btn-ghost" id="hero-btn-ghost">Comment l'utiliser</a>
-      </div>
-    </div>
-
-    <div class="foil-stage" id="foil-stage">
-      <div class="foil-glow"></div>
-      <div class="foil-pack">
-        <div class="foil-left"></div>
-        <div class="foil-right"></div>
-        <div class="foil-code" id="foil-code-block">
-          <div class="k">Code exclusif</div>
-          <div class="v code-font" id="foil-code-value">NITRO200</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
-
-<section class="ticker-section" aria-hidden="true">
-  <div class="ticker-track" id="ticker-track">
-    <!-- items injected twice via JS for seamless loop -->
-  </div>
-</section>
-
-<section class="tg-section">
-  <div class="wrap">
-    <div class="tg-card">
-      <div class="tg-left">
-        <div class="tg-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21.5 3.5L2.5 11l6 2.3m13-9.8L15.8 20l-4.6-6.6m10.3-9.9L7.9 13.3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div>
-          <div class="tg-tag" id="tg-tag">Tuto NitroDrop FR</div>
-          <h3 id="tg-title">Un guide pas à pas t'attend sur Telegram</h3>
-          <p id="tg-desc">Création du compte, saisie du code NITRO200, dépôt et suivi du classement : tout est expliqué en français, étape par étape.</p>
-        </div>
-      </div>
-      <a href="#" class="tg-btn" id="tg-btn">Ouvrir le tuto Telegram →</a>
-    </div>
-  </div>
-</section>
-
-<section class="section reveal-on-scroll" id="offres">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-tag" id="offers-tag">Offres du moment</div>
-      <h2 id="offers-title">Trois plateformes, trois codes actifs.</h2>
-      <p id="offers-desc">Chaque code est testé manuellement avant publication. Le bonus s'applique automatiquement à l'inscription ou en le collant dans le champ dédié.</p>
-    </div>
-
-    <div class="offers-grid" id="offers-grid">
-      <!-- cartes injectées par JS depuis la config -->
-    </div>
-  </div>
-</section>
-
-<section class="section reveal-on-scroll" id="classement" style="padding-top:0;">
-  <div class="wrap">
-    <div class="leaderboard">
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="brand">
+      <div class="avatar">🦁</div>
       <div>
-        <div class="section-tag" id="lb-tag">Classement mensuel</div>
-        <h2 id="lb-title">1 800€ partagés entre les 3 meilleurs parieurs.</h2>
-        <p id="lb-desc">Utilise un code NITRODROP, cumule du volume de mise sur les plateformes partenaires, et grimpe dans le classement. Reset chaque 1er du mois.</p>
-        <div class="pool-figure"><span id="lb-pool-figure">1 800€</span><span id="lb-pool-caption">Cagnotte de juillet · se termine dans 15 jours</span></div>
-      </div>
-      <div class="rank-list">
-        <div class="rank-row gold"><span class="rank-num">01</span><span class="rank-name">kaelynn_</span><span class="rank-amt">142 300€ misés</span></div>
-        <div class="rank-row"><span class="rank-num">02</span><span class="rank-name">dr0p_ghost</span><span class="rank-amt">118 900€ misés</span></div>
-        <div class="rank-row"><span class="rank-num">03</span><span class="rank-name">valen.tt</span><span class="rank-amt">96 400€ misés</span></div>
-        <div class="rank-row"><span class="rank-num">04</span><span class="rank-name">ryu_odds</span><span class="rank-amt">81 200€ misés</span></div>
+        <div class="name">Drop Cash</div>
+        <span class="beta">Beta</span>
       </div>
     </div>
-  </div>
-</section>
 
-<section class="section reveal-on-scroll" id="etapes">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="section-tag" id="steps-tag">Trois étapes</div>
-      <h2 id="steps-title">Comment réclamer un code.</h2>
+    <div class="wallet">
+      <div class="k">Balance</div>
+      <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
+      <button disabled title="New keys every day, automatically">Top up</button>
     </div>
-    <div class="steps-grid" id="steps-grid">
-      <div class="step-card">
-        <div class="step-num">01</div>
-        <h3 id="step-title-0">Choisis une plateforme</h3>
-        <p id="step-desc-0">Compare les bonus ci-dessus et clique sur "J'en profite" pour ouvrir l'inscription.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">02</div>
-        <h3 id="step-title-1">Colle le code</h3>
-        <p id="step-desc-1">Renseigne le code correspondant dans le champ prévu au moment du dépôt.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">03</div>
-        <h3 id="step-title-2">Récupère ton bonus</h3>
-        <p id="step-desc-2">Le montant est crédité automatiquement. Tu peux ensuite suivre ta position au classement.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<footer>
-  <div class="wrap">
-    <div class="footer-top">
-      <a class="logo" href="/"><div class="logo-mark">⚡</div><span id="brand-text1-footer">DROP</span><span id="brand-text2-footer" class="logo-accent">CASH</span></a>
-      <div class="footer-cols">
-        <div class="footer-col">
-          <h4 id="footer-nav-title">Navigation</h4>
-          <a href="#offres" id="footer-nav-link-0">Codes bonus</a>
-          <a href="#classement" id="footer-nav-link-1">Classement</a>
-          <a href="#etapes" id="footer-nav-link-2">Comment ça marche</a>
-        </div>
-        <div class="footer-col">
-          <h4 id="footer-community-title">Communauté</h4>
-          <a href="#" id="footer-community-link-0">Discord</a>
-          <a href="#" id="footer-community-link-1">Telegram</a>
-          <a href="#" id="footer-community-link-2">Contact</a>
-        </div>
+    <div class="s-label">MENU</div>
+    <nav class="s-nav">
+      <a href="/profile"><span class="ic">👤</span><span>Profile</span></a>
+      <a href="/leaderboard"><span class="ic">🏆</span><span>Leaderboard</span></a>
+      <a href="/" class="on"><span class="ic">🎁</span><span>Bonuses</span><span class="tag" id="bonus-count">—</span></a>
+      <a href="/vault"><span class="ic">🔒</span><span>Vault</span></a>
+    </nav>
+
+    <div class="s-label">ORIGINALS</div>
+    <nav class="s-nav">
+      <a href="/mines"><span class="ic">💣</span><span>Mines</span></a>
+      <a href="/blackjack"><span class="ic">🃏</span><span>Blackjack</span></a>
+      <a href="/slot"><span class="ic">🎰</span><span>Slot</span></a>
+      <a href="/dice"><span class="ic">🎲</span><span>Dice</span></a>
+    </nav>
+
+    <div class="side-foot">
+      <button class="wallet-login-btn" id="side-login-btn" onclick="connectDiscord()">🎮 Log in</button>
+      <div class="s-user" id="side-user" style="display:none;">
+        <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
+        <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
+        <button class="out" id="side-logout-btn" aria-label="Log out">→]</button>
       </div>
     </div>
-    <div class="disclaimer">
-      <span class="age-badge">18+</span><span id="footer-disclaimer">Le jeu comporte des risques : endettement, isolement, dépendance. NITRODROP est un site indépendant à but informatif, il n'exploite aucune plateforme de jeu et ne garantit pas les offres listées, qui restent soumises aux conditions générales de chaque opérateur. Joue avec modération. Aide et information : joueurs-info-service.fr.</span>
-    </div>
-  </div>
-</footer>
+  </aside>
 
-<a href="#" id="floating-widget" class="floating-widget" target="_blank" rel="noopener" style="display:none;">
-  <img id="floating-widget-img" src="" alt="">
-  <span class="floating-widget-badge">🎮</span>
-</a>
+  <!-- ============ CONTENU ============ -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
+      <h1>Bonuses</h1>
+      <span class="crumb">Originals</span>
+      <div class="top-right">
+        <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> players online</span>
+        <button class="icon-btn" aria-label="Notifications">🔔</button>
+      </div>
+    </div>
+
+    <div class="offers-intro">
+      <div class="offers-tag" id="offers-tag">Current offers</div>
+      <h2 class="offers-title" id="offers-title"></h2>
+      <p class="offers-desc" id="offers-desc"></p>
+    </div>
+
+    <div class="offers-grid" id="offers-grid"></div>
+
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="handle"></div>
+  <div class="d-user" id="drawer-user">
+    <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
+    <div><div class="n" id="drawer-pseudo">Not connected</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Log out" style="display:none;">→]</button>
+  </div>
+  <div class="d-sep"></div>
+  <div class="d-grid">
+    <a class="d-item" href="/profile">Profile</a><a class="d-item" href="/leaderboard">Leaderboard</a><a class="d-item" href="/">Bonuses</a>
+    <a class="d-item" href="/vault">Vault</a>
+  </div>
+  <div class="d-label">ORIGINALS</div>
+  <div class="d-grid">
+    <a class="d-item" href="/blackjack"><span>🃏</span>Blackjack</a><a class="d-item" href="/slot"><span>🎰</span>Slot</a>
+    <a class="d-item" href="/mines"><span>💣</span>Mines</a><a class="d-item" href="/dice"><span>🎲</span>Dice</a>
+  </div>
+</div>
 
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()" aria-label="Fermer">×</button>
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
 
     <div id="modal-step-gate">
-      <div class="modal-tag" id="gate-tag">Recevoir le bonus</div>
-      <h3 id="gate-platform-name">Voltra</h3>
-      <p class="modal-sub" id="gate-sub">Es-tu déjà inscrit sur Voltra avec le code NITRO200 ?</p>
+      <div class="modal-tag" id="gate-tag">Get the bonus</div>
+      <h3 id="gate-platform-name"></h3>
+      <p class="modal-sub" id="gate-sub"></p>
       <div class="gate-actions">
-        <button type="button" class="modal-submit" id="gate-yes-btn" onclick="gateYes()">Oui, je suis inscrit</button>
-        <button type="button" class="modal-ghost" id="gate-no-btn" onclick="gateNo()">Non, je m'inscris d'abord</button>
+        <button type="button" class="modal-submit" id="gate-yes-btn" onclick="gateYes()">Yes, I'm registered</button>
+        <button type="button" class="modal-ghost" id="gate-no-btn" onclick="gateNo()">No, I'll sign up first</button>
       </div>
     </div>
 
     <div id="modal-step-form" style="display:none;">
-      <div class="modal-tag" id="form-tag-label">Réclamer le bonus</div>
-      <h3 id="modal-platform-name">Voltra</h3>
-      <p class="modal-sub" id="form-sub">Indique l'email et le pseudo de ton compte sur la plateforme.</p>
+      <div class="modal-tag" id="form-tag-label">Claim bonus</div>
+      <h3 id="modal-platform-name"></h3>
+      <p class="modal-sub" id="form-sub"></p>
       <form id="claim-form" onsubmit="submitClaim(event)">
         <label><span id="email-label-text">Email</span>
           <input type="email" required placeholder="toi@email.com" id="claim-email-input">
         </label>
-        <label><span id="pseudo-label-text">Pseudo sur la plateforme</span>
-          <input type="text" required placeholder="Ton pseudo de compte" id="claim-pseudo-input">
+        <label><span id="pseudo-label-text">Username on the platform</span>
+          <input type="text" required placeholder="Your account username" id="claim-pseudo-input">
         </label>
-        <label><span id="discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
-        <p id="discord-join-note" style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;">
-          Rejoins d'abord notre <a href="#" id="discord-join-link" target="_blank" style="color:var(--green); font-weight:600;">serveur Discord</a>, sinon on ne pourra pas t'envoyer la confirmation en DM.
-        </p>
-        <div id="discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
+        <div id="discord-block">
+          <label><span id="discord-label-text">Your Discord account</span></label>
+          <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Connect with Discord</button>
+        </div>
         <input type="hidden" id="claim-discord-input">
-        <button type="submit" class="modal-submit" id="claim-submit-btn">Confirmer ma demande</button>
+        <button type="submit" class="modal-submit" id="claim-submit-btn">Confirm my request</button>
       </form>
     </div>
 
     <div id="modal-step-confirm" style="display:none;">
       <div class="confirm-icon">✓</div>
-      <h3 id="confirm-title">Demande envoyée</h3>
-      <p id="confirm-text">Ton bonus sera envoyé sous moins de 24h après vérification de ton inscription sur Voltra.</p>
-      <div class="countdown code-font" id="countdown">24:00:00</div>
-      <p class="modal-note" id="confirm-note">Un email de confirmation t'a été envoyé. Tu peux fermer cette fenêtre.</p>
-      <a href="#" class="tg-btn" id="confirm-telegram-btn" style="margin-top:20px; width:100%; justify-content:center;">Rejoindre le canal Telegram</a>
+      <h3 id="confirm-title">Request sent</h3>
+      <p id="confirm-text"></p>
+      <div class="countdown" id="countdown">24:00:00</div>
+      <p class="modal-note" id="confirm-note"></p>
+      <a href="#" class="modal-ghost" id="confirm-telegram-btn" style="margin-top:20px; display:block; text-align:center; text-decoration:none;">Join the Telegram channel</a>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="scratch-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeScratchModal()" aria-label="Fermer">×</button>
-
-    <div id="scratch-step-form">
-      <div class="modal-tag" id="scratch-tag">Ticket à gratter</div>
-      <h3 id="scratch-title">Tente ta chance</h3>
-      <p class="modal-sub" id="scratch-subtitle">Un essai gratuit par jour.</p>
-      <form id="scratch-form" onsubmit="submitScratch(event)">
-        <label><span id="scratch-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="scratch-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('scratch')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="scratch-discord-note">
-          Connexion Discord requise pour participer (1 essai par jour).
-        </p>
-        <div id="scratch-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="scratch-discord-input">
-        <button type="submit" class="modal-submit" id="scratch-submit-btn">Gratter le ticket</button>
-        <p id="scratch-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="scratch-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="scratch-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="scratch-step-card" style="display:none; text-align:center;">
-      <h3 id="scratch-result-title">Ton ticket</h3>
-      <div class="scratch-card-visual" id="scratch-card-visual">
-        <div class="scratch-silver" id="scratch-silver">👆</div>
-        <div class="scratch-result" id="scratch-result"></div>
-      </div>
-      <p id="scratch-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="scratch-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="scratch-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayScratch()">Rejouer</button>
-    </div>
+<div class="custom-alert-overlay" id="customAlertOverlay">
+  <div class="custom-alert-box">
+    <div class="custom-alert-title">drop-cash.com</div>
+    <div class="custom-alert-msg" id="customAlertMsg"></div>
+    <button class="custom-alert-btn" id="customAlertOkBtn" type="button">OK</button>
   </div>
 </div>
 
-<div class="modal-overlay" id="slot-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeSlotModal()" aria-label="Fermer">×</button>
-
-    <div id="slot-step-form">
-      <div class="modal-tag" id="slot-tag">Machine à sous</div>
-      <h3 id="slot-title">Tente ta chance</h3>
-      <p class="modal-sub" id="slot-subtitle">Un spin gratuit par jour.</p>
-      <form id="slot-form" onsubmit="submitSlot(event)">
-        <label><span id="slot-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="slot-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('slot')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="slot-discord-note">
-          Connexion Discord requise pour participer (1 spin par jour).
-        </p>
-        <div id="slot-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="slot-discord-input">
-        <button type="submit" class="modal-submit" id="slot-submit-btn">Spin</button>
-        <p id="slot-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="slot-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="slot-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="slot-step-card" style="display:none; text-align:center;">
-      <h3 id="slot-result-title">Résultat</h3>
-      <div class="slot-reels" id="slot-reels">
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-0">7️⃣</span></div>
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-1">🍒</span></div>
-        <div class="slot-reel"><span class="slot-sym" id="slot-sym-2">💎</span></div>
-      </div>
-      <p id="slot-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="slot-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="slot-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replaySlot()">Rejouer</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="wheel-modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeWheelModal()" aria-label="Fermer">×</button>
-
-    <div id="wheel-step-form">
-      <div class="modal-tag" id="wheel-tag">Roue de la fortune</div>
-      <h3 id="wheel-title">Fais tourner la roue</h3>
-      <p class="modal-sub" id="wheel-subtitle">Tente ta chance chaque jour.</p>
-      <form id="wheel-form" onsubmit="submitWheel(event)">
-        <label><span id="wheel-discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="wheel-discord-connect-btn" class="modal-ghost" onclick="connectDiscord('wheel')">🎮 Se connecter avec Discord</button>
-        <p style="font-size:11.5px; color:var(--text-faint); margin-top:-8px; line-height:1.5;" id="wheel-discord-note">
-          Connexion Discord requise pour participer.
-        </p>
-        <div id="wheel-discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:600; text-align:center;"></div>
-        <input type="hidden" id="wheel-discord-input">
-        <button type="submit" class="modal-submit" id="wheel-submit-btn">Faire tourner la roue</button>
-        <p id="wheel-cooldown-message" class="modal-submit" style="display:none; background:var(--bg-raise); color:var(--text-dim); text-align:center; padding:14px; border-radius:10px; font-weight:700; font-size:14.5px; margin:0;"></p>
-        <p id="wheel-tries-remaining" style="display:none; font-size:11.5px; color:var(--text-faint); text-align:center; margin:0;"></p>
-      </form>
-      <p id="wheel-form-error" style="color:#FF7A90; font-size:12.5px; margin-top:10px; text-align:center; display:none;"></p>
-    </div>
-
-    <div id="wheel-step-card" style="display:none; text-align:center;">
-      <h3 id="wheel-result-title">Résultat</h3>
-      <div class="wheel-wrap">
-        <div class="wheel-pointer"></div>
-        <div class="wheel-disc" id="wheel-disc">
-          <div class="wheel-label-pos" style="transform:rotate(22.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-22.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(67.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-67.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(112.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-112.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(157.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-157.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(202.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-202.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(247.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-247.5deg);">🎉</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(292.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-292.5deg);">😔</span></div>
-          <div class="wheel-label-pos" style="transform:rotate(337.5deg);"><span class="wheel-label-content" style="transform:translateY(-75px) rotate(-337.5deg);">🎉</span></div>
-        </div>
-        <div class="wheel-center-dot"></div>
-      </div>
-      <p id="wheel-result-message" style="margin-top:16px; font-size:13.5px; color:var(--text-dim); line-height:1.6;"></p>
-      <a href="#" id="wheel-discord-claim-btn" class="tg-btn" style="display:none; margin-top:14px; width:100%; justify-content:center;" target="_blank">Réclamer sur Discord</a>
-      <button type="button" id="wheel-play-again-btn" class="modal-submit" style="display:none; margin-top:12px;" onclick="replayWheel()">Rejouer</button>
-    </div>
-  </div>
-</div>
-
-<script src="nitrodrop-config.js?v=20260719a"></script>
+<script src="nitrodrop-config.js?v=20260721a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
+  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
+  const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
-  // ---------- Identifiant "appareil" persistant (pas un cookie classique, juste localStorage) ----------
-  function getOrCreateDeviceId(){
-    let id = localStorage.getItem('nitrodrop_device_id');
-    if (!id){
-      id = (crypto.randomUUID && crypto.randomUUID()) ||
-        ('dev-' + Date.now() + '-' + Math.random().toString(36).slice(2));
-      localStorage.setItem('nitrodrop_device_id', id);
-    }
-    return id;
+  function formatLocalTime(dateMs){
+    if (!dateMs) return '';
+    return new Date(dateMs).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
   }
-
-  // ---------- Migration vers la structure multilingue (une seule fois, transparente) ----------
-  (function migrateToI18n(cfg){
-    if (cfg.content) return;
-    const textKeys = ['nav','hero','telegram','offersSection','offers','tickerSettings',
-                       'ticker','leaderboard','steps','footer','modal','brand','pageTitle','vault','scratchTicket','slotMachine','wheelGame'];
-    const en = {};
-    textKeys.forEach(k => { en[k] = cfg[k]; delete cfg[k]; });
-    cfg.content = { en, fr: JSON.parse(JSON.stringify(en)) };
-    cfg.defaultLang = cfg.defaultLang || 'en';
-  })(CONFIG);
-
-  let currentLang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
-
-  // Permet de forcer la langue via un lien du type https://tondomaine.com/?lang=fr
-  // Le choix est ensuite mémorisé comme si la personne avait cliqué sur le bouton FR/EN elle-même.
-  const urlLangParam = new URLSearchParams(location.search).get('lang');
-  if (urlLangParam && CONFIG.content[urlLangParam]) {
-    currentLang = urlLangParam;
-    localStorage.setItem('nitrodrop_lang', currentLang);
-  }
-  if (!CONFIG.content[currentLang]) currentLang = CONFIG.defaultLang || 'en';
-
-  function getActive(){ return CONFIG.content[currentLang]; }
 
   function escapeHtml(str){
-    return String(str)
-      .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
-      .replaceAll('"','&quot;');
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  // Échappe d'abord tout le HTML (sécurité), PUIS convertit **texte** en gras.
-  // Comme l'échappement se fait en premier, aucune balise réelle ne peut être injectée.
-  function formatWithBold(str){
-    return escapeHtml(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  function isMobileDevice(){
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
   }
-
-  function fillTemplate(tpl, vars){
-    return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
-  }
-
-  // ---------- Applique la config statique (nav, hero, telegram, sections, footer) ----------
-  // ---------- Effet "machine à sous" pour un texte (lettres qui tournent puis se figent) ----------
-  const SLOT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  function slotSpinText(el, finalText){
-    if (!el) return;
-    // Évite de relancer l'animation si le texte final est déjà identique et déjà stable
-    if (el.dataset.slotValue === finalText && !el.dataset.slotSpinning) return;
-    el.dataset.slotValue = finalText;
-    el.dataset.slotSpinning = '1';
-    el.innerHTML = '';
-    const letters = finalText.split('');
-    const spans = letters.map(ch => {
-      const s = document.createElement('span');
-      s.style.display = 'inline-block';
-      s.style.minWidth = '0.55em';
-      s.style.textAlign = 'center';
-      s.textContent = ch === ' ' ? '\u00A0' : ch;
-      el.appendChild(s);
-      return s;
-    });
-    let remaining = spans.length;
-    spans.forEach((span, i) => {
-      const finalChar = letters[i];
-      if (finalChar === ' '){ remaining--; if (remaining <= 0) el.dataset.slotSpinning = ''; return; }
-      const spinTime = 550 + i * 90;
-      const stepTime = 45;
-      let elapsed = 0;
-      const interval = setInterval(() => {
-        elapsed += stepTime;
-        if (elapsed >= spinTime){
-          span.textContent = finalChar;
-          clearInterval(interval);
-          remaining--;
-          if (remaining <= 0) el.dataset.slotSpinning = '';
-        } else {
-          span.textContent = SLOT_CHARS[Math.floor(Math.random() * SLOT_CHARS.length)];
-        }
-      }, stepTime);
-    });
-  }
-
-  function applyStaticConfig(cfg){
-    // Logo / nom de marque (nav + footer)
-    const brandText1 = (cfg.brand && cfg.brand.text1) || 'NITRO';
-    const brandText2 = (cfg.brand && cfg.brand.text2) || 'DROP';
-    document.getElementById('brand-text1-nav').textContent = brandText1;
-    slotSpinText(document.getElementById('brand-text2-nav'), brandText2);
-    document.getElementById('brand-text1-footer').textContent = brandText1;
-    slotSpinText(document.getElementById('brand-text2-footer'), brandText2);
-
-    // Nav
-    cfg.nav.links.forEach((link, i) => {
-      const el = document.getElementById('nav-link-' + i);
-      if (el){
-        if (link.label && link.label.trim()){
-          el.textContent = link.label; el.href = link.href; el.style.display = '';
-          if (link.newTab){ el.target = '_blank'; el.rel = 'noopener'; }
-          else { el.removeAttribute('target'); el.removeAttribute('rel'); }
-        } else {
-          el.style.display = 'none';
-        }
-      }
-      const mEl = document.getElementById('mobile-nav-link-' + i);
-      if (mEl){
-        if (link.label && link.label.trim()){
-          mEl.textContent = link.label; mEl.href = link.href; mEl.style.display = '';
-          if (link.newTab){ mEl.target = '_blank'; mEl.rel = 'noopener'; }
-          else { mEl.removeAttribute('target'); mEl.removeAttribute('rel'); }
-        } else {
-          mEl.style.display = 'none';
-        }
-      }
-    });
-    const navCta = document.getElementById('nav-cta');
-    navCta.textContent = cfg.nav.ctaText;
-    navCta.href = cfg.nav.ctaHref;
-    const navCtaMobile = document.getElementById('nav-cta-mobile');
-    navCtaMobile.textContent = cfg.nav.ctaText;
-    navCtaMobile.href = cfg.nav.ctaHref;
-
-    // Hero
-    document.getElementById('hero-eyebrow').textContent = cfg.hero.eyebrow;
-    document.getElementById('hero-title-line1').textContent = cfg.hero.titleLine1;
-    document.getElementById('hero-title-em').textContent = cfg.hero.titleEm;
-    document.getElementById('hero-lede').textContent = cfg.hero.lede;
-    document.getElementById('promo-code').textContent = cfg.hero.code;
-    document.getElementById('foil-code-value').textContent = cfg.hero.code;
-    document.getElementById('foil-code-block').style.display = (cfg.hero.code && cfg.hero.code.trim()) ? '' : 'none';
-    const btnP = document.getElementById('hero-btn-primary');
-    btnP.textContent = cfg.hero.btnPrimaryText; btnP.href = cfg.hero.btnPrimaryHref;
-    const btnG = document.getElementById('hero-btn-ghost');
-    btnG.textContent = cfg.hero.btnGhostText; btnG.href = cfg.hero.btnGhostHref;
-
-    // Telegram
-    document.getElementById('tg-tag').textContent = cfg.telegram.tag;
-    document.getElementById('tg-title').textContent = cfg.telegram.title;
-    document.getElementById('tg-desc').textContent = cfg.telegram.desc;
-    const tgBtn = document.getElementById('tg-btn');
-    tgBtn.textContent = cfg.telegram.btnText; tgBtn.href = cfg.telegram.btnHref;
-
-    // Offers section head
-    document.getElementById('offers-tag').textContent = cfg.offersSection.tag;
-    document.getElementById('offers-title').textContent = cfg.offersSection.title;
-    document.getElementById('offers-desc').textContent = cfg.offersSection.desc;
-
-    // Leaderboard head
-    document.getElementById('lb-tag').textContent = cfg.leaderboard.tag;
-    document.getElementById('lb-title').textContent = cfg.leaderboard.title;
-    document.getElementById('lb-desc').textContent = cfg.leaderboard.desc;
-    document.getElementById('lb-pool-figure').textContent = cfg.leaderboard.poolFigure;
-    document.getElementById('lb-pool-caption').textContent = cfg.leaderboard.poolCaption;
-
-    // Sections activables/désactivables
-    document.getElementById('hero-code-widget').style.display = (cfg.hero.codeWidgetEnabled === false) ? 'none' : '';
-    document.getElementById('classement').style.display = (cfg.leaderboard.enabled === false) ? 'none' : '';
-    document.getElementById('etapes').style.display = (cfg.steps.enabled === false) ? 'none' : '';
-
-    // Steps
-    document.getElementById('steps-tag').textContent = cfg.steps.tag;
-    document.getElementById('steps-title').textContent = cfg.steps.title;
-    cfg.steps.items.forEach((step, i) => {
-      const t = document.getElementById('step-title-' + i);
-      const d = document.getElementById('step-desc-' + i);
-      if (t) t.textContent = step.title;
-      if (d) d.textContent = step.desc;
-    });
-
-    // Footer
-    document.getElementById('footer-nav-title').textContent = cfg.footer.navTitle;
-    cfg.footer.navLinks.forEach((link, i) => {
-      const el = document.getElementById('footer-nav-link-' + i);
-      if (el){ el.textContent = link.label; el.href = link.href; }
-    });
-    document.getElementById('footer-community-title').textContent = cfg.footer.communityTitle;
-    cfg.footer.communityLinks.forEach((link, i) => {
-      const el = document.getElementById('footer-community-link-' + i);
-      if (el){
-        el.textContent = link.label; el.href = link.href;
-        if (link.newTab){ el.target = '_blank'; el.rel = 'noopener'; }
-        else { el.removeAttribute('target'); el.removeAttribute('rel'); }
-      }
-    });
-    document.getElementById('footer-disclaimer').textContent = cfg.footer.disclaimer;
-
-    // Modal static labels
-    document.getElementById('page-title').textContent = cfg.pageTitle || 'NITRODROP — Codes bonus crypto vérifiés';
-    document.getElementById('gate-tag').textContent = cfg.modal.gateTag || 'Recevoir le bonus';
-    document.getElementById('claim-email-input').placeholder = cfg.modal.emailPlaceholder || 'toi@email.com';
-    document.getElementById('claim-pseudo-input').placeholder = cfg.modal.pseudoPlaceholder || 'Ton pseudo de compte';
-    document.getElementById('discord-label-text').textContent = cfg.modal.discordLabel || 'Ton ID Discord';
-    document.getElementById('claim-discord-input').placeholder = cfg.modal.discordPlaceholder || 'Ex: 123456789012345678';
-    document.getElementById('discord-connect-btn').textContent = cfg.modal.discordConnectText || '🎮 Se connecter avec Discord';
-    const discordNavLink = cfg.nav.links.find(l => (l.label || '').toLowerCase().includes('discord'));
-    const discordHref = (discordNavLink && discordNavLink.href) || '#';
-    const discordLinkText = cfg.modal.discordJoinLinkText || 'serveur Discord';
-    const discordLinkHtml = `<a href="${escapeHtml(discordHref)}" target="_blank" style="color:var(--green); font-weight:600;">${escapeHtml(discordLinkText)}</a>`;
-    const joinNoteTemplate = cfg.modal.discordJoinNote || `Rejoins d'abord notre {link}, sinon on ne pourra pas t'envoyer la confirmation en DM.`;
-    document.getElementById('discord-join-note').innerHTML = escapeHtml(joinNoteTemplate).replace('{link}', discordLinkHtml);
-    document.getElementById('gate-yes-btn').textContent = cfg.modal.gateYesText;
-    document.getElementById('gate-no-btn').textContent = cfg.modal.gateNoText;
-    document.getElementById('form-tag-label').textContent = cfg.modal.formTag;
-    document.getElementById('email-label-text').textContent = cfg.modal.emailLabel;
-    document.getElementById('pseudo-label-text').textContent = cfg.modal.pseudoLabel;
-    document.getElementById('claim-submit-btn').textContent = cfg.modal.submitText;
-    document.getElementById('confirm-title').textContent = cfg.modal.confirmTitle;
-    document.getElementById('confirm-note').textContent = cfg.modal.confirmNote;
-    const confirmTgBtn = document.getElementById('confirm-telegram-btn');
-    confirmTgBtn.textContent = cfg.modal.confirmTelegramText || 'Rejoindre le canal Telegram';
-    confirmTgBtn.href = cfg.modal.confirmTelegramHref || '#';
-    document.querySelectorAll('.modal-close').forEach(btn => {
-      btn.setAttribute('aria-label', cfg.modal.closeAriaLabel || 'Fermer');
-    });
-
-    const scratchNavLabel = (cfg.scratchTicket && cfg.scratchTicket.navLabel) || '🎫 Ticket';
-    document.getElementById('nav-scratch-btn').textContent = scratchNavLabel;
-    document.getElementById('mobile-nav-scratch-btn').textContent = scratchNavLabel;
-    const slotNavLabel = (cfg.slotMachine && cfg.slotMachine.navLabel) || '🎰 Slot';
-    document.getElementById('nav-slot-btn').textContent = slotNavLabel;
-    document.getElementById('mobile-nav-slot-btn').textContent = slotNavLabel;
-    const wheelNavLabel = (cfg.wheelGame && cfg.wheelGame.navLabel) || '🎡 Roue';
-    document.getElementById('nav-wheel-btn').textContent = wheelNavLabel;
-    document.getElementById('mobile-nav-wheel-btn').textContent = wheelNavLabel;
-  }
-
-  // ---------- Génère les cartes d'offres depuis la config ----------
-  function renderOffers(cfg){
-    const grid = document.getElementById('offers-grid');
-    grid.innerHTML = '';
-    cfg.offers.forEach((offer, idx) => {
-      const card = document.createElement('div');
-      card.className = 'offer-card' + (offer.featured ? ' featured' : '');
-      card.innerHTML = `
-        ${offer.featured ? `<div class="featured-tag">${escapeHtml(offer.badge)}</div>` : ''}
-        <div class="offer-top">
-          <div class="offer-mark ${offer.markClass}" ${offer.markColorStart && offer.markColorEnd ? `style="background:linear-gradient(135deg, ${escapeHtml(offer.markColorStart)}, ${escapeHtml(offer.markColorEnd)});"` : ''}>${escapeHtml(offer.mark)}</div>
-          <div>
-            <div class="offer-name">${escapeHtml(offer.name)}</div>
-            <div class="offer-sub">${escapeHtml(offer.sub)}</div>
-          </div>
-        </div>
-        <div class="offer-bonus">${escapeHtml(offer.bonusAmount)} <small>${escapeHtml(offer.bonusSuffix)}</small></div>
-        <div class="offer-desc">${formatWithBold(offer.desc)}</div>
-        ${offer.codeEnabled === false ? '' : `
-        <div class="offer-code-row">
-          <span>Code</span>
-          <div class="code-right">
-            <span class="c code-font">${escapeHtml(offer.code)}</span>
-            <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}" aria-label="Copier le code" title="Copier le code">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
-            </button>
-          </div>
-        </div>
-        `}
-        <div class="offer-btns">
-          <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta secondary${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
-          <a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-
-    grid.querySelectorAll('[data-copy-code]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const code = btn.dataset.copyCode;
-        navigator.clipboard.writeText(code).then(() => {
-          const originalHtml = btn.innerHTML;
-          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M20 6 9 17l-5-5"></path></svg>';
-          btn.classList.add('copied');
-          setTimeout(() => { btn.innerHTML = originalHtml; btn.classList.remove('copied'); }, 1600);
-        });
-      });
-    });
-
-    grid.querySelectorAll('[data-claim-idx]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const offer = cfg.offers[parseInt(btn.dataset.claimIdx, 10)];
-        openModal(offer.name, offer.code, offer.signupHref, offer.codeEnabled !== false);
-      });
-    });
-  }
-
-  // ---------- Ticker ----------
-  function renderTicker(cfg){
-    const track = document.getElementById('ticker-track');
-    const renderClaims = () => cfg.ticker.map(item =>
-      `<div class="ticker-item"><b>${escapeHtml(item.name)}</b> ${escapeHtml(cfg.tickerSettings.verbText)} ${escapeHtml(item.message)}<span class="ticker-dot"></span></div>`
-    ).join('');
-    track.innerHTML = renderClaims() + renderClaims();
-  }
-
-  const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>';
-  const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6 9 17l-5-5"></path></svg>';
-
-  function copyCode(){
-    const code = document.getElementById('promo-code').innerText;
-    navigator.clipboard.writeText(code).then(() => {
-      const btn = document.getElementById('copy-btn');
-      btn.innerHTML = CHECK_ICON;
-      btn.classList.add('copied');
-      setTimeout(() => { btn.innerHTML = COPY_ICON; btn.classList.remove('copied'); }, 1600);
-    });
-  }
-
-  // ---- Claim modal ----
-  const overlay = document.getElementById('modal-overlay');
-  const stepGate = document.getElementById('modal-step-gate');
-  const stepForm = document.getElementById('modal-step-form');
-  const stepConfirm = document.getElementById('modal-step-confirm');
-  const claimForm = document.getElementById('claim-form');
-  let countdownInterval = null;
-  let currentSignupUrl = '#';
-
-  function openModal(platform, code, signupUrl, codeEnabled){
-    currentSignupUrl = signupUrl || '#';
-    document.getElementById('gate-platform-name').innerText = platform;
-    const gateTemplate = (codeEnabled !== false && code)
-      ? getActive().modal.gateSubTemplate
-      : (getActive().modal.gateSubTemplateNoCode || getActive().modal.gateSubTemplate);
-    document.getElementById('gate-sub').innerHTML =
-      fillTemplate(escapeHtml(gateTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
-    document.getElementById('modal-platform-name').innerText = platform;
-    document.getElementById('form-sub').innerHTML =
-      fillTemplate(escapeHtml(getActive().modal.formSubTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
-    document.getElementById('confirm-text').innerHTML =
-      fillTemplate(escapeHtml(getActive().modal.confirmTextTemplate), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code)}</strong>` });
-
-    stepGate.style.display = 'block';
-    stepForm.style.display = 'none';
-    stepConfirm.style.display = 'none';
-    claimForm.reset();
-    const existingErr = document.getElementById('claim-form-error');
-    if (existingErr) existingErr.remove();
-    document.getElementById('discord-connect-btn').textContent = getActive().modal.discordConnectText || '🎮 Se connecter avec Discord';
-    applyDiscordIdentityToForm('claim');
-    clearInterval(countdownInterval);
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal(){
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-    clearInterval(countdownInterval);
-  }
-
-  function gateYes(){
-    stepGate.style.display = 'none';
-    stepForm.style.display = 'block';
-  }
-
-  function gateNo(){
-    window.open(currentSignupUrl, '_blank', 'noopener');
-    // reste sur l'étape gate : l'utilisateur revient cliquer "Oui" une fois inscrit
-  }
-
-  // ---- Telegram notification (via relais sécurisé, jamais d'appel direct depuis le navigateur) ----
-  async function sendTelegramNotification({ platform, code, email, pseudo, discordId, deviceId }){
-    const relayUrl = CONFIG.telegramRelay.url;
-    if (!relayUrl || relayUrl.includes('REMPLACE-MOI')){
-      console.warn('Relais Telegram non configuré : renseigne telegramRelay.url dans nitrodrop-config.js.');
-      return { ok: true }; // pas de blocage si le relais n'est simplement pas configuré
-    }
-    const resp = await fetch(relayUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ platform, code, email, pseudo, discordId, deviceId })
-    });
-    try{
-      return await resp.json();
-    }catch(e){
-      return { ok: true }; // réponse non-JSON (ancienne version du Worker) : on laisse passer
-    }
-  }
-
-  // ---- Connexion Discord (OAuth, récupère l'ID automatiquement) ----
-  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
 
   function saveDiscordIdentity(discordId, username, avatarUrl){
     const payload = JSON.stringify({ discordId, username, avatarUrl });
-    try{
-      localStorage.setItem(DISCORD_STORAGE_KEY, payload);
-    }catch(e){}
-    try{
-      document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax';
-    }catch(e){}
+    try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
+  }
+
+  function clearDiscordIdentity(){
+    try{ localStorage.removeItem(DISCORD_STORAGE_KEY); }catch(e){}
+    try{ document.cookie = DISCORD_STORAGE_KEY + '=; max-age=0; path=/; SameSite=Lax'; }catch(e){}
   }
 
   function getSavedDiscordIdentity(){
@@ -1322,200 +553,266 @@
     return null;
   }
 
-  // Pseudo utilisé pour les 3 mini-jeux (Ticket/Slot/Roue) : plus de champ manuel,
-  // on prend directement le pseudo Discord (comme sur la page Originals).
-  function getConnectedUsername(){
-    const saved = getSavedDiscordIdentity();
-    return (saved && saved.username) || '';
-  }
+  function getSharedDiscordId(){ const s = getSavedDiscordIdentity(); return s ? s.discordId : ''; }
+  function getSharedUsername(){ const s = getSavedDiscordIdentity(); return s ? s.username : ''; }
+  function getSharedAvatarUrl(){ const s = getSavedDiscordIdentity(); return s ? (s.avatarUrl || '') : ''; }
 
-  const DISCORD_FORM_IDS = {
-    claim: { input: 'claim-discord-input', btn: 'discord-connect-btn', info: 'discord-connected-info' },
-    scratch: { input: 'scratch-discord-input', btn: 'scratch-discord-connect-btn', info: 'scratch-discord-connected-info' },
-    slot: { input: 'slot-discord-input', btn: 'slot-discord-connect-btn', info: 'slot-discord-connected-info' },
-    wheel: { input: 'wheel-discord-input', btn: 'wheel-discord-connect-btn', info: 'wheel-discord-connected-info' }
-  };
-
-  // Réutilise la connexion Discord déjà faite dans une autre popup (évite de se reconnecter à chaque fois)
-  function applyDiscordIdentityToForm(context){
-    const ids = DISCORD_FORM_IDS[context];
-    if (!ids) return;
-    const saved = getSavedDiscordIdentity();
-    const input = document.getElementById(ids.input);
-    const btn = document.getElementById(ids.btn);
-    const info = document.getElementById(ids.info);
-    if (saved && saved.discordId){
-      input.value = saved.discordId;
-      btn.style.display = 'none';
-      info.style.display = 'block';
-      const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
-      info.textContent = template.replace('{username}', saved.username || 'Discord');
-    } else {
-      input.value = '';
-      btn.style.display = '';
-      info.style.display = 'none';
-    }
-  }
-
-  // ---------- Compte à rebours "déjà joué aujourd'hui" (ticket + slot) ----------
-  const cooldownIntervals = {};
-
-  function msUntilNextUtcMidnight(){
-    const now = new Date();
-    const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
-    return next - now.getTime();
-  }
-
-  function formatCountdown(ms){
-    if (ms < 0) ms = 0;
-    const totalSec = Math.floor(ms / 1000);
-    const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSec % 60).padStart(2, '0');
-    return `${h}:${m}:${s}`;
-  }
-
-  function clearCooldown(prefix){
-    if (cooldownIntervals[prefix]){
-      clearInterval(cooldownIntervals[prefix]);
-      cooldownIntervals[prefix] = null;
-    }
-  }
-
-  function showCooldown(prefix, template){
-    clearCooldown(prefix);
-    const submitBtn = document.getElementById(prefix + '-submit-btn');
-    const msgEl = document.getElementById(prefix + '-cooldown-message');
-    const triesEl = document.getElementById(prefix + '-tries-remaining');
-    submitBtn.style.display = 'none';
-    msgEl.style.display = 'block';
-    if (triesEl) triesEl.style.display = 'none';
-    const tick = () => {
-      const ms = msUntilNextUtcMidnight();
-      msgEl.textContent = fillTemplate(template || 'Reviens dans {time}', { time: formatCountdown(ms) });
-      if (ms <= 1000){
-        clearCooldown(prefix);
-        hideCooldown(prefix);
-      }
-    };
-    tick();
-    cooldownIntervals[prefix] = setInterval(tick, 1000);
-  }
-
-  function hideCooldown(prefix, remaining){
-    clearCooldown(prefix);
-    const submitBtn = document.getElementById(prefix + '-submit-btn');
-    const msgEl = document.getElementById(prefix + '-cooldown-message');
-    const triesEl = document.getElementById(prefix + '-tries-remaining');
-    submitBtn.style.display = '';
-    msgEl.style.display = 'none';
-    if (triesEl){
-      if (typeof remaining === 'number'){
-        const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
-        triesEl.textContent = fillTemplate(st.triesRemainingText || '{remaining} essai(s) restant(s) aujourd\'hui', { remaining });
-        triesEl.style.display = 'block';
-      } else {
-        triesEl.style.display = 'none';
-      }
-    }
-  }
-
-  async function checkAlreadyPlayed(prefix, discordId){
-    if (!discordId){ hideCooldown(prefix); return; }
-    const st = getActive()[prefix === 'scratch' ? 'scratchTicket' : prefix === 'slot' ? 'slotMachine' : 'wheelGame'] || {};
-    try{
-      const resp = await fetch(`${getWorkerBase()}/${prefix}/status?discordId=${encodeURIComponent(discordId)}`);
-      const data = await resp.json();
-      if (data.alreadyPlayed){
-        showCooldown(prefix, st.cooldownMessage || 'Reviens dans {time}');
-      } else {
-        hideCooldown(prefix, data.remaining);
-      }
-    }catch(err){
-      hideCooldown(prefix);
-    }
-  }
-
-  let discordConnectContext = 'claim';
-
-  function isMobileDevice(){
-    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
-  }
-
-  function connectDiscord(context){
-    discordConnectContext = context || 'claim';
+  function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){
-      alert(getActive().modal.discordNotConfiguredAlert || 'Connexion Discord non configurée par l\'administrateur du site.');
-      return;
-    }
+    if (!clientId){ showAlert('Discord login has not been set up by the site administrator.'); return; }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
-    const btnId = discordConnectContext === 'scratch' ? 'scratch-discord-connect-btn'
-                : discordConnectContext === 'slot' ? 'slot-discord-connect-btn'
-                : discordConnectContext === 'wheel' ? 'wheel-discord-connect-btn'
-                : 'discord-connect-btn';
-    const btn = document.getElementById(btnId);
-    btn.textContent = getActive().modal.discordConnectingText || 'Connexion en cours…';
-
     if (isMobileDevice()){
-      // Sur mobile, les popups ne sont pas fiables : on part en pleine page, et
-      // discord-callback.html nous ramène ici une fois la connexion terminée.
       try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
       window.location.href = authUrl;
       return;
     }
     window.open(authUrl, 'discord-oauth', 'width=500,height=750');
   }
+</script>
+<script>
+// Popup d'alerte maison (remplace alert() natif du navigateur) — globale, utilisée
+// aussi bien ici que dans le script d'identité partagé (connectDiscord, etc.)
+const customAlertOverlay = document.getElementById('customAlertOverlay');
+const customAlertMsg = document.getElementById('customAlertMsg');
+function showAlert(message){
+  customAlertMsg.textContent = message;
+  customAlertOverlay.classList.add('show');
+}
+document.getElementById('customAlertOkBtn').addEventListener('click', () => {
+  customAlertOverlay.classList.remove('show');
+});
 
-  window.addEventListener('message', (event) => {
-    if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
-    const { discordId, username, avatarUrl } = event.data;
-    saveDiscordIdentity(discordId, username, avatarUrl);
-    applyDiscordIdentityToForm(discordConnectContext);
-    if (discordConnectContext === 'scratch' || discordConnectContext === 'slot' || discordConnectContext === 'wheel'){
-      checkAlreadyPlayed(discordConnectContext, discordId);
+(async function(){
+  const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
+  const toggle=o=>{drawer.classList.toggle('open',o);scrim.classList.toggle('open',o);document.body.style.overflow=o?'hidden':''};
+  document.getElementById('burger').addEventListener('click',()=>toggle(true));
+  scrim.addEventListener('click',()=>toggle(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')toggle(false)});
+  drawer.querySelectorAll('.d-item').forEach(b=>b.addEventListener('click',()=>toggle(false)));
+
+  const balanceSidebarEl=document.getElementById('balance-sidebar');
+  function setBalance(v){ balanceSidebarEl.textContent = v; }
+
+  // ---------------- Offres (lues depuis la même config que la page d'accueil) ----------------
+  let currentLang = 'en';
+  try{ currentLang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en'; }catch(e){}
+  const urlLangParam = new URLSearchParams(location.search).get('lang');
+  if (urlLangParam && CONFIG.content && CONFIG.content[urlLangParam]) currentLang = urlLangParam;
+  if (!CONFIG.content || !CONFIG.content[currentLang]) currentLang = (CONFIG.defaultLang || 'en');
+
+  function getActive(){ return CONFIG.content[currentLang]; }
+
+  // Échappe d'abord tout le HTML (sécurité), PUIS convertit **texte** en gras.
+  function formatWithBold(str){
+    return escapeHtml(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+
+  function renderOffers(){
+    const cfg = getActive();
+    if (!cfg || !cfg.offers) return;
+
+    if (cfg.offersSection){
+      document.getElementById('offers-tag').textContent = cfg.offersSection.tag;
+      document.getElementById('offers-title').textContent = cfg.offersSection.title;
+      document.getElementById('offers-desc').textContent = cfg.offersSection.desc;
     }
-  });
 
-  async function submitClaim(e){
-    e.preventDefault();
-    const platform = document.getElementById('modal-platform-name').innerText;
-    const email = claimForm.querySelector('input[type="email"]').value;
-    const pseudo = document.getElementById('claim-pseudo-input').value;
-    const discordId = document.getElementById('claim-discord-input').value;
+    const grid = document.getElementById('offers-grid');
+    grid.innerHTML = '';
+    cfg.offers.forEach((offer, idx) => {
+      const card = document.createElement('div');
+      card.className = 'offer-card' + (offer.featured ? ' featured' : '');
+      const markStyle = (offer.markColorStart && offer.markColorEnd)
+        ? ` style="background:linear-gradient(135deg, ${escapeHtml(offer.markColorStart)}, ${escapeHtml(offer.markColorEnd)});"`
+        : '';
+      card.innerHTML = `
+        ${offer.featured ? `<div class="featured-tag">${escapeHtml(offer.badge)}</div>` : ''}
+        <div class="offer-top">
+          <div class="offer-mark ${escapeHtml(offer.markClass || '')}"${markStyle}>${escapeHtml(offer.mark)}</div>
+          <div>
+            <div class="offer-name">${escapeHtml(offer.name)}</div>
+            <div class="offer-sub">${escapeHtml(offer.sub)}</div>
+          </div>
+        </div>
+        <div class="offer-bonus">${escapeHtml(offer.bonusAmount)} <small>${escapeHtml(offer.bonusSuffix)}</small></div>
+        <div class="offer-desc">${formatWithBold(offer.desc)}</div>
+        ${offer.codeEnabled === false ? '' : `
+        <div class="offer-code-row">
+          <span>Code</span>
+          <div class="code-right">
+            <span class="c">${escapeHtml(offer.code)}</span>
+            <button type="button" class="offer-copy-btn" data-copy-code="${escapeHtml(offer.code)}" aria-label="Copy code" title="Copy code">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+            </button>
+          </div>
+        </div>
+        `}
+        <div class="offer-btns">
+          <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
+          <a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
 
-    if (!discordId){
-      alert(getActive().modal.discordRequiredAlert || 'Connecte-toi avec Discord avant de valider ta demande.');
-      return;
+    grid.querySelectorAll('[data-claim-idx]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const offer = cfg.offers[parseInt(btn.dataset.claimIdx, 10)];
+        openModal(offer.name, offer.code, offer.signupHref, offer.codeEnabled !== false);
+      });
+    });
+
+    grid.querySelectorAll('[data-copy-code]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.dataset.copyCode;
+        navigator.clipboard.writeText(code).then(() => {
+          const originalHtml = btn.innerHTML;
+          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M20 6 9 17l-5-5"></path></svg>';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.innerHTML = originalHtml; btn.classList.remove('copied'); }, 1600);
+        }).catch(() => {});
+      });
+    });
+  }
+
+  // ==================================================================
+  // Modale de réclamation de bonus — reprise complète du fonctionnement
+  // de la page d'accueil (portail « déjà inscrit ? », formulaire, envoi
+  // au relais, compte à rebours de 24h).
+  // ==================================================================
+  const overlay = document.getElementById('modal-overlay');
+  const stepGate = document.getElementById('modal-step-gate');
+  const stepForm = document.getElementById('modal-step-form');
+  const stepConfirm = document.getElementById('modal-step-confirm');
+  const claimForm = document.getElementById('claim-form');
+  let countdownInterval = null;
+  let currentSignupUrl = '#';
+  let currentClaimCode = '';
+
+  function fillTemplate(tpl, vars){
+    return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
+  }
+
+  function getOrCreateDeviceId(){
+    let id = null;
+    try{ id = localStorage.getItem('nitrodrop_device_id'); }catch(e){}
+    if (!id){
+      id = (crypto.randomUUID && crypto.randomUUID()) ||
+        ('dev-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+      try{ localStorage.setItem('nitrodrop_device_id', id); }catch(e){}
     }
+    return id;
+  }
 
-    const submitBtn = claimForm.querySelector('.modal-submit');
-    const originalLabel = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Envoi en cours…';
+  // Applique les textes de la modale depuis la config (mêmes keys que la page d'accueil)
+  function applyModalTexts(){
+    const cfg = getActive();
+    if (!cfg || !cfg.modal) return;
+    const m = cfg.modal;
+    const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+    set('gate-tag', m.gateTag || 'Get the bonus');
+    set('discord-label-text', m.discordLabel || 'Your Discord account');
+    set('discord-connect-btn', m.discordConnectText || '🎮 Connect with Discord');
+    set('gate-yes-btn', m.gateYesText);
+    set('gate-no-btn', m.gateNoText);
+    set('form-tag-label', m.formTag);
+    set('email-label-text', m.emailLabel);
+    set('pseudo-label-text', m.pseudoLabel);
+    set('claim-submit-btn', m.submitText);
+    set('confirm-title', m.confirmTitle);
+    set('confirm-note', m.confirmNote);
 
-    let result = { ok: true };
-    try{
-      result = await sendTelegramNotification({ platform, code: currentClaimCode, email, pseudo, discordId, deviceId: getOrCreateDeviceId() });
-    }catch(err){
-      console.error('Échec de la notification Telegram :', err);
+    const emailInput = document.getElementById('claim-email-input');
+    if (m.emailPlaceholder) emailInput.placeholder = m.emailPlaceholder;
+    const pseudoInput = document.getElementById('claim-pseudo-input');
+    if (m.pseudoPlaceholder) pseudoInput.placeholder = m.pseudoPlaceholder;
+
+    const tgBtn = document.getElementById('confirm-telegram-btn');
+    tgBtn.textContent = m.confirmTelegramText || 'Join the Telegram channel';
+    tgBtn.href = m.confirmTelegramHref || '#';
+    document.querySelectorAll('.modal-close').forEach(btn => {
+      btn.setAttribute('aria-label', m.closeAriaLabel || 'Close');
+    });
+  }
+
+  // Réutilise la connexion Discord déjà faite ailleurs sur le site.
+  // Si le compte est déjà connecté, tout le bloc Discord disparaît : la connexion
+  // ajoute désormais automatiquement le joueur au serveur, et son identité est
+  // déjà visible dans la barre latérale.
+  function applyDiscordIdentityToClaimForm(){
+    const saved = getSavedDiscordIdentity();
+    const input = document.getElementById('claim-discord-input');
+    const block = document.getElementById('discord-block');
+    if (saved && saved.discordId){
+      input.value = saved.discordId;
+      block.style.display = 'none';
+    } else {
+      input.value = '';
+      block.style.display = '';
     }
+  }
 
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalLabel;
+  function openModal(platform, code, signupUrl, codeEnabled){
+    currentSignupUrl = signupUrl || '#';
+    currentClaimCode = code || '';
+    const m = getActive().modal || {};
 
-    if (result && result.ok === false && result.reason === 'duplicate_24h'){
-      const template = getActive().modal.duplicateRequestMessage ||
-        "Tu as déjà fait une demande pour ce casino récemment. Réessaie dans environ {hours}h.";
-      showFormError(fillTemplate(template, { hours: result.hoursRemaining || '24' }));
-      return;
-    }
+    document.getElementById('gate-platform-name').textContent = platform;
+    const gateTemplate = (codeEnabled !== false && code)
+      ? m.gateSubTemplate
+      : (m.gateSubTemplateNoCode || m.gateSubTemplate);
+    document.getElementById('gate-sub').innerHTML =
+      fillTemplate(escapeHtml(gateTemplate || ''), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code || '')}</strong>` });
 
+    document.getElementById('modal-platform-name').textContent = platform;
+    document.getElementById('form-sub').innerHTML =
+      fillTemplate(escapeHtml(m.formSubTemplate || ''), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code || '')}</strong>` });
+    document.getElementById('confirm-text').innerHTML =
+      fillTemplate(escapeHtml(m.confirmTextTemplate || ''), { platform: `<strong>${escapeHtml(platform)}</strong>`, code: `<strong>${escapeHtml(code || '')}</strong>` });
+
+    stepGate.style.display = 'block';
     stepForm.style.display = 'none';
-    stepConfirm.style.display = 'block';
-    startCountdown();
+    stepConfirm.style.display = 'none';
+    claimForm.reset();
+    const existingErr = document.getElementById('claim-form-error');
+    if (existingErr) existingErr.remove();
+    applyDiscordIdentityToClaimForm();
+    clearInterval(countdownInterval);
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    clearInterval(countdownInterval);
+  }
+
+  function gateYes(){
+    stepGate.style.display = 'none';
+    stepForm.style.display = 'block';
+  }
+
+  function gateNo(){
+    window.open(currentSignupUrl, '_blank', 'noopener');
+    // On reste sur l'étape « gate » : l'utilisateur revient cliquer « Oui » une fois inscrit
+  }
+
+  async function sendTelegramNotification({ platform, code, email, pseudo, discordId, deviceId }){
+    const url = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
+    if (!url || url.includes('REMPLACE-MOI')){
+      console.warn('Telegram relay not configured.');
+      return { ok: true };
+    }
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ platform, code, email, pseudo, discordId, deviceId })
+    });
+    try{ return await resp.json(); }catch(e){ return { ok: true }; }
   }
 
   function showFormError(msg){
@@ -1529,15 +826,57 @@
     errEl.textContent = msg;
   }
 
+  async function submitClaim(e){
+    e.preventDefault();
+    const platform = document.getElementById('modal-platform-name').textContent;
+    const email = document.getElementById('claim-email-input').value;
+    const pseudo = document.getElementById('claim-pseudo-input').value;
+    const discordId = document.getElementById('claim-discord-input').value;
+    const m = getActive().modal || {};
+
+    if (!discordId){
+      showAlert(m.discordRequiredAlert || 'Connect with Discord before submitting your request.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('claim-submit-btn');
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    let result = { ok: true };
+    try{
+      result = await sendTelegramNotification({
+        platform, code: currentClaimCode, email, pseudo, discordId, deviceId: getOrCreateDeviceId()
+      });
+    }catch(err){
+      console.error('Notification failed:', err);
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+
+    if (result && result.ok === false && result.reason === 'duplicate_24h'){
+      const template = m.duplicateRequestMessage ||
+        "You already submitted a request for this casino recently. Try again in about {hours}h.";
+      showFormError(fillTemplate(template, { hours: result.hoursRemaining || '24' }));
+      return;
+    }
+
+    stepForm.style.display = 'none';
+    stepConfirm.style.display = 'block';
+    startCountdown();
+  }
+
   function startCountdown(){
     clearInterval(countdownInterval);
-    let remaining = 24 * 3600; // 24h in seconds
+    let remaining = 24 * 3600;
     const el = document.getElementById('countdown');
     const render = () => {
       const h = String(Math.floor(remaining / 3600)).padStart(2, '0');
-      const m = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
+      const mm = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
       const s = String(remaining % 60).padStart(2, '0');
-      el.innerText = `${h}:${m}:${s}`;
+      el.textContent = `${h}:${mm}:${s}`;
     };
     render();
     countdownInterval = setInterval(() => {
@@ -1550,535 +889,96 @@
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-  // ---------- Init ----------
-  let currentClaimCode = '';
-  const _openModalOriginal = openModal;
-  openModal = function(platform, code, signupUrl){
-    currentClaimCode = code;
-    _openModalOriginal(platform, code, signupUrl);
-  };
+  // Ces fonctions sont appelées depuis des attributs onclick du HTML : elles doivent
+  // être accessibles globalement, alors que tout ce script tourne dans une fonction fermée.
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+  window.gateYes = gateYes;
+  window.gateNo = gateNo;
+  window.submitClaim = submitClaim;
 
-  applyStaticConfig(getActive());
-  renderOffers(getActive());
-  renderTicker(getActive());
+  // ---------------- Compteur de visiteurs (affichage simple, pas de vraie mesure) ----------------
+  document.getElementById('visitor-count').textContent = String(20 + Math.floor(Math.random() * 11));
 
-  // Bannière hero (image de fond) — indépendante de la langue
-  (function applyHeroBanner(){
-    const heroEl = document.getElementById('hero-header');
-    const banner = CONFIG.heroBanner || {};
-    if (banner.enabled && banner.imageUrl){
-      heroEl.style.backgroundImage = `url('${banner.imageUrl}')`;
-      heroEl.classList.add('has-banner');
-    } else {
-      heroEl.style.backgroundImage = '';
-      heroEl.classList.remove('has-banner');
-    }
-  })();
-
-  // Pack "foil" décoratif (visuel à droite du hero) — indépendant de la langue
-  (function applyFoilVisibility(){
-    const foilEl = document.getElementById('foil-stage');
-    const enabled = CONFIG.foilPackEnabled !== false; // activé par défaut
-    foilEl.style.display = enabled ? '' : 'none';
-  })();
-
-  // Position du bandeau Telegram (au-dessus ou en dessous des offres) — indépendant de la langue
-  (function applyTelegramPosition(){
-    const tgSection = document.querySelector('.tg-section');
-    const offresSection = document.getElementById('offres');
-    if (!tgSection || !offresSection) return;
-    if (CONFIG.telegramPosition === 'below'){
-      offresSection.parentNode.insertBefore(tgSection, offresSection.nextSibling);
-    } else {
-      offresSection.parentNode.insertBefore(tgSection, offresSection);
-    }
-  })();
-
-  // Bouton flottant (image + lien) — indépendant de la langue
-  (function applyFloatingWidget(){
-    const widget = CONFIG.floatingWidget || {};
-    const el = document.getElementById('floating-widget');
-    if (widget.enabled && widget.imageUrl && widget.linkUrl){
-      document.getElementById('floating-widget-img').src = widget.imageUrl;
-      el.href = widget.linkUrl;
-      el.style.display = 'flex';
-    } else {
+  // ---------------- Badge du nombre d'offres (lu depuis la config, jamais codé en dur) ----------------
+  (function updateBonusCount(){
+    const el = document.getElementById('bonus-count');
+    if (!el) return;
+    try{
+      let lang = localStorage.getItem('nitrodrop_lang') || CONFIG.defaultLang || 'en';
+      if (!CONFIG.content || !CONFIG.content[lang]) lang = CONFIG.defaultLang || 'en';
+      const offers = CONFIG.content && CONFIG.content[lang] && CONFIG.content[lang].offers;
+      if (offers && offers.length){
+        el.textContent = String(offers.length);
+      } else {
+        el.style.display = 'none';
+      }
+    }catch(e){
       el.style.display = 'none';
     }
   })();
 
-  function setLanguage(lang){
-    if (!CONFIG.content[lang]) return;
-    currentLang = lang;
-    localStorage.setItem('nitrodrop_lang', lang);
-    document.documentElement.lang = lang;
-    applyStaticConfig(getActive());
-    renderOffers(getActive());
-    renderTicker(getActive());
-    document.querySelectorAll('.lang-switch-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.lang === lang);
-    });
+  // ---------------- Identité ----------------
+  async function applyIdentity(){
+    const saved = getSavedDiscordIdentity();
+    const sideLoginBtn = document.getElementById('side-login-btn');
+    const sideUser = document.getElementById('side-user');
+    const sideUserPseudo = document.getElementById('side-user-pseudo');
+    const sideUserPfp = document.getElementById('side-user-pfp');
+    const drawerPseudo = document.getElementById('drawer-pseudo');
+    const drawerPfp = document.getElementById('drawer-user-pfp');
+    const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
+    const fallbackAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+    if (saved && saved.discordId){
+      sideLoginBtn.style.display = 'none';
+      sideUser.style.display = 'flex';
+      sideUserPseudo.textContent = saved.username;
+      sideUserPfp.src = saved.avatarUrl || fallbackAvatar;
+      drawerPseudo.textContent = saved.username;
+      drawerPfp.src = saved.avatarUrl || fallbackAvatar;
+      drawerLogoutBtn.style.display = 'grid';
+      const keys = await getKeysStatus(saved.discordId);
+      setBalance(keys);
+    } else {
+      sideLoginBtn.style.display = 'block';
+      sideUser.style.display = 'none';
+      drawerPseudo.textContent = 'Not connected';
+      drawerLogoutBtn.style.display = 'none';
+      setBalance('0');
+    }
   }
-  document.querySelectorAll('.lang-switch-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === currentLang);
-    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+
+  async function getKeysStatus(discordId){
+    if (!workerBase) return '0';
+    try{
+      const resp = await fetch(`${workerBase}/mines/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      return data.keys;
+    }catch(e){ return '0'; }
+  }
+
+  document.getElementById('side-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    applyIdentity();
+  });
+  document.getElementById('drawer-logout-btn').addEventListener('click', () => {
+    clearDiscordIdentity();
+    applyIdentity();
+    toggle(false);
   });
 
-  // ---- Menu mobile ----
-  const burgerBtn = document.getElementById('burger-btn');
-  const mobileNav = document.getElementById('mobile-nav');
-  burgerBtn.addEventListener('click', () => {
-    mobileNav.classList.toggle('open');
-  });
-  mobileNav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => mobileNav.classList.remove('open'));
+  window.addEventListener('message', (event) => {
+    if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
+    saveDiscordIdentity(event.data.discordId, event.data.username, event.data.avatarUrl);
+    applyIdentity();
+    applyDiscordIdentityToClaimForm();
   });
 
-  // ---- Ticket à gratter ----
-  function getWorkerBase(){
-    const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
-    return relayUrl.replace(/\/notify\/?$/, '');
-  }
-
-  // Compteur de visiteurs total du site (une fois par session, peu importe la page)
-  function openScratchModal(){
-    document.getElementById('scratch-step-form').style.display = 'block';
-    document.getElementById('scratch-step-card').style.display = 'none';
-    document.getElementById('scratch-form').reset();
-    document.getElementById('scratch-form-error').style.display = 'none';
-    document.getElementById('scratch-silver').classList.remove('revealed');
-    document.getElementById('scratch-discord-claim-btn').style.display = 'none';
-
-    const st = getActive().scratchTicket || {};
-    document.getElementById('scratch-tag').textContent = st.tag || 'Ticket à gratter';
-    document.getElementById('scratch-title').textContent = st.title || 'Tente ta chance';
-    document.getElementById('scratch-subtitle').textContent = st.subtitle || 'Un essai gratuit par jour.';
-    document.getElementById('scratch-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('scratch-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
-    document.getElementById('scratch-submit-btn').textContent = st.submitText || 'Gratter le ticket';
-    document.getElementById('scratch-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 essai par jour).';
-    document.getElementById('scratch-result-title').textContent = st.resultTitle || 'Ton ticket';
-    applyDiscordIdentityToForm('scratch');
-    checkAlreadyPlayed('scratch', document.getElementById('scratch-discord-input').value);
-
-    document.getElementById('scratch-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeScratchModal(){
-    document.getElementById('scratch-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('scratch');
-  }
-
-  function showScratchFormError(msg){
-    const el = document.getElementById('scratch-form-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  async function submitScratch(e){
-    e.preventDefault();
-    const pseudo = getConnectedUsername();
-    const discordId = document.getElementById('scratch-discord-input').value;
-    const st = getActive().scratchTicket || {};
-    if (!discordId){
-      showScratchFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
-      return;
-    }
-
-    const submitBtn = document.getElementById('scratch-submit-btn');
-    submitBtn.disabled = true;
-    const workerBase = getWorkerBase();
-
-    try{
-      const resp = await fetch(`${workerBase}/scratch/play`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo, discordId })
-      });
-      const data = await resp.json();
-      submitBtn.disabled = false;
-
-      if (data.ok === false && data.reason === 'already_played_today'){
-        showScratchFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
-        return;
-      }
-      if (data.ok === false && data.reason === 'banned'){
-        showScratchFormError('Ton compte a été banni des mini-jeux.');
-        return;
-      }
-      if (data.ok === false){
-        showScratchFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
-        return;
-      }
-
-      document.getElementById('scratch-step-form').style.display = 'none';
-      document.getElementById('scratch-step-card').style.display = 'block';
-
-      const silver = document.getElementById('scratch-silver');
-      const resultEl = document.getElementById('scratch-result');
-      const msgEl = document.getElementById('scratch-result-message');
-      const claimBtn = document.getElementById('scratch-discord-claim-btn');
-      const playAgainBtn = document.getElementById('scratch-play-again-btn');
-      playAgainBtn.style.display = 'none';
-
-      silver.onclick = () => {
-        silver.classList.add('revealed');
-        if (data.won){
-          resultEl.textContent = '$' + data.amount;
-          msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
-          claimBtn.style.display = 'flex';
-          claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
-          claimBtn.href = (CONFIG.scratchTicket && CONFIG.scratchTicket.discordClaimLink) || '#';
-        } else {
-          resultEl.textContent = '😔';
-          msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
-        }
-        if (data.remaining > 0){
-          playAgainBtn.textContent = st.playAgainText || 'Rejouer';
-          playAgainBtn.style.display = 'block';
-        }
-      };
-    }catch(err){
-      submitBtn.disabled = false;
-      showScratchFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
-    }
-  }
-
-  function replayScratch(){
-    document.getElementById('scratch-step-card').style.display = 'none';
-    document.getElementById('scratch-play-again-btn').style.display = 'none';
-    document.getElementById('scratch-step-form').style.display = 'block';
-    document.getElementById('scratch-discord-claim-btn').style.display = 'none';
-    const discordId = document.getElementById('scratch-discord-input').value;
-    checkAlreadyPlayed('scratch', discordId);
-  }
-
-  document.getElementById('nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
-  document.getElementById('mobile-nav-scratch-btn').addEventListener('click', (e) => { e.preventDefault(); openScratchModal(); });
-
-  const SLOT_SYMBOLS = ['7️⃣','🍒','💎','🔔','🍋','⭐'];
-
-  function openSlotModal(){
-    document.getElementById('slot-step-form').style.display = 'block';
-    document.getElementById('slot-step-card').style.display = 'none';
-    document.getElementById('slot-form').reset();
-    document.getElementById('slot-form-error').style.display = 'none';
-    document.getElementById('slot-discord-claim-btn').style.display = 'none';
-    document.querySelectorAll('#slot-reels .slot-reel').forEach(r => r.classList.remove('spinning'));
-
-    const st = getActive().slotMachine || {};
-    document.getElementById('slot-tag').textContent = st.tag || 'Machine à sous';
-    document.getElementById('slot-title').textContent = st.title || 'Tente ta chance';
-    document.getElementById('slot-subtitle').textContent = st.subtitle || 'Un spin gratuit par jour.';
-    document.getElementById('slot-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('slot-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
-    document.getElementById('slot-submit-btn').textContent = st.spinText || 'Spin';
-    document.getElementById('slot-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer (1 spin par jour).';
-    document.getElementById('slot-result-title').textContent = st.resultTitle || 'Résultat';
-    document.getElementById('slot-result-message').textContent = '';
-    applyDiscordIdentityToForm('slot');
-    checkAlreadyPlayed('slot', document.getElementById('slot-discord-input').value);
-
-    document.getElementById('slot-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeSlotModal(){
-    document.getElementById('slot-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('slot');
-  }
-
-  function showSlotFormError(msg){
-    const el = document.getElementById('slot-form-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  async function submitSlot(e){
-    e.preventDefault();
-    const pseudo = getConnectedUsername();
-    const discordId = document.getElementById('slot-discord-input').value;
-    const st = getActive().slotMachine || {};
-    if (!discordId){
-      showSlotFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
-      return;
-    }
-
-    const submitBtn = document.getElementById('slot-submit-btn');
-    submitBtn.disabled = true;
-    const workerBase = getWorkerBase();
-
-    try{
-      const resp = await fetch(`${workerBase}/slot/play`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo, discordId })
-      });
-      const data = await resp.json();
-
-      if (data.ok === false && data.reason === 'already_played_today'){
-        submitBtn.disabled = false;
-        showSlotFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
-        return;
-      }
-      if (data.ok === false && data.reason === 'banned'){
-        showSlotFormError('Ton compte a été banni des mini-jeux.');
-        return;
-      }
-      if (data.ok === false){
-        submitBtn.disabled = false;
-        showSlotFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
-        return;
-      }
-
-      document.getElementById('slot-step-form').style.display = 'none';
-      document.getElementById('slot-step-card').style.display = 'block';
-
-      const reels = document.querySelectorAll('#slot-reels .slot-reel');
-      const syms = [document.getElementById('slot-sym-0'), document.getElementById('slot-sym-1'), document.getElementById('slot-sym-2')];
-      const msgEl = document.getElementById('slot-result-message');
-      const claimBtn = document.getElementById('slot-discord-claim-btn');
-      const playAgainBtn = document.getElementById('slot-play-again-btn');
-      playAgainBtn.style.display = 'none';
-      submitBtn.textContent = st.spinningText || 'Ça tourne...';
-
-      reels.forEach(r => r.classList.add('spinning'));
-
-      // Le résultat final est déterminé AVANT le lancement de l'animation, pour que chaque
-      // rouleau s'arrête directement sur son symbole définitif (pas de changement après coup,
-      // ce qui donnait l'impression d'un résultat "truqué" à la fin du spin).
-      const pick = () => SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
-      let finalSyms;
-      if (data.won){
-        const winSym = SLOT_SYMBOLS[0];
-        finalSyms = [winSym, winSym, winSym];
-      } else {
-        let a = pick(), b = pick(), c = pick();
-        if (a === b && b === c){
-          do { c = pick(); } while (c === a);
-        }
-        finalSyms = [a, b, c];
-      }
-
-      syms.forEach((el, i) => {
-        let ticks = 0;
-        const maxTicks = 14 + i * 6;
-        const iv = setInterval(() => {
-          ticks++;
-          if (ticks >= maxTicks){
-            el.textContent = finalSyms[i];
-            clearInterval(iv);
-            reels[i].classList.remove('spinning');
-            if (i === syms.length - 1){
-              submitBtn.disabled = false;
-              submitBtn.textContent = st.spinText || 'Spin';
-              if (data.won){
-                msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
-                claimBtn.style.display = 'flex';
-                claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
-                claimBtn.href = (CONFIG.slotMachine && CONFIG.slotMachine.discordClaimLink) || '#';
-              } else {
-                msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
-              }
-              if (data.remaining > 0){
-                playAgainBtn.textContent = st.playAgainText || 'Rejouer';
-                playAgainBtn.style.display = 'block';
-              }
-            }
-          } else {
-            el.textContent = pick();
-          }
-        }, 70);
-      });
-    }catch(err){
-      submitBtn.disabled = false;
-      submitBtn.textContent = st.spinText || 'Spin';
-      showSlotFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
-    }
-  }
-
-  function replaySlot(){
-    document.getElementById('slot-step-card').style.display = 'none';
-    document.getElementById('slot-play-again-btn').style.display = 'none';
-    document.getElementById('slot-step-form').style.display = 'block';
-    document.getElementById('slot-discord-claim-btn').style.display = 'none';
-    const discordId = document.getElementById('slot-discord-input').value;
-    checkAlreadyPlayed('slot', discordId);
-  }
-
-  document.getElementById('nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
-  document.getElementById('mobile-nav-slot-btn').addEventListener('click', (e) => { e.preventDefault(); openSlotModal(); });
-
-  // ---------- Roue de la fortune ----------
-  function openWheelModal(){
-    document.getElementById('wheel-step-form').style.display = 'block';
-    document.getElementById('wheel-step-card').style.display = 'none';
-    document.getElementById('wheel-form').reset();
-    document.getElementById('wheel-form-error').style.display = 'none';
-    document.getElementById('wheel-discord-claim-btn').style.display = 'none';
-    document.getElementById('wheel-disc').style.transition = 'none';
-    document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
-
-    const st = getActive().wheelGame || {};
-    document.getElementById('wheel-tag').textContent = st.tag || 'Roue de la fortune';
-    document.getElementById('wheel-title').textContent = st.title || 'Fais tourner la roue';
-    document.getElementById('wheel-subtitle').textContent = st.subtitle || 'Tente ta chance chaque jour.';
-    document.getElementById('wheel-discord-label-text').textContent = st.discordAccountLabel || 'Ton compte Discord';
-    document.getElementById('wheel-discord-connect-btn').textContent = st.discordConnectText || '🎮 Se connecter avec Discord';
-    document.getElementById('wheel-submit-btn').textContent = st.spinText || 'Faire tourner la roue';
-    document.getElementById('wheel-discord-note').textContent = st.discordNote || 'Connexion Discord requise pour participer.';
-    document.getElementById('wheel-result-title').textContent = st.resultTitle || 'Résultat';
-    document.getElementById('wheel-result-message').textContent = '';
-    applyDiscordIdentityToForm('wheel');
-    checkAlreadyPlayed('wheel', document.getElementById('wheel-discord-input').value);
-
-    document.getElementById('wheel-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeWheelModal(){
-    document.getElementById('wheel-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
-    clearCooldown('wheel');
-  }
-
-  function showWheelFormError(msg){
-    const el = document.getElementById('wheel-form-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  // Fait tourner la roue jusqu'au centre d'un secteur du bon type (gagné/perdu),
-  // choisi au hasard parmi les 4 secteurs de ce type, avec plusieurs tours complets.
-  function spinWheelTo(discEl, won, onDone){
-    const winIndexes = [1, 3, 5, 7];
-    const loseIndexes = [0, 2, 4, 6];
-    const pool = won ? winIndexes : loseIndexes;
-    const idx = pool[Math.floor(Math.random() * pool.length)];
-    const segmentCenter = idx * 45 + 22.5;
-    const rest = (360 - segmentCenter) % 360;
-    const spins = 6;
-    const target = spins * 360 + rest;
-
-    discEl.style.transition = 'none';
-    discEl.style.transform = 'rotate(0deg)';
-    void discEl.offsetWidth; // force reflow pour repartir de 0 sans transition visible
-    discEl.style.transition = 'transform 4.5s cubic-bezier(0.12,0.67,0.1,0.99)';
-
-    const handleEnd = () => {
-      discEl.removeEventListener('transitionend', handleEnd);
-      onDone();
-    };
-    discEl.addEventListener('transitionend', handleEnd);
-
-    requestAnimationFrame(() => {
-      discEl.style.transform = `rotate(${target}deg)`;
-    });
-  }
-
-  async function submitWheel(e){
-    e.preventDefault();
-    const pseudo = getConnectedUsername();
-    const discordId = document.getElementById('wheel-discord-input').value;
-    const st = getActive().wheelGame || {};
-    if (!discordId){
-      showWheelFormError(st.discordRequiredMessage || 'Connecte-toi avec Discord avant de continuer.');
-      return;
-    }
-
-    const submitBtn = document.getElementById('wheel-submit-btn');
-    submitBtn.disabled = true;
-    const workerBase = getWorkerBase();
-
-    try{
-      const resp = await fetch(`${workerBase}/wheel/play`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo, discordId })
-      });
-      const data = await resp.json();
-
-      if (data.ok === false && data.reason === 'already_played_today'){
-        submitBtn.disabled = false;
-        showWheelFormError(st.alreadyPlayedMessage || 'Tu as déjà joué aujourd\'hui, reviens demain !');
-        return;
-      }
-      if (data.ok === false && data.reason === 'banned'){
-        showWheelFormError('Ton compte a été banni des mini-jeux.');
-        return;
-      }
-      if (data.ok === false){
-        submitBtn.disabled = false;
-        showWheelFormError(st.genericErrorMessage || 'Une erreur est survenue, réessaie.');
-        return;
-      }
-
-      document.getElementById('wheel-step-form').style.display = 'none';
-      document.getElementById('wheel-step-card').style.display = 'block';
-
-      const msgEl = document.getElementById('wheel-result-message');
-      const claimBtn = document.getElementById('wheel-discord-claim-btn');
-      const playAgainBtn = document.getElementById('wheel-play-again-btn');
-      playAgainBtn.style.display = 'none';
-      submitBtn.textContent = st.spinningText || 'Ça tourne...';
-
-      const disc = document.getElementById('wheel-disc');
-      spinWheelTo(disc, data.won, () => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = st.spinText || 'Faire tourner la roue';
-        if (data.won){
-          msgEl.textContent = fillTemplate(st.winMessage || 'Félicitations, tu remportes {amount} !', { amount: '$' + data.amount });
-          claimBtn.style.display = 'flex';
-          claimBtn.textContent = st.discordButtonText || 'Réclamer sur Discord';
-          claimBtn.href = (CONFIG.wheelGame && CONFIG.wheelGame.discordClaimLink) || '#';
-        } else {
-          msgEl.textContent = st.loseMessage || 'Pas de chance cette fois, reviens demain !';
-        }
-        if (data.remaining > 0){
-          playAgainBtn.textContent = st.playAgainText || 'Rejouer';
-          playAgainBtn.style.display = 'block';
-        }
-      });
-    }catch(err){
-      submitBtn.disabled = false;
-      submitBtn.textContent = st.spinText || 'Faire tourner la roue';
-      showWheelFormError(st.networkErrorMessage || 'Erreur de connexion, réessaie.');
-    }
-  }
-
-  function replayWheel(){
-    document.getElementById('wheel-step-card').style.display = 'none';
-    document.getElementById('wheel-play-again-btn').style.display = 'none';
-    document.getElementById('wheel-step-form').style.display = 'block';
-    document.getElementById('wheel-discord-claim-btn').style.display = 'none';
-    document.getElementById('wheel-disc').style.transition = 'none';
-    document.getElementById('wheel-disc').style.transform = 'rotate(0deg)';
-    const discordId = document.getElementById('wheel-discord-input').value;
-    checkAlreadyPlayed('wheel', discordId);
-  }
-
-  document.getElementById('nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
-  document.getElementById('mobile-nav-wheel-btn').addEventListener('click', (e) => { e.preventDefault(); openWheelModal(); });
-
-  // ---------- Révélation en douceur au défilement ----------
-  const revealEls = document.querySelectorAll('.reveal-on-scroll');
-  if (revealEls.length && 'IntersectionObserver' in window){
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting){
-          entry.target.classList.add('revealed');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    revealEls.forEach(el => revealObserver.observe(el));
-  } else {
-    revealEls.forEach(el => el.classList.add('revealed'));
-  }
+  applyModalTexts();
+  renderOffers();
+  applyIdentity();
+})();
 </script>
-
 </body>
 </html>
