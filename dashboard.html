@@ -140,12 +140,6 @@
     <div class="dash-tabs">
       <button class="dash-tab active" id="tab-btn-bonus" onclick="switchDashTab('bonus')">Demandes de bonus</button>
       <button class="dash-tab" id="tab-btn-stats" onclick="switchDashTab('stats')">📈 Statistiques</button>
-      <!-- Ticket / Machine à sous / Roue : jeux en dollars retirés du site au profit
-           du système de clés. Les onglets sont masqués mais le code reste en place,
-           pour pouvoir consulter l'historique de ces parties si besoin. -->
-      <button class="dash-tab" id="tab-btn-scratch" onclick="switchDashTab('scratch')" style="display:none;">🎫 Ticket à gratter</button>
-      <button class="dash-tab" id="tab-btn-slot" onclick="switchDashTab('slot')" style="display:none;">🎰 Machine à sous</button>
-      <button class="dash-tab" id="tab-btn-wheel" onclick="switchDashTab('wheel')" style="display:none;">🎡 Roue</button>
       <button class="dash-tab" id="tab-btn-affiliates" onclick="switchDashTab('affiliates')">📊 Affiliés</button>
       <button class="dash-tab" id="tab-btn-users" onclick="switchDashTab('users')">👥 Utilisateurs</button>
       <button class="dash-tab" id="tab-btn-leaderboard" onclick="switchDashTab('leaderboard')">🏆 Leaderboard</button>
@@ -199,66 +193,6 @@
 
     <div id="table-container"></div>
     <div class="pagination" id="pagination"></div>
-    </div>
-
-    <div id="tab-scratch" style="display:none;">
-      <div class="stats" id="scratch-stats"></div>
-
-      <div class="toolbar">
-        <input type="text" id="scratch-filter-search" placeholder="Rechercher pseudo / Discord ID..." oninput="applyScratchFilters()" style="min-width:220px;">
-        <select id="scratch-filter-result" onchange="applyScratchFilters()">
-          <option value="">Résultat : tous</option>
-          <option value="won">Gagné</option>
-          <option value="lost">Perdu</option>
-        </select>
-        <select id="scratch-filter-tipped" onchange="applyScratchFilters()">
-          <option value="">Tipsé : tous</option>
-          <option value="yes">Tipsé : oui</option>
-          <option value="no">Tipsé : non</option>
-        </select>
-      </div>
-
-      <div id="scratch-table-container"></div>
-    </div>
-
-    <div id="tab-slot" style="display:none;">
-      <div class="stats" id="slot-stats"></div>
-
-      <div class="toolbar">
-        <input type="text" id="slot-filter-search" placeholder="Rechercher pseudo / Discord ID..." oninput="applySlotFilters()" style="min-width:220px;">
-        <select id="slot-filter-result" onchange="applySlotFilters()">
-          <option value="">Résultat : tous</option>
-          <option value="won">Gagné</option>
-          <option value="lost">Perdu</option>
-        </select>
-        <select id="slot-filter-tipped" onchange="applySlotFilters()">
-          <option value="">Tipsé : tous</option>
-          <option value="yes">Tipsé : oui</option>
-          <option value="no">Tipsé : non</option>
-        </select>
-      </div>
-
-      <div id="slot-table-container"></div>
-    </div>
-
-    <div id="tab-wheel" style="display:none;">
-      <div class="stats" id="wheel-stats"></div>
-
-      <div class="toolbar">
-        <input type="text" id="wheel-filter-search" placeholder="Rechercher pseudo / Discord ID..." oninput="applyWheelFilters()" style="min-width:220px;">
-        <select id="wheel-filter-result" onchange="applyWheelFilters()">
-          <option value="">Résultat : tous</option>
-          <option value="won">Gagné</option>
-          <option value="lost">Perdu</option>
-        </select>
-        <select id="wheel-filter-tipped" onchange="applyWheelFilters()">
-          <option value="">Tipsé : tous</option>
-          <option value="yes">Tipsé : oui</option>
-          <option value="no">Tipsé : non</option>
-        </select>
-      </div>
-
-      <div id="wheel-table-container"></div>
     </div>
 
     <div id="tab-affiliates" style="display:none;">
@@ -831,12 +765,6 @@
   }
 
   // ---------- Onglet Ticket à gratter ----------
-  let allScratchPlays = [];
-  let scratchLoaded = false;
-  let allSlotPlays = [];
-  let slotLoaded = false;
-  let allWheelPlays = [];
-  let wheelLoaded = false;
   let affiliatesLoaded = false;
   let usersLoaded = false;
   let leaderboardLoaded = false;
@@ -846,30 +774,15 @@
   function switchDashTab(tab){
     activeDashTab = tab;
     document.getElementById('tab-bonus').style.display = tab === 'bonus' ? '' : 'none';
-    document.getElementById('tab-scratch').style.display = tab === 'scratch' ? '' : 'none';
-    document.getElementById('tab-slot').style.display = tab === 'slot' ? '' : 'none';
-    document.getElementById('tab-wheel').style.display = tab === 'wheel' ? '' : 'none';
     document.getElementById('tab-affiliates').style.display = tab === 'affiliates' ? '' : 'none';
     document.getElementById('tab-users').style.display = tab === 'users' ? '' : 'none';
     document.getElementById('tab-leaderboard').style.display = tab === 'leaderboard' ? '' : 'none';
     document.getElementById('tab-stats').style.display = tab === 'stats' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
-    document.getElementById('tab-btn-scratch').classList.toggle('active', tab === 'scratch');
-    document.getElementById('tab-btn-slot').classList.toggle('active', tab === 'slot');
-    document.getElementById('tab-btn-wheel').classList.toggle('active', tab === 'wheel');
     document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
     document.getElementById('tab-btn-users').classList.toggle('active', tab === 'users');
     document.getElementById('tab-btn-leaderboard').classList.toggle('active', tab === 'leaderboard');
     document.getElementById('tab-btn-stats').classList.toggle('active', tab === 'stats');
-    if (tab === 'scratch' && !scratchLoaded){
-      loadScratchPlays();
-    }
-    if (tab === 'slot' && !slotLoaded){
-      loadSlotPlays();
-    }
-    if (tab === 'wheel' && !wheelLoaded){
-      loadWheelPlays();
-    }
     if (tab === 'users' && !usersLoaded){
       loadUsers();
     }
@@ -887,13 +800,7 @@
 
   // Le bouton "Rafraîchir" de la barre du haut rafraîchit l'onglet actuellement affiché
   function refreshActiveTab(){
-    if (activeDashTab === 'scratch'){
-      loadScratchPlays();
-    } else if (activeDashTab === 'slot'){
-      loadSlotPlays();
-    } else if (activeDashTab === 'wheel'){
-      loadWheelPlays();
-    } else if (activeDashTab === 'users'){
+    if (activeDashTab === 'users'){
       loadUsers();
     } else if (activeDashTab === 'leaderboard'){
       loadAdminLeaderboard();
@@ -904,288 +811,21 @@
     }
   }
 
-  async function loadScratchPlays(){
-    const container = document.getElementById('scratch-table-container');
-    container.innerHTML = '<div class="empty">Chargement…</div>';
-    try{
-      const resp = await fetch(`${workerBaseUrl}/scratch/plays`, {
-        headers: { 'X-Dashboard-Key': dashboardKey }
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const data = await resp.json();
-      allScratchPlays = (data.plays || []).slice().reverse();
-      scratchLoaded = true;
-      renderScratchStats();
-      applyScratchFilters();
-    }catch(err){
-      container.innerHTML = `<div class="empty">Erreur : ${escapeHtml(err.message)}</div>`;
-    }
-  }
 
-  function renderScratchStats(){
-    const total = allScratchPlays.length;
-    const won = allScratchPlays.filter(p => p.won).length;
-    const tipped = allScratchPlays.filter(p => p.won && p.tipped).length;
-    document.getElementById('scratch-stats').innerHTML = `
-      <div class="stat"><div class="n">${total}</div><div class="l">Participations</div></div>
-      <div class="stat"><div class="n">${won}</div><div class="l">Gains</div></div>
-      <div class="stat"><div class="n">${tipped}</div><div class="l">Gains tipsés</div></div>
-    `;
-  }
 
-  function applyScratchFilters(){
-    const search = document.getElementById('scratch-filter-search').value.trim().toLowerCase();
-    const resultFilter = document.getElementById('scratch-filter-result').value;
-    const tippedFilter = document.getElementById('scratch-filter-tipped').value;
 
-    const filtered = allScratchPlays.filter(p => {
-      if (resultFilter === 'won' && !p.won) return false;
-      if (resultFilter === 'lost' && p.won) return false;
-      if (tippedFilter === 'yes' && !p.tipped) return false;
-      if (tippedFilter === 'no' && p.tipped) return false;
-      if (search){
-        const haystack = `${p.pseudo || ''} ${p.discordId || ''}`.toLowerCase();
-        if (!haystack.includes(search)) return false;
-      }
-      return true;
-    });
 
-    renderScratchTable(filtered);
-  }
-
-  function renderScratchTable(plays){
-    const container = document.getElementById('scratch-table-container');
-    if (plays.length === 0){
-      container.innerHTML = '<div class="empty">Aucune participation.</div>';
-      return;
-    }
-    const rows = plays.map(p => `
-      <tr>
-        <td class="mono">${escapeHtml(formatLocalDate(p))}</td>
-        <td>${escapeHtml(p.pseudo || '')}</td>
-        <td class="mono"><span class="cell-truncate" style="max-width:140px;" title="${escapeHtml(p.discordId || '')}">${escapeHtml(p.discordId || '')}</span></td>
-        <td>${p.won
-          ? `<span style="color:var(--green); font-weight:700;">Gagné — $${escapeHtml(String(p.amount || 0))}</span>`
-          : `<span style="color:var(--text-faint);">Perdu</span>`}</td>
-        <td>${p.won ? `<input type="checkbox" ${p.tipped ? 'checked' : ''} onchange="toggleScratchTip('${p.id}')">` : '—'}</td>
-      </tr>
-    `).join('');
-    container.innerHTML = `
-      <table>
-        <thead><tr><th>Date</th><th>Pseudo</th><th>Discord</th><th>Résultat</th><th>Tipsé</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    `;
-  }
-
-  async function toggleScratchTip(id){
-    try{
-      const resp = await fetch(`${workerBaseUrl}/scratch/tip`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
-        body: JSON.stringify({ id })
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const entry = allScratchPlays.find(p => p.id === id);
-      if (entry){
-        const data = await resp.json();
-        entry.tipped = data.tipped;
-      }
-      renderScratchStats();
-    }catch(err){
-      alert('Erreur lors de la mise à jour : ' + err.message);
-      loadScratchPlays();
-    }
-  }
 
   // ---------- Onglet Machine à sous ----------
-  async function loadSlotPlays(){
-    const container = document.getElementById('slot-table-container');
-    container.innerHTML = '<div class="empty">Chargement…</div>';
-    try{
-      const resp = await fetch(`${workerBaseUrl}/slot/plays`, {
-        headers: { 'X-Dashboard-Key': dashboardKey }
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const data = await resp.json();
-      allSlotPlays = (data.plays || []).slice().reverse();
-      slotLoaded = true;
-      renderSlotStats();
-      applySlotFilters();
-    }catch(err){
-      container.innerHTML = `<div class="empty">Erreur : ${escapeHtml(err.message)}</div>`;
-    }
-  }
 
-  function renderSlotStats(){
-    const total = allSlotPlays.length;
-    const won = allSlotPlays.filter(p => p.won).length;
-    const tipped = allSlotPlays.filter(p => p.won && p.tipped).length;
-    document.getElementById('slot-stats').innerHTML = `
-      <div class="stat"><div class="n">${total}</div><div class="l">Participations</div></div>
-      <div class="stat"><div class="n">${won}</div><div class="l">Gains</div></div>
-      <div class="stat"><div class="n">${tipped}</div><div class="l">Gains tipsés</div></div>
-    `;
-  }
 
-  function applySlotFilters(){
-    const search = document.getElementById('slot-filter-search').value.trim().toLowerCase();
-    const resultFilter = document.getElementById('slot-filter-result').value;
-    const tippedFilter = document.getElementById('slot-filter-tipped').value;
 
-    const filtered = allSlotPlays.filter(p => {
-      if (resultFilter === 'won' && !p.won) return false;
-      if (resultFilter === 'lost' && p.won) return false;
-      if (tippedFilter === 'yes' && !p.tipped) return false;
-      if (tippedFilter === 'no' && p.tipped) return false;
-      if (search){
-        const haystack = `${p.pseudo || ''} ${p.discordId || ''}`.toLowerCase();
-        if (!haystack.includes(search)) return false;
-      }
-      return true;
-    });
 
-    renderSlotTable(filtered);
-  }
 
-  function renderSlotTable(plays){
-    const container = document.getElementById('slot-table-container');
-    if (plays.length === 0){
-      container.innerHTML = '<div class="empty">Aucune participation.</div>';
-      return;
-    }
-    const rows = plays.map(p => `
-      <tr>
-        <td class="mono">${escapeHtml(formatLocalDate(p))}</td>
-        <td>${escapeHtml(p.pseudo || '')}</td>
-        <td class="mono"><span class="cell-truncate" style="max-width:140px;" title="${escapeHtml(p.discordId || '')}">${escapeHtml(p.discordId || '')}</span></td>
-        <td>${p.won
-          ? `<span style="color:var(--green); font-weight:700;">Gagné — $${escapeHtml(String(p.amount || 0))}</span>`
-          : `<span style="color:var(--text-faint);">Perdu</span>`}</td>
-        <td>${p.won ? `<input type="checkbox" ${p.tipped ? 'checked' : ''} onchange="toggleSlotTip('${p.id}')">` : '—'}</td>
-      </tr>
-    `).join('');
-    container.innerHTML = `
-      <table>
-        <thead><tr><th>Date</th><th>Pseudo</th><th>Discord</th><th>Résultat</th><th>Tipsé</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    `;
-  }
 
-  async function toggleSlotTip(id){
-    try{
-      const resp = await fetch(`${workerBaseUrl}/slot/tip`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
-        body: JSON.stringify({ id })
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const entry = allSlotPlays.find(p => p.id === id);
-      if (entry){
-        const data = await resp.json();
-        entry.tipped = data.tipped;
-      }
-      renderSlotStats();
-    }catch(err){
-      alert('Erreur lors de la mise à jour : ' + err.message);
-      loadSlotPlays();
-    }
-  }
 
-  async function loadWheelPlays(){
-    const container = document.getElementById('wheel-table-container');
-    container.innerHTML = '<div class="empty">Chargement…</div>';
-    try{
-      const resp = await fetch(`${workerBaseUrl}/wheel/plays`, {
-        headers: { 'X-Dashboard-Key': dashboardKey }
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const data = await resp.json();
-      allWheelPlays = (data.plays || []).slice().reverse();
-      wheelLoaded = true;
-      renderWheelStats();
-      applyWheelFilters();
-    }catch(err){
-      container.innerHTML = `<div class="empty">Erreur : ${escapeHtml(err.message)}</div>`;
-    }
-  }
 
-  function renderWheelStats(){
-    const total = allWheelPlays.length;
-    const won = allWheelPlays.filter(p => p.won).length;
-    const tipped = allWheelPlays.filter(p => p.won && p.tipped).length;
-    document.getElementById('wheel-stats').innerHTML = `
-      <div class="stat"><div class="n">${total}</div><div class="l">Participations</div></div>
-      <div class="stat"><div class="n">${won}</div><div class="l">Gains</div></div>
-      <div class="stat"><div class="n">${tipped}</div><div class="l">Gains tipsés</div></div>
-    `;
-  }
 
-  function applyWheelFilters(){
-    const search = document.getElementById('wheel-filter-search').value.trim().toLowerCase();
-    const resultFilter = document.getElementById('wheel-filter-result').value;
-    const tippedFilter = document.getElementById('wheel-filter-tipped').value;
-
-    const filtered = allWheelPlays.filter(p => {
-      if (resultFilter === 'won' && !p.won) return false;
-      if (resultFilter === 'lost' && p.won) return false;
-      if (tippedFilter === 'yes' && !p.tipped) return false;
-      if (tippedFilter === 'no' && p.tipped) return false;
-      if (search){
-        const haystack = `${p.pseudo || ''} ${p.discordId || ''}`.toLowerCase();
-        if (!haystack.includes(search)) return false;
-      }
-      return true;
-    });
-
-    renderWheelTable(filtered);
-  }
-
-  function renderWheelTable(plays){
-    const container = document.getElementById('wheel-table-container');
-    if (plays.length === 0){
-      container.innerHTML = '<div class="empty">Aucune participation.</div>';
-      return;
-    }
-    const rows = plays.map(p => `
-      <tr>
-        <td class="mono">${escapeHtml(formatLocalDate(p))}</td>
-        <td>${escapeHtml(p.pseudo || '')}</td>
-        <td class="mono"><span class="cell-truncate" style="max-width:140px;" title="${escapeHtml(p.discordId || '')}">${escapeHtml(p.discordId || '')}</span></td>
-        <td>${p.won
-          ? `<span style="color:var(--green); font-weight:700;">Gagné — $${escapeHtml(String(p.amount || 0))}</span>`
-          : `<span style="color:var(--text-faint);">Perdu</span>`}</td>
-        <td>${p.won ? `<input type="checkbox" ${p.tipped ? 'checked' : ''} onchange="toggleWheelTip('${p.id}')">` : '—'}</td>
-      </tr>
-    `).join('');
-    container.innerHTML = `
-      <table>
-        <thead><tr><th>Date</th><th>Pseudo</th><th>Discord</th><th>Résultat</th><th>Tipsé</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    `;
-  }
-
-  async function toggleWheelTip(id){
-    try{
-      const resp = await fetch(`${workerBaseUrl}/wheel/tip`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
-        body: JSON.stringify({ id })
-      });
-      if (!resp.ok) throw new Error('Réponse ' + resp.status);
-      const entry = allWheelPlays.find(p => p.id === id);
-      if (entry){
-        const data = await resp.json();
-        entry.tipped = data.tipped;
-      }
-      renderWheelStats();
-    }catch(err){
-      alert('Erreur lors de la mise à jour : ' + err.message);
-      loadWheelPlays();
-    }
-  }
 
   // ---------- Onglet Affiliés ----------
   function slugifyCasino(name){
