@@ -115,6 +115,18 @@
   .icon-btn{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);
     display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.15s}
   .icon-btn:hover{color:var(--gold);border-color:rgba(232,193,104,.3)}
+  /* Cloche : mène au profil. La pastille n'apparaît que s'il y a des clés
+     ou des succès à réclamer, pour ne pas créer de fausse alerte. */
+  .bell-btn{position:relative; text-decoration:none;}
+  .bell-dot{
+    position:absolute; top:-3px; right:-3px; min-width:9px; height:9px; border-radius:20px;
+    background:var(--red); border:2px solid var(--panel-2);
+    animation:bellPulse 2s ease-in-out infinite;
+  }
+  @keyframes bellPulse{
+    0%,100%{transform:scale(1); opacity:1;}
+    50%{transform:scale(1.25); opacity:.75;}
+  }
   .burger{display:none}
 
   /* ---------- Panneau de jeu ---------- */
@@ -370,7 +382,7 @@
       <span class="crumb">Originals</span>
       <div class="top-right">
         <span class="live"><span class="dot"></span> <span id="visitor-count">—</span> players online</span>
-        <button class="icon-btn" aria-label="Notifications">🔔</button>
+        <a class="icon-btn bell-btn" id="bell-btn" href="/profile" aria-label="Notifications" title="Rewards waiting">🔔<span class="bell-dot" id="bell-dot" style="display:none;"></span></a>
       </div>
     </div>
 
@@ -563,6 +575,15 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   let busy=false;
 
+
+  // Pastille de la cloche : allumée quand des clés du jour attendent le joueur.
+  function updateBellDot(data){
+    const dot = document.getElementById('bell-dot');
+    if (!dot) return;
+    const pending = data && data.rewards && (data.rewards.daily || data.rewards.achievements);
+    dot.style.display = pending ? '' : 'none';
+  }
+
   function setBalance(v){
     balanceEl.textContent = v;
     balanceSidebarEl.textContent = v;
@@ -749,6 +770,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     try{
       const resp = await fetch(`${workerBase}/mines/status?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
+      updateBellDot(data);
       return data.keys;
     }catch(e){ return '0'; }
   }
