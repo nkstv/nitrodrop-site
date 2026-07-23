@@ -55,7 +55,7 @@
   .btn:hover{transform:translateY(-1px);}
   /* Les variables --green et --violet ont été redéfinies en doré lors du passage
      au thème du site : on fixe ici des couleurs de texte lisibles dessus. */
-  .btn-save{background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#241a06;}
+  .btn-save{background:#E8C168 !important; color:#241a06 !important; font-weight:800;}
   .btn-reset{background:var(--bg-card); border:1px solid var(--line-strong); color:var(--text);}
   .btn-open{background:var(--bg-card); border:1px solid var(--gold); color:var(--gold);}
   .btn-open:hover{background:rgba(232,193,104,.1);}
@@ -130,9 +130,10 @@
   /* Barre d'enregistrement : classes dédiées pour ne pas entrer en conflit
      avec les .btn existants des panneaux. */
   .sb-save{
-    background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#241a06;
+    background:#E8C168 !important; color:#241a06 !important;
     font-family:'Nunito Sans',sans-serif; font-weight:800; font-size:14px; padding:11px 22px;
     border:none; border-radius:11px; cursor:pointer; transition:.15s;
+    box-shadow:0 4px 14px rgba(232,193,104,.25);
   }
   .sb-save:hover{filter:brightness(1.06); transform:translateY(-1px);}
   .sb-ghost{
@@ -666,10 +667,6 @@
     document.getElementById('offersSection-desc').value = content.offersSection.desc;
 
 
-    content.steps.items.forEach((step, i) => {
-      document.getElementById(`step-title-${i}`).value = step.title;
-      document.getElementById(`step-desc-${i}`).value = step.desc;
-    });
 
 
     document.getElementById('modal-gateTag').value = content.modal.gateTag || '';
@@ -725,18 +722,15 @@
     document.getElementById('vault-wrongCodeMessage').value = content.vault.wrongCodeMessage || '';
     document.getElementById('vault-notConfiguredMessage').value = content.vault.notConfiguredMessage || '';
 
-    content.scratchTicket = content.scratchTicket || {};
 
     cfg.scratchTicket = cfg.scratchTicket || {};
 
     cfg.vault = cfg.vault || {};
     document.getElementById('vault-discord-message').value = cfg.vault.discordNewRoundMessage || '';
 
-    content.slotMachine = content.slotMachine || {};
 
     cfg.slotMachine = cfg.slotMachine || {};
 
-    content.wheelGame = content.wheelGame || {};
 
     cfg.wheelGame = cfg.wheelGame || {};
     document.getElementById('vault-usernamePlaceholder').value = content.vault.usernamePlaceholder || '';
@@ -763,15 +757,9 @@
 
   // ---------- Lit tous les champs et reconstruit cfg ----------
   function readForm(){
-    content.brand = content.brand || {};
     cfg.heroBanner = cfg.heroBanner || {};
     cfg.floatingWidget = cfg.floatingWidget || {};
 
-    content.nav.links = content.nav.links.map((link, i) => ({
-      label: document.getElementById(`nav-link-label-${i}`).value,
-      href: document.getElementById(`nav-link-href-${i}`).value,
-      newTab: document.getElementById(`nav-link-newtab-${i}`).checked
-    }));
 
 
     content.telegram.tag = document.getElementById('tg-tag').value;
@@ -785,10 +773,6 @@
     content.offersSection.desc = document.getElementById('offersSection-desc').value;
 
 
-    content.steps.items = content.steps.items.map((step, i) => ({
-      title: document.getElementById(`step-title-${i}`).value,
-      desc: document.getElementById(`step-desc-${i}`).value
-    }));
 
     content.offers = content.offers.map((offer, i) => ({
       ...offer,
@@ -812,20 +796,7 @@
     }));
 
 
-    content.ticker = content.ticker.map((item, i) => ({
-      name: document.getElementById(`ticker-name-${i}`).value,
-      message: document.getElementById(`ticker-message-${i}`).value
-    }));
 
-    content.footer.navLinks = content.footer.navLinks.map((link, i) => ({
-      label: document.getElementById(`footer-nav-label-${i}`).value,
-      href: document.getElementById(`footer-nav-href-${i}`).value
-    }));
-    content.footer.communityLinks = content.footer.communityLinks.map((link, i) => ({
-      label: document.getElementById(`footer-community-label-${i}`).value,
-      href: document.getElementById(`footer-community-href-${i}`).value,
-      newTab: document.getElementById(`footer-community-newtab-${i}`).checked
-    }));
 
     content.modal.gateTag = document.getElementById('modal-gateTag').value;
     content.modal.gateSubTemplate = document.getElementById('modal-gateSubTemplate').value;
@@ -880,14 +851,12 @@
     content.vault.wrongCodeMessage = document.getElementById('vault-wrongCodeMessage').value;
     content.vault.notConfiguredMessage = document.getElementById('vault-notConfiguredMessage').value;
 
-    content.scratchTicket = content.scratchTicket || {};
 
     cfg.scratchTicket = cfg.scratchTicket || {};
 
     cfg.vault = cfg.vault || {};
     cfg.vault.discordNewRoundMessage = document.getElementById('vault-discord-message').value;
 
-    content.slotMachine = content.slotMachine || {};
 
     cfg.slotMachine = cfg.slotMachine || {};
 
