@@ -121,13 +121,26 @@
   .lb-podium-card.rank-1 .lb-podium-avatar{width:82px;height:82px;margin-top:20px}
   .lb-podium-name{font-family:"Baloo 2";font-weight:800;font-size:15px;color:var(--cream);margin-top:4px;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-  .lb-podium-wager{color:var(--gold);font-weight:800;font-size:14px;display:flex;align-items:center;gap:5px}
+  .lb-podium-wager{color:var(--gold);font-weight:800;font-size:14px;display:flex;align-items:center;gap:5px;
+    max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lb-podium-wager .lbl{color:var(--muted);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px}
   @media(max-width:700px){
-    .lb-podium{gap:10px}
-    .lb-podium-card{width:120px;padding:16px 10px 18px}
-    .lb-podium-avatar{width:50px;height:50px}
-    .lb-podium-card.rank-1 .lb-podium-avatar{width:64px;height:64px}
+    /* Les 3 cartes doivent tenir sur une seule ligne : on passe de largeurs
+       fixes (qui débordaient et renvoyaient le 3e à la ligne) à des largeurs
+       flexibles qui se partagent l'espace disponible. */
+    .lb-podium{gap:7px; flex-wrap:nowrap; padding:30px 4px 10px; align-items:flex-end;}
+    .lb-podium-card{width:auto; flex:1 1 0; min-width:0; padding:14px 7px 15px; gap:4px;}
+    .lb-podium-avatar{width:44px; height:44px; margin-top:12px;}
+    .lb-podium-card.rank-1 .lb-podium-avatar{width:54px; height:54px; margin-top:14px;}
+    .lb-podium-medal{width:30px; height:30px; font-size:13px; top:-15px;}
+    .lb-podium-card.rank-1 .lb-podium-medal{width:36px; height:36px; font-size:15px; top:-18px;}
+    .lb-podium-name{font-size:12.5px;}
+    .lb-podium-wager{font-size:12px; flex-direction:column; gap:1px; line-height:1.25;}
+    .lb-podium-wager .lbl{font-size:8.5px; letter-spacing:.5px; margin-bottom:0;}
+  }
+  @media(max-width:360px){
+    .lb-podium-name{font-size:11px;}
+    .lb-podium-wager{font-size:11px;}
   }
 
   /* ---------- Paris ---------- */
