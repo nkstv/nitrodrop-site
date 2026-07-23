@@ -23,6 +23,22 @@
   }
   h1{font-family:"Baloo 2",sans-serif}
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  /* Empêche le zoom au double-tap sur mobile quand on appuie vite plusieurs fois
+     (Max, ½, 2×, cases du plateau...). Le zoom au pincement reste possible. */
+  button, a, input, select, label, .tile, .chip, .d-item, .offer-copy-btn, .mult{
+    touch-action:manipulation;
+  }
+  /* Évite le surlignage bleu et le menu contextuel quand on tape vite sur un
+     bouton. Le texte des pages reste sélectionnable normalement. */
+  button, .tile, .chip, .mult, .bet-btn, .d-item{
+    -webkit-user-select:none; user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* iOS zoome automatiquement sur un champ dont la police fait moins de 16px.
+     On force 16px sur mobile uniquement : l'apparence sur ordinateur ne change pas. */
+  @media(max-width:860px){
+    input, select, textarea{font-size:16px !important;}
+  }
   :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
 
   .app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
