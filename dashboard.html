@@ -3,36 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NITRODROP — Historique des demandes</title>
+<title>Drop Cash — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#07070C; --bg-raise:#100F1C; --bg-card:#131226;
-    --line:rgba(255,255,255,0.08); --line-strong:rgba(255,255,255,0.16);
-    --green:#B6FF3C; --violet:#8B5CFF;
-    --text:#F1F0FA; --text-dim:#9591B0; --text-faint:#5F5C77;
+    /* Thème repris des pages de jeu (Mines, Blackjack...) : fond sombre chaud
+       et accents dorés, au lieu de l'ancien violet/vert. Les noms de variables
+       sont conservés pour ne rien casser dans le reste de la feuille. */
+    --bg:#100B06; --bg-raise:#191309; --bg-card:#20180E;
+    --line:rgba(232,193,104,0.12); --line-strong:rgba(232,193,104,0.28);
+    --gold:#E8C168; --gold-deep:#C89B3C;
+    --green:#E8C168;            /* accent principal = doré */
+    --accent-green:#5FD68B;     /* vert réservé aux valeurs positives */
+    --red:#F26D6D;
+    --violet:#C89B3C;
+    --text:#F5EBD8; --text-dim:#B9A88A; --text-faint:#7C6B4F;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; padding:0 0 100px;}
+  body{background:var(--bg); color:var(--text); font-family:'Nunito Sans',sans-serif; padding:0 0 100px;}
   .topbar{
     position:sticky; top:0; z-index:10; background:rgba(7,7,12,0.9); backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line); padding:18px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
   }
-  .topbar h1{font-family:'Unbounded'; font-size:18px; font-weight:900;}
-  .topbar h1 span{color:var(--green);}
+  .topbar h1{font-family:"Baloo 2"; font-size:20px; font-weight:800;}
+  .topbar h1 span{color:var(--gold);}
   .wrap{max-width:1500px; margin:0 auto; padding:24px 32px;}
   .toolbar{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px;}
-  .dash-tabs{display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid var(--line);}
+  .dash-tabs{display:flex; gap:7px; margin-bottom:22px; flex-wrap:wrap;}
   .dash-tab{
-    background:none; border:none; color:var(--text-dim); font-size:14px; font-weight:600;
-    padding:12px 6px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+    background:var(--bg-card); border:1px solid var(--line); color:var(--text-dim);
+    font-size:13.5px; font-weight:700; padding:10px 15px; cursor:pointer; border-radius:30px;
+    transition:.15s; white-space:nowrap;
   }
-  .dash-tab.active{color:var(--green); border-bottom-color:var(--green);}
-  .dash-tab:hover{color:var(--text);}
+  .dash-tab:hover{color:var(--text); border-color:var(--line-strong);}
+  .dash-tab.active{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    color:#3a2a08; border-color:transparent; box-shadow:0 3px 12px rgba(232,193,104,.22);
+  }
   select, input[type=text]{
     background:var(--bg-card); border:1px solid var(--line-strong); border-radius:9px;
-    padding:10px 14px; color:var(--text); font-size:13.5px; font-family:'Inter';
+    padding:10px 14px; color:var(--text); font-size:13.5px; font-family:'Nunito Sans';
   }
   .btn{
     border:none; border-radius:9px; padding:10px 16px; font-weight:700; font-size:13px; cursor:pointer;
@@ -41,9 +52,12 @@
   .btn.primary{background:var(--green); color:#08130a; border-color:transparent;}
   .stats{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;}
   .stat{
-    background:var(--bg-card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; min-width:120px;
+    background:linear-gradient(180deg, var(--bg-card), var(--bg-raise));
+    border:1px solid var(--line); border-radius:16px; padding:16px 20px; min-width:130px;
+    transition:.18s;
   }
-  .stat .n{font-family:'Unbounded'; font-weight:900; font-size:22px; color:var(--green);}
+  .stat:hover{border-color:var(--line-strong);}
+  .stat .n{font-family:"Baloo 2"; font-weight:800; font-size:24px; color:var(--gold); line-height:1.15;}
   .stat .l{font-size:11.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.04em; margin-top:4px;}
   table{width:100%; border-collapse:collapse; background:var(--bg-card); border-radius:14px; border:1px solid var(--line); font-size:12px;}
   th{
@@ -51,6 +65,40 @@
     padding:9px 10px; background:var(--bg-raise); border-bottom:1px solid var(--line-strong); white-space:nowrap;
   }
   td{padding:8px 10px; font-size:12px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  /* ---------- Onglet Statistiques ---------- */
+  .chart-card{
+    background:linear-gradient(180deg, var(--bg-card), var(--bg-raise));
+    border:1px solid var(--line); border-radius:18px; padding:22px 24px; margin-bottom:18px;
+  }
+  .chart-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap;}
+  .chart-head h3{font-family:"Baloo 2"; font-weight:800; font-size:17px; color:var(--text);}
+  .chart-head p{font-size:12px; color:var(--text-faint); margin-top:3px;}
+  .chart-legend{display:flex; gap:16px; font-size:12px; color:var(--text-dim); font-weight:600;}
+  .chart-legend span{display:flex; align-items:center; gap:6px;}
+  .chart-legend i{width:9px; height:9px; border-radius:50%; display:block;}
+  .dot-wager{background:var(--gold);}
+  .dot-payout{background:var(--accent-green);}
+
+  .chart-svg{width:100%; height:auto; display:block; overflow:visible;}
+  .chart-grid line{stroke:var(--line); stroke-width:1;}
+  .chart-axis{font-size:9.5px; fill:var(--text-faint); font-family:'JetBrains Mono',monospace;}
+  .chart-hover-zone{fill:transparent; cursor:crosshair;}
+  .chart-hover-zone:hover + .chart-hover-line{opacity:1;}
+  .chart-hover-line{stroke:var(--line-strong); stroke-width:1; stroke-dasharray:3 3; opacity:0; pointer-events:none;}
+
+  .game-breakdown{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;}
+  .game-row{
+    background:var(--bg-raise); border:1px solid var(--line); border-radius:14px; padding:15px 17px;
+  }
+  .game-row .g-name{display:flex; align-items:center; gap:8px; font-family:"Baloo 2"; font-weight:800;
+    font-size:14.5px; color:var(--text); margin-bottom:12px;}
+  .game-row .g-line{display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0;}
+  .game-row .g-line span:first-child{color:var(--text-faint);}
+  .game-row .g-line span:last-child{font-weight:700; font-family:'JetBrains Mono',monospace;}
+  .g-wager{color:var(--gold);} .g-payout{color:var(--accent-green);} .g-margin{color:var(--text);}
+  .g-bar{height:5px; border-radius:3px; background:var(--bg-card); margin-top:11px; overflow:hidden;}
+  .g-bar i{display:block; height:100%; background:linear-gradient(90deg,var(--gold-deep),var(--gold));}
+
   .cell-truncate{max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; cursor:help;}
   #table-scroll, #users-table-scroll, #lb-table-scroll{overflow-x:auto; border-radius:14px;}
   #table-scroll::-webkit-scrollbar, #users-table-scroll::-webkit-scrollbar, #lb-table-scroll::-webkit-scrollbar{height:8px;}
@@ -75,7 +123,7 @@
 <body>
 
 <div id="gate" class="gate">
-  <h1 style="font-family:'Unbounded'; font-size:20px;">NITRO<span style="color:var(--green);">DROP</span></h1>
+  <h1 style="font-family:"Baloo 2"; font-size:20px;">NITRO<span style="color:var(--green);">DROP</span></h1>
   <div style="color:var(--text-dim); font-size:13.5px;">Clé du dashboard</div>
   <input type="text" id="gate-key" placeholder="Colle ta clé ici" autofocus>
   <button class="btn primary" onclick="unlockDashboard()">Accéder</button>
@@ -91,6 +139,7 @@
   <div class="wrap">
     <div class="dash-tabs">
       <button class="dash-tab active" id="tab-btn-bonus" onclick="switchDashTab('bonus')">Demandes de bonus</button>
+      <button class="dash-tab" id="tab-btn-stats" onclick="switchDashTab('stats')">📈 Statistiques</button>
       <button class="dash-tab" id="tab-btn-scratch" onclick="switchDashTab('scratch')">🎫 Ticket à gratter</button>
       <button class="dash-tab" id="tab-btn-slot" onclick="switchDashTab('slot')">🎰 Machine à sous</button>
       <button class="dash-tab" id="tab-btn-wheel" onclick="switchDashTab('wheel')">🎡 Roue</button>
@@ -269,6 +318,29 @@
       </div>
 
       <div id="users-table-container"></div>
+    </div>
+
+    <div id="tab-stats" style="display:none;">
+      <div class="stats" id="stats-cards"></div>
+
+      <div class="chart-card">
+        <div class="chart-head">
+          <div>
+            <h3>Clés misées par jour</h3>
+            <p>30 derniers jours</p>
+          </div>
+          <div class="chart-legend">
+            <span><i class="dot-wager"></i> Misé</span>
+            <span><i class="dot-payout"></i> Reversé</span>
+          </div>
+        </div>
+        <div id="stats-chart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-head"><div><h3>Répartition par jeu</h3><p>Depuis le début</p></div></div>
+        <div id="stats-games"></div>
+      </div>
     </div>
 
     <div id="tab-leaderboard" style="display:none;">
@@ -765,6 +837,7 @@
   let affiliatesLoaded = false;
   let usersLoaded = false;
   let leaderboardLoaded = false;
+  let statsLoaded = false;
   let activeDashTab = 'bonus';
 
   function switchDashTab(tab){
@@ -776,6 +849,7 @@
     document.getElementById('tab-affiliates').style.display = tab === 'affiliates' ? '' : 'none';
     document.getElementById('tab-users').style.display = tab === 'users' ? '' : 'none';
     document.getElementById('tab-leaderboard').style.display = tab === 'leaderboard' ? '' : 'none';
+    document.getElementById('tab-stats').style.display = tab === 'stats' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-scratch').classList.toggle('active', tab === 'scratch');
     document.getElementById('tab-btn-slot').classList.toggle('active', tab === 'slot');
@@ -783,6 +857,7 @@
     document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
     document.getElementById('tab-btn-users').classList.toggle('active', tab === 'users');
     document.getElementById('tab-btn-leaderboard').classList.toggle('active', tab === 'leaderboard');
+    document.getElementById('tab-btn-stats').classList.toggle('active', tab === 'stats');
     if (tab === 'scratch' && !scratchLoaded){
       loadScratchPlays();
     }
@@ -797,6 +872,9 @@
     }
     if (tab === 'leaderboard' && !leaderboardLoaded){
       loadAdminLeaderboard();
+    }
+    if (tab === 'stats' && !statsLoaded){
+      loadStats();
     }
     if (tab === 'affiliates' && !affiliatesLoaded){
       affiliatesLoaded = true;
@@ -816,6 +894,8 @@
       loadUsers();
     } else if (activeDashTab === 'leaderboard'){
       loadAdminLeaderboard();
+    } else if (activeDashTab === 'stats'){
+      loadStats();
     } else {
       loadSubmissions();
     }
@@ -1712,6 +1792,137 @@
     }catch(e){
       alert('Erreur réseau : ' + e.message);
     }
+  }
+
+  // ==================================================================
+  // Onglet Statistiques — vue d'ensemble de l'activité des mini-jeux.
+  // Le graphe est dessiné en SVG à la main : pas de bibliothèque externe à
+  // charger, donc rien à télécharger en plus pour afficher la page.
+  // ==================================================================
+  async function loadStats(){
+    statsLoaded = true;
+    document.getElementById('stats-chart').innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/stats/overview`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      renderStatsCards(data.totals || {});
+      renderStatsChart(data.days || []);
+      renderGameBreakdown(data.games || {}, data.totals || {});
+    }catch(e){
+      document.getElementById('stats-chart').innerHTML =
+        `<div class="empty">Erreur de chargement : ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  function fmtKeys(n){
+    const v = Number(n) || 0;
+    if (Math.abs(v) >= 1000000) return (v/1000000).toFixed(2) + 'M';
+    if (Math.abs(v) >= 1000) return (v/1000).toFixed(1) + 'k';
+    return (Math.round(v * 100) / 100).toString();
+  }
+
+  function renderStatsCards(t){
+    const marginPct = t.wagered > 0 ? ((t.margin / t.wagered) * 100).toFixed(1) : '0.0';
+    document.getElementById('stats-cards').innerHTML = `
+      <div class="stat"><div class="n">🔑 ${fmtKeys(t.wagered)}</div><div class="l">Total misé</div></div>
+      <div class="stat"><div class="n">🔑 ${fmtKeys(t.payout)}</div><div class="l">Total reversé</div></div>
+      <div class="stat"><div class="n">${marginPct}%</div><div class="l">Marge maison</div></div>
+      <div class="stat"><div class="n">${(t.plays || 0).toLocaleString('fr-FR')}</div><div class="l">Parties jouées</div></div>
+      <div class="stat"><div class="n">${t.uniquePlayers || 0}</div><div class="l">Joueurs actifs</div></div>
+      <div class="stat"><div class="n">${t.registeredPlayers || 0}</div><div class="l">Comptes créés</div></div>
+      <div class="stat"><div class="n">🔑 ${fmtKeys(t.keysInCirculation)}</div><div class="l">Clés en circulation</div></div>
+    `;
+  }
+
+  function renderStatsChart(days){
+    const host = document.getElementById('stats-chart');
+    if (!days.length){ host.innerHTML = '<div class="empty">Aucune donnée.</div>'; return; }
+
+    const W = 900, H = 260, padL = 52, padR = 14, padT = 14, padB = 30;
+    const innerW = W - padL - padR, innerH = H - padT - padB;
+    const maxVal = Math.max(1, ...days.map(d => Math.max(d.wagered, d.payout)));
+
+    const x = i => padL + (days.length === 1 ? innerW/2 : (i / (days.length - 1)) * innerW);
+    const y = v => padT + innerH - (v / maxVal) * innerH;
+
+    const line = key => days.map((d, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(d[key]).toFixed(1)}`).join(' ');
+    const area = key => `${line(key)} L${x(days.length-1).toFixed(1)},${(padT+innerH).toFixed(1)} L${x(0).toFixed(1)},${(padT+innerH).toFixed(1)} Z`;
+
+    // Repères horizontaux
+    const ticks = 4;
+    let grid = '';
+    for (let i = 0; i <= ticks; i++){
+      const val = (maxVal / ticks) * i;
+      const yy = y(val);
+      grid += `<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W-padR}" y2="${yy.toFixed(1)}"></line>`;
+      grid += `<text class="chart-axis" x="${padL-8}" y="${(yy+3).toFixed(1)}" text-anchor="end">${fmtKeys(val)}</text>`;
+    }
+
+    // Dates : une étiquette tous les 5 jours pour rester lisible
+    let xLabels = '';
+    days.forEach((d, i) => {
+      if (i % 5 !== 0 && i !== days.length - 1) return;
+      const label = d.date.slice(8) + '/' + d.date.slice(5,7);
+      xLabels += `<text class="chart-axis" x="${x(i).toFixed(1)}" y="${H-8}" text-anchor="middle">${label}</text>`;
+    });
+
+    // Points avec infobulle native au survol
+    let dots = '';
+    days.forEach((d, i) => {
+      dots += `<circle cx="${x(i).toFixed(1)}" cy="${y(d.wagered).toFixed(1)}" r="3" fill="var(--gold)">`
+           +  `<title>${d.date} — misé ${fmtKeys(d.wagered)} · reversé ${fmtKeys(d.payout)} · ${d.plays} parties</title></circle>`;
+    });
+
+    host.innerHTML = `
+      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Clés misées par jour">
+        <defs>
+          <linearGradient id="gWager" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="var(--gold)" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <g class="chart-grid">${grid}</g>
+        <path d="${area('wagered')}" fill="url(#gWager)"></path>
+        <path d="${line('payout')}" fill="none" stroke="var(--accent-green)" stroke-width="1.8"
+              stroke-linejoin="round" stroke-linecap="round" opacity="0.75" stroke-dasharray="4 3"></path>
+        <path d="${line('wagered')}" fill="none" stroke="var(--gold)" stroke-width="2.4"
+              stroke-linejoin="round" stroke-linecap="round"></path>
+        ${dots}
+        ${xLabels}
+      </svg>
+    `;
+  }
+
+  function renderGameBreakdown(games, totals){
+    const host = document.getElementById('stats-games');
+    const meta = {
+      mines: { icon: '💣', name: 'Mines' },
+      blackjack: { icon: '🃏', name: 'Blackjack' },
+      dice: { icon: '🎲', name: 'Dice' },
+      slots: { icon: '🎰', name: 'Slot' },
+    };
+    const entries = Object.entries(games);
+    if (!entries.length){ host.innerHTML = '<div class="empty">Aucune donnée.</div>'; return; }
+    const maxWager = Math.max(1, ...entries.map(([, g]) => g.wagered));
+
+    host.innerHTML = '<div class="game-breakdown">' + entries.map(([key, g]) => {
+      const m = meta[key] || { icon: '🎮', name: key };
+      const rtp = g.wagered > 0 ? ((g.payout / g.wagered) * 100).toFixed(1) : '0.0';
+      const share = ((g.wagered / maxWager) * 100).toFixed(1);
+      return `
+        <div class="game-row">
+          <div class="g-name"><span>${m.icon}</span>${escapeHtml(m.name)}</div>
+          <div class="g-line"><span>Misé</span><span class="g-wager">🔑 ${fmtKeys(g.wagered)}</span></div>
+          <div class="g-line"><span>Reversé</span><span class="g-payout">🔑 ${fmtKeys(g.payout)}</span></div>
+          <div class="g-line"><span>Marge</span><span class="g-margin">🔑 ${fmtKeys(g.margin)}</span></div>
+          <div class="g-line"><span>RTP réel</span><span class="g-margin">${rtp}%</span></div>
+          <div class="g-line"><span>Parties</span><span class="g-margin">${g.plays.toLocaleString('fr-FR')}</span></div>
+          <div class="g-bar"><i style="width:${share}%"></i></div>
+        </div>`;
+    }).join('') + '</div>';
   }
 
   async function togglePlayerExcluded(discordId, excluded){
