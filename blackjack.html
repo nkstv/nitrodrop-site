@@ -389,7 +389,7 @@
             <label>Bet Amount <span class="bal">🔑 <b id="balance">0</b> KEYS</span></label>
             <div class="input-row" id="betRow">
               <span class="key">🔑</span>
-              <input id="bet" type="number" inputmode="numeric" value="1" min="1">
+              <input id="bet" type="number" inputmode="decimal" step="0.1" value="1" min="0.1">
               <button class="chip" id="half">½</button>
               <button class="chip" id="double">2×</button>
               <button class="chip" id="maxBet">Max</button>
@@ -585,6 +585,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   drawer.querySelectorAll('.d-item').forEach(b=>b.addEventListener('click',()=>toggle(false)));
 
   const betInput=document.getElementById('bet'), betRow=document.getElementById('betRow');
+  // Mise minimum alignée sur le serveur (MIN_BET_KEYS)
+  const MIN_BET = 0.1;
+  const roundBet = n => Math.round(n * 100) / 100;
+
   const balanceEl=document.getElementById('balance');
   const balanceSidebarEl=document.getElementById('balance-sidebar');
   const playBtn=document.getElementById('play');
@@ -756,8 +760,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (busy) return;
     const discordId = getSharedDiscordId(), pseudo = getSharedUsername();
     if (!discordId){ connectDiscord(); return; }
-    const bet = Math.floor(+betInput.value || 0);
-    if (!(bet>0)){ betRow.classList.add('err'); setTimeout(()=>betRow.classList.remove('err'),1200); return; }
+    const bet = roundBet(+betInput.value || 0);
+    if (!(bet >= MIN_BET)){ betRow.classList.add('err'); setTimeout(()=>betRow.classList.remove('err'),1200); return; }
 
     busy=true; playBtn.disabled=true;
     try{
@@ -833,11 +837,13 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   doubleBtn.addEventListener('click', () => bjAction('double'));
   splitBtn.addEventListener('click', () => bjAction('split'));
 
-  document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(1,Math.floor((+betInput.value||0)/2)));
-  document.getElementById('double').addEventListener('click',()=>betInput.value=(+betInput.value||0)*2);
+  document.getElementById('half').addEventListener('click',()=>betInput.value=Math.max(MIN_BET,roundBet((+betInput.value||0)/2)));
+  document.getElementById('double').addEventListener('click',()=>betInput.value=roundBet((+betInput.value||0)*2));
   document.getElementById('maxBet').addEventListener('click',()=>{
+    // On mise tout le solde disponible, décimales comprises : sinon un joueur
+    // avec 0.80 clé ne pourrait plus jamais miser.
     const max = parseFloat(balanceEl.textContent) || 0;
-    betInput.value = Math.max(1, Math.floor(max));
+    betInput.value = Math.max(MIN_BET, roundBet(max));
   });
 
   // ---------------- Historique (public + personnel) ----------------
