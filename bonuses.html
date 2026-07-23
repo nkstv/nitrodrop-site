@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -194,7 +194,7 @@
   .win{color:var(--green)}
   .lose{color:var(--muted)}
 
-  /* ================= MOBILE (identique à la version précédente) ================= */
+  /* ================= MOBILE (identique à la version previouse) ================= */
   .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
     opacity:0;pointer-events:none;transition:.25s;z-index:50}
   .scrim.open{opacity:1;pointer-events:auto}
@@ -351,9 +351,9 @@
     </div>
 
     <div class="wallet">
-      <div class="k">Solde</div>
+      <div class="k">Balance</div>
       <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
-      <button disabled title="Nouvelles clés chaque jour, automatiquement">Recharger</button>
+      <button disabled title="New keys every day, automatically">Top up</button>
     </div>
 
     <div class="s-label">MENU</div>
@@ -376,7 +376,7 @@
       <div class="s-user" id="side-user" style="display:none;">
         <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
         <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
-        <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
+        <button class="out" id="side-logout-btn" aria-label="Log out">→]</button>
       </div>
     </div>
   </aside>
@@ -394,7 +394,7 @@
     </div>
 
     <div class="offers-intro">
-      <div class="offers-tag" id="offers-tag">Offres du moment</div>
+      <div class="offers-tag" id="offers-tag">Current offers</div>
       <h2 class="offers-title" id="offers-title"></h2>
       <p class="offers-desc" id="offers-desc"></p>
     </div>
@@ -409,8 +409,8 @@
   <div class="handle"></div>
   <div class="d-user" id="drawer-user">
     <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
-    <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
-    <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
+    <div><div class="n" id="drawer-pseudo">Not connected</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Log out" style="display:none;">→]</button>
   </div>
   <div class="d-sep"></div>
   <div class="d-grid">
@@ -426,45 +426,45 @@
 
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()" aria-label="Fermer">×</button>
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
 
     <div id="modal-step-gate">
-      <div class="modal-tag" id="gate-tag">Recevoir le bonus</div>
+      <div class="modal-tag" id="gate-tag">Get the bonus</div>
       <h3 id="gate-platform-name"></h3>
       <p class="modal-sub" id="gate-sub"></p>
       <div class="gate-actions">
-        <button type="button" class="modal-submit" id="gate-yes-btn" onclick="gateYes()">Oui, je suis inscrit</button>
-        <button type="button" class="modal-ghost" id="gate-no-btn" onclick="gateNo()">Non, je m'inscris d'abord</button>
+        <button type="button" class="modal-submit" id="gate-yes-btn" onclick="gateYes()">Yes, I'm registered</button>
+        <button type="button" class="modal-ghost" id="gate-no-btn" onclick="gateNo()">No, I'll sign up first</button>
       </div>
     </div>
 
     <div id="modal-step-form" style="display:none;">
-      <div class="modal-tag" id="form-tag-label">Réclamer le bonus</div>
+      <div class="modal-tag" id="form-tag-label">Claim bonus</div>
       <h3 id="modal-platform-name"></h3>
       <p class="modal-sub" id="form-sub"></p>
       <form id="claim-form" onsubmit="submitClaim(event)">
         <label><span id="email-label-text">Email</span>
           <input type="email" required placeholder="toi@email.com" id="claim-email-input">
         </label>
-        <label><span id="pseudo-label-text">Pseudo sur la plateforme</span>
+        <label><span id="pseudo-label-text">Username on the platform</span>
           <input type="text" required placeholder="Ton pseudo de compte" id="claim-pseudo-input">
         </label>
-        <label><span id="discord-label-text">Ton compte Discord</span></label>
-        <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
+        <label><span id="discord-label-text">Your Discord account</span></label>
+        <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Connect with Discord</button>
         <p id="discord-join-note" style="font-size:11.5px; color:var(--muted-2); margin-top:-8px; line-height:1.5;"></p>
         <div id="discord-connected-info" style="display:none; font-size:13px; color:var(--green); font-weight:700; text-align:center;"></div>
         <input type="hidden" id="claim-discord-input">
-        <button type="submit" class="modal-submit" id="claim-submit-btn">Confirmer ma demande</button>
+        <button type="submit" class="modal-submit" id="claim-submit-btn">Confirm my request</button>
       </form>
     </div>
 
     <div id="modal-step-confirm" style="display:none;">
       <div class="confirm-icon">✓</div>
-      <h3 id="confirm-title">Demande envoyée</h3>
+      <h3 id="confirm-title">Request sent</h3>
       <p id="confirm-text"></p>
       <div class="countdown" id="countdown">24:00:00</div>
       <p class="modal-note" id="confirm-note"></p>
-      <a href="#" class="modal-ghost" id="confirm-telegram-btn" style="margin-top:20px; display:block; text-align:center; text-decoration:none;">Rejoindre le canal Telegram</a>
+      <a href="#" class="modal-ghost" id="confirm-telegram-btn" style="margin-top:20px; display:block; text-align:center; text-decoration:none;">Join the Telegram channel</a>
     </div>
   </div>
 </div>
@@ -486,7 +486,7 @@
 
   function formatLocalTime(dateMs){
     if (!dateMs) return '';
-    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+    return new Date(dateMs).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
   }
 
   function escapeHtml(str){
@@ -536,7 +536,7 @@
 
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    if (!clientId){ showAlert('Discord login has not been set up by the site administrator.'); return; }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
@@ -684,15 +684,15 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     return id;
   }
 
-  // Applique les textes de la modale depuis la config (mêmes clés que la page d'accueil)
+  // Applique les textes de la modale depuis la config (mêmes keys que la page d'accueil)
   function applyModalTexts(){
     const cfg = getActive();
     if (!cfg || !cfg.modal) return;
     const m = cfg.modal;
     const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
-    set('gate-tag', m.gateTag || 'Recevoir le bonus');
-    set('discord-label-text', m.discordLabel || 'Ton compte Discord');
-    set('discord-connect-btn', m.discordConnectText || '🎮 Se connecter avec Discord');
+    set('gate-tag', m.gateTag || 'Get the bonus');
+    set('discord-label-text', m.discordLabel || 'Your Discord account');
+    set('discord-connect-btn', m.discordConnectText || '🎮 Connect with Discord');
     set('gate-yes-btn', m.gateYesText);
     set('gate-no-btn', m.gateNoText);
     set('form-tag-label', m.formTag);
@@ -715,10 +715,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     document.getElementById('discord-join-note').innerHTML = escapeHtml(joinNoteTemplate).replace('{link}', discordLinkHtml);
 
     const tgBtn = document.getElementById('confirm-telegram-btn');
-    tgBtn.textContent = m.confirmTelegramText || 'Rejoindre le canal Telegram';
+    tgBtn.textContent = m.confirmTelegramText || 'Join the Telegram channel';
     tgBtn.href = m.confirmTelegramHref || '#';
     document.querySelectorAll('.modal-close').forEach(btn => {
-      btn.setAttribute('aria-label', m.closeAriaLabel || 'Fermer');
+      btn.setAttribute('aria-label', m.closeAriaLabel || 'Close');
     });
   }
 
@@ -732,7 +732,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       input.value = saved.discordId;
       btn.style.display = 'none';
       info.style.display = 'block';
-      const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connecté en tant que {username}';
+      const template = (getActive().modal && getActive().modal.discordConnectedText) || '✓ Connected as {username}';
       info.textContent = template.replace('{username}', saved.username || 'Discord');
     } else {
       input.value = '';
@@ -790,7 +790,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   async function sendTelegramNotification({ platform, code, email, pseudo, discordId, deviceId }){
     const url = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
     if (!url || url.includes('REMPLACE-MOI')){
-      console.warn('Relais Telegram non configuré.');
+      console.warn('Telegram relay not configured.');
       return { ok: true };
     }
     const resp = await fetch(url, {
@@ -821,14 +821,14 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const m = getActive().modal || {};
 
     if (!discordId){
-      showAlert(m.discordRequiredAlert || 'Connecte-toi avec Discord avant de valider ta demande.');
+      showAlert(m.discordRequiredAlert || 'Connect with Discord before submitting your request.');
       return;
     }
 
     const submitBtn = document.getElementById('claim-submit-btn');
     const originalLabel = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Envoi en cours…';
+    submitBtn.textContent = 'Sending…';
 
     let result = { ok: true };
     try{
@@ -844,7 +844,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
     if (result && result.ok === false && result.reason === 'duplicate_24h'){
       const template = m.duplicateRequestMessage ||
-        "Tu as déjà fait une demande pour ce casino récemment. Réessaie dans environ {hours}h.";
+        "You already submitted a request for this casino recently. Try again in about {hours}h.";
       showFormError(fillTemplate(template, { hours: result.hoursRemaining || '24' }));
       return;
     }
@@ -929,7 +929,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     } else {
       sideLoginBtn.style.display = 'block';
       sideUser.style.display = 'none';
-      drawerPseudo.textContent = 'Non connecté';
+      drawerPseudo.textContent = 'Not connected';
       drawerLogoutBtn.style.display = 'none';
       setBalance('0');
     }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -285,7 +285,7 @@
   .win{color:var(--green)}
   .lose{color:var(--muted)}
 
-  /* ================= MOBILE (identique à la version précédente) ================= */
+  /* ================= MOBILE (identique à la version previouse) ================= */
   .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
     opacity:0;pointer-events:none;transition:.25s;z-index:50}
   .scrim.open{opacity:1;pointer-events:auto}
@@ -380,9 +380,9 @@
     </div>
 
     <div class="wallet">
-      <div class="k">Solde</div>
+      <div class="k">Balance</div>
       <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
-      <button disabled title="Nouvelles clés chaque jour, automatiquement">Recharger</button>
+      <button disabled title="New keys every day, automatically">Top up</button>
     </div>
 
     <div class="s-label">MENU</div>
@@ -405,7 +405,7 @@
       <div class="s-user" id="side-user" style="display:none;">
         <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
         <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
-        <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
+        <button class="out" id="side-logout-btn" aria-label="Log out">→]</button>
       </div>
     </div>
   </aside>
@@ -427,26 +427,26 @@
       <aside class="vault-side">
         <div class="vault-stat">
           <div class="n" id="vault-stat-total">🔑 0</div>
-          <div class="l" id="vault-stat-total-label">Total distribué</div>
+          <div class="l" id="vault-stat-total-label">Total paid out</div>
         </div>
         <div class="vault-steps">
-          <div class="vault-step"><b>1.</b> <span id="vault-step1">Rejoins le Discord</span></div>
-          <div class="vault-step"><b>2.</b> <span id="vault-step2">Repère le code du jour</span></div>
-          <div class="vault-step"><b>3.</b> <span id="vault-step3">Sois le premier à l'entrer</span></div>
+          <div class="vault-step"><b>1.</b> <span id="vault-step1">Join the Discord</span></div>
+          <div class="vault-step"><b>2.</b> <span id="vault-step2">Spot the code of the day</span></div>
+          <div class="vault-step"><b>3.</b> <span id="vault-step3">Be the first to enter it</span></div>
         </div>
         <div class="vault-tg">
           <div class="ic">✈</div>
-          <div class="tag" id="vault-tg-tag">Récompenses quotidiennes</div>
+          <div class="tag" id="vault-tg-tag">Daily rewards</div>
           <h4 id="vault-tg-title">Rejoins le Telegram</h4>
-          <p id="vault-tg-desc">Cadeaux quotidiens, bonus exclusifs et nouvelles opportunités.</p>
-          <a href="#" id="vault-tg-btn" target="_blank" rel="noopener">Rejoindre →</a>
+          <p id="vault-tg-desc">Daily giveaways, exclusive bonuses and new opportunities.</p>
+          <a href="#" id="vault-tg-btn" target="_blank" rel="noopener">Join →</a>
         </div>
       </aside>
 
       <section class="vault-main">
-        <div class="vault-eyebrow" id="vault-eyebrow">Accès exclusif</div>
-        <h2 class="vault-title" id="vault-title">Le coffre-fort</h2>
-        <p class="vault-subtitle" id="vault-subtitle">Un code a été partagé sur Discord. Le premier à le trouver ici remporte le contenu du coffre.</p>
+        <div class="vault-eyebrow" id="vault-eyebrow">Exclusive access</div>
+        <h2 class="vault-title" id="vault-title">The Vault</h2>
+        <p class="vault-subtitle" id="vault-subtitle">A code has been shared on Discord. The first to enter it here wins the vault.</p>
 
         <div class="vault-visual" id="vault-visual">
           <div class="vault-door" id="vault-door">
@@ -465,9 +465,9 @@
               <div class="s">via Discord</div>
             </div>
           </div>
-          <button type="button" class="vault-connect-btn" id="vault-connect-btn" onclick="connectDiscord()">🎮 Se connecter avec Discord</button>
-          <input type="text" id="vault-code-input" placeholder="Code secret" autocomplete="off">
-          <button type="submit" class="bet-btn" id="vault-submit-btn">Ouvrir le coffre</button>
+          <button type="button" class="vault-connect-btn" id="vault-connect-btn" onclick="connectDiscord()">🎮 Connect with Discord</button>
+          <input type="text" id="vault-code-input" placeholder="Secret code" autocomplete="off">
+          <button type="submit" class="bet-btn" id="vault-submit-btn">Open the vault</button>
         </form>
 
         <p class="vault-message" id="vault-message"></p>
@@ -476,29 +476,29 @@
       <aside class="vault-side">
         <div class="vault-stat">
           <div class="n" id="vault-stat-rounds">0</div>
-          <div class="l" id="vault-stat-rounds-label">Coffres ouverts</div>
+          <div class="l" id="vault-stat-rounds-label">Vaults opened</div>
         </div>
         <div class="vault-winners">
-          <h4 id="vault-winners-title">🏆 Derniers gagnants</h4>
+          <h4 id="vault-winners-title">🏆 Latest winners</h4>
           <div id="vault-winners-list"></div>
-          <p id="vault-winners-empty" class="vault-empty" style="display:none;">Personne pour l'instant.</p>
+          <p id="vault-winners-empty" class="vault-empty" style="display:none;">No winners yet.</p>
         </div>
       </aside>
 
     </div>
 
     <section class="bets">
-      <h3 class="vault-history-title" id="vault-history-title">Historique des gains</h3>
+      <h3 class="vault-history-title" id="vault-history-title">Winnings history</h3>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Gagnant</th><th>Gain</th><th>Code</th><th>Date</th></tr></thead>
+          <thead><tr><th>Winner</th><th>Gain</th><th>Code</th><th>Date</th></tr></thead>
           <tbody id="vault-history-list"></tbody>
         </table>
       </div>
-      <p id="vault-history-empty" class="vault-empty" style="display:none;">Aucun gain pour l'instant.</p>
+      <p id="vault-history-empty" class="vault-empty" style="display:none;">No winnings yet.</p>
       <div id="vault-history-pagination" class="vault-pagination" style="display:none;">
-        <button type="button" id="vault-history-prev-btn" aria-label="précédent">◀</button>
-        <button type="button" id="vault-history-next-btn" aria-label="suivant">▶</button>
+        <button type="button" id="vault-history-prev-btn" aria-label="previous">◀</button>
+        <button type="button" id="vault-history-next-btn" aria-label="next">▶</button>
       </div>
     </section>
 
@@ -510,8 +510,8 @@
   <div class="handle"></div>
   <div class="d-user" id="drawer-user">
     <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
-    <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
-    <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
+    <div><div class="n" id="drawer-pseudo">Not connected</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Log out" style="display:none;">→]</button>
   </div>
   <div class="d-sep"></div>
   <div class="d-grid">
@@ -542,7 +542,7 @@
 
   function formatLocalTime(dateMs){
     if (!dateMs) return '';
-    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+    return new Date(dateMs).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
   }
 
   function escapeHtml(str){
@@ -592,7 +592,7 @@
 
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    if (!clientId){ showAlert('Discord login has not been set up by the site administrator.'); return; }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
@@ -640,7 +640,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
   }
 
-  // Applique les libellés du coffre depuis la config (mêmes clés qu'avant)
+  // Applique les libellés du coffre depuis la config (mêmes keys qu'avant)
   (function applyVaultTexts(){
     const v = getActive().vault;
     if (!v) return;
@@ -712,7 +712,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   async function checkInitialStatus(){
     if (!workerBase){
-      showMessage('Coffre non configuré.', 'info');
+      showMessage('Vault not configured.', 'info');
       lockFormOut();
       return;
     }
@@ -722,11 +722,11 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       const data = await resp.json();
       if (data.claimed){
         const v = getActive().vault || {};
-        showMessage(v.alreadyClaimedMessage || "Ce coffre a déjà été réclamé par quelqu'un d'autre.", 'info');
+        showMessage(v.alreadyClaimedMessage || "This vault has already been claimed by someone else.", 'info');
         lockFormOut();
       }
     }catch(e){
-      console.error("Impossible de vérifier l'état du coffre :", e);
+      console.error("Could not check vault status:", e);
     }
   }
 
@@ -766,7 +766,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       vaultHistoryPageIndex = 0;
       renderVaultHistoryPage();
     }catch(e){
-      console.error("Impossible de charger l'historique du coffre :", e);
+      console.error("Could not load vault history:", e);
     }
   }
 
@@ -789,7 +789,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const pageItems = vaultHistoryFull.slice(start, start + VAULT_HISTORY_PAGE_SIZE);
 
     listEl.innerHTML = pageItems.map(h => {
-      const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString('fr-FR') : '';
+      const date = h.claimedAt ? new Date(h.claimedAt).toLocaleDateString('en-US') : '';
       const avatarSrc = h.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png';
       return `<tr>
         <td><span class="p"><img class="pfp" src="${escapeHtml(avatarSrc)}" alt="" referrerpolicy="no-referrer">${escapeHtml(h.username || '?')}</span></td>
@@ -828,7 +828,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const code = vaultCodeInput.value.trim();
     const saved = getSavedDiscordIdentity();
     if (!saved || !saved.discordId){
-      showMessage('Connecte-toi avec Discord pour pouvoir recevoir tes clés.', 'error');
+      showMessage('Connect with Discord so your keys can be credited.', 'error');
       return;
     }
     const username = saved.username || '';
@@ -859,38 +859,38 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
           playSound('success');
           vaultAmountEl.textContent = data.amount ? '🔑 ' + data.amount : '🎉';
           vaultVisual.classList.add('opened');
-          const template = v.successMessage || 'Félicitations, tu remportes {amount} !';
-          showMessage(fillTemplate(template, { amount: data.amount ? data.amount + ' clés' : '' }), 'success');
+          const template = v.successMessage || 'Congratulations, you won {amount}!';
+          showMessage(fillTemplate(template, { amount: data.amount ? data.amount + ' keys' : '' }), 'success');
           // Le solde vient d'être crédité côté serveur : on le reflète tout de suite
           if (data.keys != null) setBalance(data.keys);
           lockFormOut();
           loadVaultHistory();
         } else if (data.reason === 'missing_discord'){
-          showMessage('Connecte-toi avec Discord pour pouvoir recevoir tes clés.', 'error');
+          showMessage('Connect with Discord so your keys can be credited.', 'error');
           vaultSubmitBtn.disabled = false;
         } else if (data.reason === 'banned'){
-          showMessage('Ton compte a été banni des mini-jeux.', 'error');
+          showMessage('Your account has been banned from the games.', 'error');
           lockFormOut();
         } else if (data.reason === 'already_claimed'){
           playSound('fail');
           vaultDoor.classList.add('shake');
-          showMessage(v.alreadyClaimedMessage || 'Trop tard, ce coffre a déjà été réclamé.', 'error');
+          showMessage(v.alreadyClaimedMessage || 'Too late — this vault has already been claimed.', 'error');
           lockFormOut();
           setTimeout(() => vaultDoor.classList.remove('shake'), 400);
         } else if (data.reason === 'not_configured'){
-          showMessage(v.notConfiguredMessage || 'Aucun coffre actif pour le moment.', 'info');
+          showMessage(v.notConfiguredMessage || 'No active vault right now.', 'info');
           lockFormOut();
         } else {
           playSound('fail');
           vaultDoor.classList.add('shake');
-          showMessage(v.wrongCodeMessage || 'Code incorrect, le coffre reste verrouillé.', 'error');
+          showMessage(v.wrongCodeMessage || 'Wrong code — the vault stays locked.', 'error');
           vaultSubmitBtn.disabled = false;
           setTimeout(() => vaultDoor.classList.remove('shake'), 400);
         }
       }, 650);
     }catch(err){
       vaultDial.classList.remove('spin');
-      showMessage('Erreur de connexion, réessaie.', 'error');
+      showMessage('Connection error, please try again.', 'error');
       vaultSubmitBtn.disabled = false;
     }
   });
@@ -944,9 +944,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     } else {
       sideLoginBtn.style.display = 'block';
       sideUser.style.display = 'none';
-      drawerPseudo.textContent = 'Non connecté';
+      drawerPseudo.textContent = 'Not connected';
       drawerLogoutBtn.style.display = 'none';
-      // Formulaire du coffre : connexion Discord requise pour recevoir les clés
+      // Formulaire du coffre : connexion Discord requise pour recevoir les keys
       vaultConnectBtn.style.display = '';
       vaultIdentityBox.style.display = 'none';
       setBalance('0');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -155,7 +155,7 @@
   .win{color:var(--green)}
   .lose{color:var(--muted)}
 
-  /* ================= MOBILE (identique à la version précédente) ================= */
+  /* ================= MOBILE (identique à la version previouse) ================= */
   .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
     opacity:0;pointer-events:none;transition:.25s;z-index:50}
   .scrim.open{opacity:1;pointer-events:auto}
@@ -250,9 +250,9 @@
     </div>
 
     <div class="wallet">
-      <div class="k">Solde</div>
+      <div class="k">Balance</div>
       <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
-      <button disabled title="Nouvelles clés chaque jour, automatiquement">Recharger</button>
+      <button disabled title="New keys every day, automatically">Top up</button>
     </div>
 
     <div class="s-label">MENU</div>
@@ -275,7 +275,7 @@
       <div class="s-user" id="side-user" style="display:none;">
         <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
         <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
-        <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
+        <button class="out" id="side-logout-btn" aria-label="Log out">→]</button>
       </div>
     </div>
   </aside>
@@ -297,7 +297,7 @@
       <section class="bets">
         <div class="table-scroll">
           <table>
-            <thead><tr><th>Rang</th><th>Joueur</th><th>Misé</th></tr></thead>
+            <thead><tr><th>Rank</th><th>Player</th><th>Wagered</th></tr></thead>
             <tbody id="lbList"></tbody>
           </table>
         </div>
@@ -312,8 +312,8 @@
   <div class="handle"></div>
   <div class="d-user" id="drawer-user">
     <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
-    <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
-    <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
+    <div><div class="n" id="drawer-pseudo">Not connected</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Log out" style="display:none;">→]</button>
   </div>
   <div class="d-sep"></div>
   <div class="d-grid">
@@ -344,7 +344,7 @@
 
   function formatLocalTime(dateMs){
     if (!dateMs) return '';
-    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+    return new Date(dateMs).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
   }
 
   function escapeHtml(str){
@@ -394,7 +394,7 @@
 
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    if (!clientId){ showAlert('Discord login has not been set up by the site administrator.'); return; }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
@@ -449,7 +449,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
           <div class="lb-podium-medal">${medalIcon(rank)}</div>
           <img class="lb-podium-avatar" src="${escapeHtml(avatarSrc)}" alt="" referrerpolicy="no-referrer">
           <div class="lb-podium-name">${escapeHtml(p.pseudo || '?')}</div>
-          <div class="lb-podium-wager"><span class="lbl">Misé</span>🔑 ${escapeHtml(String(p.wager))}</div>
+          <div class="lb-podium-wager"><span class="lbl">Wagered</span>🔑 ${escapeHtml(String(p.wager))}</div>
         </div>
       `;
     }).join('');
@@ -532,7 +532,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     } else {
       sideLoginBtn.style.display = 'block';
       sideUser.style.display = 'none';
-      drawerPseudo.textContent = 'Non connecté';
+      drawerPseudo.textContent = 'Not connected';
       drawerLogoutBtn.style.display = 'none';
       setBalance('0');
     }

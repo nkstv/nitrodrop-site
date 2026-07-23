@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -189,7 +189,7 @@
   .win{color:var(--green)}
   .lose{color:var(--muted)}
 
-  /* ================= MOBILE (identique à la version précédente) ================= */
+  /* ================= MOBILE (identique à la version previouse) ================= */
   .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
     opacity:0;pointer-events:none;transition:.25s;z-index:50}
   .scrim.open{opacity:1;pointer-events:auto}
@@ -282,9 +282,9 @@
     </div>
 
     <div class="wallet">
-      <div class="k">Solde</div>
+      <div class="k">Balance</div>
       <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
-      <button disabled title="Nouvelles clés chaque jour, automatiquement">Recharger</button>
+      <button disabled title="New keys every day, automatically">Top up</button>
     </div>
 
     <div class="s-label">MENU</div>
@@ -307,7 +307,7 @@
       <div class="s-user" id="side-user" style="display:none;">
         <img class="pfp" id="side-user-pfp" alt="" referrerpolicy="no-referrer">
         <div><div class="n" id="side-user-pseudo">—</div><div class="s">via Discord</div></div>
-        <button class="out" id="side-logout-btn" aria-label="Se déconnecter">→]</button>
+        <button class="out" id="side-logout-btn" aria-label="Log out">→]</button>
       </div>
     </div>
   </aside>
@@ -342,7 +342,7 @@
 
         <section class="board slot-board">
           <div class="bust-card" id="bustCard">
-            <div class="t">Perdu</div>
+            <div class="t">Lost</div>
             <div class="v"><span class="key">🔑</span> <span id="bustAmt">-0</span></div>
           </div>
           <div class="win-card" id="winCard">
@@ -383,8 +383,8 @@
   <div class="handle"></div>
   <div class="d-user" id="drawer-user">
     <img class="pfp" id="drawer-user-pfp" alt="" referrerpolicy="no-referrer">
-    <div><div class="n" id="drawer-pseudo">Non connecté</div><div class="s">via Discord</div></div>
-    <button class="d-out" id="drawer-logout-btn" aria-label="Se déconnecter" style="display:none;">→]</button>
+    <div><div class="n" id="drawer-pseudo">Not connected</div><div class="s">via Discord</div></div>
+    <button class="d-out" id="drawer-logout-btn" aria-label="Log out" style="display:none;">→]</button>
   </div>
   <div class="d-sep"></div>
   <div class="d-grid">
@@ -415,7 +415,7 @@
 
   function formatLocalTime(dateMs){
     if (!dateMs) return '';
-    return new Date(dateMs).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+    return new Date(dateMs).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
   }
 
   function escapeHtml(str){
@@ -465,7 +465,7 @@
 
   function connectDiscord(){
     const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){ showAlert('Connexion Discord non configurée par l\'administrateur du site.'); return; }
+    if (!clientId){ showAlert('Discord login has not been set up by the site administrator.'); return; }
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
@@ -532,9 +532,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       });
       const data = await resp.json();
       if (!data.ok){
-        if (data.reason==='insufficient_keys') showAlert('Solde de clés insuffisant.');
-        else if (data.reason==='banned') showAlert('Ton compte a été banni des mini-jeux.');
-        else showAlert("Impossible de lancer la machine.");
+        if (data.reason==='insufficient_keys') showAlert('Not enough keys.');
+        else if (data.reason==='banned') showAlert('Your account has been banned from the games.');
+        else showAlert("Could not spin the reels.");
         playBtn.disabled=false; busy=false;
         return;
       }
@@ -552,7 +552,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         loadHistory();
       }, 700);
     }catch(e){
-      showAlert('Erreur réseau, réessaie.');
+      showAlert('Network error, please try again.');
     }
     setTimeout(() => { playBtn.disabled=false; busy=false; }, 750);
   }
@@ -586,12 +586,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         resultHtml = `<span class="${mult>=2?'win':mult===0?'lose':''}">${(mult.toFixed ? mult.toFixed(2) : mult)}×</span>`;
       } else if (isBlackjack){
         payout = p.payout;
-        const label = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Gagné' : p.result==='push' ? 'Égalité' : 'Perdu';
+        const label = p.result==='blackjack' ? 'Blackjack' : p.result==='win' ? 'Won' : p.result==='push' ? 'Push' : 'Lost';
         const cls = (p.result==='win'||p.result==='blackjack') ? 'win' : p.result==='push' ? '' : 'lose';
         resultHtml = `<span class="${cls}">${label}</span>`;
       } else {
         payout = p.payout;
-        resultHtml = `<span class="${p.won?'win':'lose'}">${p.won ? p.multiplier.toFixed(2)+'×' : 'Perdu'}</span>`;
+        resultHtml = `<span class="${p.won?'win':'lose'}">${p.won ? p.multiplier.toFixed(2)+'×' : 'Lost'}</span>`;
       }
       tr.innerHTML=`<td><span class="g"><span class="ic">${gameIcon}</span>${gameName}</span></td>
         <td><span class="p"><img class="pfp" src="${escapeHtml(p.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="" referrerpolicy="no-referrer">${escapeHtml(p.pseudo||'?')}</span></td>
@@ -679,7 +679,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     } else {
       sideLoginBtn.style.display = 'block';
       sideUser.style.display = 'none';
-      drawerPseudo.textContent = 'Non connecté';
+      drawerPseudo.textContent = 'Not connected';
       drawerLogoutBtn.style.display = 'none';
       setBalance('0');
     }
