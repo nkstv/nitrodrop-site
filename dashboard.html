@@ -65,6 +65,76 @@
     padding:9px 10px; background:var(--bg-raise); border-bottom:1px solid var(--line-strong); white-space:nowrap;
   }
   td{padding:8px 10px; font-size:12px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  /* ---------- Modale de refus ---------- */
+  .dl-overlay{
+    position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.72); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .2s ease; overflow-y:auto;
+  }
+  .dl-overlay.active{opacity:1; pointer-events:auto;}
+  .dl-modal{
+    position:relative; width:100%; max-width:460px; margin:auto;
+    background:linear-gradient(180deg,#241c12,#191309);
+    border:1px solid var(--line-strong); border-radius:20px; padding:30px;
+    box-shadow:0 40px 100px rgba(0,0,0,.6);
+    transform:translateY(14px); transition:transform .2s ease;
+  }
+  .dl-overlay.active .dl-modal{transform:translateY(0);}
+  .dl-close{
+    position:absolute; top:14px; right:16px; background:none; border:none; color:var(--text-dim);
+    font-size:24px; line-height:1; padding:4px; cursor:pointer;
+  }
+  .dl-close:hover{color:var(--text);}
+  .dl-tag{color:#FF7A90; font-size:11px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase;}
+  .dl-modal h3{font-family:"Baloo 2"; font-weight:800; font-size:21px; color:var(--text); margin-top:9px;}
+  .dl-sub{font-size:13px; color:var(--text-faint); margin-top:8px; line-height:1.55;}
+
+  .dl-reasons{display:flex; flex-direction:column; gap:8px; margin:22px 0 4px;}
+  .dl-reason{
+    display:flex; align-items:flex-start; gap:11px; width:100%; text-align:left;
+    background:var(--bg-raise); border:1px solid var(--line); border-radius:12px;
+    padding:13px 14px; cursor:pointer; transition:.15s;
+    font-family:inherit; font-size:13px; color:var(--text-dim); line-height:1.5;
+  }
+  .dl-reason:hover{border-color:var(--line-strong); color:var(--text);}
+  .dl-reason.selected{
+    border-color:#FF7A90; background:rgba(242,109,109,.08); color:var(--text);
+  }
+  .dl-reason .radio{
+    width:16px; height:16px; border-radius:50%; border:2px solid var(--line-strong);
+    flex:none; margin-top:1px; transition:.15s; position:relative;
+  }
+  .dl-reason.selected .radio{border-color:#FF7A90;}
+  .dl-reason.selected .radio::after{
+    content:''; position:absolute; inset:3px; border-radius:50%; background:#FF7A90;
+  }
+
+  .dl-note-wrap{margin-top:14px;}
+  .dl-note-wrap label{
+    display:block; font-size:11px; font-weight:800; letter-spacing:1.1px;
+    text-transform:uppercase; color:var(--text-faint); margin-bottom:8px;
+  }
+  .dl-note-wrap textarea{
+    width:100%; background:var(--bg-raise); border:1px solid var(--line); border-radius:11px;
+    padding:12px 14px; color:var(--text); font-family:inherit; font-size:13.5px; resize:vertical;
+    outline:none; transition:border-color .15s;
+  }
+  .dl-note-wrap textarea:focus{border-color:#FF7A90;}
+
+  .dl-actions{display:flex; flex-direction:column; gap:9px; margin-top:24px;}
+  .dl-confirm{
+    background:#F26D6D; color:#2a0a0a; font-family:"Baloo 2"; font-weight:800; font-size:15px;
+    padding:13px; border:none; border-radius:12px; cursor:pointer; transition:.15s; width:100%;
+  }
+  .dl-confirm:hover:not(:disabled){filter:brightness(1.08);}
+  .dl-confirm:disabled{opacity:.4; cursor:default;}
+  .dl-cancel{
+    background:var(--bg-card); border:1px solid var(--line); color:var(--text-dim);
+    font-family:"Baloo 2"; font-weight:800; font-size:14px; padding:12px;
+    border-radius:12px; cursor:pointer; transition:.15s; width:100%;
+  }
+  .dl-cancel:hover{border-color:var(--line-strong); color:var(--text);}
+
   /* ---------- Onglet Statistiques ---------- */
   .chart-card{
     background:linear-gradient(180deg, var(--bg-card), var(--bg-raise));
@@ -182,7 +252,7 @@
         <option value="no">Qualifié : non</option>
       </select>
       <select id="filter-discord-age" onchange="applyFilters()">
-        <option value="">Compte Discord : tous</option>
+        <option value="">Âge : tous</option>
         <option value="recent">Compte récent (&lt; 30j)</option>
       </select>
       <select id="filter-device" onchange="applyFilters()">
@@ -658,7 +728,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Compte Discord</th><th>Appareil</th><th>Suspicion</th><th>Déjà payé</th><th>Qualifié</th><th>Gains réels</th><th>Tipsé</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Âge</th><th>Appareil</th><th>Suspicion</th><th>Déjà payé</th><th>Qualifié</th><th>Gains réels</th><th>Statut</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -686,10 +756,13 @@
   }
 
   // ---------- Suivi des demandes : Tipsé / Refusé ----------
+  // Les libellés sont ceux envoyés au joueur (en anglais) ; l'ordre est celui affiché.
   const DECLINE_REASONS = [
-    { id: 'duplicate_account',   label: 'Double compte' },
-    { id: 'rules_not_respected', label: 'Règles non respectées' },
-    { id: 'other',               label: 'Autre (préciser)' },
+    { id: 'duplicate_account', label: 'Duplicate account detected' },
+    { id: 'bonus_cashout',     label: 'Cashout of the welcome bonus' },
+    { id: 'no_deposit',        label: 'Please read the rules; you must make a deposit to claim this bonus.' },
+    { id: 'discord_too_young', label: 'Your Discord account is not old enough.' },
+    { id: 'other',             label: 'Other' },
   ];
 
   function renderStatusCell(s){
@@ -714,40 +787,90 @@
   }
 
   // Refus : on demande le motif, puis le Worker envoie le DM correspondant
-  async function openDeclineDialog(id){
-    const choices = DECLINE_REASONS.map((r, i) => `${i + 1}. ${r.label}`).join('\n');
-    const answer = prompt(`Motif du refus :\n\n${choices}\n\nEntre le numéro (1-${DECLINE_REASONS.length}) :`);
-    if (answer === null) return;
-    const idx = parseInt(answer, 10) - 1;
-    if (!(idx >= 0 && idx < DECLINE_REASONS.length)){
-      alert('Numéro invalide.');
+  // ---------- Modale de refus ----------
+  let declineTargetId = null;
+  let declineSelected = null;
+
+  function openDeclineDialog(id){
+    const entry = allSubmissions.find(s => s.id === id);
+    declineTargetId = id;
+    declineSelected = null;
+
+    document.getElementById('dl-platform').textContent =
+      entry ? `${entry.platform} — ${entry.pseudo || '?'}` : 'Demande';
+
+    // Liste des motifs, régénérée à chaque ouverture pour repartir propre
+    document.getElementById('dl-reasons').innerHTML = DECLINE_REASONS.map(r => `
+      <button type="button" class="dl-reason" data-reason="${r.id}" onclick="selectDeclineReason('${r.id}')">
+        <span class="radio"></span>
+        <span>${escapeHtml(r.label)}</span>
+      </button>
+    `).join('');
+
+    document.getElementById('dl-note-wrap').style.display = 'none';
+    document.getElementById('dl-note').value = '';
+    document.getElementById('dl-confirm').disabled = true;
+    document.getElementById('declineOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDeclineDialog(){
+    document.getElementById('declineOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    declineTargetId = null;
+    declineSelected = null;
+  }
+
+  function selectDeclineReason(id){
+    declineSelected = id;
+    document.querySelectorAll('.dl-reason').forEach(b => {
+      b.classList.toggle('selected', b.dataset.reason === id);
+    });
+    // Le champ libre n'apparaît que pour "Other"
+    document.getElementById('dl-note-wrap').style.display = (id === 'other') ? '' : 'none';
+    document.getElementById('dl-confirm').disabled = false;
+  }
+
+  async function submitDecline(){
+    if (!declineTargetId || !declineSelected) return;
+    const note = document.getElementById('dl-note').value.trim();
+    if (declineSelected === 'other' && !note){
+      alert('Précise le motif pour « Other ».');
       return;
     }
-    const reason = DECLINE_REASONS[idx];
-    let note = '';
-    if (reason.id === 'other'){
-      note = prompt('Précise le motif (il sera envoyé au joueur) :') || '';
-      if (!note.trim()){ alert('Un motif est nécessaire pour "Autre".'); return; }
-    }
+    const btn = document.getElementById('dl-confirm');
+    btn.disabled = true;
+    btn.textContent = 'Envoi…';
+    const id = declineTargetId;
     try{
       const resp = await fetch(`${workerBaseUrl}/submissions/decline`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
-        body: JSON.stringify({ id, reason: reason.id, note }),
+        body: JSON.stringify({ id, reason: declineSelected, note }),
       });
       const data = await resp.json();
-      if (!data.ok){ alert('Échec du refus.'); return; }
+      if (!data.ok){ alert('Échec du refus.'); btn.disabled = false; btn.textContent = 'Confirmer le refus'; return; }
+
       const s = allSubmissions.find(x => x.id === id);
       if (s){
         s.status = 'declined'; s.tipped = false;
-        s.declineReason = reason.id; s.declineNote = note;
+        s.declineReason = declineSelected; s.declineNote = note;
       }
       if (data.discord && data.discord.attempted && !data.discord.ok){
-        alert('Refus enregistré, mais le message Discord n\'a pas pu être envoyé : ' + (data.discord.error || ''));
+        showBanner('⚠️ Refus enregistré, mais le DM Discord a échoué : ' + (data.discord.error || ''), true);
+      } else if (data.discord && data.discord.ok){
+        showBanner('✅ Refus enregistré et DM Discord envoyé.');
+      } else {
+        showBanner('ℹ️ Refus enregistré — aucun ID Discord, pas de DM envoyé.');
       }
+      btn.textContent = 'Confirmer le refus';
+      closeDeclineDialog();
+      renderStats();
       applyFilters();
     }catch(e){
       alert('Erreur réseau : ' + e.message);
+      btn.disabled = false;
+      btn.textContent = 'Confirmer le refus';
     }
   }
 
@@ -1687,6 +1810,29 @@
     }
   }
 </script>
+
+<!-- Modale de refus : remplace le prompt() du navigateur, qui était fonctionnel
+     mais très laid et impossible à styler. -->
+<div class="dl-overlay" id="declineOverlay">
+  <div class="dl-modal">
+    <button class="dl-close" onclick="closeDeclineDialog()" aria-label="Fermer">×</button>
+    <div class="dl-tag">Refuser la demande</div>
+    <h3 id="dl-platform">—</h3>
+    <p class="dl-sub">Le joueur recevra un message Discord expliquant le motif.</p>
+
+    <div class="dl-reasons" id="dl-reasons"></div>
+
+    <div class="dl-note-wrap" id="dl-note-wrap" style="display:none;">
+      <label for="dl-note">Précise le motif (envoyé au joueur)</label>
+      <textarea id="dl-note" rows="3" placeholder="Ex: Your account was created after the offer ended."></textarea>
+    </div>
+
+    <div class="dl-actions">
+      <button class="dl-confirm" id="dl-confirm" onclick="submitDecline()" disabled>Confirmer le refus</button>
+      <button class="dl-cancel" onclick="closeDeclineDialog()">Annuler</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

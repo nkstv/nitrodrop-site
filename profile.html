@@ -828,9 +828,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   }
 
   // ---------------- Suivi des demandes de bonus ----------------
+  // Doit rester aligné avec les motifs du dashboard
   const DECLINE_LABELS = {
-    duplicate_account: 'Duplicate account',
-    rules_not_respected: 'Rules not respected',
+    duplicate_account: 'Duplicate account detected',
+    bonus_cashout: 'Cashout of the welcome bonus',
+    no_deposit: 'A deposit is required to claim this bonus',
+    discord_too_young: 'Discord account not old enough',
     other: 'Other',
   };
 
