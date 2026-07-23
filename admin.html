@@ -73,98 +73,136 @@
     font-weight:700; font-size:13.5px; padding:10px 18px; border-radius:9px; cursor:pointer;
   }
   .lang-tab.active{background:var(--violet); color:#fff; border-color:transparent;}
+
+  /* ---------- Mise en page : barre latérale + sections ---------- */
+  .admin-shell{display:grid; grid-template-columns:250px 1fr; min-height:100vh;}
+
+  .admin-side{
+    background:var(--bg-raise); border-right:1px solid var(--line);
+    padding:22px 16px; display:flex; flex-direction:column; gap:22px;
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .side-brand{display:flex; align-items:center; gap:11px; padding:0 6px;}
+  .brand-mark{
+    width:36px; height:36px; border-radius:11px; flex:none; display:grid; place-items:center;
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    font-size:17px; color:#3a2a08;
+  }
+  .brand-name{font-family:"Baloo 2"; font-weight:800; font-size:15.5px; color:var(--text);}
+  .brand-sub{font-size:11px; color:var(--text-faint); margin-top:1px;}
+
+  .side-nav{display:flex; flex-direction:column; gap:4px; flex:1;}
+  .nav-item{
+    display:flex; align-items:center; gap:11px; width:100%; text-align:left;
+    background:none; border:1px solid transparent; border-radius:11px;
+    padding:11px 12px; color:var(--text-dim); font-size:13.5px; font-weight:700;
+    cursor:pointer; transition:.15s; font-family:inherit;
+  }
+  .nav-item:hover{background:var(--bg-card); color:var(--text);}
+  .nav-item.active{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    color:#3a2a08; border-color:transparent;
+  }
+  .nav-item .ic{font-size:15px; width:20px; text-align:center;}
+
+  .side-foot{display:flex; flex-direction:column; gap:6px; border-top:1px solid var(--line); padding-top:14px;}
+  .side-link{
+    display:block; padding:9px 12px; border-radius:10px; font-size:12.5px; font-weight:700;
+    color:var(--text-dim); text-decoration:none; transition:.15s;
+  }
+  .side-link:hover{background:var(--bg-card); color:var(--gold);}
+
+  .admin-main{padding:30px 34px 120px; max-width:1000px;}
+  .section-head{margin-bottom:22px;}
+  .section-head h1{font-family:"Baloo 2"; font-weight:800; font-size:24px; color:var(--text);}
+  .section-head p{font-size:13.5px; color:var(--text-faint); margin-top:5px;}
+
+  /* Barre d'enregistrement, toujours visible en bas */
+  .save-bar{
+    position:fixed; bottom:0; left:250px; right:0; z-index:50;
+    background:rgba(16,11,6,.94); backdrop-filter:blur(10px);
+    border-top:1px solid var(--line); padding:14px 34px;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .btn-save{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 55%,var(--gold-deep)); color:#3a2a08;
+    font-family:"Baloo 2"; font-weight:800; font-size:14.5px; padding:11px 22px;
+    border:none; border-radius:11px; cursor:pointer; transition:.15s;
+  }
+  .btn-save:hover{filter:brightness(1.06); transform:translateY(-1px);}
+  .btn-ghost{
+    background:var(--bg-card); border:1px solid var(--line); color:var(--text-dim);
+    font-family:"Baloo 2"; font-weight:800; font-size:13.5px; padding:11px 18px;
+    border-radius:11px; cursor:pointer; transition:.15s;
+  }
+  .btn-ghost:hover{border-color:var(--line-strong); color:var(--text);}
+  .save-hint{font-size:12px; color:var(--text-faint); margin-left:auto;}
+  .save-hint b{color:var(--gold);}
+
+  @media(max-width:900px){
+    .admin-shell{grid-template-columns:1fr;}
+    .admin-side{
+      position:static; height:auto; flex-direction:row; align-items:center;
+      overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);
+      padding:12px; gap:12px;
+    }
+    .side-brand{flex:none;}
+    .side-nav{flex-direction:row; gap:6px; flex:none;}
+    .nav-item{white-space:nowrap; padding:9px 13px;}
+    .nav-item span:not(.ic){display:none;}
+    .side-foot{flex-direction:row; border-top:none; padding-top:0; flex:none;}
+    .admin-main{padding:20px 16px 130px;}
+    .save-bar{left:0; padding:12px 16px;}
+    .save-hint{display:none;}
+  }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <h1>NITRO<span>DROP</span> — Panel admin</h1>
-  <div class="topbar-actions">
-    <button class="btn btn-reset" onclick="doReset()">Réinitialiser</button>
-    <a href="/" target="_blank"><button class="btn btn-open" type="button">Ouvrir le site</button></a>
-    <button class="btn btn-save" onclick="doSave()">Enregistrer</button>
-  </div>
-</div>
+<div class="admin-shell">
 
-<div class="wrap">
-
-  <div class="note">
-    <strong>Note :</strong> les modifications sont stockées dans le navigateur (localStorage) et lues par index.html.
-    Ouvre les deux fichiers depuis le même dossier via un petit serveur local (ex. <code>python3 -m http.server</code>) plutôt qu'en double-cliquant dessus,
-    sinon certains navigateurs bloquent le stockage local pour les fichiers ouverts en <code>file://</code>.
-  </div>
-
-  <!-- LANGUES -->
-  <div class="panel" style="border-color:rgba(139,92,255,0.4);">
-    <h2>Langues</h2>
-    <div class="sub">Modifie les textes séparément pour chaque langue. Bascule l'onglet ci-dessous pour éditer l'anglais ou le français — ils sont indépendants (rien n'est traduit automatiquement).</div>
-    <div style="display:flex; gap:10px; margin-bottom:14px;">
-      <button type="button" class="lang-tab active" data-lang="en" onclick="switchAdminLang('en')">🇬🇧 English</button>
-      <button type="button" class="lang-tab" data-lang="fr" onclick="switchAdminLang('fr')">🇫🇷 Français</button>
+  <aside class="admin-side">
+    <div class="side-brand">
+      <div class="brand-mark">⚡</div>
+      <div>
+        <div class="brand-name">Drop Cash</div>
+        <div class="brand-sub">Configuration</div>
+      </div>
     </div>
-    <div class="field"><label>Langue affichée par défaut aux visiteurs</label>
-      <select id="defaultLang" onchange="cfg.defaultLang = this.value;">
-        <option value="en">Anglais</option>
-        <option value="fr">Français</option>
-      </select>
+
+    <nav class="side-nav">
+      <button class="nav-item active" data-section="offers" onclick="showSection('offers')"><span class="ic">🎁</span><span>Offres & bonus</span></button>
+      <button class="nav-item" data-section="vault" onclick="showSection('vault')"><span class="ic">🔒</span><span>Coffre-fort</span></button>
+      <button class="nav-item" data-section="integrations" onclick="showSection('integrations')"><span class="ic">🔗</span><span>Intégrations</span></button>
+      <button class="nav-item" data-section="site" onclick="showSection('site')"><span class="ic">⚙️</span><span>Réglages</span></button>
+      <button class="nav-item" data-section="publish" onclick="showSection('publish')"><span class="ic">🚀</span><span>Publication</span></button>
+    </nav>
+
+    <div class="side-foot">
+      <a class="side-link" href="/dashboard">📊 Dashboard</a>
+      <a class="side-link" href="/" target="_blank">🌐 Voir le site</a>
     </div>
-  </div>
+  </aside>
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  <!-- TELEGRAM -->
-  <div class="panel">
-    <h2>Bandeau Telegram</h2>
-    <div class="sub">Le bloc "Un guide pas à pas t'attend sur Telegram".</div>
-    <div class="field"><label>Étiquette</label><input type="text" id="tg-tag"></div>
-    <div class="field"><label>Titre</label><input type="text" id="tg-title"></div>
-    <div class="field"><label>Description</label><textarea id="tg-desc"></textarea></div>
-    <div class="row">
-      <div class="field"><label>Texte du bouton</label><input type="text" id="tg-btnText"></div>
-      <div class="field"><label>Lien du bouton</label><input type="text" id="tg-btnHref"></div>
+  <main class="admin-main">
+  <section class="admin-section" id="section-offers">
+    <div class="section-head">
+      <h1>🎁 Offres & bonus</h1>
+      <p>Les offres affichées sur le site et le formulaire de réclamation</p>
     </div>
-  </div>
-
-  
-
-  <!-- OFFERS SECTION -->
-  <div class="panel">
+<div class="panel">
     <h2>Section "Offres du moment"</h2>
     <div class="field"><label>Étiquette</label><input type="text" id="offersSection-tag"></div>
     <div class="field"><label>Titre</label><input type="text" id="offersSection-title"></div>
     <div class="field"><label>Description</label><textarea id="offersSection-desc"></textarea></div>
   </div>
-
-  <!-- OFFERS -->
-  <div class="panel">
+<div class="panel">
     <h2>Les 3 offres</h2>
     <div class="sub">Nom, bonus, description, code, lien d'inscription et textes des boutons pour chaque plateforme.</div>
     <div id="offers-fields"></div>
     <button type="button" class="btn btn-save" onclick="addOffer()" style="margin-top:6px;">+ Ajouter une offre</button>
   </div>
-
-  
-
-  
-
-  
-
-  <!-- MODAL / POPUP -->
-  <div class="panel">
+<div class="panel">
     <h2>Popup "Recevoir le bonus"</h2>
     <div class="sub">Les textes du popup qui s'ouvre quand on clique sur "Recevoir le bonus". Utilise <code>{platform}</code> et <code>{code}</code> comme variables — elles seront remplacées automatiquement par la plateforme et le code concernés.</div>
 
@@ -218,29 +256,13 @@
       <div class="field"><label>Lien du bouton Telegram</label><input type="text" id="modal-confirmTelegramHref"></div>
     </div>
   </div>
-
-  <!-- TELEGRAM RELAY -->
-  <div class="panel">
-    <h2>Notification Telegram (relais)</h2>
-    <div class="sub">L'URL de ton Cloudflare Worker qui reçoit les demandes et les transmet à ton bot Telegram. Le token du bot n'est jamais stocké ici — il vit uniquement côté Worker.</div>
-    <div class="field"><label>URL du relais</label><input type="text" id="relay-url"></div>
-  </div>
-
-  <!-- DISCORD OAUTH -->
-  <div class="panel">
-    <h2>Connexion Discord (bouton du formulaire)</h2>
-    <div class="sub">
-      Le "Client ID" de ton application Discord (donnée publique, sans risque à afficher). Va sur
-      <a href="https://discord.com/developers/applications" target="_blank" style="color:var(--violet);">discord.com/developers/applications</a>
-      → ton application → "General Information" → copie "Application ID" (aussi appelé "Client ID").<br><br>
-      <strong style="color:var(--violet);">Important :</strong> dans la même application → "OAuth2" → "General" → section "Redirects" → ajoute cette URL exacte :
-      <code id="discord-redirect-hint" style="display:block; margin-top:6px; padding:8px; background:var(--bg-raise); border-radius:6px; word-break:break-all;"></code>
+  </section>
+  <section class="admin-section" id="section-vault" style="display:none;">
+    <div class="section-head">
+      <h1>🔒 Coffre-fort</h1>
+      <p>Le code du jour et le montant à gagner</p>
     </div>
-    <div class="field"><label>Discord Client ID</label><input type="text" id="discord-client-id" placeholder="Ex: 1527360448557482056"></div>
-  </div>
-
-  <!-- VAULT -->
-  <div class="panel" style="border-color:rgba(139,92,255,0.4);">
+<div class="panel" style="border-color:rgba(139,92,255,0.4);">
     <h2>Coffre-fort (page /vault.html)</h2>
     <div class="sub">Le code secret et le montant ne sont <strong>jamais</strong> publiés sur GitHub (ils ne seraient plus secrets) — ils sont envoyés directement et uniquement à ton Worker Cloudflare, protégés par ta clé de dashboard.</div>
 
@@ -313,9 +335,66 @@
       <div class="field"><label>Texte si personne n'a encore gagné</label><input type="text" id="vault-winnersEmpty" placeholder="Personne pour l'instant."></div>
     </div>
   </div>
-
-  <!-- PUBLICATION GITHUB -->
-  <div class="panel" style="border-color:rgba(182,255,60,0.4);">
+  </section>
+  <section class="admin-section" id="section-integrations" style="display:none;">
+    <div class="section-head">
+      <h1>🔗 Intégrations</h1>
+      <p>Telegram et Discord</p>
+    </div>
+<div class="panel">
+    <h2>Notification Telegram (relais)</h2>
+    <div class="sub">L'URL de ton Cloudflare Worker qui reçoit les demandes et les transmet à ton bot Telegram. Le token du bot n'est jamais stocké ici — il vit uniquement côté Worker.</div>
+    <div class="field"><label>URL du relais</label><input type="text" id="relay-url"></div>
+  </div>
+<div class="panel">
+    <h2>Connexion Discord (bouton du formulaire)</h2>
+    <div class="sub">
+      Le "Client ID" de ton application Discord (donnée publique, sans risque à afficher). Va sur
+      <a href="https://discord.com/developers/applications" target="_blank" style="color:var(--violet);">discord.com/developers/applications</a>
+      → ton application → "General Information" → copie "Application ID" (aussi appelé "Client ID").<br><br>
+      <strong style="color:var(--violet);">Important :</strong> dans la même application → "OAuth2" → "General" → section "Redirects" → ajoute cette URL exacte :
+      <code id="discord-redirect-hint" style="display:block; margin-top:6px; padding:8px; background:var(--bg-raise); border-radius:6px; word-break:break-all;"></code>
+    </div>
+    <div class="field"><label>Discord Client ID</label><input type="text" id="discord-client-id" placeholder="Ex: 1527360448557482056"></div>
+  </div>
+<div class="panel">
+    <h2>Bandeau Telegram</h2>
+    <div class="sub">Le bloc "Un guide pas à pas t'attend sur Telegram".</div>
+    <div class="field"><label>Étiquette</label><input type="text" id="tg-tag"></div>
+    <div class="field"><label>Titre</label><input type="text" id="tg-title"></div>
+    <div class="field"><label>Description</label><textarea id="tg-desc"></textarea></div>
+    <div class="row">
+      <div class="field"><label>Texte du bouton</label><input type="text" id="tg-btnText"></div>
+      <div class="field"><label>Lien du bouton</label><input type="text" id="tg-btnHref"></div>
+    </div>
+  </div>
+  </section>
+  <section class="admin-section" id="section-site" style="display:none;">
+    <div class="section-head">
+      <h1>⚙️ Réglages</h1>
+      <p>Langue de la configuration</p>
+    </div>
+<div class="panel" style="border-color:rgba(139,92,255,0.4);">
+    <h2>Langues</h2>
+    <div class="sub">Modifie les textes séparément pour chaque langue. Bascule l'onglet ci-dessous pour éditer l'anglais ou le français — ils sont indépendants (rien n'est traduit automatiquement).</div>
+    <div style="display:flex; gap:10px; margin-bottom:14px;">
+      <button type="button" class="lang-tab active" data-lang="en" onclick="switchAdminLang('en')">🇬🇧 English</button>
+      <button type="button" class="lang-tab" data-lang="fr" onclick="switchAdminLang('fr')">🇫🇷 Français</button>
+    </div>
+    <div class="field"><label>Langue affichée par défaut aux visiteurs</label>
+      <select id="defaultLang" onchange="cfg.defaultLang = this.value;">
+        <option value="en">Anglais</option>
+        <option value="fr">Français</option>
+      </select>
+    </div>
+  </div>
+  </section>
+  <section class="admin-section" id="section-publish" style="display:none;">
+    <div class="section-head">
+      <h1>🚀 Publication</h1>
+      <p>Envoyer les changements en ligne</p>
+    </div>
+<div class="panel" style="border-color:rgba(182,255,60,0.4);">
     <h2>Publier en ligne (GitHub)</h2>
     <div class="sub">
       Envoie directement tes modifications sur GitHub. Le site public (index.html) se met à jour pour <strong>tout le monde</strong> en ~1 minute, sans que tu aies besoin de re-uploader un fichier à la main.
@@ -339,13 +418,41 @@
     <button class="btn btn-save" onclick="publishToGitHub()" style="margin-top:6px;">Publier sur GitHub</button>
     <div id="gh-status" style="margin-top:12px; font-size:12.5px; color:var(--text-dim);"></div>
   </div>
+  </section>
+
+    <div class="save-bar">
+      <button class="btn-save" onclick="doSave()">💾 Enregistrer</button>
+      <button class="btn-ghost" onclick="doReset()">↺ Réinitialiser</button>
+      <span class="save-hint">Enregistre en local. Utilise <b>Publication</b> pour mettre en ligne.</span>
+    </div>
+  </main>
 
 </div>
 
-<div class="toast" id="toast">Enregistré ✓</div>
+<div class="toast" id="toast"></div>
 
-<script src="nitrodrop-config.js?v=20260721a"></script>
 <script>
+  // Navigation entre les sections. Tout reste dans la page : les champs cachés
+  // conservent leur valeur, donc un seul « Enregistrer » suffit pour l'ensemble.
+  function showSection(id){
+    document.querySelectorAll('.admin-section').forEach(s => {
+      s.style.display = (s.id === 'section-' + id) ? '' : 'none';
+    });
+    document.querySelectorAll('.nav-item').forEach(b => {
+      b.classList.toggle('active', b.dataset.section === id);
+    });
+    try{ localStorage.setItem('nitrodrop_admin_section', id); }catch(e){}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Rouvre la dernière section consultée
+  window.addEventListener('DOMContentLoaded', () => {
+    try{
+      const last = localStorage.getItem('nitrodrop_admin_section');
+      if (last && document.getElementById('section-' + last)) showSection(last);
+    }catch(e){}
+  });
+
   // ---------- Verrou d'accès (dissuasif, pas une vraie sécurité) ----------
   // Change ce mot de passe avant de publier. N'importe qui sait lire du code
   // source peut le voir ici : ça bloque juste les visiteurs qui tombent sur
