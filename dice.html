@@ -567,6 +567,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   let direction = 'under'; // 'under' ou 'over'
   let busy=false;
   const HOUSE_EDGE = 0.97;
+  // Même plancher que le serveur : un gain doit toujours rapporter quelque chose
+  const MIN_MULTIPLIER = 1.01;
 
   function setBalance(v){
     balanceEl.textContent = v;
@@ -577,7 +579,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const target = parseFloat(targetSlider.value);
     targetDisplay.textContent = target.toFixed(2);
     const winChance = direction === 'under' ? target : (100 - target);
-    const multiplier = (100 / winChance) * HOUSE_EDGE;
+    const multiplier = Math.max(MIN_MULTIPLIER, (100 / winChance) * HOUSE_EDGE);
     winChanceEl.textContent = winChance.toFixed(2);
     diceMultEl.textContent = multiplier.toFixed(2);
     diceTrack.style.background = direction === 'under'
