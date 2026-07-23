@@ -205,8 +205,27 @@
     box-shadow:0 0 22px rgba(232,193,104,.13);
   }
   .bj-hand-row.is-idle-hand{opacity:.45;}
+  /* La mise en valeur du gain prime sur celle de la main active (déclarée
+     plus haut), au cas où les deux se chevaucheraient. */
+  .bj-hand-row .bj-cards.cards-win{
+    background:linear-gradient(180deg, rgba(95,214,139,.15), rgba(95,214,139,.05));
+    border:1.5px solid var(--green);
+    box-shadow:0 0 30px rgba(95,214,139,.32);
+  }
   .bj-hand-label.win .total{color:var(--green);} .bj-hand-label.lose .total{color:var(--red);}
   .bj-cards{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  /* Main gagnante : les cartes elles-mêmes sont mises en valeur, au lieu d'une
+     carte de gain affichée par-dessus qui masquait le jeu. */
+  .bj-cards.cards-win{
+    padding:9px 11px; border-radius:16px;
+    background:linear-gradient(180deg, rgba(95,214,139,.15), rgba(95,214,139,.05));
+    border:1.5px solid var(--green);
+    box-shadow:0 0 30px rgba(95,214,139,.32);
+    animation:cardsWin .45s ease;
+  }
+  @keyframes cardsWin{
+    0%{transform:scale(1);} 45%{transform:scale(1.04);} 100%{transform:scale(1);}
+  }
   .bj-card{
     width:56px;height:78px;border-radius:9px;background:linear-gradient(180deg,#fdf8ec,#efe4c8);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -677,6 +696,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     bjTable.style.display = 'flex';
     bjResultEl.style.display = 'none';
     winCard.classList.remove('show');
+    playerCardsEls.forEach(el => el.classList.remove('cards-win'));
 
     const dealerVal = state.dealerHidden ? cardValueLabel([state.dealerCards[0]]) : cardValueLabel(state.dealerCards);
     const dealerBust = !state.dealerHidden && dealerVal > 21;
@@ -731,10 +751,15 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       const totalBet = state.hands.reduce((s,h)=>s+h.bet,0);
       const totalPayout = state.totalPayout || 0;
       if (totalPayout > totalBet){
-        // Gain : la carte verte centrée se suffit à elle-même (pas de texte en plus)
-        winMultEl.textContent = (totalPayout / totalBet).toFixed(2);
-        winAmtEl.textContent = '+' + roundKeysClient(totalPayout - totalBet);
-        winCard.classList.add('show');
+        // Gain : on colore les cartes gagnantes en vert plutôt que d'afficher une
+        // carte par-dessus, qui masquait justement la main. Avec un split, seule
+        // la (ou les) main(s) gagnante(s) est mise en valeur.
+        state.hands.forEach((h, i) => {
+          if (i > 1) return;
+          if (h.result === 'win' || h.result === 'blackjack'){
+            playerCardsEls[i].classList.add('cards-win');
+          }
+        });
       } else {
         // Push ou défaite : pas de carte, donc on garde un retour texte
         const label = totalPayout === totalBet ? 'Push' : 'Lost';
@@ -752,6 +777,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     bjPlaceholder.style.display = 'flex';
     bjResultEl.style.display = 'none';
     winCard.classList.remove('show');
+    playerCardsEls.forEach(el => el.classList.remove('cards-win'));
     bjInsurance.style.display = 'none';
     playerRows.forEach(row => row.classList.remove('is-active-hand','is-idle-hand'));
     hitBtn.disabled = true; standBtn.disabled = true; splitBtn.disabled = true; doubleBtn.disabled = true;

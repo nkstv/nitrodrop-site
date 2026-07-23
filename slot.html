@@ -155,6 +155,18 @@
     box-shadow:0 3px 0 rgba(0,0,0,.35), inset 0 0 20px rgba(0,0,0,.3);
   }
   .slot-sym{font-size:56px; display:block; animation:reveal .3s ease;}
+  /* Gain : les rouleaux eux-mêmes passent en vert (plus lisible qu'une carte
+     affichée par-dessus, qui masquait les symboles gagnants). */
+  .slot-reel.reel-win{
+    border-color:var(--green);
+    background:linear-gradient(180deg, rgba(95,214,139,.16), rgba(95,214,139,.06));
+    box-shadow:0 0 26px rgba(95,214,139,.35), inset 0 0 20px rgba(95,214,139,.12);
+    animation:reelWin .45s ease;
+  }
+  @keyframes reelWin{
+    0%{transform:scale(1);} 45%{transform:scale(1.07);} 100%{transform:scale(1);}
+  }
+  .slot-reels.win-glow{filter:drop-shadow(0 0 30px rgba(95,214,139,.25));}
   @keyframes reveal{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
   .bust-card{position:absolute;top:14px;right:14px;background:rgba(20,14,8,.93);border:1.5px solid var(--red);
     border-radius:var(--r-m);padding:10px 18px;text-align:center;box-shadow:0 0 26px rgba(242,109,109,.25);
@@ -525,6 +537,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const bustCard=document.getElementById('bustCard'), bustAmt=document.getElementById('bustAmt');
   const winCard=document.getElementById('winCard'), winMultEl=document.getElementById('winMult'), winAmtEl=document.getElementById('winAmt');
   const reelEls=[document.getElementById('reel0'), document.getElementById('reel1'), document.getElementById('reel2')];
+  const slotReels=document.getElementById('slotReels');
 
   let busy=false;
 
@@ -543,7 +556,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     busy=true; playBtn.disabled=true;
     bustCard.classList.remove('show');
     winCard.classList.remove('show');
-    reelEls.forEach(r => r.textContent = '❔');
+    reelEls.forEach(r => { r.textContent = '❔'; r.parentElement.classList.remove('reel-win'); });
+    slotReels.classList.remove('win-glow');
 
     try{
       const resp = await fetch(`${workerBase}/slots/spin`, {
@@ -562,9 +576,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       data.symbols.forEach((s, i) => { setTimeout(() => { reelEls[i].textContent = s; }, i * 180); });
       setTimeout(() => {
         if (data.won){
-          winMultEl.textContent = data.multiplier.toFixed(2);
-          winAmtEl.textContent = '+' + data.payout;
-          winCard.classList.add('show');
+          // Les rouleaux passent en vert : la carte de gain masquait les symboles
+          reelEls.forEach(el => el.parentElement.classList.add('reel-win'));
+          slotReels.classList.add('win-glow');
         } else {
           bustAmt.textContent = '-' + bet;
           bustCard.classList.add('show');
