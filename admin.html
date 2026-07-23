@@ -110,16 +110,7 @@
     </div>
   </div>
 
-  <!-- MENU / HEADER -->
-  <div class="panel">
-    <h2>Nom du site (logo)</h2>
-    <div class="sub">Le texte affiché en haut à gauche et dans le pied de page.</div>
-    <div class="row">
-      <div class="field"><label>Première partie (blanc)</label><input type="text" id="brand-text1"></div>
-      <div class="field"><label>Deuxième partie (vert)</label><input type="text" id="brand-text2"></div>
-    </div>
-    <div class="field"><label>Titre de l'onglet du navigateur</label><input type="text" id="page-title"></div>
-  </div>
+  
 
   
 
@@ -131,20 +122,7 @@
 
   
 
-  <!-- MENU / HEADER -->
-  <div class="panel">
-    <h2>Menu (nav)</h2>
-    <div class="sub">Les 4 liens du menu du haut, et le bouton vert en haut à droite.</div>
-
-    <div class="subheading">Liens du menu</div>
-    <div id="nav-links-fields"></div>
-
-    <div class="subheading">Bouton du header</div>
-    <div class="row">
-      <div class="field"><label>Texte du bouton</label><input type="text" id="nav-ctaText"></div>
-      <div class="field"><label>Lien du bouton</label><input type="text" id="nav-ctaHref"></div>
-    </div>
-  </div>
+  
 
   
 
@@ -161,21 +139,7 @@
     </div>
   </div>
 
-  <!-- LEADERBOARD -->
-  <div class="panel">
-    <h2>Classement mensuel</h2>
-    <div class="checkbox-row">
-      <input type="checkbox" id="lb-enabled">
-      <label for="lb-enabled">Afficher la section "Classement"</label>
-    </div>
-    <div class="field"><label>Étiquette</label><input type="text" id="lb-tag"></div>
-    <div class="field"><label>Titre</label><input type="text" id="lb-title"></div>
-    <div class="field"><label>Description</label><textarea id="lb-desc"></textarea></div>
-    <div class="row">
-      <div class="field"><label>Montant de la cagnotte</label><input type="text" id="lb-poolFigure"></div>
-      <div class="field"><label>Légende de la cagnotte</label><input type="text" id="lb-poolCaption"></div>
-    </div>
-  </div>
+  
 
   <!-- OFFERS SECTION -->
   <div class="panel">
@@ -193,28 +157,7 @@
     <button type="button" class="btn btn-save" onclick="addOffer()" style="margin-top:6px;">+ Ajouter une offre</button>
   </div>
 
-  <!-- STEPS -->
-  <div class="panel">
-    <h2>Section "Comment réclamer un code"</h2>
-    <div class="checkbox-row">
-      <input type="checkbox" id="steps-enabled">
-      <label for="steps-enabled">Afficher la section "Trois étapes"</label>
-    </div>
-    <div class="field"><label>Étiquette</label><input type="text" id="steps-tag"></div>
-    <div class="field"><label>Titre</label><input type="text" id="steps-title"></div>
-
-    <div class="subheading">Étape 1</div>
-    <div class="field"><label>Titre</label><input type="text" id="step-title-0"></div>
-    <div class="field"><label>Description</label><textarea id="step-desc-0"></textarea></div>
-
-    <div class="subheading">Étape 2</div>
-    <div class="field"><label>Titre</label><input type="text" id="step-title-1"></div>
-    <div class="field"><label>Description</label><textarea id="step-desc-1"></textarea></div>
-
-    <div class="subheading">Étape 3</div>
-    <div class="field"><label>Titre</label><input type="text" id="step-title-2"></div>
-    <div class="field"><label>Description</label><textarea id="step-desc-2"></textarea></div>
-  </div>
+  
 
   
 
@@ -457,30 +400,6 @@
   }
 
   // ---------- Rendu des champs dynamiques ----------
-  function renderNavLinks(){
-    const container = document.getElementById('nav-links-fields');
-    container.innerHTML = '';
-    content.nav.links.forEach((link, i) => {
-      const row = el('div', {class:'row'});
-      const f1 = el('div', {class:'field'});
-      f1.appendChild(el('label', {text:`Lien ${i+1} — texte`}));
-      const in1 = el('input', {type:'text', id:`nav-link-label-${i}`, value: link.label});
-      f1.appendChild(in1);
-      const f2 = el('div', {class:'field'});
-      f2.appendChild(el('label', {text:`Lien ${i+1} — url`}));
-      const in2 = el('input', {type:'text', id:`nav-link-href-${i}`, value: link.href});
-      f2.appendChild(in2);
-      const f3 = el('div', {class:'field', style:'display:flex; align-items:flex-end; padding-bottom:10px;'});
-      const chkWrap = el('div', {style:'display:flex; align-items:center; gap:8px;'});
-      const chk = el('input', {type:'checkbox', id:`nav-link-newtab-${i}`});
-      chk.checked = link.newTab === true;
-      chkWrap.appendChild(chk);
-      chkWrap.appendChild(el('label', {for:`nav-link-newtab-${i}`, text:'Nouvel onglet', style:'margin:0; text-transform:none; font-weight:400;'}));
-      f3.appendChild(chkWrap);
-      row.appendChild(f1); row.appendChild(f2); row.appendChild(f3);
-      container.appendChild(row);
-    });
-  }
 
   function addOffer(){
     readForm();
@@ -614,14 +533,9 @@
   // ---------- Remplit tous les champs simples depuis cfg ----------
   function fillForm(){
     document.getElementById('defaultLang').value = cfg.defaultLang || 'en';
-    document.getElementById('brand-text1').value = (content.brand && content.brand.text1) || 'NITRO';
-    document.getElementById('brand-text2').value = (content.brand && content.brand.text2) || 'DROP';
-    document.getElementById('page-title').value = content.pageTitle || 'NITRODROP — Codes bonus crypto vérifiés';
     cfg.heroBanner = cfg.heroBanner || {};
     cfg.floatingWidget = cfg.floatingWidget || {};
 
-    document.getElementById('nav-ctaText').value = content.nav.ctaText;
-    document.getElementById('nav-ctaHref').value = content.nav.ctaHref;
 
 
     document.getElementById('tg-tag').value = content.telegram.tag;
@@ -634,16 +548,7 @@
     document.getElementById('offersSection-title').value = content.offersSection.title;
     document.getElementById('offersSection-desc').value = content.offersSection.desc;
 
-    document.getElementById('lb-enabled').checked = content.leaderboard.enabled !== false;
-    document.getElementById('lb-tag').value = content.leaderboard.tag;
-    document.getElementById('lb-title').value = content.leaderboard.title;
-    document.getElementById('lb-desc').value = content.leaderboard.desc;
-    document.getElementById('lb-poolFigure').value = content.leaderboard.poolFigure;
-    document.getElementById('lb-poolCaption').value = content.leaderboard.poolCaption;
 
-    document.getElementById('steps-enabled').checked = content.steps.enabled !== false;
-    document.getElementById('steps-tag').value = content.steps.tag;
-    document.getElementById('steps-title').value = content.steps.title;
     content.steps.items.forEach((step, i) => {
       document.getElementById(`step-title-${i}`).value = step.title;
       document.getElementById(`step-desc-${i}`).value = step.desc;
@@ -742,9 +647,6 @@
   // ---------- Lit tous les champs et reconstruit cfg ----------
   function readForm(){
     content.brand = content.brand || {};
-    content.brand.text1 = document.getElementById('brand-text1').value;
-    content.brand.text2 = document.getElementById('brand-text2').value;
-    content.pageTitle = document.getElementById('page-title').value;
     cfg.heroBanner = cfg.heroBanner || {};
     cfg.floatingWidget = cfg.floatingWidget || {};
 
@@ -753,8 +655,6 @@
       href: document.getElementById(`nav-link-href-${i}`).value,
       newTab: document.getElementById(`nav-link-newtab-${i}`).checked
     }));
-    content.nav.ctaText = document.getElementById('nav-ctaText').value;
-    content.nav.ctaHref = document.getElementById('nav-ctaHref').value;
 
 
     content.telegram.tag = document.getElementById('tg-tag').value;
@@ -767,16 +667,7 @@
     content.offersSection.title = document.getElementById('offersSection-title').value;
     content.offersSection.desc = document.getElementById('offersSection-desc').value;
 
-    content.leaderboard.enabled = document.getElementById('lb-enabled').checked;
-    content.leaderboard.tag = document.getElementById('lb-tag').value;
-    content.leaderboard.title = document.getElementById('lb-title').value;
-    content.leaderboard.desc = document.getElementById('lb-desc').value;
-    content.leaderboard.poolFigure = document.getElementById('lb-poolFigure').value;
-    content.leaderboard.poolCaption = document.getElementById('lb-poolCaption').value;
 
-    content.steps.enabled = document.getElementById('steps-enabled').checked;
-    content.steps.tag = document.getElementById('steps-tag').value;
-    content.steps.title = document.getElementById('steps-title').value;
     content.steps.items = content.steps.items.map((step, i) => ({
       title: document.getElementById(`step-title-${i}`).value,
       desc: document.getElementById(`step-desc-${i}`).value
