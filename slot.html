@@ -417,6 +417,22 @@
   }
   .bd-reel.win{border-color:var(--green); background:rgba(95,214,139,.12);}
 
+  .bd-id{
+    display:flex; align-items:center; gap:9px; margin-top:16px; padding-top:14px;
+    border-top:1px solid var(--line); cursor:pointer; transition:.15s;
+  }
+  .bd-id:hover code{color:var(--gold);}
+  .bd-id .k{
+    font-size:9.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase;
+    color:var(--muted); flex:none;
+  }
+  .bd-id code{
+    flex:1; min-width:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:11px; color:var(--muted-2); overflow:hidden; text-overflow:ellipsis;
+    white-space:nowrap; transition:.15s;
+  }
+  .bd-id.copied code{color:var(--green);}
+
   tbody tr.clickable{cursor:pointer; transition:background .12s;}
   tbody tr.clickable:hover{background:rgba(232,193,104,.05);}
 
@@ -1137,10 +1153,29 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         <div class="bd-cell"><div class="k">Date</div><div class="v" style="font-size:13px;">${escapeHtml(when)}</div></div>
       </div>
       ${detail}
+      ${p.id ? `<div class="bd-id" title="Click to copy" onclick="copyBetId('${escapeHtml(p.id)}', this)">
+        <span class="k">Bet ID</span>
+        <code>${escapeHtml(p.id)}</code>
+      </div>` : ''}
     `;
     overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
   }
+
+
+  // Copie l'identifiant de la partie : utile quand un joueur signale un problème
+  // sur une manche précise.
+  function copyBetId(id, el){
+    navigator.clipboard.writeText(id).then(() => {
+      const code = el.querySelector('code');
+      const original = code.textContent;
+      code.textContent = 'Copied ✓';
+      el.classList.add('copied');
+      setTimeout(() => { code.textContent = original; el.classList.remove('copied'); }, 1400);
+    }).catch(() => {});
+  }
+
+  window.copyBetId = copyBetId;
 
   (function initBetDetail(){
     const overlay = document.getElementById('betDetailOverlay');
