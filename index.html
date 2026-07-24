@@ -351,6 +351,13 @@
   .modal-note{font-size:12px; color:var(--muted-2); margin-top:14px;}
 
   /* ---------- Conditions du bonus + écran de livraison ---------- */
+  /* Bouton verrouillé pendant la lecture des conditions */
+  .modal-submit.locked{
+    background:var(--panel-3); color:var(--muted); box-shadow:none;
+    cursor:not-allowed; opacity:1;
+  }
+  .modal-submit.locked:hover{filter:none; transform:none;}
+
   .terms-list{list-style:none; margin:20px 0 24px; display:flex; flex-direction:column; gap:13px;}
   .terms-list li{
     display:flex; gap:11px; align-items:flex-start;
@@ -931,6 +938,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     overlay.classList.remove('active');
     document.body.style.overflow = '';
     clearInterval(countdownInterval);
+    clearInterval(termsCountdownInterval);
   }
 
   function gateYes(){
@@ -980,6 +988,33 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     }
     stepForm.style.display = 'none';
     stepTerms.style.display = 'block';
+    startTermsCountdown();
+  }
+
+  // Le bouton reste verrouillé quelques secondes : ça laisse le temps de lire
+  // les conditions au lieu de cliquer par réflexe.
+  const TERMS_DELAY_SECONDS = 4;
+  let termsCountdownInterval = null;
+
+  function startTermsCountdown(){
+    clearInterval(termsCountdownInterval);
+    const btn = document.getElementById('terms-accept-btn');
+    let remaining = TERMS_DELAY_SECONDS;
+    btn.disabled = true;
+    btn.classList.add('locked');
+    const render = () => {
+      if (remaining > 0){
+        btn.textContent = `Please read the rules… ${remaining}s`;
+        remaining--;
+      } else {
+        clearInterval(termsCountdownInterval);
+        btn.disabled = false;
+        btn.classList.remove('locked');
+        btn.textContent = 'I accept — send my bonus';
+      }
+    };
+    render();
+    termsCountdownInterval = setInterval(render, 1000);
   }
 
   // Après acceptation : envoi réel, puis écran de livraison animé
@@ -1070,6 +1105,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   document.getElementById('terms-accept-btn').addEventListener('click', confirmAndSend);
   document.getElementById('terms-back-btn').addEventListener('click', () => {
+    clearInterval(termsCountdownInterval);
     stepTerms.style.display = 'none';
     stepForm.style.display = 'block';
   });
