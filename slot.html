@@ -433,6 +433,14 @@
   }
   .bd-id.copied code{color:var(--green);}
 
+  .bd-share{
+    width:100%; margin-top:12px; padding:11px; border-radius:12px;
+    background:var(--panel-3); border:1px solid var(--line); color:var(--cream);
+    font-family:"Baloo 2"; font-weight:800; font-size:13.5px; cursor:pointer; transition:.15s;
+  }
+  .bd-share:hover{border-color:rgba(232,193,104,.4); color:var(--gold);}
+  .bd-share.copied{background:rgba(95,214,139,.14); border-color:var(--green); color:var(--green);}
+
   tbody tr.clickable{cursor:pointer; transition:background .12s;}
   tbody tr.clickable:hover{background:rgba(232,193,104,.05);}
 
@@ -1057,6 +1065,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   function openBetDetail(index){
     const p = lastHistoryRows[index];
     if (!p) return;
+    renderBetDetail(p);
+  }
+
+  // Séparé de openBetDetail pour pouvoir aussi afficher une partie chargée
+  // depuis un lien partagé (?bet=ID), qui n'est pas dans l'historique courant.
+  function renderBetDetail(p){
     const overlay = document.getElementById('betDetailOverlay');
     const body = document.getElementById('bdBody');
     const meta = { mines:['💣','Mines'], blackjack:['🃏','Blackjack'], dice:['🎲','Dice'], slot:['🎰','Slot'] };
@@ -1153,10 +1167,13 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         <div class="bd-cell"><div class="k">Date</div><div class="v" style="font-size:13px;">${escapeHtml(when)}</div></div>
       </div>
       ${detail}
-      ${p.id ? `<div class="bd-id" title="Click to copy" onclick="copyBetId('${escapeHtml(p.id)}', this)">
-        <span class="k">Bet ID</span>
-        <code>${escapeHtml(p.id)}</code>
-      </div>` : ''}
+      ${p.id ? `
+        <div class="bd-id" title="Click to copy" onclick="copyBetId('${escapeHtml(p.id)}', this)">
+          <span class="k">Bet ID</span>
+          <code>${escapeHtml(p.id)}</code>
+        </div>
+        <button class="bd-share" onclick="shareBet('${escapeHtml(p.id)}', '${escapeHtml(p.game || '')}', this)">🔗 Copy share link</button>
+      ` : ''}
     `;
     overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -1176,6 +1193,39 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   }
 
   window.copyBetId = copyBetId;
+
+
+  // Lien partageable vers une manche précise
+  function shareBet(id, game, btn){
+    // Le lien pointe vers la page du jeu concerné, pas vers la page courante :
+    // une partie de Dice ouverte depuis Mines doit renvoyer vers /dice.
+    const pages = { mines:'/mines', blackjack:'/blackjack', dice:'/dice', slot:'/slot' };
+    const path = pages[game] || location.pathname;
+    const link = `${location.origin}${path}?bet=${encodeURIComponent(id)}`;
+    navigator.clipboard.writeText(link).then(() => {
+      const original = btn.textContent;
+      btn.textContent = '✓ Link copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+    }).catch(() => {});
+  }
+  window.shareBet = shareBet;
+
+  // Ouverture directe depuis un lien partagé (?bet=ID)
+  (async function openSharedBet(){
+    const betId = new URLSearchParams(location.search).get('bet');
+    if (!betId || !workerBase) return;
+    try{
+      const resp = await fetch(`${workerBase}/bet?id=${encodeURIComponent(betId)}`);
+      const data = await resp.json();
+      if (!data.ok || !data.bet) return;
+      renderBetDetail(data.bet);
+      // On retire le paramètre pour ne pas rouvrir la popup au rechargement
+      const url = new URL(location.href);
+      url.searchParams.delete('bet');
+      history.replaceState({}, '', url);
+    }catch(e){}
+  })();
 
   (function initBetDetail(){
     const overlay = document.getElementById('betDetailOverlay');
