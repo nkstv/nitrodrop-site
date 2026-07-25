@@ -2,6 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- ===== DIAGNOSTIC TEMPORAIRE : capture les erreurs dès le début ===== -->
+<script>
+  window.__diagErrors = [];
+  window.addEventListener('error', function(e){
+    var msg = e.message || 'erreur';
+    if (e.filename) msg += '  @ ' + e.filename.split('/').pop() + ':' + e.lineno;
+    // On ignore le bruit des extensions de navigateur
+    if (String(e.filename||'').indexOf('contentscript') === -1) {
+      window.__diagErrors.push(msg);
+    }
+  });
+  window.addEventListener('unhandledrejection', function(e){
+    window.__diagErrors.push('Promise: ' + (e.reason && e.reason.message ? e.reason.message : e.reason));
+  });
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#171209">
 <title>Drop Cash — Vault</title>
@@ -1198,5 +1213,96 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
 })();
 </script>
+<!-- ===================== PANNEAU DE DIAGNOSTIC TEMPORAIRE ===================== -->
+<div id="diagPanel" style="position:fixed;left:0;right:0;bottom:0;z-index:99999;
+     background:#0b0b14;color:#e8e8f5;font:12px/1.5 monospace;padding:12px 14px;
+     border-top:2px solid #d4af37;max-height:45vh;overflow:auto;white-space:pre-wrap;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <b style="color:#d4af37;">🔧 DIAGNOSTIC DROP-CASH (temporaire)</b>
+    <button onclick="document.getElementById('diagPanel').style.display='none'"
+            style="background:#d4af37;border:0;border-radius:6px;padding:4px 10px;cursor:pointer;font-weight:bold;">Fermer</button>
+  </div>
+  <div id="diagBody">Analyse en cours…</div>
+  <button id="diagConnectTest"
+          style="margin-top:10px;background:#5865F2;color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;font-weight:bold;">
+    ▶ Tester « Connect with Discord » (avec capture d'erreur)
+  </button>
+</div>
+<script>
+(function(){
+  function has(name){
+    try { return typeof window[name] === 'function' ? '✅ function' : ('❌ ' + typeof window[name]); }
+    catch(e){ return '❌ ' + e.message; }
+  }
+  function line(label, val){ return label.padEnd(30, ' ') + val; }
+
+  var out = [];
+
+  // 1) Version réellement chargée du config
+  var cfgScript = document.querySelector('script[src*="nitrodrop-config"]');
+  var cfgSrc = cfgScript ? cfgScript.src : '(introuvable)';
+  var version = (cfgSrc.match(/v=([0-9a-z]+)/) || [,'(aucune)'])[1];
+  out.push(line('Version config chargée', version + (version === '20260725b' ? '  ✅ à jour' : '  ⚠️ ANCIENNE VERSION EN CACHE')));
+  out.push(line('URL config', cfgSrc));
+  out.push('');
+
+  // 2) Présence des fonctions clés
+  out.push(line('connectDiscord', has('connectDiscord')));
+  out.push(line('nitrodropAuthFetch', has('nitrodropAuthFetch')));
+  out.push(line('nitrodropEstablishSession', has('nitrodropEstablishSession')));
+  out.push(line('nitrodropGetSession', has('nitrodropGetSession')));
+  out.push(line('nitrodropLoadPublishedConfig', has('nitrodropLoadPublishedConfig')));
+  out.push('');
+
+  // 3) Config / clientId Discord
+  try {
+    var okCfg = (typeof CONFIG !== 'undefined');
+    out.push(line('CONFIG défini', okCfg ? '✅ oui' : '❌ non'));
+    if (okCfg) {
+      var cid = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
+      out.push(line('Discord clientId', cid ? ('✅ ' + cid) : '❌ manquant'));
+    }
+  } catch(e){ out.push(line('CONFIG', '❌ ' + e.message)); }
+  out.push('');
+
+  // 4) Session actuelle
+  try {
+    var sess = (typeof nitrodropGetSession === 'function') ? nitrodropGetSession() : '';
+    out.push(line('Jeton de session', sess ? ('✅ présent (' + sess.length + ' car.)') : '— absent (normal si pas connecté)'));
+  } catch(e){ out.push(line('Session', '❌ ' + e.message)); }
+  out.push('');
+
+  // 5) Erreurs JS capturées depuis le chargement
+  var errs = window.__diagErrors || [];
+  if (errs.length){
+    out.push('❌ ERREURS JS DÉTECTÉES (' + errs.length + ') :');
+    errs.forEach(function(e){ out.push('   • ' + e); });
+  } else {
+    out.push('✅ Aucune erreur JS de la page au chargement.');
+  }
+
+  document.getElementById('diagBody').textContent = out.join('\n');
+
+  // 6) Test du bouton connect avec capture d'erreur explicite
+  document.getElementById('diagConnectTest').addEventListener('click', function(){
+    var body = document.getElementById('diagBody');
+    try {
+      if (typeof connectDiscord !== 'function'){
+        body.textContent += '\n\n▶ RÉSULTAT : connectDiscord n\'existe pas (❌). Le script de la page a planté avant sa définition — voir les erreurs ci-dessus.';
+        return;
+      }
+      body.textContent += '\n\n▶ Appel de connectDiscord()… si rien ne se passe, l\'erreur exacte s\'affiche juste en dessous :';
+      connectDiscord();
+      // Si on arrive ici sans redirection, c'est que la fonction est sortie sans agir
+      setTimeout(function(){
+        body.textContent += '\n▶ (aucune redirection déclenchée — la fonction est sortie sans ouvrir Discord)';
+      }, 300);
+    } catch(err){
+      body.textContent += '\n\n❌ ERREUR AU CLIC : ' + err.message;
+    }
+  });
+})();
+</script>
+<!-- =================== FIN PANNEAU DE DIAGNOSTIC TEMPORAIRE =================== -->
 </body>
 </html>
