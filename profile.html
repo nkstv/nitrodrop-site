@@ -422,6 +422,12 @@
 </style>
 </head>
 <body>
+<script>
+  // Stub : met les logs de côté tant que le vrai panneau (en bas de page) n'est
+  // pas encore chargé, pour ne rien perdre des diagnostics qui se produisent tôt.
+  window.pfDebugQueue = [];
+  window.pfDebugLog = function(label, data, isError){ window.pfDebugQueue.push([label, data, isError]); };
+</script>
 
 <div class="app">
   <!-- ============ SIDEBAR ============ -->
@@ -604,6 +610,7 @@
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+  if (window.pfDebugLog) window.pfDebugLog('workerBase (URL du Worker détectée)', workerBase || '(vide — problème de config CONFIG.telegramRelay.url)', !workerBase);
 
   function formatLocalTime(dateMs){
     if (!dateMs) return '';
@@ -906,8 +913,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     try{
       const resp = await nitrodropAuthFetch(`${workerBase}/discord/membership?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
+      window.pfDebugLog(`GET /discord/membership (HTTP ${resp.status})`, data, !data.ok);
       banner.style.display = (data.ok && data.checked && data.isMember === false) ? 'flex' : 'none';
     }catch(e){
+      window.pfDebugLog('GET /discord/membership a échoué', e.message, true);
       // En cas de doute (erreur réseau), on ne montre pas de faux avertissement.
       banner.style.display = 'none';
     }
@@ -962,6 +971,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   // ---------------- Chargement ----------------
   async function loadProfile(){
     const discordId = getSharedDiscordId();
+    window.pfDebugLog('discordId détecté', discordId || '(vide — identité Discord non trouvée en localStorage/cookie)', !discordId);
     if (!discordId || !workerBase){
       pfNotice.style.display = '';
       pfWrap.style.display = 'none';
@@ -1184,6 +1194,44 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     });
   })();
 
+})();
+</script>
+<div id="pf-debug-panel" style="display:none; position:fixed; left:12px; right:12px; bottom:12px; max-height:46vh; overflow:auto; background:#0d0a05; border:2px solid #E8C168; border-radius:12px; padding:14px; z-index:99999; font-family:monospace; font-size:12px; color:#F2E9D8; box-shadow:0 10px 40px rgba(0,0,0,.6);">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+    <b style="color:#E8C168;">🔧 Diagnostic Drop Cash (?debug=1)</b>
+    <button onclick="document.getElementById('pf-debug-panel').style.display='none'" style="background:#332818; color:#E8C168; padding:4px 10px; border-radius:6px; font-family:monospace;">Fermer</button>
+  </div>
+  <div id="pf-debug-log"></div>
+</div>
+<script>
+(function(){
+  const DEBUG_ON = new URLSearchParams(location.search).get('debug') === '1';
+  const panel = document.getElementById('pf-debug-panel');
+  const log = document.getElementById('pf-debug-log');
+  if (DEBUG_ON && panel) panel.style.display = '';
+
+  window.pfDebugLog = function(label, data, isError){
+    if (!DEBUG_ON || !log) return;
+    const time = new Date().toLocaleTimeString('fr-FR');
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:8px 0; border-bottom:1px solid rgba(232,193,104,.15);';
+    let dataStr;
+    try{ dataStr = typeof data === 'string' ? data : JSON.stringify(data, null, 2); }
+    catch(e){ dataStr = String(data); }
+    row.innerHTML = `<div style="color:${isError ? '#F26D6D' : '#5FD68B'}; font-weight:bold;">[${time}] ${label}${isError ? ' ❌' : ' ✅'}</div>` +
+      `<pre style="white-space:pre-wrap; word-break:break-all; margin:4px 0 0; color:#cbbfa3;">${dataStr.replace(/</g,'&lt;')}</pre>`;
+    log.prepend(row);
+  };
+
+  // On rejoue tout ce qui a été mis de côté par le stub avant que ce script
+  // (placé en bas de page) n'ait eu le temps de se charger.
+  (window.pfDebugQueue || []).forEach(args => window.pfDebugLog(...args));
+  window.pfDebugQueue = [];
+
+  // Capture aussi les erreurs JS globales pour ne rien manquer
+  window.addEventListener('error', (e) => {
+    if (window.pfDebugLog) window.pfDebugLog('Erreur JS', `${e.message}\n${e.filename}:${e.lineno}`, true);
+  });
 })();
 </script>
 </body>
