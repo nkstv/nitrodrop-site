@@ -41,7 +41,7 @@
     background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
     color:#3a2a08; border-color:transparent; box-shadow:0 3px 12px rgba(232,193,104,.22);
   }
-  select, input[type=text]{
+  select, input[type=text], input[type=number]{
     background:var(--bg-card); border:1px solid var(--line-strong); border-radius:9px;
     padding:10px 14px; color:var(--text); font-size:13.5px; font-family:'Nunito Sans';
   }
@@ -229,12 +229,18 @@
     transition:.15s border-color, .15s box-shadow;
   }
   select:hover{border-color:var(--line-strong);}
-  select:focus, input[type=text]:focus{
+  select:focus, input[type=text]:focus, input[type=number]:focus{
     outline:none; border-color:var(--gold-deep);
     box-shadow:0 0 0 3px rgba(232,193,104,.14);
   }
-  input[type=text]{transition:.15s border-color, .15s box-shadow;}
-  input[type=text]::placeholder{color:var(--text-faint);}
+  input[type=text], input[type=number]{transition:.15s border-color, .15s box-shadow;}
+  input[type=text]::placeholder, input[type=number]::placeholder{color:var(--text-faint);}
+  /* Flèches de spinner natives du navigateur sur input[type=number] : on les
+     retire pour un rendu cohérent avec le reste des champs du dashboard. */
+  input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button{
+    -webkit-appearance:none; margin:0;
+  }
+  input[type=number]{-moz-appearance:textfield;}
 
   /* Bouton "Rafraîchir", filtres, etc. : micro-interaction cohérente */
   .btn{transition:.15s border-color, .15s color, .15s transform;}
@@ -1580,7 +1586,7 @@
           </td>
           <td>
             <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-              <input type="number" id="user-amount-${escapeHtml(u.discordId)}" placeholder="Montant" min="0" step="1" style="width:80px; padding:6px 8px;">
+              <input type="number" id="user-amount-${escapeHtml(u.discordId)}" placeholder="Montant" min="0" step="1" style="width:100px; padding:8px 10px; font-size:12.5px;">
               <button type="button" class="btn" onclick="adjustUserKeys('${escapeHtml(u.discordId)}','add')">+ Ajouter</button>
               <button type="button" class="btn" onclick="adjustUserKeys('${escapeHtml(u.discordId)}','remove')">− Retirer</button>
               <button type="button" class="btn" onclick="toggleUserBan('${escapeHtml(u.discordId)}', ${!u.banned})">${u.banned ? 'Débannir' : 'Bannir'}</button>
@@ -1745,7 +1751,7 @@
           <td>${e.excluded ? '<span class="badge" style="color:#FF7A90; border-color:#FF7A90;">Masqué</span>' : '<span class="badge" style="color:var(--green); border-color:var(--green);">Visible</span>'}</td>
           <td>
             <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-              <input type="number" id="lb-value-${escapeHtml(e.discordId)}" placeholder="Total" step="1" style="width:90px; padding:6px 8px;">
+              <input type="number" id="lb-value-${escapeHtml(e.discordId)}" placeholder="Total" step="1" style="width:100px; padding:8px 10px; font-size:12.5px;">
               <button type="button" class="btn" onclick="setPlayerWager('${escapeHtml(e.discordId)}')">Définir</button>
               <button type="button" class="btn" onclick="resetPlayerWager('${escapeHtml(e.discordId)}')">Réinitialiser</button>
               <button type="button" class="btn" onclick="togglePlayerExcluded('${escapeHtml(e.discordId)}', ${!e.excluded})">${e.excluded ? 'Réafficher' : 'Masquer'}</button>
