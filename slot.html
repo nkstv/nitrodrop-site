@@ -610,7 +610,7 @@
   </div>
 </div>
 
-<script src="nitrodrop-config.js?v=20260721a"></script>
+<script src="nitrodrop-config.js?v=20260725b"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
   const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
@@ -673,12 +673,11 @@
     const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
     const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
-    if (isMobileDevice()){
-      try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
-      window.location.href = authUrl;
-      return;
-    }
-    window.open(authUrl, 'discord-oauth', 'width=500,height=750');
+    // Redirection pleine page (desktop + mobile) : plus de popup, donc aucun
+    // blocage possible par le navigateur ou une extension. Au retour de Discord,
+    // discord-callback.html ramène sur cette page via nitrodrop_oauth_return.
+    try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
+    window.location.href = authUrl;
   }
 </script>
 <script>
