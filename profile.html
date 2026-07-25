@@ -754,7 +754,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (!discordId){ connectDiscord(); return; }
     claimBtn.disabled = true;
     try{
-      const resp = await fetch(`${workerBase}/profile/claim`, {
+      const resp = await nitrodropAuthFetch(`${workerBase}/profile/claim`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ discordId }),
       });
@@ -832,7 +832,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const btn = document.getElementById('pf-claim-ach');
     btn.disabled = true;
     try{
-      const resp = await fetch(`${workerBase}/profile/claim-achievements`, {
+      const resp = await nitrodropAuthFetch(`${workerBase}/profile/claim-achievements`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ discordId }),
       });
@@ -892,7 +892,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const count = document.getElementById('pf-bt-count');
     if (!workerBase){ list.innerHTML = ''; empty.style.display = ''; return; }
     try{
-      const resp = await fetch(`${workerBase}/profile/bonus-requests?discordId=${encodeURIComponent(discordId)}`);
+      const resp = await nitrodropAuthFetch(`${workerBase}/profile/bonus-requests?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
       const reqs = data.requests || [];
 
@@ -941,7 +941,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       return;
     }
     try{
-      const resp = await fetch(`${workerBase}/profile/summary?discordId=${encodeURIComponent(discordId)}`);
+      const resp = await nitrodropAuthFetch(`${workerBase}/profile/summary?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
       if (!data.ok){ pfNotice.style.display = ''; pfWrap.style.display = 'none'; return; }
 
@@ -1029,6 +1029,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   window.addEventListener('message', (event) => {
     if (!event.data || event.data.type !== 'nitrodrop-discord-auth') return;
     saveDiscordIdentity(event.data.discordId, event.data.username, event.data.avatarUrl);
+    if (event.data.session) nitrodropSaveSession(event.data.session);
     applyIdentity();
   });
 
@@ -1065,7 +1066,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     async function load(){
       const discordId = getSharedDiscordId();
       try{
-        const resp = await fetch(`${workerBase}/drop/status?id=${encodeURIComponent(dropId)}` +
+        const resp = await nitrodropAuthFetch(`${workerBase}/drop/status?id=${encodeURIComponent(dropId)}` +
           (discordId ? `&discordId=${encodeURIComponent(discordId)}` : ''));
         const data = await resp.json();
 
@@ -1117,7 +1118,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       btn.disabled = true;
       btn.textContent = 'Claiming…';
       try{
-        const resp = await fetch(`${workerBase}/drop/claim`, {
+        const resp = await nitrodropAuthFetch(`${workerBase}/drop/claim`, {
           method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({
             id: dropId,

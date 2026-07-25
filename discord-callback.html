@@ -72,6 +72,22 @@
       try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
     }catch(e){}
 
+    // Échange le token OAuth contre un jeton de session signé par le worker.
+    // C'est CE jeton (et non le discordId brut) qui authentifiera ensuite chaque
+    // requête de jeu. Sans lui, le worker refusera toute action sur le compte.
+    // Non-bloquant : si le worker ne propose pas encore /auth/session (le temps que
+    // tu le déploies), le login continue normalement avec l'ancien mécanisme. Dès
+    // que le worker mis à jour est en ligne, chaque login obtient son jeton signé.
+    let sessionToken = '';
+    if (workerBase){
+      try{
+        const sess = await nitrodropEstablishSession(workerBase, accessToken);
+        sessionToken = sess.session || '';
+      }catch(e){
+        console.warn('Session non établie (worker pas encore à jour ?) :', e.message);
+      }
+    }
+
     // Ajout automatique au serveur Discord (nécessite le scope "guilds.join" déjà demandé
     // dans l'URL d'autorisation). Volontairement non-bloquant : si ça échoue (bot absent,
     // permissions manquantes...), la connexion au site continue normalement quand même.
@@ -90,7 +106,8 @@
           type: 'nitrodrop-discord-auth',
           discordId: user.id,
           username: user.username,
-          avatarUrl
+          avatarUrl,
+          session: sessionToken
         }, '*');
       }catch(e){}
       msgEl.textContent = modal.callbackSuccessMessage || "Connecté ! Cette fenêtre va se fermer…";
