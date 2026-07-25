@@ -798,7 +798,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   function lockFormOut(){
     vaultCodeInput.disabled = true;
     vaultSubmitBtn.disabled = true;
-    vaultConnectBtn.disabled = true;
+    // Le bouton de connexion reste TOUJOURS actif : même quand le coffre est déjà
+    // réclamé, un visiteur déconnecté doit pouvoir se connecter avec Discord.
   }
 
   async function checkInitialStatus(){
