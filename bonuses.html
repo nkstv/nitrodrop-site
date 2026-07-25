@@ -520,10 +520,10 @@
       <p class="modal-sub" id="form-sub"></p>
       <form id="claim-form" onsubmit="submitClaim(event)">
         <label><span id="email-label-text">Email</span>
-          <input type="email" required placeholder="toi@email.com" id="claim-email-input">
+          <input type="text" inputmode="email" autocomplete="email" placeholder="toi@email.com" id="claim-email-input">
         </label>
         <label><span id="pseudo-label-text">Username on the platform</span>
-          <input type="text" required placeholder="Your account username" id="claim-pseudo-input">
+          <input type="text" placeholder="Your account username" id="claim-pseudo-input">
         </label>
         <div id="discord-block">
           <label><span id="discord-label-text">Your Discord account</span></label>
@@ -826,6 +826,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     } else {
       input.value = '';
       block.style.display = '';
+      discordMembershipStatus = null;
       const status = document.getElementById('discord-membership-status');
       if (status) status.style.display = 'none';
     }
@@ -834,13 +835,18 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   // Vérifie que le joueur est bien sur le serveur Discord avant qu'il envoie sa
   // demande de bonus : sans ça, le bot ne peut pas lui envoyer ses DM de suivi
   // (sent/declined) et il ne saura jamais que son bonus est arrivé.
+  // null = inconnu (pas encore vérifié / vérification indisponible) — dans ce
+  // cas on ne bloque JAMAIS l'envoi, seul un "false" certain bloque.
+  let discordMembershipStatus = null;
+
   async function checkDiscordMembershipInClaimForm(discordId){
     const status = document.getElementById('discord-membership-status');
     if (!status || !workerBase || !discordId) return;
     try{
       const resp = await nitrodropAuthFetch(`${workerBase}/discord/membership?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
-      if (!data.ok || !data.checked){ status.style.display = 'none'; return; }
+      if (!data.ok || !data.checked){ status.style.display = 'none'; discordMembershipStatus = null; return; }
+      discordMembershipStatus = !!data.isMember;
       if (data.isMember){
         status.style.cssText = 'display:block; font-size:12.5px; line-height:1.5; border-radius:10px; padding:9px 11px; margin:8px 0 0; color:var(--green); background:rgba(95,214,139,.08); border:1px solid rgba(95,214,139,.25);';
         status.innerHTML = '✅ You are a member of our Discord server. Your bonus notifications will reach you.';
@@ -850,6 +856,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       }
     }catch(e){
       status.style.display = 'none';
+      discordMembershipStatus = null;
     }
   }
 
@@ -927,13 +934,36 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   async function submitClaim(e){
     e.preventDefault();
     const platform = document.getElementById('modal-platform-name').textContent;
-    const email = document.getElementById('claim-email-input').value;
-    const pseudo = document.getElementById('claim-pseudo-input').value;
+    const email = document.getElementById('claim-email-input').value.trim();
+    const pseudo = document.getElementById('claim-pseudo-input').value.trim();
     const discordId = document.getElementById('claim-discord-input').value;
     const m = getActive().modal || {};
 
+    // Validation faite ici en JS (messages toujours en anglais, quelle que soit
+    // la langue du navigateur) plutôt que via l'attribut "required" natif, dont
+    // la bulle d'erreur du navigateur s'affiche dans la langue du système/du
+    // navigateur du joueur (ex: en français) et non celle du site.
+    if (!email){
+      showAlert('Please enter your email address.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      showAlert('Please enter a valid email address.');
+      return;
+    }
+    if (!pseudo){
+      showAlert('Please enter your username on the platform.');
+      return;
+    }
     if (!discordId){
       showAlert(m.discordRequiredAlert || 'Connect with Discord before submitting your request.');
+      return;
+    }
+    // Bloque tant qu'on sait avec certitude que le joueur n'est pas sur le
+    // serveur Discord : sans ça, le bot ne pourra jamais lui envoyer le suivi
+    // (sent/declined) de sa demande. Si le statut est inconnu, on ne bloque pas.
+    if (discordMembershipStatus === false){
+      showAlert("You must join our Discord server before requesting a bonus, so we can deliver it and keep you updated. Use the \"Join now\" button above.");
       return;
     }
 
