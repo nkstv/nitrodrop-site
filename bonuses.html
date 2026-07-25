@@ -993,10 +993,28 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       showAlert(m.discordRequiredAlert || 'Connect with Discord before submitting your request.');
       return;
     }
-    // Bloque tant qu'on sait avec certitude que le joueur n'est pas sur le
-    // serveur Discord : sans ça, le bot ne pourra jamais lui envoyer le suivi
-    // (sent/declined) de sa demande. Si le statut est inconnu, on ne bloque pas.
+    // Revérifie EN DIRECT à l'instant du clic (pas le statut mis en cache lors
+    // de la connexion) : le joueur a pu rejoindre puis quitter le serveur entre
+    // temps, et un statut périmé laisserait passer une demande sans possibilité
+    // de livraison. Le cache (discordMembershipStatus) sert seulement au bandeau
+    // visuel affiché en continu ; ceci est le vrai verrou.
+    const preSubmitBtn = document.getElementById('claim-submit-btn');
+    const preSubmitLabel = preSubmitBtn.textContent;
+    preSubmitBtn.disabled = true;
+    preSubmitBtn.textContent = 'Checking Discord…';
+    try{
+      const membershipResp = await nitrodropAuthFetch(`${workerBase}/discord/membership?discordId=${encodeURIComponent(discordId)}`);
+      const membershipData = await membershipResp.json();
+      discordMembershipStatus = (membershipData.ok && membershipData.checked) ? !!membershipData.isMember : null;
+    }catch(err){
+      // Erreur réseau : on ne bloque pas sur une incertitude, comme partout ailleurs.
+      discordMembershipStatus = discordMembershipStatus === false ? null : discordMembershipStatus;
+    }
+    preSubmitBtn.disabled = false;
+    preSubmitBtn.textContent = preSubmitLabel;
+
     if (discordMembershipStatus === false){
+      checkDiscordMembershipInClaimForm(discordId); // rafraîchit aussi le bandeau visuel
       showAlert("You must join our Discord server before requesting a bonus, so we can deliver it and keep you updated. Use the \"Join now\" button above.");
       return;
     }

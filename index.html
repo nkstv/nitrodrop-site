@@ -1047,7 +1047,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   // Le formulaire ne déclenche plus l'envoi directement : le joueur doit d'abord
   // accepter les conditions du bonus.
-  function submitClaim(e){
+  async function submitClaim(e){
     e.preventDefault();
     const email = document.getElementById('claim-email-input').value.trim();
     const pseudo = document.getElementById('claim-pseudo-input').value.trim();
@@ -1074,11 +1074,29 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       showAlert(m.discordRequiredAlert || 'Connect with Discord before submitting your request.');
       return;
     }
-    // Bloque tant qu'on sait avec certitude que le joueur n'est pas sur le
-    // serveur Discord : sans ça, le bot ne pourra jamais lui envoyer le suivi
-    // (sent/declined) de sa demande. Si le statut est inconnu (vérification
-    // pas encore faite ou en échec), on ne bloque pas -> on laisse passer.
+
+    // Revérifie EN DIRECT à l'instant du clic (pas le statut mis en cache lors
+    // de la connexion) : le joueur a pu rejoindre puis quitter le serveur entre
+    // temps, et un statut périmé laisserait passer une demande sans possibilité
+    // de livraison. Le cache (discordMembershipStatus) sert seulement au bandeau
+    // visuel affiché en continu ; ceci est le vrai verrou.
+    const submitBtn = document.getElementById('claim-submit-btn');
+    const originalBtnLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Checking Discord…';
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/discord/membership?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      discordMembershipStatus = (data.ok && data.checked) ? !!data.isMember : null;
+    }catch(err){
+      // Erreur réseau : on ne bloque pas sur une incertitude, comme partout ailleurs.
+      discordMembershipStatus = discordMembershipStatus === false ? null : discordMembershipStatus;
+    }
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalBtnLabel;
+
     if (discordMembershipStatus === false){
+      checkDiscordMembershipInClaimForm(discordId); // rafraîchit aussi le bandeau visuel
       showAlert("You must join our Discord server before requesting a bonus, so we can deliver it and keep you updated. Use the \"Join now\" button above.");
       return;
     }
