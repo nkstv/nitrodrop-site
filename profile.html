@@ -516,6 +516,14 @@
         <section class="card">
           <div class="card-h"><h2>Bonus tracking</h2><span class="card-tag" id="pf-bt-count"></span></div>
           <p class="card-sub">Follow your bonus requests here.</p>
+          <div id="pf-discord-required" style="display:none; background:var(--panel-3); border:1px solid rgba(232,193,104,.28); border-radius:var(--r-m); padding:14px; margin-bottom:12px; flex-direction:column; gap:10px;">
+            <div style="font-size:13.5px; line-height:1.5; color:var(--cream);">
+              ⚠️ You need to be on our <b>Discord server</b> to receive your bonus notifications. Join and verify to keep your bonus tracking up to date.
+            </div>
+            <button id="pf-discord-join-btn" onclick="joinDiscordServer()" style="align-self:flex-start; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08; font-weight:800; font-family:'Baloo 2',sans-serif; padding:9px 18px; border-radius:10px; font-size:13.5px;">
+              Join Discord &amp; verify
+            </button>
+          </div>
           <div id="pf-bonus-list"></div>
           <p class="pf-empty" id="pf-bonus-empty" style="display:none;">No bonus request yet.</p>
         </section>
@@ -885,6 +893,26 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     other: 'Other',
   };
 
+  // Ré-utilise le flow OAuth existant (connectDiscord, scope guilds.join) :
+  // discord-callback.html appelle déjà /discord/join-guild automatiquement au
+  // retour, donc "rejoindre" ici revient juste à relancer ce même flow.
+  function joinDiscordServer(){
+    connectDiscord();
+  }
+
+  async function checkDiscordMembership(discordId){
+    const banner = document.getElementById('pf-discord-required');
+    if (!banner || !workerBase || !discordId) return;
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/discord/membership?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      banner.style.display = (data.ok && data.checked && data.isMember === false) ? 'flex' : 'none';
+    }catch(e){
+      // En cas de doute (erreur réseau), on ne montre pas de faux avertissement.
+      banner.style.display = 'none';
+    }
+  }
+
   async function loadBonusRequests(discordId){
     const list = document.getElementById('pf-bonus-list');
     const empty = document.getElementById('pf-bonus-empty');
@@ -963,6 +991,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       renderAchievements(data.achievements, data.claimableKeys || 0);
       renderRecent(data.recent || []);
       loadBonusRequests(discordId);
+      checkDiscordMembership(discordId);
     }catch(e){
       pfNotice.style.display = '';
       pfWrap.style.display = 'none';
