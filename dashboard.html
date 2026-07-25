@@ -247,17 +247,6 @@
         <option value="low">Suspicion : faible uniquement</option>
         <option value="none">Suspicion : aucune</option>
       </select>
-      <select id="filter-already-paid" onchange="applyFilters()">
-        <option value="">Déjà payé : tous</option>
-        <option value="yes">🚩 Déjà payé (rouge)</option>
-        <option value="regular">✓ Client régulier (vert)</option>
-        <option value="no">Aucun signal</option>
-      </select>
-      <select id="filter-qualified" onchange="applyFilters()">
-        <option value="">Qualifié : tous</option>
-        <option value="yes">★ Qualifié : oui</option>
-        <option value="no">Qualifié : non</option>
-      </select>
       <select id="filter-discord-age" onchange="applyFilters()">
         <option value="">Âge : tous</option>
         <option value="recent">Compte récent (&lt; 30j)</option>
@@ -510,60 +499,6 @@
     });
   }
 
-  function computeQualifiedFlags(submissions){
-    submissions.forEach(s => {
-      const match = submissions.find(o =>
-        o.id !== s.id &&
-        o.platform !== s.platform &&
-        o.ip && s.ip && o.ip === s.ip && o.ip !== 'inconnue' &&
-        o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase() &&
-        o.discordId && s.discordId && o.discordId === s.discordId
-      );
-      s._qualifiedMatch = match || null;
-    });
-  }
-
-  function computeAlreadyPaidFlags(submissions){
-    submissions.forEach(s => {
-      const tippedOthers = submissions.filter(o =>
-        o.id !== s.id && o.platform === s.platform && o.tipped
-      );
-
-      const isSameIdentity = o =>
-        o.discordId && s.discordId && o.discordId === s.discordId &&
-        o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase() &&
-        o.pseudo && s.pseudo && o.pseudo.toLowerCase() === s.pseudo.toLowerCase();
-
-      // Priorité au drapeau rouge : un signal (IP/Discord/email/pseudo) partagé avec une identité DIFFÉRENTE
-      const suspiciousMatch = tippedOthers.find(o => {
-        if (isSameIdentity(o)) return false; // ce n'est pas suspect, c'est le retour légitime lui-même
-        return (
-          (o.discordId && o.discordId === s.discordId) ||
-          (o.email && s.email && o.email.toLowerCase() === s.email.toLowerCase()) ||
-          (o.ip && s.ip && ipPrefix(o.ip) === ipPrefix(s.ip) && ipPrefix(s.ip) !== '') ||
-          (normalizeBase(o.pseudo).length >= 3 && normalizeBase(o.pseudo) === normalizeBase(s.pseudo))
-        );
-      });
-
-      if (suspiciousMatch){
-        s._alreadyPaidMatch = suspiciousMatch;
-        s._returningCustomerMatch = null;
-        return;
-      }
-
-      // Sinon seulement : retour légitime (pseudo + Discord + email identiques, ET aucun signal
-      // suspect ailleurs dans le score de suspicion général — sinon on ne rassure pas à tort)
-      const legitimateReturn = tippedOthers.find(isSameIdentity);
-      if (legitimateReturn && (s._suspicionScore || 0) < 20){
-        s._alreadyPaidMatch = null;
-        s._returningCustomerMatch = legitimateReturn;
-      } else {
-        s._alreadyPaidMatch = null;
-        s._returningCustomerMatch = null;
-      }
-    });
-  }
-
   function computeSuspicionScores(submissions){
     submissions.forEach(s => {
       s._reasons = [];
@@ -625,8 +560,6 @@
       const data = await resp.json();
       allSubmissions = (data.submissions || []).slice().reverse(); // plus récent en premier
       computeSuspicionScores(allSubmissions);
-      computeAlreadyPaidFlags(allSubmissions);
-      computeQualifiedFlags(allSubmissions);
       computeDeviceFlags(allSubmissions);
 
       const casinos = [...new Set(allSubmissions.map(s => s.platform))].sort();
@@ -650,8 +583,6 @@
     const tippedFilter = document.getElementById('filter-tipped').value;
     const archivedFilter = document.getElementById('filter-archived').value;
     const suspicionFilter = document.getElementById('filter-suspicion').value;
-    const alreadyPaidFilter = document.getElementById('filter-already-paid').value;
-    const qualifiedFilter = document.getElementById('filter-qualified').value;
     const discordAgeFilter = document.getElementById('filter-discord-age').value;
     const deviceFilter = document.getElementById('filter-device').value;
 
@@ -662,11 +593,6 @@
       if (suspicionFilter === 'medium' && (s._suspicionScore || 0) < 20) return false;
       if (suspicionFilter === 'low' && ((s._suspicionScore || 0) === 0 || (s._suspicionScore || 0) >= 20)) return false;
       if (suspicionFilter === 'none' && (s._suspicionScore || 0) !== 0) return false;
-      if (alreadyPaidFilter === 'yes' && !s._alreadyPaidMatch) return false;
-      if (alreadyPaidFilter === 'regular' && !s._returningCustomerMatch) return false;
-      if (alreadyPaidFilter === 'no' && (s._alreadyPaidMatch || s._returningCustomerMatch)) return false;
-      if (qualifiedFilter === 'yes' && !s._qualifiedMatch) return false;
-      if (qualifiedFilter === 'no' && s._qualifiedMatch) return false;
       if (discordAgeFilter === 'recent'){
         const d = discordIdToDate(s.discordId);
         if (!d) return false;
@@ -719,32 +645,12 @@
     return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:#FFC75922; color:#FFC759; cursor:help;">⚠ Même appareil</span>`;
   }
 
-  function renderQualifiedBadge(s){
-    const match = s._qualifiedMatch;
-    if (!match) return '';
-    const detail = `Même IP/email/Discord aussi utilisés sur ${match.platform} (${match.pseudo || '?'}, ${match.date || '?'})`;
-    return `<span title="${escapeHtml(detail)}" style="display:inline-block; margin-left:6px; padding:2px 7px; border-radius:999px; font-size:10.5px; font-weight:700; background:var(--violet)22; color:var(--violet); cursor:help;">★</span>`;
-  }
-
-  // Cherche si le pseudo d'une demande de bonus a des tips reçus dans l'export
-  // Duel.com importé (remplace l'ancienne colonne "Qualifié" du tableau).
+  // Cherche si le pseudo d'une demande de bonus a des tips reçus dans l'export Duel.com importé.
   function renderTipsBadge(s){
     const entry = tipsLookup[String(s.pseudo || '').toLowerCase()];
     if (!entry) return '<span style="color:var(--text-faint); font-size:11.5px;">—</span>';
     const detail = `${entry.numberOfTips} tip(s) reçu(s) au total`;
     return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:var(--green)22; color:var(--green); cursor:help;">$${entry.totalTipped.toFixed(2)} · ${entry.numberOfTips}</span>`;
-  }
-
-  function renderAlreadyPaidBadge(s){
-    if (s._returningCustomerMatch){
-      const m = s._returningCustomerMatch;
-      const detail = `Client déjà tipsé le ${m.date || '?'} (même pseudo/Discord/email)`;
-      return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:var(--green)22; color:var(--green); cursor:help;">✓ Client régulier</span>`;
-    }
-    const match = s._alreadyPaidMatch;
-    if (!match) return `<span style="color:var(--text-faint); font-size:11.5px;">—</span>`;
-    const detail = `Déjà tipsé : ${match.pseudo || '?'} le ${match.date || '?'}`;
-    return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:#FF7A9022; color:#FF7A90; cursor:help;">🚩 Déjà payé</span>`;
   }
 
   function renderTable(){
@@ -767,7 +673,6 @@
         <td>${renderDiscordAgeBadge(s)}</td>
         <td>${renderDeviceBadge(s)}</td>
         <td>${renderSuspicionBadge(s)}</td>
-        <td>${renderAlreadyPaidBadge(s)}</td>
         <td>${renderTipsBadge(s)}</td>
         <td>${renderAffiliateBadge(s)}</td>
         <td style="text-align:center;">
@@ -786,7 +691,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Âge</th><th>Appareil</th><th>Suspicion</th><th>Déjà payé</th><th>TIPS</th><th>Gains réels</th><th>Statut</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Âge</th><th>Appareil</th><th>Suspicion</th><th>TIPS</th><th>Gains réels</th><th>Statut</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -832,14 +737,13 @@
   function renderPseudoCell(s){
     const pseudo = s.pseudo || '';
     const safe = escapeHtml(pseudo);
-    const qualifiedBadge = renderQualifiedBadge(s);
     const builder = CASINO_PROFILE_URLS[slugifyCasinoClient(s.platform)];
     if (!pseudo || !builder){
-      return `<span class="cell-truncate" style="max-width:100px;" title="${safe}">${safe}</span>${qualifiedBadge}`;
+      return `<span class="cell-truncate" style="max-width:100px;" title="${safe}">${safe}</span>`;
     }
     return `<a class="cell-truncate pseudo-link" style="max-width:100px;"
               href="${escapeHtml(builder(pseudo))}" target="_blank" rel="noopener"
-              title="Ouvrir le profil de ${safe} sur ${escapeHtml(s.platform)}">${safe}</a>${qualifiedBadge}`;
+              title="Ouvrir le profil de ${safe} sur ${escapeHtml(s.platform)}">${safe}</a>`;
   }
 
   // Même normalisation que côté Worker ("Duel.com" -> "duelcom")
