@@ -268,6 +268,14 @@
       </select>
     </div>
 
+    <div class="toolbar" style="align-items:flex-end; margin-top:4px;">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-size:12px; color:var(--text-dim); font-weight:600; text-transform:uppercase;">Importer les tips (CSV Duel.com)</label>
+        <input type="file" id="tips-csv-input" accept=".csv" onchange="handleTipsCsvSelected(event)">
+      </div>
+      <span id="tips-import-status" style="font-size:12.5px; color:rgba(244,236,216,.7);"></span>
+    </div>
+
     <div id="table-container"></div>
     <div class="pagination" id="pagination"></div>
     </div>
@@ -628,6 +636,7 @@
 
       applyFilters();
       loadAffiliateLookupForSubmissions();
+      loadTipsLookup();
     }catch(err){
       console.error(err);
       document.getElementById('table-container').innerHTML =
@@ -712,9 +721,18 @@
 
   function renderQualifiedBadge(s){
     const match = s._qualifiedMatch;
-    if (!match) return `<span style="color:var(--text-faint); font-size:11.5px;">—</span>`;
+    if (!match) return '';
     const detail = `Même IP/email/Discord aussi utilisés sur ${match.platform} (${match.pseudo || '?'}, ${match.date || '?'})`;
-    return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:var(--violet)22; color:var(--violet); cursor:help;">★ Qualifié</span>`;
+    return `<span title="${escapeHtml(detail)}" style="display:inline-block; margin-left:6px; padding:2px 7px; border-radius:999px; font-size:10.5px; font-weight:700; background:var(--violet)22; color:var(--violet); cursor:help;">★</span>`;
+  }
+
+  // Cherche si le pseudo d'une demande de bonus a des tips reçus dans l'export
+  // Duel.com importé (remplace l'ancienne colonne "Qualifié" du tableau).
+  function renderTipsBadge(s){
+    const entry = tipsLookup[String(s.pseudo || '').toLowerCase()];
+    if (!entry) return '<span style="color:var(--text-faint); font-size:11.5px;">—</span>';
+    const detail = `${entry.numberOfTips} tip(s) reçu(s) au total`;
+    return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:var(--green)22; color:var(--green); cursor:help;">$${entry.totalTipped.toFixed(2)} · ${entry.numberOfTips}</span>`;
   }
 
   function renderAlreadyPaidBadge(s){
@@ -750,7 +768,7 @@
         <td>${renderDeviceBadge(s)}</td>
         <td>${renderSuspicionBadge(s)}</td>
         <td>${renderAlreadyPaidBadge(s)}</td>
-        <td>${renderQualifiedBadge(s)}</td>
+        <td>${renderTipsBadge(s)}</td>
         <td>${renderAffiliateBadge(s)}</td>
         <td style="text-align:center;">
           ${renderStatusCell(s)}
@@ -768,7 +786,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Âge</th><th>Appareil</th><th>Suspicion</th><th>Déjà payé</th><th>Qualifié</th><th>Gains réels</th><th>Statut</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Âge</th><th>Appareil</th><th>Suspicion</th><th>Déjà payé</th><th>TIPS</th><th>Gains réels</th><th>Statut</th><th>Archive</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -814,13 +832,14 @@
   function renderPseudoCell(s){
     const pseudo = s.pseudo || '';
     const safe = escapeHtml(pseudo);
+    const qualifiedBadge = renderQualifiedBadge(s);
     const builder = CASINO_PROFILE_URLS[slugifyCasinoClient(s.platform)];
     if (!pseudo || !builder){
-      return `<span class="cell-truncate" style="max-width:100px;" title="${safe}">${safe}</span>`;
+      return `<span class="cell-truncate" style="max-width:100px;" title="${safe}">${safe}</span>${qualifiedBadge}`;
     }
     return `<a class="cell-truncate pseudo-link" style="max-width:100px;"
               href="${escapeHtml(builder(pseudo))}" target="_blank" rel="noopener"
-              title="Ouvrir le profil de ${safe} sur ${escapeHtml(s.platform)}">${safe}</a>`;
+              title="Ouvrir le profil de ${safe} sur ${escapeHtml(s.platform)}">${safe}</a>${qualifiedBadge}`;
   }
 
   // Même normalisation que côté Worker ("Duel.com" -> "duelcom")
@@ -1097,6 +1116,10 @@
   let currentAffiliateViewSlug = '';
   let currentAffiliateViewPlayers = [];
 
+  let tipsLookup = {};        // clé: pseudoLower -> {totalTipped, numberOfTips}
+  let tipsImportedAt = null;
+  let tipsLoaded = false;
+
   // Cherche si le pseudo d'une demande de bonus a un gain réel importé pour son casino
   function renderAffiliateBadge(s){
     const slug = slugifyCasino(s.platform || '');
@@ -1114,6 +1137,32 @@
   }
 
   // Charge les données affiliés nécessaires pour croiser avec les demandes de bonus actuellement affichées
+  // Charge le jeu de données tips (une seule fois par session dashboard, comme
+  // les affiliés) pour croiser avec les demandes de bonus actuellement affichées.
+  async function loadTipsLookup(){
+    if (tipsLoaded) { renderTable(); return; }
+    try{
+      const resp = await fetch(`${workerBaseUrl}/tips/data`, {
+        headers: { 'X-Dashboard-Key': dashboardKey }
+      });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      const lookup = {};
+      (data.tips || []).forEach(t => {
+        lookup[String(t.pseudo || '').toLowerCase()] = {
+          totalTipped: t.totalTipped || 0,
+          numberOfTips: t.numberOfTips || 0,
+        };
+      });
+      tipsLookup = lookup;
+      tipsImportedAt = data.importedAt || null;
+      tipsLoaded = true;
+      renderTable();
+    }catch(e){
+      console.warn('Chargement des tips échoué :', e.message);
+    }
+  }
+
   async function loadAffiliateLookupForSubmissions(){
     const platforms = [...new Set(allSubmissions.map(s => s.platform).filter(Boolean))];
     const slugsToLoad = platforms
@@ -1239,6 +1288,62 @@
     }
     result.push(cur);
     return result;
+  }
+
+  // Colonnes attendues (export Duel.com) : Receiver, Total Tipped, Number of Tips
+  function parseTipsCSV(text){
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 2) return [];
+    const header = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+    const findCol = (candidates) => header.findIndex(h => candidates.some(c => h.includes(c)));
+    const idxReceiver = findCol(['receiver', 'pseudo', 'player', 'username']);
+    const idxTotal = findCol(['total tipped', 'total', 'amount']);
+    const idxCount = findCol(['number of tips', 'tips', 'count']);
+
+    return lines.slice(1).map(line => {
+      const cols = parseCSVLine(line);
+      const pseudo = (cols[idxReceiver] || '').trim();
+      const totalRaw = (cols[idxTotal] || '').trim();
+      const countRaw = (cols[idxCount] || '').trim();
+      const totalTipped = parseFloat(totalRaw.replace(/[^0-9.\-]/g, '')) || 0;
+      const numberOfTips = parseInt(countRaw.replace(/[^0-9\-]/g, ''), 10) || 0;
+      return { pseudo, totalTipped, numberOfTips };
+    }).filter(t => t.pseudo);
+  }
+
+  async function handleTipsCsvSelected(event){
+    const file = event.target.files[0];
+    if (!file) return;
+    const status = document.getElementById('tips-import-status');
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const tips = parseTipsCSV(reader.result);
+      if (tips.length === 0){
+        alert('Aucune ligne valide trouvée. Vérifie les colonnes (Receiver, Total Tipped, Number of Tips).');
+        event.target.value = '';
+        return;
+      }
+      status.textContent = 'Import en cours…';
+      status.style.color = 'rgba(244,236,216,.7)';
+      try{
+        const resp = await fetch(`${workerBaseUrl}/tips/import`, {
+          method: 'POST',
+          headers: { 'X-Dashboard-Key': dashboardKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tips }),
+        });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        status.textContent = `Importé ✅ — ${data.count} pseudo(s) mis à jour.`;
+        status.style.color = '#8fce8f';
+        tipsLoaded = false;
+        loadTipsLookup();
+      }catch(err){
+        status.textContent = 'Erreur : ' + err.message;
+        status.style.color = '#e08a8a';
+      }
+      event.target.value = '';
+    };
+    reader.readAsText(file);
   }
 
   function parseAffiliateCSV(text){
