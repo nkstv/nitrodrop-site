@@ -529,6 +529,10 @@
           <label><span id="discord-label-text">Your Discord account</span></label>
           <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Connect with Discord</button>
         </div>
+        <p style="font-size:12.5px; line-height:1.5; color:var(--red); background:rgba(242,109,109,.08); border:1px solid rgba(242,109,109,.25); border-radius:10px; padding:9px 11px; margin:8px 0 0;">
+          ⚠️ <b>Important:</b> you must stay a member of our Discord server, otherwise we won't be able to deliver your bonus.
+        </p>
+        <div id="discord-membership-status" style="display:none; font-size:12.5px; line-height:1.5; border-radius:10px; padding:9px 11px; margin:8px 0 0;"></div>
         <input type="hidden" id="claim-discord-input">
         <button type="submit" class="modal-submit" id="claim-submit-btn">Confirm my request</button>
       </form>
@@ -818,9 +822,34 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (saved && saved.discordId){
       input.value = saved.discordId;
       block.style.display = 'none';
+      checkDiscordMembershipInClaimForm(saved.discordId);
     } else {
       input.value = '';
       block.style.display = '';
+      const status = document.getElementById('discord-membership-status');
+      if (status) status.style.display = 'none';
+    }
+  }
+
+  // Vérifie que le joueur est bien sur le serveur Discord avant qu'il envoie sa
+  // demande de bonus : sans ça, le bot ne peut pas lui envoyer ses DM de suivi
+  // (sent/declined) et il ne saura jamais que son bonus est arrivé.
+  async function checkDiscordMembershipInClaimForm(discordId){
+    const status = document.getElementById('discord-membership-status');
+    if (!status || !workerBase || !discordId) return;
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/discord/membership?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      if (!data.ok || !data.checked){ status.style.display = 'none'; return; }
+      if (data.isMember){
+        status.style.cssText = 'display:block; font-size:12.5px; line-height:1.5; border-radius:10px; padding:9px 11px; margin:8px 0 0; color:var(--green); background:rgba(95,214,139,.08); border:1px solid rgba(95,214,139,.25);';
+        status.innerHTML = '✅ You are a member of our Discord server. Your bonus notifications will reach you.';
+      } else {
+        status.style.cssText = 'display:block; font-size:12.5px; line-height:1.5; border-radius:10px; padding:9px 11px; margin:8px 0 0; color:var(--gold); background:rgba(232,193,104,.10); border:1px solid rgba(232,193,104,.3);';
+        status.innerHTML = '⚠️ You are not on our Discord server yet. <button type="button" onclick="connectDiscord()" style="text-decoration:underline; font-weight:800; color:var(--gold);">Join now</button> so we can deliver your bonus.';
+      }
+    }catch(e){
+      status.style.display = 'none';
     }
   }
 
