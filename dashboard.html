@@ -195,6 +195,87 @@
   }
   .gate input{width:280px; text-align:center;}
   .gate .err{color:#FF7A90; font-size:13px;}
+
+  /* ============================================================
+     POLISH VISUEL — aligne les composants sur le niveau de finition
+     du site public (mêmes tokens de couleur, mais rendu plus soigné
+     que les <select>/<input>/<table> par défaut du navigateur).
+     N'affecte que l'apparence, aucune logique JS n'est touchée.
+     ============================================================ */
+
+  ::selection{background:rgba(232,193,104,.28); color:var(--text);}
+
+  /* Scrollbar globale (pas seulement les tableaux) */
+  ::-webkit-scrollbar{width:10px; height:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:6px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--gold-deep);}
+
+  /* Topbar : légère profondeur au lieu d'une simple ligne plate */
+  .topbar{
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+    background:linear-gradient(180deg, rgba(16,11,6,.97), rgba(16,11,6,.88));
+  }
+  .topbar h1{letter-spacing:.02em;}
+
+  /* Selects : on retire le rendu natif du navigateur et on ajoute un
+     chevron cohérent avec la palette dorée, au lieu de la flèche grise
+     par défaut du système. */
+  select{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23B9A88A' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 13px center;
+    padding-right:34px; cursor:pointer;
+    transition:.15s border-color, .15s box-shadow;
+  }
+  select:hover{border-color:var(--line-strong);}
+  select:focus, input[type=text]:focus{
+    outline:none; border-color:var(--gold-deep);
+    box-shadow:0 0 0 3px rgba(232,193,104,.14);
+  }
+  input[type=text]{transition:.15s border-color, .15s box-shadow;}
+  input[type=text]::placeholder{color:var(--text-faint);}
+
+  /* Bouton "Rafraîchir", filtres, etc. : micro-interaction cohérente */
+  .btn{transition:.15s border-color, .15s color, .15s transform;}
+  .btn:hover{border-color:var(--line-strong); color:#fff;}
+  .btn:active{transform:translateY(1px);}
+  .btn.primary:hover{filter:brightness(1.08);}
+  .dash-tab{transition:.15s background, .15s color, .15s border-color;}
+
+  /* Input file (import CSV) : le bouton natif du navigateur ("Choisir un
+     fichier") jurait complètement avec le reste du thème sombre/doré. */
+  input[type=file]{
+    color:var(--text-dim); font-size:13px; font-family:'Nunito Sans';
+    border:1px dashed var(--line-strong); border-radius:9px;
+    padding:9px 12px; background:var(--bg-raise); cursor:pointer;
+    transition:.15s border-color, .15s background;
+  }
+  input[type=file]:hover{border-color:var(--gold-deep); background:var(--bg-card);}
+  input[type=file]::file-selector-button{
+    background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));
+    color:#3a2a08; border:none; border-radius:7px; padding:7px 14px;
+    font-weight:800; font-family:'Nunito Sans'; font-size:12.5px; cursor:pointer;
+    margin-right:12px; transition:.15s filter;
+  }
+  input[type=file]::file-selector-button:hover{filter:brightness(1.06);}
+
+  /* Tableau : un peu plus d'air, header collant, lignes mieux délimitées */
+  #table-scroll table, #users-table-scroll table, #lb-table-scroll table{
+    border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.25);
+  }
+  th{padding:12px 12px; font-size:11px; letter-spacing:.05em;}
+  td{padding:11px 12px;}
+  thead th{position:sticky; top:0; z-index:2;}
+  tr:hover td{background:rgba(232,193,104,.035);}
+
+  /* Cartes stats : profondeur + légère bordure lumineuse au survol */
+  .stat{box-shadow:0 10px 26px rgba(0,0,0,.22);}
+  .stat:hover{box-shadow:0 12px 30px rgba(0,0,0,.3), 0 0 0 1px rgba(232,193,104,.12);}
+
+  /* Toolbars : un peu plus d'air entre les filtres */
+  .toolbar{gap:10px 12px;}
+  .toolbar label{color:var(--text-faint); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;}
 </style>
 </head>
 <body>
