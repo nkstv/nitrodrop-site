@@ -906,6 +906,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   function joinDiscordServer(){
     connectDiscord();
   }
+  window.joinDiscordServer = joinDiscordServer;
 
   async function checkDiscordMembership(discordId){
     const banner = document.getElementById('pf-discord-required');
