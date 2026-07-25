@@ -574,7 +574,7 @@
         </label>
         <div id="discord-block">
           <label><span id="discord-label-text">Your Discord account</span></label>
-          <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscord()">🎮 Connect with Discord</button>
+          <button type="button" id="discord-connect-btn" class="modal-ghost" onclick="connectDiscordFromClaim()">🎮 Connect with Discord</button>
         </div>
         <p style="font-size:12.5px; line-height:1.5; color:var(--red); background:rgba(242,109,109,.08); border:1px solid rgba(242,109,109,.25); border-radius:10px; padding:9px 11px; margin:8px 0 0;">
           ⚠️ <b>Important:</b> you must stay a member of our Discord server, otherwise we won't be able to deliver your bonus.
@@ -929,12 +929,46 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         status.innerHTML = '✅ You are a member of our Discord server. Your bonus notifications will reach you.';
       } else {
         status.style.cssText = 'display:block; font-size:12.5px; line-height:1.5; border-radius:10px; padding:9px 11px; margin:8px 0 0; color:var(--gold); background:rgba(232,193,104,.10); border:1px solid rgba(232,193,104,.3);';
-        status.innerHTML = '⚠️ You are not on our Discord server yet. <button type="button" onclick="connectDiscord()" style="text-decoration:underline; font-weight:800; color:var(--gold);">Join now</button> so we can deliver your bonus.';
+        status.innerHTML = '⚠️ You are not on our Discord server yet. <button type="button" onclick="connectDiscordFromClaim()" style="text-decoration:underline; font-weight:800; color:var(--gold);">Join now</button> so we can deliver your bonus.';
       }
     }catch(e){
       status.style.display = 'none';
       discordMembershipStatus = null;
     }
+  }
+
+  // Le clic sur "Rejoindre Discord" depuis la modale de claim quitte la page en
+  // plein écran (OAuth), donc le formulaire (email/pseudo/plateforme) serait
+  // perdu au retour. On le sauvegarde ici juste avant de partir, et on le
+  // restaure automatiquement au chargement (voir restoreClaimDraftIfAny plus bas).
+  const CLAIM_DRAFT_KEY = 'nitrodrop_claim_draft';
+
+  function saveClaimDraft(){
+    try{
+      sessionStorage.setItem(CLAIM_DRAFT_KEY, JSON.stringify({
+        platform: document.getElementById('modal-platform-name').textContent || '',
+        code: currentClaimCode,
+        signupUrl: currentSignupUrl,
+        email: document.getElementById('claim-email-input').value,
+        pseudo: document.getElementById('claim-pseudo-input').value,
+      }));
+    }catch(e){}
+  }
+
+  function connectDiscordFromClaim(){
+    saveClaimDraft();
+    connectDiscord();
+  }
+
+  function restoreClaimDraftIfAny(){
+    let draft = null;
+    try{ draft = JSON.parse(sessionStorage.getItem(CLAIM_DRAFT_KEY) || 'null'); }catch(e){}
+    if (!draft || !draft.platform) return;
+    try{ sessionStorage.removeItem(CLAIM_DRAFT_KEY); }catch(e){}
+    openModal(draft.platform, draft.code, draft.signupUrl, true);
+    gateYes();
+    document.getElementById('claim-email-input').value = draft.email || '';
+    document.getElementById('claim-pseudo-input').value = draft.pseudo || '';
   }
 
   function openModal(platform, code, signupUrl, codeEnabled){
@@ -1266,6 +1300,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   applyModalTexts();
   renderOffers();
   applyIdentity();
+  restoreClaimDraftIfAny();
 
   // ---------------- Popup de drop (lien Discord ?drop=ID) ----------------
   (function initDrop(){
