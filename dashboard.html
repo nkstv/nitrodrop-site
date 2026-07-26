@@ -176,7 +176,7 @@
   .g-bar{height:5px; border-radius:3px; background:var(--bg-card); margin-top:11px; overflow:hidden;}
   .g-bar i{display:block; height:100%; background:linear-gradient(90deg,var(--gold-deep),var(--gold));}
 
-  .cell-truncate{max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; cursor:help;}
+  .cell-truncate{max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; cursor:help;}
   #table-scroll, #users-table-scroll, #lb-table-scroll{overflow-x:auto; border-radius:14px;}
   #table-scroll::-webkit-scrollbar, #users-table-scroll::-webkit-scrollbar, #lb-table-scroll::-webkit-scrollbar{height:8px;}
   #table-scroll::-webkit-scrollbar-thumb, #users-table-scroll::-webkit-scrollbar-thumb, #lb-table-scroll::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:4px;}
@@ -266,14 +266,18 @@
   }
   input[type=file]::file-selector-button:hover{filter:brightness(1.06);}
 
-  /* Tableau : un peu plus d'air, header collant, lignes mieux délimitées */
+  /* Tableau : compact pour limiter le scroll horizontal, header collant */
   #table-scroll table, #users-table-scroll table, #lb-table-scroll table{
     border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.25);
   }
-  th{padding:12px 12px; font-size:11px; letter-spacing:.05em;}
-  td{padding:11px 12px;}
+  th{padding:8px 8px; font-size:10px; letter-spacing:.04em;}
+  td{padding:6px 8px; font-size:11.5px;}
   thead th{position:sticky; top:0; z-index:2;}
   tr:hover td{background:rgba(232,193,104,.035);}
+  /* Boutons d'action DANS le tableau uniquement (pas les onglets/toolbar) :
+     plus compacts pour que toute la ligne tienne sans scroll horizontal. */
+  td .btn{padding:6px 10px; font-size:11px;}
+  .badge{padding:2px 8px; font-size:10.5px;}
 
   /* Cartes stats : profondeur + légère bordure lumineuse au survol */
   .stat{box-shadow:0 10px 26px rgba(0,0,0,.22);}
@@ -756,7 +760,7 @@
         <td>${renderPseudoCell(s)}</td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.email || '')}">${escapeHtml(s.email || '')}</span></td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}">${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}</span></td>
-        <td class="mono" style="white-space:nowrap;">${escapeHtml(s.discordId || '—')}</td>
+        <td class="mono"><span class="cell-truncate" style="max-width:130px;" title="${escapeHtml(s.discordId || '—')}">${escapeHtml(s.discordId || '—')}</span></td>
         <td>${renderDiscordAgeBadge(s)}</td>
         <td>${renderDeviceBadge(s)}</td>
         <td>${renderSuspicionBadge(s)}</td>
@@ -1576,7 +1580,7 @@
               <span class="cell-truncate" title="${escapeHtml(u.pseudo)}">${escapeHtml(u.pseudo || '?')}</span>
             </span>
           </td>
-          <td class="mono" style="white-space:nowrap;">${escapeHtml(u.discordId)}</td>
+          <td class="mono"><span class="cell-truncate" style="max-width:150px;" title="${escapeHtml(u.discordId)}">${escapeHtml(u.discordId)}</span></td>
           <td><b id="user-keys-${escapeHtml(u.discordId)}">${(u.keys || 0).toFixed(2)}</b></td>
           <td class="mono">${lastSeenLabel}</td>
           <td class="mono">${createdLabel}</td>
@@ -1586,7 +1590,7 @@
           </td>
           <td>
             <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-              <input type="number" id="user-amount-${escapeHtml(u.discordId)}" placeholder="Montant" min="0" step="1" style="width:100px; padding:8px 10px; font-size:12.5px;">
+              <input type="number" id="user-amount-${escapeHtml(u.discordId)}" placeholder="Montant" min="0" step="1" style="width:78px; padding:6px 7px; font-size:11px;">
               <button type="button" class="btn" onclick="adjustUserKeys('${escapeHtml(u.discordId)}','add')">+ Ajouter</button>
               <button type="button" class="btn" onclick="adjustUserKeys('${escapeHtml(u.discordId)}','remove')">− Retirer</button>
               <button type="button" class="btn" onclick="toggleUserBan('${escapeHtml(u.discordId)}', ${!u.banned})">${u.banned ? 'Débannir' : 'Bannir'}</button>
@@ -1744,14 +1748,14 @@
               <span class="cell-truncate" title="${escapeHtml(e.pseudo)}">${escapeHtml(e.pseudo || '?')}</span>
             </span>
           </td>
-          <td class="mono" style="white-space:nowrap;">${escapeHtml(e.discordId)}</td>
+          <td class="mono"><span class="cell-truncate" style="max-width:150px;" title="${escapeHtml(e.discordId)}">${escapeHtml(e.discordId)}</span></td>
           <td class="mono" title="Total réellement joué, hors correction">${e.rawWager.toFixed(2)}</td>
           <td>${adjLabel}</td>
           <td><b id="lb-wager-${escapeHtml(e.discordId)}">${e.wager.toFixed(2)}</b></td>
           <td>${e.excluded ? '<span class="badge" style="color:#FF7A90; border-color:#FF7A90;">Masqué</span>' : '<span class="badge" style="color:var(--green); border-color:var(--green);">Visible</span>'}</td>
           <td>
             <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-              <input type="number" id="lb-value-${escapeHtml(e.discordId)}" placeholder="Total" step="1" style="width:100px; padding:8px 10px; font-size:12.5px;">
+              <input type="number" id="lb-value-${escapeHtml(e.discordId)}" placeholder="Total" step="1" style="width:70px; padding:6px 7px; font-size:11px;">
               <button type="button" class="btn" onclick="setPlayerWager('${escapeHtml(e.discordId)}')">Définir</button>
               <button type="button" class="btn" onclick="resetPlayerWager('${escapeHtml(e.discordId)}')">Réinitialiser</button>
               <button type="button" class="btn" onclick="togglePlayerExcluded('${escapeHtml(e.discordId)}', ${!e.excluded})">${e.excluded ? 'Réafficher' : 'Masquer'}</button>
