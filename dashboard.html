@@ -286,6 +286,13 @@
   /* Toolbars : un peu plus d'air entre les filtres */
   .toolbar{gap:10px 12px;}
   .toolbar label{color:var(--text-faint); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;}
+
+  /* Filtres du tableau principal : compacts pour tenir sur une seule ligne */
+  .filter-select{
+    padding:8px 26px 8px 10px !important; font-size:12px !important;
+    background-position:right 9px center !important; flex:none;
+  }
+  select.filter-select{white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
 </style>
 </head>
 <body>
@@ -316,33 +323,33 @@
     <div id="tab-bonus">
     <div class="stats" id="stats"></div>
 
-    <div class="toolbar">
-      <select id="filter-casino" onchange="applyFilters()">
+    <div class="toolbar" style="flex-wrap:wrap;">
+      <select id="filter-casino" onchange="applyFilters()" class="filter-select" style="width:130px;">
         <option value="">Tous les casinos</option>
       </select>
-      <input type="text" id="filter-search" placeholder="Rechercher pseudo / email / IP / Discord..." oninput="applyFilters()" style="min-width:220px;">
-      <select id="filter-tipped" onchange="applyFilters()">
+      <input type="text" id="filter-search" placeholder="Rechercher pseudo / email / IP / Discord..." oninput="applyFilters()" class="filter-select" style="width:190px;">
+      <select id="filter-tipped" onchange="applyFilters()" class="filter-select" style="width:100px;">
         <option value="">Tipsé : tous</option>
         <option value="yes">Tipsé : oui</option>
         <option value="no">Tipsé : non</option>
       </select>
-      <select id="filter-archived" onchange="applyFilters()">
+      <select id="filter-archived" onchange="applyFilters()" class="filter-select" style="width:100px;">
         <option value="active">Actives</option>
         <option value="archived">Archivées</option>
         <option value="all">Toutes</option>
       </select>
-      <select id="filter-suspicion" onchange="applyFilters()">
+      <select id="filter-suspicion" onchange="applyFilters()" class="filter-select" style="width:140px;">
         <option value="">Suspicion : tous</option>
         <option value="high">Suspicion : élevée</option>
         <option value="medium">Suspicion : moyenne+</option>
         <option value="low">Suspicion : faible uniquement</option>
         <option value="none">Suspicion : aucune</option>
       </select>
-      <select id="filter-discord-age" onchange="applyFilters()">
+      <select id="filter-discord-age" onchange="applyFilters()" class="filter-select" style="width:110px;">
         <option value="">Âge : tous</option>
         <option value="recent">Compte récent (&lt; 30j)</option>
       </select>
-      <select id="filter-device" onchange="applyFilters()">
+      <select id="filter-device" onchange="applyFilters()" class="filter-select" style="width:130px;">
         <option value="">Appareil : tous</option>
         <option value="yes">⚠ Même appareil : oui</option>
       </select>
