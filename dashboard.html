@@ -756,7 +756,7 @@
         <td>${renderPseudoCell(s)}</td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.email || '')}">${escapeHtml(s.email || '')}</span></td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}">${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}</span></td>
-        <td class="mono"><span class="cell-truncate" style="max-width:110px;" title="${escapeHtml(s.discordId || '—')}">${escapeHtml(s.discordId || '—')}</span></td>
+        <td class="mono" style="white-space:nowrap;">${escapeHtml(s.discordId || '—')}</td>
         <td>${renderDiscordAgeBadge(s)}</td>
         <td>${renderDeviceBadge(s)}</td>
         <td>${renderSuspicionBadge(s)}</td>
@@ -1576,7 +1576,7 @@
               <span class="cell-truncate" title="${escapeHtml(u.pseudo)}">${escapeHtml(u.pseudo || '?')}</span>
             </span>
           </td>
-          <td class="mono cell-truncate" title="${escapeHtml(u.discordId)}">${escapeHtml(u.discordId)}</td>
+          <td class="mono" style="white-space:nowrap;">${escapeHtml(u.discordId)}</td>
           <td><b id="user-keys-${escapeHtml(u.discordId)}">${(u.keys || 0).toFixed(2)}</b></td>
           <td class="mono">${lastSeenLabel}</td>
           <td class="mono">${createdLabel}</td>
@@ -1744,7 +1744,7 @@
               <span class="cell-truncate" title="${escapeHtml(e.pseudo)}">${escapeHtml(e.pseudo || '?')}</span>
             </span>
           </td>
-          <td class="mono cell-truncate" title="${escapeHtml(e.discordId)}">${escapeHtml(e.discordId)}</td>
+          <td class="mono" style="white-space:nowrap;">${escapeHtml(e.discordId)}</td>
           <td class="mono" title="Total réellement joué, hors correction">${e.rawWager.toFixed(2)}</td>
           <td>${adjLabel}</td>
           <td><b id="lb-wager-${escapeHtml(e.discordId)}">${e.wager.toFixed(2)}</b></td>
