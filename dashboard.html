@@ -820,11 +820,11 @@
   // ---------- Suivi des demandes : Tipsé / Refusé ----------
   // Les libellés sont ceux envoyés au joueur (en anglais) ; l'ordre est celui affiché.
   const DECLINE_REASONS = [
-    { id: 'duplicate_account', label: 'Duplicate account detected' },
-    { id: 'bonus_cashout',     label: 'Cashout of the welcome bonus' },
-    { id: 'no_deposit',        label: 'Please read the rules; you must make a deposit to claim this bonus.' },
-    { id: 'discord_too_young', label: 'Your Discord account is not old enough.' },
-    { id: 'other',             label: 'Other' },
+    { id: 'duplicate_account', label: 'Duplicate account detected', shortLabel: 'Compte dupliqué' },
+    { id: 'bonus_cashout',     label: 'Cashout of the welcome bonus', shortLabel: 'Cashout bonus' },
+    { id: 'no_deposit',        label: 'Please read the rules; you must make a deposit to claim this bonus.', shortLabel: 'Dépôt requis' },
+    { id: 'discord_too_young', label: 'Your Discord account is not old enough.', shortLabel: 'Discord trop récent' },
+    { id: 'other',             label: 'Other', shortLabel: 'Autre' },
   ];
 
   // Pseudo cliquable vers le profil du casino, quand on connaît le format d'URL.
@@ -858,8 +858,10 @@
                 onclick="toggleTipped('${s.id}', false)">Annuler</button>`;
     }
     if (status === 'declined'){
-      const label = (DECLINE_REASONS.find(r => r.id === s.declineReason) || {}).label || 'Refusé';
-      return `<span class="badge" style="color:#FF7A90; border-color:#FF7A90;" title="${escapeHtml(s.declineNote || '')}">${escapeHtml(label)}</span>
+      const reason = DECLINE_REASONS.find(r => r.id === s.declineReason) || {};
+      const shortLabel = reason.shortLabel || reason.label || 'Refusé';
+      const fullText = reason.label || '';
+      return `<span class="badge" style="color:#FF7A90; border-color:#FF7A90; white-space:nowrap;" title="${escapeHtml(fullText)}${s.declineNote ? ' — ' + escapeHtml(s.declineNote) : ''}">${escapeHtml(shortLabel)}</span>
               <button class="btn" style="padding:4px 8px; font-size:11px; margin-top:5px;"
                 onclick="toggleTipped('${s.id}', false)">Annuler</button>`;
     }
