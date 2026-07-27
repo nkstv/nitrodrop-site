@@ -72,7 +72,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "sub": "Crypto Casino · Best Deals",
           "bonusAmount": "$8.00",
           "bonusSuffix": "$2.00/day × 4",
-          "desc": "Register with the code, submit your username, and get your tip. **No deposit** needed.",
+          "desc": "Register with the code, submit your username, and get your tip. **No deposit** needed. (not available) ",
           "code": "welcomebonus2026",
           "signupHref": "https://duel-casino-home.com/welcomebonus/",
           "signupText": "1. Create Account",
@@ -80,9 +80,9 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": true,
           "claimHighlighted": false,
           "codeEnabled": true,
-          "depositRequired": false,
           "markColorStart": "#6c3fff",
-          "markColorEnd": "#2a1a66"
+          "markColorEnd": "#2a1a66",
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -101,9 +101,9 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": true,
           "claimHighlighted": false,
           "codeEnabled": true,
-          "depositRequired": false,
           "markColorStart": "#0f8a82",
-          "markColorEnd": "#0d7343"
+          "markColorEnd": "#0d7343",
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -122,9 +122,9 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": true,
           "claimHighlighted": false,
           "codeEnabled": true,
-          "depositRequired": true,
           "markColorStart": "#3748a0",
-          "markColorEnd": "#1d2863"
+          "markColorEnd": "#1d2863",
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -143,9 +143,9 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": false,
           "claimHighlighted": false,
           "codeEnabled": false,
-          "depositRequired": true,
           "markColorStart": "#41a51d",
-          "markColorEnd": "#0d540e"
+          "markColorEnd": "#0d540e",
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -159,14 +159,14 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Sign up with the code, deposit a **minimum of $10**, and wager $50 to claim your reward. New users only.",
           "code": "casinofr",
           "codeEnabled": true,
-          "depositRequired": true,
           "signupHref": "https://duel-casino-home.com/gamdom/",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
           "markColorStart": "#2c9108",
-          "markColorEnd": "#0e4d0a"
+          "markColorEnd": "#0e4d0a",
+          "depositRequired": false
         },
         {
           "featured": true,
@@ -180,14 +180,14 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Sign up with the code, deposit a minimum of **$20**, and wager $70 to claim your reward. New users only.",
           "code": "",
           "codeEnabled": false,
-          "depositRequired": true,
           "signupHref": "https://duel-casino-home.com/flush/",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
           "markColorStart": "#6c3fff",
-          "markColorEnd": "#2a1a66"
+          "markColorEnd": "#2a1a66",
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -201,14 +201,14 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Sign up with the code, deposit a minimum of **$10**, and wager $40 to claim your reward. New users only.",
           "code": "NksCasino",
           "codeEnabled": true,
-          "depositRequired": true,
           "signupHref": "https://rollbit.com/referral/NksCasino",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
           "markColorStart": "#ffe419",
-          "markColorEnd": "#675c13"
+          "markColorEnd": "#675c13",
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -224,12 +224,12 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Sign up with the link, deposit a minimum of $10 and claim your reward. New users only.\n",
           "code": "",
           "codeEnabled": false,
-          "depositRequired": true,
           "signupHref": "https://duel-casino-home.com/mystake/",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "depositRequired": false
         },
         {
           "featured": true,
@@ -245,12 +245,12 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Register with the code, **submit your username**, and get your tip. **Deposit required** (no minimum).",
           "code": "mrrvsu0g",
           "codeEnabled": true,
-          "depositRequired": true,
           "signupHref": "https://duel-casino-home.com/bcgame/",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "depositRequired": false
         }
       ],
       "tickerSettings": {
@@ -390,7 +390,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "subtitle": "A code has been shared on Discord. The first person to find it here wins the contents of the Vault.",
         "codePlaceholder": "Secret code",
         "submitText": "Open Vault",
-        "successMessage": "Congratulations, you win {amount}! Contact NEKOS on Discord to claim your reward at the casino of your choice.",
+        "successMessage": "Congratulations, you win {amount}!",
         "alreadyClaimedMessage": "The reward has already been claimed by someone else..",
         "wrongCodeMessage": "Incorrect code, the vault remains locked.",
         "notConfiguredMessage": "The reward has already been claimed by someone else.",
@@ -548,7 +548,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": true,
           "claimHighlighted": false,
           "codeEnabled": true,
-          "depositRequired": false,
           "markColorStart": "#6c3fff",
           "markColorEnd": "#2a1a66"
         },
@@ -569,7 +568,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": true,
           "claimHighlighted": false,
           "codeEnabled": true,
-          "depositRequired": false,
           "markColorStart": "#6c3fff",
           "markColorEnd": "#2a1a66"
         },
@@ -590,7 +588,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": true,
           "claimHighlighted": false,
           "codeEnabled": true,
-          "depositRequired": true,
           "markColorStart": "#6c3fff",
           "markColorEnd": "#2a1a66"
         },
@@ -611,7 +608,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": false,
           "claimHighlighted": false,
           "codeEnabled": false,
-          "depositRequired": true,
           "markColorStart": "#6c3fff",
           "markColorEnd": "#2a1a66"
         },
@@ -627,7 +623,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le code, **déposez 10$ minimum** et misez **50$** pour débloquer votre récompense. Réservé aux nouveaux utilisateurs.",
           "code": "casinofr",
           "codeEnabled": true,
-          "depositRequired": true,
           "signupHref": "https://duel-casino-home.com/gamdom/",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
@@ -648,7 +643,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le code, **déposez 20$ minimum** et misez **70$** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
           "code": "",
           "codeEnabled": false,
-          "depositRequired": true,
           "signupHref": "https://duel-casino-home.com/flush/",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
@@ -669,7 +663,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le code, **déposez 10$ minimum** et misez **40$** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
           "code": "NksCasino",
           "codeEnabled": true,
-          "depositRequired": true,
           "signupHref": "https://rollbit.com/referral/NksCasino",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
@@ -692,7 +685,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le lien, **déposez 10$ minimum** pour débloquer votre récompense. **Réservé aux nouveaux utilisateurs**.",
           "code": "",
           "codeEnabled": false,
-          "depositRequired": true,
           "signupHref": "https://duel-casino-home.com/mystake/",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
@@ -713,7 +705,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "desc": "Inscrivez-vous avec le code, indiquez **votre nom d'utilisateur** et recevez votre bonus. **Dépôt requis** (aucun minimum).",
           "code": "mrrvsu0g",
           "codeEnabled": true,
-          "depositRequired": true,
           "signupHref": "https://duel-casino-home.com/bcgame/",
           "signupText": "1. Créer un compte",
           "claimText": "2. Réclamer mon bonus",
@@ -926,7 +917,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "navLabel": "🎡 Roue",
         "tag": "Roue de la fortune",
         "title": "Fais tourner la roue",
-        "subtitle": "Tente ta chance chaque jour.",
+        "subtitle": "Tente ta chance chaque jour. Libellé",
         "usernameLabel": "Pseudo*",
         "usernamePlaceholder": "votre Pseudo",
         "discordNote": "Connexion Discord requise pour participer.",
@@ -975,7 +966,7 @@ const NITRODROP_DEFAULT_CONFIG = {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   },
   "vault": {
-    "discordNewRoundMessage": "🔐 New Lucky Vault 🚨 **{code}** — try your luck to win **${amount}**! \n\n--------\n\n👉 Here: https://drop-cash.com/vault "
+    "discordNewRoundMessage": "🔐 New Vault 🚨\n\nClaim **{amount} Keys**!  with Secret Code : ||{code}||\n\n👉 Here: https://drop-cash.com/vault \n\nGood luck 🍀 "
   },
   "wheelGame": {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
