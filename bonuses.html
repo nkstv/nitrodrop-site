@@ -301,6 +301,15 @@
     transform:translateY(14px); transition:transform .2s ease; margin:auto;
   }
   .modal-overlay.active .modal{transform:translateY(0);}
+  .confirm-progress-track{
+    position:absolute; top:0; left:0; right:0; height:4px;
+    background:rgba(232,193,104,.15); border-radius:20px 20px 0 0; overflow:hidden;
+  }
+  .confirm-progress-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg,var(--gold-deep),var(--gold));
+  }
+  .confirm-progress-fill.running{width:100%; transition:width 5s linear;}
   .modal-close{
     position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted);
     font-size:24px; line-height:1; padding:4px; cursor:pointer;
@@ -574,6 +583,7 @@
     </div>
 
     <div id="modal-step-confirm" style="display:none;">
+      <div class="confirm-progress-track"><div class="confirm-progress-fill" id="confirm-progress-fill"></div></div>
       <div class="confirm-icon">✓</div>
       <h3 id="confirm-title">Request sent</h3>
       <p id="confirm-text"></p>
@@ -980,6 +990,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     overlay.classList.remove('active');
     document.body.style.overflow = '';
     clearInterval(countdownInterval);
+    clearTimeout(autoCloseTimeout);
   }
 
   function gateYes(){
@@ -1142,6 +1153,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     stepDeposit.style.display = 'none';
     stepConfirm.style.display = 'block';
     startCountdown();
+    startAutoCloseProgress();
   }
 
   document.getElementById('terms-accept-btn').addEventListener('click', () => {
@@ -1180,6 +1192,22 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       if (remaining <= 0){ remaining = 0; clearInterval(countdownInterval); }
       render();
     }, 1000);
+  }
+
+  // Barre de progression en haut de la modale de confirmation : se remplit de
+  // gauche à droite sur 5 secondes, puis ferme la modale automatiquement.
+  let autoCloseTimeout = null;
+  function startAutoCloseProgress(){
+    clearTimeout(autoCloseTimeout);
+    const fill = document.getElementById('confirm-progress-fill');
+    if (fill){
+      fill.classList.remove('running');
+      // Force un reflow pour que le navigateur reparte bien de 0% avant
+      // de relancer la transition (sinon il ne rejoue pas l'animation).
+      void fill.offsetWidth;
+      fill.classList.add('running');
+    }
+    autoCloseTimeout = setTimeout(() => { closeModal(); }, 5000);
   }
 
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
