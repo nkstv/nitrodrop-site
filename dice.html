@@ -1295,6 +1295,17 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const pages = { mines:'/mines', blackjack:'/blackjack', dice:'/dice', slot:'/slot' };
     const path = pages[game] || location.pathname;
     const link = `${location.origin}${path}?bet=${encodeURIComponent(id)}`;
+    // Copie ce pari précis dans un stockage permanent (non tronqué), pour que
+    // le lien ne devienne jamais invalide même après 1000 parties d'autres
+    // joueurs sur ce jeu. Non-bloquant : le lien est copié tout de suite,
+    // qu'importe le résultat de cet appel.
+    if (workerBase){
+      fetch(`${workerBase}/bet/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, game }),
+      }).catch(() => {});
+    }
     navigator.clipboard.writeText(link).then(() => {
       const original = btn.textContent;
       btn.textContent = '✓ Link copied';
