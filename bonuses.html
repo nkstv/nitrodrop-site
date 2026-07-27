@@ -307,6 +307,20 @@
   }
   .modal-close:hover{color:var(--cream);}
   .modal-tag{color:var(--gold); font-size:11px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase;}
+  .terms-list{list-style:none; margin:20px 0 24px; display:flex; flex-direction:column; gap:13px;}
+  .terms-list li{
+    display:flex; gap:11px; align-items:flex-start;
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:12px; padding:13px 14px;
+    font-size:13px; color:var(--muted); line-height:1.55;
+  }
+  .terms-list li b{color:var(--cream);}
+  .terms-list .ic{font-size:15px; flex:none; line-height:1.4;}
+  /* Bouton verrouillé pendant la lecture des conditions */
+  .modal-submit.locked{
+    background:var(--panel-3); color:var(--muted); box-shadow:none;
+    cursor:not-allowed; opacity:1;
+  }
+  .modal-submit.locked:hover{filter:none; transform:none;}
   .modal h3{font-family:"Baloo 2"; font-weight:800; font-size:22px; color:var(--cream); margin-top:10px;}
   .modal-sub{font-size:13.5px; color:var(--muted); margin-top:10px; line-height:1.6;}
   .modal-sub strong{color:var(--gold); font-weight:800;}
@@ -538,6 +552,19 @@
       </form>
     </div>
 
+    <div id="modal-step-terms" style="display:none;">
+      <div class="modal-tag">Before we send it</div>
+      <h3>Bonus conditions</h3>
+      <p class="modal-sub">Please read carefully — these rules decide whether you stay eligible for future offers.</p>
+      <ul class="terms-list">
+        <li><span class="ic">⚠️</span><div><b>Don't all-in your welcome bonus.</b> If you bet everything in one go, you won't be eligible for the next reload.</div></li>
+        <li><span class="ic">⚠️</span><div><b>Don't withdraw straight away.</b> If you cash out the bonus money immediately, you won't be eligible for the next reload.</div></li>
+        <li><span class="ic">✅</span><div>Play reasonably and you'll keep getting our offers.</div></li>
+      </ul>
+      <button type="button" class="modal-submit" id="terms-accept-btn">I accept — send my bonus</button>
+      <button type="button" class="modal-ghost" id="terms-back-btn" style="margin-top:10px;">Go back</button>
+    </div>
+
     <div id="modal-step-confirm" style="display:none;">
       <div class="confirm-icon">✓</div>
       <h3 id="confirm-title">Request sent</h3>
@@ -759,6 +786,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const overlay = document.getElementById('modal-overlay');
   const stepGate = document.getElementById('modal-step-gate');
   const stepForm = document.getElementById('modal-step-form');
+  const stepTerms = document.getElementById('modal-step-terms');
   const stepConfirm = document.getElementById('modal-step-confirm');
   const claimForm = document.getElementById('claim-form');
   let countdownInterval = null;
@@ -1019,10 +1047,48 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       return;
     }
 
-    const submitBtn = document.getElementById('claim-submit-btn');
-    const originalLabel = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending…';
+    stepForm.style.display = 'none';
+    stepTerms.style.display = 'block';
+    startTermsCountdown();
+  }
+
+  // Le bouton reste verrouillé quelques secondes : ça laisse le temps de lire
+  // les conditions au lieu de cliquer par réflexe.
+  const TERMS_DELAY_SECONDS = 4;
+  let termsCountdownInterval = null;
+
+  function startTermsCountdown(){
+    clearInterval(termsCountdownInterval);
+    const btn = document.getElementById('terms-accept-btn');
+    let remaining = TERMS_DELAY_SECONDS;
+    btn.disabled = true;
+    btn.classList.add('locked');
+    const render = () => {
+      if (remaining > 0){
+        btn.textContent = `Please read the rules… ${remaining}s`;
+        remaining--;
+      } else {
+        clearInterval(termsCountdownInterval);
+        btn.disabled = false;
+        btn.classList.remove('locked');
+        btn.textContent = 'I accept — send my bonus';
+      }
+    };
+    render();
+    termsCountdownInterval = setInterval(render, 1000);
+  }
+
+  // Après acceptation des conditions : envoi réel de la demande.
+  async function confirmAndSend(){
+    const platform = document.getElementById('modal-platform-name').textContent;
+    const email = document.getElementById('claim-email-input').value;
+    const pseudo = document.getElementById('claim-pseudo-input').value;
+    const discordId = document.getElementById('claim-discord-input').value;
+    const m = getActive().modal || {};
+
+    const acceptBtn = document.getElementById('terms-accept-btn');
+    acceptBtn.disabled = true;
+    acceptBtn.textContent = 'Sending…';
 
     let result = { ok: true };
     try{
@@ -1033,20 +1099,30 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       console.error('Notification failed:', err);
     }
 
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalLabel;
+    acceptBtn.disabled = false;
+    acceptBtn.textContent = 'I accept — send my bonus';
 
+    // Demande déjà faite récemment : on revient au formulaire avec l'explication
     if (result && result.ok === false && result.reason === 'duplicate_24h'){
+      stepTerms.style.display = 'none';
+      stepForm.style.display = 'block';
       const template = m.duplicateRequestMessage ||
         "You already submitted a request for this casino recently. Try again in about {hours}h.";
       showFormError(fillTemplate(template, { hours: result.hoursRemaining || '24' }));
       return;
     }
 
-    stepForm.style.display = 'none';
+    stepTerms.style.display = 'none';
     stepConfirm.style.display = 'block';
     startCountdown();
   }
+
+  document.getElementById('terms-accept-btn').addEventListener('click', confirmAndSend);
+  document.getElementById('terms-back-btn').addEventListener('click', () => {
+    clearInterval(termsCountdownInterval);
+    stepTerms.style.display = 'none';
+    stepForm.style.display = 'block';
+  });
 
   function startCountdown(){
     clearInterval(countdownInterval);
