@@ -481,8 +481,12 @@
         <span id="wager-d1-status" style="margin-left:12px; font-size:13px; color:rgba(244,236,216,.7);"></span>
       </div>
 
-      <div class="toolbar" style="margin-bottom:10px;">
+      <div class="toolbar" style="margin-bottom:10px; flex-wrap:wrap;">
         <button onclick="runWagerBackfill()" id="lb-backfill-btn" style="background:#2a2115; border:1px solid rgba(232,193,104,.35); color:#E8C168; padding:8px 14px; border-radius:10px; font-weight:700; cursor:pointer;">🛠️ Réparer les totaux misés (à faire une seule fois)</button>
+        <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-dim); font-weight:600; cursor:pointer;">
+          <input type="checkbox" id="lb-backfill-force">
+          Forcer (recalcule aussi les joueurs déjà connus depuis les logs actuels — corrige un total visiblement trop bas, mais peut légèrement sous-compter les gros joueurs si une partie de leur historique ancien a déjà été poussée hors des logs)
+        </label>
         <span id="lb-backfill-status" style="margin-left:12px; font-size:13px; color:rgba(244,236,216,.7);"></span>
       </div>
 
@@ -579,7 +583,11 @@
   async function runWagerBackfill(){
     const btn = document.getElementById('lb-backfill-btn');
     const status = document.getElementById('lb-backfill-status');
-    if (!confirm('Ça va initialiser le total misé "à vie" de chaque joueur à partir des parties actuellement connues. À ne faire qu\'une seule fois. Continuer ?')) return;
+    const force = document.getElementById('lb-backfill-force').checked;
+    const confirmMsg = force
+      ? 'Ça va RECALCULER le total misé "à vie" de TOUS les joueurs (y compris ceux déjà connus) à partir des logs de parties actuels. Utile si un total semble trop bas, mais peut légèrement sous-évaluer les très gros joueurs actifs si une partie de leur historique ancien a déjà disparu des logs (limités aux 1000 dernières parties par jeu). Continuer ?'
+      : 'Ça va initialiser le total misé "à vie" des joueurs qui n\'ont pas encore d\'entrée, à partir des parties actuellement connues. Continuer ?';
+    if (!confirm(confirmMsg)) return;
     btn.disabled = true;
     status.textContent = 'En cours…';
     status.style.color = 'rgba(244,236,216,.7)';
@@ -587,7 +595,7 @@
       const resp = await fetch(`${workerBaseUrl}/admin/backfill-wager-totals`, {
         method: 'POST',
         headers: { 'X-Dashboard-Key': dashboardKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ force: false }),
+        body: JSON.stringify({ force }),
       });
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const data = await resp.json();
