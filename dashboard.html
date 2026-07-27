@@ -330,6 +330,11 @@
     <div id="tab-bonus">
     <div class="stats" id="stats"></div>
 
+    <div class="toolbar" style="margin-bottom:2px;">
+      <button onclick="runSubmissionsMigration()" id="migrate-d1-btn" style="background:#2a2115; border:1px solid rgba(232,193,104,.35); color:#E8C168; padding:8px 14px; border-radius:10px; font-weight:700; cursor:pointer;">🛠️ Migrer les demandes vers D1 (à faire une seule fois)</button>
+      <span id="migrate-d1-status" style="margin-left:12px; font-size:13px; color:rgba(244,236,216,.7);"></span>
+    </div>
+
     <div class="toolbar" style="flex-wrap:wrap;">
       <select id="filter-casino" onchange="applyFilters()" class="filter-select" style="width:130px;">
         <option value="">Tous les casinos</option>
@@ -493,6 +498,35 @@
   let filtered = [];
   let currentPage = 1;
   let workerBaseUrl = '';
+
+  async function runSubmissionsMigration(){
+    const btn = document.getElementById('migrate-d1-btn');
+    const status = document.getElementById('migrate-d1-status');
+    if (!workerBaseUrl || !dashboardKey){
+      status.textContent = 'Renseigne d\'abord l\'URL du Worker et la clé dashboard (page de connexion).';
+      status.style.color = '#e08a8a';
+      return;
+    }
+    if (!confirm('Ça va copier toutes les demandes existantes vers le nouveau stockage D1 (plus fiable). À ne faire qu\'une seule fois. Continuer ?')) return;
+    btn.disabled = true;
+    status.textContent = 'En cours…';
+    status.style.color = 'rgba(244,236,216,.7)';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/admin/migrate-submissions-to-d1`, {
+        method: 'POST',
+        headers: { 'X-Dashboard-Key': dashboardKey, 'Content-Type': 'application/json' },
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status + ' — ' + await resp.text());
+      const data = await resp.json();
+      status.textContent = `Terminé ✅ — ${data.migrated} demande(s) migrée(s), ${data.totalInD1} au total dans le nouveau stockage (contre ${data.totalInOldKV} avant). Rafraîchis la page.`;
+      status.style.color = '#8fce8f';
+    }catch(e){
+      status.textContent = 'Erreur : ' + e.message;
+      status.style.color = '#e08a8a';
+    }finally{
+      btn.disabled = false;
+    }
+  }
 
   async function runWagerBackfill(){
     const btn = document.getElementById('lb-backfill-btn');
