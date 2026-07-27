@@ -759,7 +759,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         `}
         <div class="offer-btns">
           <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
-          <a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>
+          ${(bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].reached)
+            ? `<span class="offer-cta" style="opacity:.45; cursor:not-allowed; pointer-events:none;" title="You've already reached the submission limit for this offer.">Bonus limit reached</span>`
+            : `<a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>`}
         </div>
       `;
       grid.appendChild(card);
@@ -769,6 +771,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const offer = cfg.offers[parseInt(btn.dataset.claimIdx, 10)];
+        if (bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].reached){
+          showAlert("You've already reached the submission limit for this offer.");
+          return;
+        }
         openModal(offer.name, offer.code, offer.signupHref, offer.codeEnabled !== false, offer.depositRequired === true);
       });
     });
@@ -801,6 +807,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   let countdownInterval = null;
   let currentSignupUrl = '#';
   let currentDepositRequired = false;
+  // Statut des limites de soumission pour LE joueur actuellement identifié,
+  // par casino : { "Duel.com": {count, limit, reached}, ... }. Rechargé après
+  // connexion Discord puisque ça dépend de qui est connecté.
+  let bonusLimitStatus = {};
   let currentClaimCode = '';
 
   function fillTemplate(tpl, vars){
@@ -1262,12 +1272,32 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (event.data.session) nitrodropSaveSession(event.data.session);
     applyIdentity();
     applyDiscordIdentityToClaimForm();
+    loadBonusLimitStatus();
   });
+
+  // Recharge aussi le statut des limites de soumission quand l'identité change
+  // (connexion, ou retour de la redirection Discord).
+  async function loadBonusLimitStatus(){
+    const discordId = getSharedDiscordId();
+    if (!discordId || !workerBase) return;
+    try{
+      const resp = await fetch(`${workerBase}/bonus-limits/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      if (data && data.ok){
+        bonusLimitStatus = data.status || {};
+        renderOffers();
+      }
+    }catch(e){
+      // Pas bloquant : au pire les boutons restent cliquables et le worker
+      // refusera quand même la demande si la limite est réellement atteinte.
+    }
+  }
 
   applyModalTexts();
   renderOffers();
   applyIdentity();
   restoreClaimDraftIfAny();
+  loadBonusLimitStatus();
 
   // ---------------- Popup de drop (lien Discord ?drop=ID) ----------------
   (function initDrop(){

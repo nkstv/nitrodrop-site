@@ -224,6 +224,13 @@
     <div class="sub">Nom, bonus, description, code, lien d'inscription et textes des boutons pour chaque plateforme.</div>
     <div id="offers-fields"></div>
     <button type="button" class="btn btn-save" onclick="addOffer()" style="margin-top:6px;">+ Ajouter une offre</button>
+    <div class="note" style="margin-top:18px;">
+      <strong>Limites de soumission :</strong> réglage séparé de la config du site, stocké directement sur le Worker (nécessite l'URL et la clé renseignées dans la section "Coffre-fort"). L'effet est immédiat, pas besoin de publier sur GitHub.
+      <div style="margin-top:12px;">
+        <button type="button" class="btn btn-save" onclick="saveOfferSubmissionLimits()">Enregistrer les limites de soumission</button>
+        <span id="offer-limits-status" style="margin-left:10px; font-size:12.5px; color:var(--text-dim);"></span>
+      </div>
+    </div>
   </div>
 <div class="panel">
     <h2>Popup "Recevoir le bonus"</h2>
@@ -532,6 +539,7 @@
   })();
 
   let cfg = nitrodropLoadConfig();
+  let offerSubmissionLimits = {};
 
   // ---------- Migration vers la structure multilingue (une seule fois, transparente) ----------
   function migrateToI18n(cfg){
@@ -678,6 +686,17 @@
       chkDeposit.appendChild(chkDepositInput);
       chkDeposit.appendChild(el('label', {for:`offer-depositRequired-${i}`, text:'Dépôt requis pour recevoir ce bonus (ajoute une étape de confirmation "j\'ai fait mon dépôt" avant l\'envoi de la demande)'}));
       block.appendChild(chkDeposit);
+
+      const fLimit = el('div', {class:'field'});
+      fLimit.appendChild(el('label', {text:'Limite de soumissions par joueur pour cette offre (0 = illimité)'}));
+      const inLimit = el('input', {
+        type:'number', min:'0', step:'1', id:`offer-submissionLimit-${i}`,
+        value: String(offerSubmissionLimits[offer.name] || 0),
+      });
+      fLimit.appendChild(inLimit);
+      fLimit.appendChild(el('div', {class:'sub', style:'margin-top:4px; margin-bottom:0;',
+        text:'Réglage à part de la config du site : enregistré directement sur le Worker via le bouton dédié plus bas, effet immédiat sans republier.'}));
+      block.appendChild(fLimit);
 
       const row4 = el('div', {class:'row'});
       const f7 = el('div', {class:'field'}); f7.appendChild(el('label', {text:'Texte bouton "S\'inscrire"'}));
@@ -1147,6 +1166,51 @@ function nitrodropAuthFetch(url, options) {
     return { base, key };
   }
 
+  // ---------- Limites de soumission par offre (stockées côté Worker, pas dans
+  // la config statique du site : effet immédiat, pas besoin de republier) ----------
+  async function loadOfferSubmissionLimits(){
+    const base = getVaultWorkerBase();
+    if (!base) return; // pas encore renseigné à ce stade du chargement, pas grave
+    try{
+      const resp = await fetch(`${base}/bonus-limits`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      offerSubmissionLimits = data.limits || {};
+      renderOffersFields();
+    }catch(e){
+      console.warn('Limites de soumission non chargées :', e.message);
+    }
+  }
+
+  async function saveOfferSubmissionLimits(){
+    const auth = getDropAuth();
+    if (!auth) return;
+    const statusEl = document.getElementById('offer-limits-status');
+    const limits = {};
+    content.offers.forEach((offer, i) => {
+      const input = document.getElementById(`offer-submissionLimit-${i}`);
+      const n = input ? parseInt(input.value, 10) : 0;
+      if (Number.isFinite(n) && n > 0) limits[offer.name] = n;
+    });
+    statusEl.textContent = 'Enregistrement…';
+    statusEl.style.color = 'var(--text-dim)';
+    try{
+      const resp = await fetch(`${auth.base}/bonus-limits/set`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': auth.key },
+        body: JSON.stringify({ limits }),
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      offerSubmissionLimits = data.limits || limits;
+      statusEl.textContent = 'Limites enregistrées ✓ (effet immédiat sur le site)';
+      statusEl.style.color = 'var(--green)';
+    }catch(err){
+      statusEl.textContent = 'Erreur : ' + err.message;
+      statusEl.style.color = '#FF7A90';
+    }
+  }
+
   let lastDropLink = '';
 
   async function createDrop(){
@@ -1434,6 +1498,7 @@ function nitrodropAuthFetch(url, options) {
 
   fillForm();
   fillGithubFields();
+  loadOfferSubmissionLimits();
 </script>
 
 </body>
