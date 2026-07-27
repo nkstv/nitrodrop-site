@@ -367,6 +367,13 @@
       </select>
     </div>
 
+    <div id="bulk-toolbar" style="display:none; align-items:center; gap:10px; background:var(--bg-raise); border:1px solid var(--gold); border-radius:10px; padding:10px 14px; margin-bottom:10px;">
+      <span id="bulk-count" style="font-weight:700; color:var(--gold); font-size:13px;">0 sélectionnée(s)</span>
+      <button class="btn" style="padding:6px 12px; font-size:12px;" onclick="bulkArchive()">Archiver la sélection</button>
+      <button class="btn" style="padding:6px 12px; font-size:12px; color:#FF7A90; border-color:#FF7A90;" onclick="openBulkDeclineDialog(Array.from(selectedIds))">Refuser la sélection (motif commun)</button>
+      <button class="btn" style="padding:6px 12px; font-size:12px; color:#FF7A90; border-color:#FF7A90;" onclick="bulkDelete()">Supprimer la sélection</button>
+      <button class="btn" style="padding:6px 12px; font-size:12px; margin-left:auto;" onclick="clearSelection()">Vider la sélection</button>
+    </div>
     <div id="table-container"></div>
     <div class="pagination" id="pagination"></div>
     </div>
@@ -495,6 +502,10 @@
   // parmi les lignes actuellement affichées (la page en cours), pour repérer
   // vite les comptes dupliqués sans avoir à comparer ligne par ligne à l'oeil.
   let duplicateCheckActive = false;
+  // Sélection multiple pour les actions groupées (archiver/refuser/supprimer
+  // plusieurs demandes d'un coup). Persiste tant qu'on ne change pas de page
+  // manuellement via "Vider la sélection".
+  let selectedIds = new Set();
   let filtered = [];
   let currentPage = 1;
   let workerBaseUrl = '';
@@ -902,6 +913,89 @@
     return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:var(--green)22; color:var(--green); cursor:help;">$${entry.totalTipped.toFixed(2)} · ${entry.numberOfTips}</span>`;
   }
 
+  // ---------- Sélection multiple / actions groupées ----------
+  function toggleRowSelection(id, checked){
+    if (checked) selectedIds.add(id); else selectedIds.delete(id);
+    updateBulkToolbar();
+  }
+
+  function toggleSelectAllOnPage(checked){
+    document.querySelectorAll('.row-select-cb').forEach(cb => {
+      cb.checked = checked;
+      if (checked) selectedIds.add(cb.dataset.id); else selectedIds.delete(cb.dataset.id);
+    });
+    updateBulkToolbar();
+  }
+
+  function clearSelection(){
+    selectedIds.clear();
+    document.querySelectorAll('.row-select-cb').forEach(cb => { cb.checked = false; });
+    const selectAll = document.getElementById('select-all-cb');
+    if (selectAll) selectAll.checked = false;
+    updateBulkToolbar();
+  }
+
+  function updateBulkToolbar(){
+    const toolbar = document.getElementById('bulk-toolbar');
+    const countEl = document.getElementById('bulk-count');
+    if (!toolbar || !countEl) return;
+    const n = selectedIds.size;
+    toolbar.style.display = n > 0 ? 'flex' : 'none';
+    countEl.textContent = `${n} sélectionnée(s)`;
+    // Coche automatiquement "tout sélectionner" si toutes les lignes de la page le sont
+    const pageCbs = document.querySelectorAll('.row-select-cb');
+    const selectAll = document.getElementById('select-all-cb');
+    if (selectAll && pageCbs.length > 0){
+      selectAll.checked = Array.from(pageCbs).every(cb => selectedIds.has(cb.dataset.id));
+    }
+  }
+
+  async function bulkArchive(){
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!confirm(`Archiver ${ids.length} demande(s) sélectionnée(s) ?`)) return;
+    let ok = 0, fail = 0;
+    for (const id of ids){
+      try{
+        const resp = await fetch(`${workerBaseUrl}/submissions/archive`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+          body: JSON.stringify({ id, archived: true }),
+        });
+        if (!resp.ok) throw new Error();
+        const entry = allSubmissions.find(s => s.id === id);
+        if (entry) entry.archived = true;
+        ok++;
+      }catch(e){ fail++; }
+    }
+    showBanner(`✅ ${ok} demande(s) archivée(s)${fail ? `, ${fail} échec(s)` : ''}.`, fail > 0);
+    selectedIds.clear();
+    applyFilters();
+  }
+
+  async function bulkDelete(){
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!confirm(`Supprimer DÉFINITIVEMENT ${ids.length} demande(s) sélectionnée(s) ? Elles disparaîtront aussi des pages Profil des joueurs concernés. Cette action est irréversible.`)) return;
+    const succeededIds = new Set();
+    let fail = 0;
+    for (const id of ids){
+      try{
+        const resp = await fetch(`${workerBaseUrl}/submissions/delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+          body: JSON.stringify({ id }),
+        });
+        if (!resp.ok) throw new Error();
+        succeededIds.add(id);
+      }catch(e){ fail++; }
+    }
+    allSubmissions = allSubmissions.filter(s => !succeededIds.has(s.id));
+    showBanner(`✅ ${succeededIds.size} demande(s) supprimée(s)${fail ? `, ${fail} échec(s) (restées visibles, réessaie sur celles-là)` : ''}.`, fail > 0);
+    selectedIds.clear();
+    applyFilters();
+  }
+
   function toggleDuplicateCheck(){
     duplicateCheckActive = !duplicateCheckActive;
     const btn = document.getElementById('dup-check-btn');
@@ -1023,6 +1117,7 @@
     const container = document.getElementById('table-container');
     if (filtered.length === 0){
       container.innerHTML = '<div class="empty">Aucune demande trouvée.</div>';
+      updateBulkToolbar();
       return;
     }
     const start = (currentPage - 1) * PAGE_SIZE;
@@ -1053,6 +1148,7 @@
       const dDup = duplicateCheckActive && dKey && dupDiscord[dKey] > 1;
       return `
       <tr style="${s.archived ? 'opacity:0.45;' : ''}">
+        <td style="text-align:center;"><input type="checkbox" class="row-select-cb" data-id="${s.id}" ${selectedIds.has(s.id) ? 'checked' : ''} onchange="toggleRowSelection('${s.id}', this.checked)"></td>
         <td class="mono">${escapeHtml(formatLocalDate(s))}</td>
         <td><span class="badge">${escapeHtml(s.platform || '')}</span></td>
         <td${pDup ? ` style="${DUP_CELL_STYLE}"` : ''}>${renderPseudoCell(s)}</td>
@@ -1085,13 +1181,14 @@
       <table>
         <thead>
           <tr>
-            <th class="sortable" id="th-date" onclick="sortTableBy('date')">Date</th><th class="sortable" id="th-platform" onclick="sortTableBy('platform')">Casino</th><th class="sortable" id="th-pseudo" onclick="sortTableBy('pseudo')">Pseudo</th><th class="sortable" id="th-email" onclick="sortTableBy('email')">Email</th><th>IP</th><th class="sortable" id="th-discordId" onclick="sortTableBy('discordId')">Discord</th><th class="sortable" id="th-age" onclick="sortTableBy('age')">Âge</th><th>Appareil</th><th class="sortable" id="th-suspicion" onclick="sortTableBy('suspicion')">Suspicion</th><th class="sortable" id="th-tips" onclick="sortTableBy('tips')">TIPS</th><th class="sortable" id="th-earnings" onclick="sortTableBy('earnings')">Gains réels</th><th class="sortable" id="th-status" onclick="sortTableBy('status')">Statut</th><th>Archive</th><th>Alerte</th>
+            <th style="width:26px;"><input type="checkbox" id="select-all-cb" onchange="toggleSelectAllOnPage(this.checked)"></th><th class="sortable" id="th-date" onclick="sortTableBy('date')">Date</th><th class="sortable" id="th-platform" onclick="sortTableBy('platform')">Casino</th><th class="sortable" id="th-pseudo" onclick="sortTableBy('pseudo')">Pseudo</th><th class="sortable" id="th-email" onclick="sortTableBy('email')">Email</th><th>IP</th><th class="sortable" id="th-discordId" onclick="sortTableBy('discordId')">Discord</th><th class="sortable" id="th-age" onclick="sortTableBy('age')">Âge</th><th>Appareil</th><th class="sortable" id="th-suspicion" onclick="sortTableBy('suspicion')">Suspicion</th><th class="sortable" id="th-tips" onclick="sortTableBy('tips')">TIPS</th><th class="sortable" id="th-earnings" onclick="sortTableBy('earnings')">Gains réels</th><th class="sortable" id="th-status" onclick="sortTableBy('status')">Statut</th><th>Archive</th><th>Alerte</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
       </table>
       </div>
     `;
+    updateBulkToolbar();
   }
 
   function renderPagination(){
@@ -1170,16 +1267,28 @@
 
   // Refus : on demande le motif, puis le Worker envoie le DM correspondant
   // ---------- Modale de refus ----------
-  let declineTargetId = null;
+  let declineTargetIds = [];
   let declineSelected = null;
 
   function openDeclineDialog(id){
-    const entry = allSubmissions.find(s => s.id === id);
-    declineTargetId = id;
+    openDeclineDialogForIds([id]);
+  }
+
+  function openBulkDeclineDialog(ids){
+    openDeclineDialogForIds(ids);
+  }
+
+  function openDeclineDialogForIds(ids){
+    declineTargetIds = ids;
     declineSelected = null;
 
-    document.getElementById('dl-platform').textContent =
-      entry ? `${entry.platform} — ${entry.pseudo || '?'}` : 'Demande';
+    if (ids.length === 1){
+      const entry = allSubmissions.find(s => s.id === ids[0]);
+      document.getElementById('dl-platform').textContent =
+        entry ? `${entry.platform} — ${entry.pseudo || '?'}` : 'Demande';
+    } else {
+      document.getElementById('dl-platform').textContent = `${ids.length} demandes sélectionnées`;
+    }
 
     // Liste des motifs, régénérée à chaque ouverture pour repartir propre
     document.getElementById('dl-reasons').innerHTML = DECLINE_REASONS.map(r => `
@@ -1199,7 +1308,7 @@
   function closeDeclineDialog(){
     document.getElementById('declineOverlay').classList.remove('active');
     document.body.style.overflow = '';
-    declineTargetId = null;
+    declineTargetIds = [];
     declineSelected = null;
   }
 
@@ -1214,7 +1323,7 @@
   }
 
   async function submitDecline(){
-    if (!declineTargetId || !declineSelected) return;
+    if (declineTargetIds.length === 0 || !declineSelected) return;
     const note = document.getElementById('dl-note').value.trim();
     if (declineSelected === 'other' && !note){
       alert('Précise le motif pour « Other ».');
@@ -1222,38 +1331,48 @@
     }
     const btn = document.getElementById('dl-confirm');
     btn.disabled = true;
-    btn.textContent = 'Envoi…';
-    const id = declineTargetId;
-    try{
-      const resp = await fetch(`${workerBaseUrl}/submissions/decline`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
-        body: JSON.stringify({ id, reason: declineSelected, note }),
-      });
-      const data = await resp.json();
-      if (!data.ok){ alert('Échec du refus.'); btn.disabled = false; btn.textContent = 'Confirmer le refus'; return; }
+    const ids = declineTargetIds.slice();
+    const bulk = ids.length > 1;
+    btn.textContent = bulk ? `Envoi… (0/${ids.length})` : 'Envoi…';
 
-      const s = allSubmissions.find(x => x.id === id);
-      if (s){
-        s.status = 'declined'; s.tipped = false;
-        s.declineReason = declineSelected; s.declineNote = note;
+    let okCount = 0, failCount = 0, discordFailCount = 0;
+    for (let i = 0; i < ids.length; i++){
+      const id = ids[i];
+      try{
+        const resp = await fetch(`${workerBaseUrl}/submissions/decline`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+          body: JSON.stringify({ id, reason: declineSelected, note }),
+        });
+        const data = await resp.json();
+        if (!data.ok){ failCount++; continue; }
+        okCount++;
+        const s = allSubmissions.find(x => x.id === id);
+        if (s){
+          s.status = 'declined'; s.tipped = false;
+          s.declineReason = declineSelected; s.declineNote = note;
+        }
+        if (data.discord && data.discord.attempted && !data.discord.ok) discordFailCount++;
+      }catch(e){
+        failCount++;
       }
-      if (data.discord && data.discord.attempted && !data.discord.ok){
-        showBanner('⚠️ Refus enregistré, mais le DM Discord a échoué : ' + (data.discord.error || ''), true);
-      } else if (data.discord && data.discord.ok){
-        showBanner('✅ Refus enregistré et DM Discord envoyé.');
-      } else {
-        showBanner('ℹ️ Refus enregistré — aucun ID Discord, pas de DM envoyé.');
-      }
-      btn.textContent = 'Confirmer le refus';
-      closeDeclineDialog();
-      renderStats();
-      applyFilters();
-    }catch(e){
-      alert('Erreur réseau : ' + e.message);
-      btn.disabled = false;
-      btn.textContent = 'Confirmer le refus';
+      if (bulk) btn.textContent = `Envoi… (${i + 1}/${ids.length})`;
     }
+
+    if (bulk){
+      showBanner(`✅ ${okCount} demande(s) refusée(s)${failCount ? `, ${failCount} échec(s)` : ''}${discordFailCount ? `, ${discordFailCount} DM Discord non envoyé(s)` : ''}.`, failCount > 0);
+      selectedIds.clear();
+    } else if (okCount === 1){
+      showBanner(discordFailCount ? '⚠️ Refus enregistré, mais le DM Discord a échoué.' : '✅ Refus enregistré et DM Discord envoyé (si ID Discord fourni).');
+    } else {
+      showBanner('❌ Échec du refus.', true);
+    }
+
+    btn.textContent = 'Confirmer le refus';
+    closeDeclineDialog();
+    renderStats();
+    applyFilters();
+    updateBulkToolbar();
   }
 
   async function toggleTipped(id, tipped){
