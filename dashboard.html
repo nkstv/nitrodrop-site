@@ -598,6 +598,29 @@
     });
   }
 
+  // Signal séparé du badge "Appareil" existant : ici on ne regarde QUE les cas
+  // où le même appareil sert à soumettre plusieurs comptes sur le MÊME casino
+  // (ferme de comptes ciblant un casino précis) — plus grave qu'un simple
+  // partage d'appareil entre casinos différents.
+  function computeDeviceCasinoFlags(submissions){
+    submissions.forEach(s => {
+      if (!s.deviceId){
+        s._deviceCasinoMatch = null;
+        return;
+      }
+      const match = submissions.find(o =>
+        o.id !== s.id &&
+        o.deviceId && o.deviceId === s.deviceId &&
+        o.platform === s.platform &&
+        (
+          (o.pseudo || '').toLowerCase() !== (s.pseudo || '').toLowerCase() ||
+          (o.email || '').toLowerCase() !== (s.email || '').toLowerCase()
+        )
+      );
+      s._deviceCasinoMatch = match || null;
+    });
+  }
+
   function computeSuspicionScores(submissions){
     submissions.forEach(s => {
       s._reasons = [];
@@ -660,6 +683,7 @@
       allSubmissions = (data.submissions || []).slice().reverse(); // plus récent en premier
       computeSuspicionScores(allSubmissions);
       computeDeviceFlags(allSubmissions);
+      computeDeviceCasinoFlags(allSubmissions);
 
       const casinos = [...new Set(allSubmissions.map(s => s.platform))].sort();
       const sel = document.getElementById('filter-casino');
@@ -744,6 +768,17 @@
     return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:#FFC75922; color:#FFC759; cursor:help;">⚠ Même appareil</span>`;
   }
 
+  // Colonne "Alerte" : même appareil ET même casino que sur une autre demande
+  // — signal distinct du badge "Appareil" (qui lui repère un appareil partagé
+  // même entre casinos différents). Plus grave : ça sent la ferme de comptes
+  // ciblant CE casino précis.
+  function renderAlertBadge(s){
+    const match = s._deviceCasinoMatch;
+    if (!match) return `<span style="color:var(--text-faint); font-size:11.5px;">—</span>`;
+    const detail = `Même appareil ET même casino (${s.platform}) utilisé par : ${match.pseudo || '?'} (${match.email || '?'}), le ${match.date || '?'}`;
+    return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:#FF7A9022; color:#FF7A90; cursor:help;">🚨 Alerte</span>`;
+  }
+
   // Cherche si le pseudo d'une demande de bonus a des tips reçus dans l'export Duel.com importé.
   function renderTipsBadge(s){
     const entry = tipsLookup[String(s.pseudo || '').toLowerCase()];
@@ -782,6 +817,7 @@
             ${s.archived ? 'Désarchiver' : 'Archiver'}
           </button>
         </td>
+        <td>${renderAlertBadge(s)}</td>
       </tr>
     `).join('');
 
@@ -790,7 +826,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Âge</th><th>Appareil</th><th>Suspicion</th><th>TIPS</th><th>Gains réels</th><th>Statut</th><th>Archive</th>
+            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Âge</th><th>Appareil</th><th>Suspicion</th><th>TIPS</th><th>Gains réels</th><th>Statut</th><th>Archive</th><th>Alerte</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -1042,7 +1078,7 @@
 
   function escapeHtml(str){
     return String(str)
-      .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+      .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
   }
 
   // ---------- Onglet Ticket à gratter ----------
