@@ -586,6 +586,7 @@
       desc: '',
       code: '',
       codeEnabled: true,
+      depositRequired: true,
       signupHref: '',
       signupText: "S'inscrire",
       claimText: 'Recevoir le bonus',
@@ -670,6 +671,13 @@
       chkCode.appendChild(chkCodeInput);
       chkCode.appendChild(el('label', {for:`offer-codeEnabled-${i}`, text:'Afficher un code promo sur cette offre (décoche si inscription simple sans code)'}));
       block.appendChild(chkCode);
+
+      const chkDeposit = el('div', {class:'checkbox-row'});
+      const chkDepositInput = el('input', {type:'checkbox', id:`offer-depositRequired-${i}`});
+      chkDepositInput.checked = (offer.depositRequired === true);
+      chkDeposit.appendChild(chkDepositInput);
+      chkDeposit.appendChild(el('label', {for:`offer-depositRequired-${i}`, text:'Dépôt requis pour recevoir ce bonus (ajoute une étape de confirmation "j\'ai fait mon dépôt" avant l\'envoi de la demande)'}));
+      block.appendChild(chkDeposit);
 
       const row4 = el('div', {class:'row'});
       const f7 = el('div', {class:'field'}); f7.appendChild(el('label', {text:'Texte bouton "S\'inscrire"'}));
@@ -833,6 +841,7 @@
       desc: document.getElementById(`offer-desc-${i}`).value,
       code: document.getElementById(`offer-code-${i}`).value,
       codeEnabled: document.getElementById(`offer-codeEnabled-${i}`).checked,
+      depositRequired: document.getElementById(`offer-depositRequired-${i}`).checked,
       signupHref: document.getElementById(`offer-signupHref-${i}`).value,
       signupText: document.getElementById(`offer-signupText-${i}`).value,
       claimText: document.getElementById(`offer-claimText-${i}`).value,

@@ -598,6 +598,14 @@
       <button type="button" class="modal-ghost" id="terms-back-btn" style="margin-top:10px;">Go back</button>
     </div>
 
+    <div id="modal-step-deposit" style="display:none;">
+      <div class="modal-tag">One more thing</div>
+      <h3>Deposit required</h3>
+      <p class="modal-sub">You must make a deposit and wager (read the conditions) to receive your money.</p>
+      <button type="button" class="modal-submit" id="deposit-confirm-btn">Yes, I've made my deposit</button>
+      <button type="button" class="modal-ghost" id="deposit-back-btn" style="margin-top:10px;">Go back</button>
+    </div>
+
     <div id="modal-step-delivery" style="display:none;">
       <div class="delivery-anim">
         <div class="delivery-ring"></div>
@@ -809,7 +817,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const offer = cfg.offers[parseInt(btn.dataset.claimIdx, 10)];
-        openModal(offer.name, offer.code, offer.signupHref, offer.codeEnabled !== false);
+        openModal(offer.name, offer.code, offer.signupHref, offer.codeEnabled !== false, offer.depositRequired === true);
       });
     });
 
@@ -836,11 +844,13 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   const stepForm = document.getElementById('modal-step-form');
   const stepConfirm = document.getElementById('modal-step-confirm');
   const stepTerms = document.getElementById('modal-step-terms');
+  const stepDeposit = document.getElementById('modal-step-deposit');
   const stepDelivery = document.getElementById('modal-step-delivery');
   const claimForm = document.getElementById('claim-form');
   let countdownInterval = null;
   let currentSignupUrl = '#';
   let currentClaimCode = '';
+  let currentDepositRequired = false;
 
   function fillTemplate(tpl, vars){
     return tpl.replace(/\{(\w+)\}/g, (m, key) => (vars[key] !== undefined ? vars[key] : m));
@@ -949,6 +959,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         platform: document.getElementById('modal-platform-name').textContent || '',
         code: currentClaimCode,
         signupUrl: currentSignupUrl,
+        depositRequired: currentDepositRequired,
         email: document.getElementById('claim-email-input').value,
         pseudo: document.getElementById('claim-pseudo-input').value,
       }));
@@ -965,15 +976,16 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     try{ draft = JSON.parse(sessionStorage.getItem(CLAIM_DRAFT_KEY) || 'null'); }catch(e){}
     if (!draft || !draft.platform) return;
     try{ sessionStorage.removeItem(CLAIM_DRAFT_KEY); }catch(e){}
-    openModal(draft.platform, draft.code, draft.signupUrl, true);
+    openModal(draft.platform, draft.code, draft.signupUrl, true, draft.depositRequired === true);
     gateYes();
     document.getElementById('claim-email-input').value = draft.email || '';
     document.getElementById('claim-pseudo-input').value = draft.pseudo || '';
   }
 
-  function openModal(platform, code, signupUrl, codeEnabled){
+  function openModal(platform, code, signupUrl, codeEnabled, depositRequired){
     currentSignupUrl = signupUrl || '#';
     currentClaimCode = code || '';
+    currentDepositRequired = depositRequired === true;
     const m = getActive().modal || {};
 
     document.getElementById('gate-platform-name').textContent = platform;
@@ -992,6 +1004,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     stepGate.style.display = 'block';
     stepForm.style.display = 'none';
     stepTerms.style.display = 'none';
+    stepDeposit.style.display = 'none';
     stepDelivery.style.display = 'none';
     stepConfirm.style.display = 'none';
     claimForm.reset();
@@ -1131,7 +1144,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     termsCountdownInterval = setInterval(render, 1000);
   }
 
-  // Après acceptation : envoi réel, puis écran de livraison animé
+  // Après acceptation (et confirmation de dépôt si nécessaire) : envoi réel,
+  // puis écran de livraison animé.
   async function confirmAndSend(){
     const platform = document.getElementById('modal-platform-name').textContent;
     const email = document.getElementById('claim-email-input').value;
@@ -1139,7 +1153,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const discordId = document.getElementById('claim-discord-input').value;
     const m = getActive().modal || {};
 
-    const acceptBtn = document.getElementById('terms-accept-btn');
+    const acceptBtn = document.getElementById(currentDepositRequired ? 'deposit-confirm-btn' : 'terms-accept-btn');
+    const originalLabel = acceptBtn.textContent;
     acceptBtn.disabled = true;
     acceptBtn.textContent = 'Sending…';
 
@@ -1153,11 +1168,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     }
 
     acceptBtn.disabled = false;
-    acceptBtn.textContent = 'I accept — send my bonus';
+    acceptBtn.textContent = originalLabel;
 
     // Demande déjà faite récemment : on revient au formulaire avec l'explication
     if (result && result.ok === false && result.reason === 'duplicate_24h'){
       stepTerms.style.display = 'none';
+      stepDeposit.style.display = 'none';
       stepForm.style.display = 'block';
       const template = m.duplicateRequestMessage ||
         "You already submitted a request for this casino recently. Try again in about {hours}h.";
@@ -1166,6 +1182,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     }
 
     stepTerms.style.display = 'none';
+    stepDeposit.style.display = 'none';
     stepDelivery.style.display = 'block';
     runDeliveryAnimation();
   }
@@ -1217,11 +1234,24 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     }, 1000);
   }
 
-  document.getElementById('terms-accept-btn').addEventListener('click', confirmAndSend);
+  document.getElementById('terms-accept-btn').addEventListener('click', () => {
+    clearInterval(termsCountdownInterval);
+    if (currentDepositRequired){
+      stepTerms.style.display = 'none';
+      stepDeposit.style.display = 'block';
+    } else {
+      confirmAndSend();
+    }
+  });
   document.getElementById('terms-back-btn').addEventListener('click', () => {
     clearInterval(termsCountdownInterval);
     stepTerms.style.display = 'none';
     stepForm.style.display = 'block';
+  });
+  document.getElementById('deposit-confirm-btn').addEventListener('click', confirmAndSend);
+  document.getElementById('deposit-back-btn').addEventListener('click', () => {
+    stepDeposit.style.display = 'none';
+    stepTerms.style.display = 'block';
   });
 
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
