@@ -816,6 +816,9 @@
           <button class="btn" style="padding:5px 10px; font-size:11.5px; white-space:nowrap;" onclick="toggleArchived('${s.id}', ${!s.archived})">
             ${s.archived ? 'Désarchiver' : 'Archiver'}
           </button>
+          <button class="btn" style="padding:5px 10px; font-size:11.5px; white-space:nowrap; margin-top:4px; color:#FF7A90; border-color:#FF7A90;" onclick="deleteSubmission('${s.id}')">
+            Delete
+          </button>
         </td>
         <td>${renderAlertBadge(s)}</td>
       </tr>
@@ -1056,6 +1059,27 @@
       const entry = allSubmissions.find(s => s.id === id);
       if (entry) entry.archived = archived;
       applyFilters(); // ré-applique le filtre courant pour faire disparaître/réapparaître la ligne si besoin
+    }catch(err){
+      alert('Erreur : ' + err.message);
+    }
+  }
+
+  // Suppression DÉFINITIVE (contrairement à Archiver) : l'entrée disparaît
+  // aussi de la page Profil du joueur, puisque les deux lisent la même liste
+  // côté worker. Confirmation obligatoire vu que c'est irréversible.
+  async function deleteSubmission(id){
+    const entry = allSubmissions.find(s => s.id === id);
+    const label = entry ? `${entry.pseudo || '?'} / ${entry.platform || '?'}` : id;
+    if (!confirm(`Supprimer définitivement cette demande (${label}) ? Elle disparaîtra aussi de la page Profil du joueur. Cette action est irréversible.`)) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/submissions/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ id })
+      });
+      if (!resp.ok) throw new Error('Échec de la suppression');
+      allSubmissions = allSubmissions.filter(s => s.id !== id);
+      applyFilters();
     }catch(err){
       alert('Erreur : ' + err.message);
     }
