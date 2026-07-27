@@ -64,6 +64,9 @@
     text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.03em; color:var(--text-faint);
     padding:9px 10px; background:var(--bg-raise); border-bottom:1px solid var(--line-strong); white-space:nowrap;
   }
+  th.sortable{cursor:pointer; user-select:none; transition:.15s color;}
+  th.sortable:hover{color:var(--gold);}
+  th.sortable .sort-arrow{margin-left:4px; opacity:.7;}
   td{padding:8px 10px; font-size:12px; border-bottom:1px solid var(--line); vertical-align:middle;}
   /* Pseudo cliquable (profil casino) : discret, souligné au survol seulement */
   .pseudo-link{
@@ -707,6 +710,74 @@
     }
   }
 
+  // ---------- Tri par colonne ----------
+  let sortColumn = null;
+  let sortDirection = 'desc';
+  const SORTABLE_COLUMNS = ['date','platform','pseudo','email','discordId','age','suspicion','tips','earnings','status'];
+
+  function getSortValue(s, column){
+    switch(column){
+      case 'date': return s.dateMs || 0;
+      case 'platform': return (s.platform || '').toLowerCase();
+      case 'pseudo': return (s.pseudo || '').toLowerCase();
+      case 'email': return (s.email || '').toLowerCase();
+      case 'discordId': return s.discordId || '';
+      case 'age': {
+        const d = discordIdToDate(s.discordId);
+        return d ? d.getTime() : Number.POSITIVE_INFINITY; // pas de date connue -> classé après les plus vieux comptes
+      }
+      case 'suspicion': return s._suspicionScore || 0;
+      case 'tips': {
+        const e = tipsLookup[String(s.pseudo || '').toLowerCase()];
+        return e ? e.totalTipped : -1;
+      }
+      case 'earnings': {
+        const slug = slugifyCasino(s.platform || '');
+        const key = slug + '::' + String(s.pseudo || '').toLowerCase();
+        const e = affiliateLookup[key];
+        return e ? (e.totalEarned || 0) : -1;
+      }
+      case 'status': return s.status || (s.tipped ? 'sent' : 'pending');
+      default: return 0;
+    }
+  }
+
+  function sortTableBy(column){
+    if (!SORTABLE_COLUMNS.includes(column)) return;
+    if (sortColumn === column){
+      sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortColumn = column;
+      sortDirection = 'desc';
+    }
+    applyFilters();
+  }
+
+  function applySort(){
+    if (!sortColumn) return;
+    filtered.sort((a, b) => {
+      const va = getSortValue(a, sortColumn);
+      const vb = getSortValue(b, sortColumn);
+      let cmp;
+      if (typeof va === 'number' && typeof vb === 'number') cmp = va - vb;
+      else cmp = String(va).localeCompare(String(vb));
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }
+
+  // Met à jour la petite flèche ▲/▼ sur l'en-tête actuellement trié
+  function updateSortHeaders(){
+    SORTABLE_COLUMNS.forEach(col => {
+      const th = document.getElementById(`th-${col}`);
+      if (!th) return;
+      th.innerHTML = th.textContent.replace(/\s*[▲▼]$/, '');
+    });
+    if (sortColumn){
+      const th = document.getElementById(`th-${sortColumn}`);
+      if (th) th.innerHTML = `${th.textContent} <span class="sort-arrow">${sortDirection === 'asc' ? '▲' : '▼'}</span>`;
+    }
+  }
+
   function applyFilters(){
     const casino = document.getElementById('filter-casino').value;
     const search = document.getElementById('filter-search').value.toLowerCase();
@@ -740,10 +811,12 @@
       return true;
     });
 
+    applySort();
     currentPage = 1;
     renderStats();
     renderTable();
     renderPagination();
+    updateSortHeaders();
   }
 
   function renderStats(){
@@ -877,7 +950,7 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Casino</th><th>Pseudo</th><th>Email</th><th>IP</th><th>Discord</th><th>Âge</th><th>Appareil</th><th>Suspicion</th><th>TIPS</th><th>Gains réels</th><th>Statut</th><th>Archive</th><th>Alerte</th>
+            <th class="sortable" id="th-date" onclick="sortTableBy('date')">Date</th><th class="sortable" id="th-platform" onclick="sortTableBy('platform')">Casino</th><th class="sortable" id="th-pseudo" onclick="sortTableBy('pseudo')">Pseudo</th><th class="sortable" id="th-email" onclick="sortTableBy('email')">Email</th><th>IP</th><th class="sortable" id="th-discordId" onclick="sortTableBy('discordId')">Discord</th><th class="sortable" id="th-age" onclick="sortTableBy('age')">Âge</th><th>Appareil</th><th class="sortable" id="th-suspicion" onclick="sortTableBy('suspicion')">Suspicion</th><th class="sortable" id="th-tips" onclick="sortTableBy('tips')">TIPS</th><th class="sortable" id="th-earnings" onclick="sortTableBy('earnings')">Gains réels</th><th class="sortable" id="th-status" onclick="sortTableBy('status')">Statut</th><th>Archive</th><th>Alerte</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
