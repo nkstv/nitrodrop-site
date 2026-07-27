@@ -381,7 +381,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "subtitle": "A code has been shared on Discord. The first person to find it here wins the contents of the Vault.",
         "codePlaceholder": "Secret code",
         "submitText": "Open Vault",
-        "successMessage": "Congratulations, you win {amount}!",
+        "successMessage": "Congratulations, you win {amount}! Contact NEKOS on Discord to claim your reward at the casino of your choice.",
         "alreadyClaimedMessage": "The reward has already been claimed by someone else..",
         "wrongCodeMessage": "Incorrect code, the vault remains locked.",
         "notConfiguredMessage": "The reward has already been claimed by someone else.",
@@ -908,7 +908,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "navLabel": "🎡 Roue",
         "tag": "Roue de la fortune",
         "title": "Fais tourner la roue",
-        "subtitle": "Tente ta chance chaque jour. Libellé",
+        "subtitle": "Tente ta chance chaque jour.",
         "usernameLabel": "Pseudo*",
         "usernamePlaceholder": "votre Pseudo",
         "discordNote": "Connexion Discord requise pour participer.",
@@ -957,7 +957,7 @@ const NITRODROP_DEFAULT_CONFIG = {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   },
   "vault": {
-    "discordNewRoundMessage": "🔐 New Vault 🚨\n\nClaim **{amount} Keys**!  with Secret Code : ||{code}||\n\n👉 Here: https://drop-cash.com/vault \n\nGood luck 🍀 "
+    "discordNewRoundMessage": "🔐 New Lucky Vault 🚨 **{code}** — try your luck to win **${amount}**! \n\n--------\n\n👉 Here: https://drop-cash.com/vault "
   },
   "wheelGame": {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
