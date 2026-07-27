@@ -957,7 +957,7 @@ const NITRODROP_DEFAULT_CONFIG = {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   },
   "vault": {
-    "discordNewRoundMessage": "🔐 New Vault 🚨\n\nClaim **{amount} Keys**!  with Secret Code : ||{code}||\n\n--------\n\n👉 Here: https://drop-cash.com/vault \n\nGood luck 🍀 "
+    "discordNewRoundMessage": "🔐 New Vault 🚨\n\nClaim **{amount} Keys**!  with Secret Code : ||{code}||\n\n👉 Here: https://drop-cash.com/vault \n\nGood luck 🍀 "
   },
   "wheelGame": {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
