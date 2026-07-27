@@ -308,7 +308,10 @@
 <div id="app" style="display:none;">
   <div class="topbar">
     <h1>NITRO<span>DROP</span> — Historique des demandes</h1>
-    <button class="btn" onclick="refreshActiveTab()">Rafraîchir</button>
+    <div style="display:flex; gap:10px;">
+      <button class="btn" id="dup-check-btn" onclick="toggleDuplicateCheck()">🔁 Check doublons page</button>
+      <button class="btn" onclick="refreshActiveTab()">Rafraîchir</button>
+    </div>
   </div>
 
   <div class="wrap">
@@ -479,6 +482,10 @@
   const PAGE_SIZE = 20;
   let dashboardKey = '';
   let allSubmissions = [];
+  // "Check doublons page" : surligne pseudo/email/Discord identiques UNIQUEMENT
+  // parmi les lignes actuellement affichées (la page en cours), pour repérer
+  // vite les comptes dupliqués sans avoir à comparer ligne par ligne à l'oeil.
+  let duplicateCheckActive = false;
   let filtered = [];
   let currentPage = 1;
   let workerBaseUrl = '';
@@ -787,6 +794,23 @@
     return `<span title="${escapeHtml(detail)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:var(--green)22; color:var(--green); cursor:help;">$${entry.totalTipped.toFixed(2)} · ${entry.numberOfTips}</span>`;
   }
 
+  function toggleDuplicateCheck(){
+    duplicateCheckActive = !duplicateCheckActive;
+    const btn = document.getElementById('dup-check-btn');
+    if (duplicateCheckActive){
+      btn.style.background = '#FF7A90';
+      btn.style.color = '#2a0a0f';
+      btn.style.borderColor = '#FF7A90';
+      btn.textContent = '🔁 Doublons : actif (cliquer pour arrêter)';
+    } else {
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+      btn.textContent = '🔁 Check doublons page';
+    }
+    renderTable();
+  }
+
   function renderTable(){
     const container = document.getElementById('table-container');
     if (filtered.length === 0){
@@ -796,14 +820,37 @@
     const start = (currentPage - 1) * PAGE_SIZE;
     const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
-    const rows = pageItems.map(s => `
+    // Fréquence de chaque pseudo/email/Discord ID SUR CETTE PAGE UNIQUEMENT
+    // (pas sur l'ensemble des demandes) — c'est bien ce que l'admin veut
+    // repérer rapidement à l'oeil sur ce qu'il a sous les yeux.
+    const dupPseudo = {}, dupEmail = {}, dupDiscord = {};
+    if (duplicateCheckActive){
+      pageItems.forEach(s => {
+        const p = (s.pseudo || '').toLowerCase().trim();
+        const e = (s.email || '').toLowerCase().trim();
+        const d = (s.discordId || '').trim();
+        if (p) dupPseudo[p] = (dupPseudo[p] || 0) + 1;
+        if (e) dupEmail[e] = (dupEmail[e] || 0) + 1;
+        if (d) dupDiscord[d] = (dupDiscord[d] || 0) + 1;
+      });
+    }
+    const DUP_CELL_STYLE = 'background:rgba(255,122,144,.22); box-shadow:inset 0 0 0 1px #FF7A90;';
+
+    const rows = pageItems.map(s => {
+      const pKey = (s.pseudo || '').toLowerCase().trim();
+      const eKey = (s.email || '').toLowerCase().trim();
+      const dKey = (s.discordId || '').trim();
+      const pDup = duplicateCheckActive && pKey && dupPseudo[pKey] > 1;
+      const eDup = duplicateCheckActive && eKey && dupEmail[eKey] > 1;
+      const dDup = duplicateCheckActive && dKey && dupDiscord[dKey] > 1;
+      return `
       <tr style="${s.archived ? 'opacity:0.45;' : ''}">
         <td class="mono">${escapeHtml(formatLocalDate(s))}</td>
         <td><span class="badge">${escapeHtml(s.platform || '')}</span></td>
-        <td>${renderPseudoCell(s)}</td>
-        <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.email || '')}">${escapeHtml(s.email || '')}</span></td>
+        <td${pDup ? ` style="${DUP_CELL_STYLE}"` : ''}>${renderPseudoCell(s)}</td>
+        <td class="mono"${eDup ? ` style="${DUP_CELL_STYLE}"` : ''}><span class="cell-truncate" title="${escapeHtml(s.email || '')}">${escapeHtml(s.email || '')}</span></td>
         <td class="mono"><span class="cell-truncate" title="${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}">${escapeHtml(s.ip || '')} ${s.country ? '(' + escapeHtml(s.country) + ')' : ''}</span></td>
-        <td class="mono"><span class="cell-truncate" style="max-width:130px;" title="${escapeHtml(s.discordId || '—')}">${escapeHtml(s.discordId || '—')}</span></td>
+        <td class="mono"${dDup ? ` style="${DUP_CELL_STYLE}"` : ''}><span class="cell-truncate" style="max-width:130px;" title="${escapeHtml(s.discordId || '—')}">${escapeHtml(s.discordId || '—')}</span></td>
         <td>${renderDiscordAgeBadge(s)}</td>
         <td>${renderDeviceBadge(s)}</td>
         <td>${renderSuspicionBadge(s)}</td>
@@ -822,7 +869,8 @@
         </td>
         <td>${renderAlertBadge(s)}</td>
       </tr>
-    `).join('');
+    `;
+    }).join('');
 
     container.innerHTML = `
       <div id="table-scroll">
