@@ -575,6 +575,19 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     return `🔑 ${escapeHtml(String(p.wager))}`;
   }
 
+  // Version podium : le mini-jeu passe sur sa propre ligne en dessous du
+  // multiplicateur (les cartes du podium sont trop étroites pour tout mettre
+  // sur une seule ligne sans que ça déborde).
+  function formatPodiumValue(p){
+    if (leaderboardSort === 'multiplier'){
+      const game = p.bestMultiplierGame
+        ? `<div style="font-size:11.5px; color:var(--muted); font-weight:600; margin-top:2px;">${escapeHtml(p.bestMultiplierGame)}</div>`
+        : '';
+      return `${escapeHtml(String(p.bestMultiplier))}x${game}`;
+    }
+    return `🔑 ${escapeHtml(String(p.wager))}`;
+  }
+
   function renderPodium(top3){
     if (top3.length === 0){ lbPodium.innerHTML = ''; return; }
     // Ordre visuel : #2, #1, #3 (le #1 est centré et mis en avant via CSS order)
@@ -587,7 +600,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
           <div class="lb-podium-medal">${medalIcon(rank)}</div>
           <img class="lb-podium-avatar" src="${escapeHtml(avatarSrc)}" alt="" referrerpolicy="no-referrer">
           <div class="lb-podium-name">${escapeHtml(p.pseudo || '?')}</div>
-          <div class="lb-podium-wager"><span class="lbl">${label}</span>${formatEntryValue(p)}</div>
+          <div class="lb-podium-wager"><span class="lbl">${label}</span><div>${formatPodiumValue(p)}</div></div>
         </div>
       `;
     }).join('');
