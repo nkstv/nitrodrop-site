@@ -297,8 +297,8 @@
     <div class="sub">Le code secret et le montant ne sont <strong>jamais</strong> publiés sur GitHub (ils ne seraient plus secrets) — ils sont envoyés directement et uniquement à ton Worker Cloudflare, protégés par ta clé de dashboard.</div>
 
     <div class="row">
-      <div class="field"><label>URL de ton Worker (sans /notify à la fin)</label><input type="text" id="vault-worker-url" placeholder="https://nitrodrop-relay.tonpseudo.workers.dev"></div>
-      <div class="field"><label>Clé du dashboard (X-Dashboard-Key)</label><input type="password" id="vault-dashboard-key" placeholder="Ta clé DASHBOARD_KEY"></div>
+      <div class="field"><label>URL de ton Worker (sans /notify à la fin)</label><input type="text" id="vault-worker-url" placeholder="https://nitrodrop-relay.tonpseudo.workers.dev" onchange="loadOfferSubmissionLimits()"></div>
+      <div class="field"><label>Clé du dashboard (X-Dashboard-Key)</label><input type="password" id="vault-dashboard-key" placeholder="Ta clé DASHBOARD_KEY" onchange="loadOfferSubmissionLimits()"></div>
     </div>
 
     <button type="button" class="btn" onclick="loadVaultState()">Charger l'état actuel</button>
