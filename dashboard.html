@@ -313,6 +313,7 @@
     <h1>NITRO<span>DROP</span> — Historique des demandes</h1>
     <div style="display:flex; gap:10px;">
       <button class="btn" id="dup-check-btn" onclick="toggleDuplicateCheck()">🔁 Check doublons page</button>
+      <button class="btn" onclick="openDuplicateReport()">🔎 Doublons (tout l'historique)</button>
       <button class="btn" onclick="refreshActiveTab()">Rafraîchir</button>
     </div>
   </div>
@@ -882,6 +883,106 @@
       btn.textContent = '🔁 Check doublons page';
     }
     renderTable();
+  }
+
+  // ---------- Rapport global de doublons (tout l'historique, pas juste la page) ----------
+  // Regroupe par "cluster de comptes liés" : si A partage un pseudo avec B, et
+  // B partage un email avec C, alors A/B/C ressortent comme UN SEUL groupe
+  // (union-find), plutôt que 3 listes séparées pseudo/email/discord qui
+  // répéteraient les mêmes comptes sous des angles différents.
+  function findDuplicateClusters(submissions){
+    const n = submissions.length;
+    const parent = Array.from({ length: n }, (_, i) => i);
+    function find(x){ while (parent[x] !== x){ parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+    function union(a, b){ const ra = find(a), rb = find(b); if (ra !== rb) parent[ra] = rb; }
+
+    const pseudoIndex = {}, emailIndex = {}, discordIndex = {};
+    submissions.forEach((s, i) => {
+      const p = (s.pseudo || '').toLowerCase().trim();
+      const e = (s.email || '').toLowerCase().trim();
+      const d = (s.discordId || '').trim();
+      if (p){ if (pseudoIndex[p] !== undefined) union(i, pseudoIndex[p]); else pseudoIndex[p] = i; }
+      if (e){ if (emailIndex[e] !== undefined) union(i, emailIndex[e]); else emailIndex[e] = i; }
+      if (d){ if (discordIndex[d] !== undefined) union(i, discordIndex[d]); else discordIndex[d] = i; }
+    });
+
+    const groups = {};
+    submissions.forEach((s, i) => {
+      const root = find(i);
+      (groups[root] = groups[root] || []).push(s);
+    });
+
+    return Object.values(groups)
+      .filter(g => g.length > 1)
+      .sort((a, b) => b.length - a.length);
+  }
+
+  function openDuplicateReport(){
+    const clusters = findDuplicateClusters(allSubmissions);
+    const totalInvolved = clusters.reduce((sum, g) => sum + g.length, 0);
+    document.getElementById('dup-report-summary').textContent = clusters.length === 0
+      ? `Aucun groupe de comptes liés détecté sur les ${allSubmissions.length} demandes.`
+      : `${clusters.length} groupe(s) de comptes liés trouvé(s), impliquant ${totalInvolved} demande(s) sur ${allSubmissions.length} au total.`;
+
+    const body = document.getElementById('dup-report-body');
+    body.innerHTML = clusters.map((group, gi) => {
+      const uniquePseudos = [...new Set(group.map(s => (s.pseudo || '').toLowerCase().trim()).filter(Boolean))];
+      const uniqueEmails = [...new Set(group.map(s => (s.email || '').toLowerCase().trim()).filter(Boolean))];
+      const uniqueDiscords = [...new Set(group.map(s => (s.discordId || '').trim()).filter(Boolean))];
+      const linkParts = [];
+      if (uniquePseudos.length < group.length) linkParts.push('pseudo commun');
+      if (uniqueEmails.length < group.length) linkParts.push('email commun');
+      if (uniqueDiscords.length < group.length) linkParts.push('Discord commun');
+
+      const rows = group
+        .slice()
+        .sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0))
+        .map(s => `
+          <tr>
+            <td class="mono" style="font-size:11px;">${escapeHtml(formatLocalDate(s))}</td>
+            <td><span class="badge" style="font-size:10.5px;">${escapeHtml(s.platform || '')}</span></td>
+            <td>${escapeHtml(s.pseudo || '')}</td>
+            <td class="mono" style="font-size:11px;">${escapeHtml(s.email || '')}</td>
+            <td class="mono" style="font-size:11px;">${escapeHtml(s.discordId || '—')}</td>
+            <td style="font-size:11px;">${escapeHtml(s.status || (s.tipped ? 'sent' : 'pending'))}</td>
+            <td>
+              <button class="btn" style="padding:3px 8px; font-size:10.5px;" onclick="jumpToSearchFromReport('${escapeHtml((s.pseudo || s.email || s.discordId || '').replace(/'/g, "\\'"))}')">Filtrer</button>
+            </td>
+          </tr>
+        `).join('');
+
+      return `
+        <div style="border:1px solid var(--line-strong); border-radius:12px; padding:14px; margin-bottom:14px; background:var(--bg-raise);">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+            <div style="font-weight:700; font-size:13px; color:var(--gold);">Groupe #${gi + 1} — ${group.length} demandes liées</div>
+            <div style="font-size:11.5px; color:var(--text-dim);">${linkParts.length ? '🔗 ' + linkParts.join(' + ') : ''}</div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%; font-size:12px;">
+              <thead><tr>
+                <th style="padding:4px 6px;">Date</th><th style="padding:4px 6px;">Casino</th><th style="padding:4px 6px;">Pseudo</th>
+                <th style="padding:4px 6px;">Email</th><th style="padding:4px 6px;">Discord</th><th style="padding:4px 6px;">Statut</th><th style="padding:4px 6px;"></th>
+              </tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }).join('') || '<p style="color:var(--text-dim); font-size:13px;">Aucun groupe à afficher — bon signe !</p>';
+
+    document.getElementById('dupReportOverlay').classList.add('active');
+  }
+
+  function closeDuplicateReport(){
+    document.getElementById('dupReportOverlay').classList.remove('active');
+  }
+
+  // Depuis le rapport : ferme la modale et filtre directement le tableau
+  // principal sur ce pseudo/email/discordId pour aller voir le détail.
+  function jumpToSearchFromReport(value){
+    closeDuplicateReport();
+    document.getElementById('filter-search').value = value;
+    applyFilters();
   }
 
   function renderTable(){
@@ -2185,6 +2286,16 @@
       <button class="dl-confirm" id="dl-confirm" onclick="submitDecline()" disabled>Confirmer le refus</button>
       <button class="dl-cancel" onclick="closeDeclineDialog()">Annuler</button>
     </div>
+  </div>
+</div>
+
+<div class="dl-overlay" id="dupReportOverlay">
+  <div class="dl-modal" style="max-width:1100px; width:100%;">
+    <button class="dl-close" onclick="closeDuplicateReport()" aria-label="Fermer">×</button>
+    <div class="dl-tag">Anti-fraude</div>
+    <h3>Comptes liés — historique complet</h3>
+    <p class="dl-sub" id="dup-report-summary">—</p>
+    <div id="dup-report-body" style="max-height:65vh; overflow-y:auto; margin-top:18px;"></div>
   </div>
 </div>
 
