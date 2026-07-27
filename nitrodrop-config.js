@@ -908,7 +908,7 @@ const NITRODROP_DEFAULT_CONFIG = {
         "navLabel": "🎡 Roue",
         "tag": "Roue de la fortune",
         "title": "Fais tourner la roue",
-        "subtitle": "Tente ta chance chaque jour. Libellé",
+        "subtitle": "Tente ta chance chaque jour.",
         "usernameLabel": "Pseudo*",
         "usernamePlaceholder": "votre Pseudo",
         "discordNote": "Connexion Discord requise pour participer.",
@@ -957,7 +957,7 @@ const NITRODROP_DEFAULT_CONFIG = {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   },
   "vault": {
-    "discordNewRoundMessage": "🔐 New Vault 🚨 Try your luck to win **🔑{amount}**! \n\n||{code}||\n\n--------\n\n👉 Here: https://drop-cash.com/vault \n\nGood luck 🍀 "
+    "discordNewRoundMessage": "🔐 New Lucky Vault 🚨 **{code}** — try your luck to win **${amount}**! \n\n--------\n\n👉 Here: https://drop-cash.com/vault "
   },
   "wheelGame": {
     "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
@@ -1017,4 +1017,74 @@ function nitrodropSaveConfig(cfg) {
 
 function nitrodropResetConfig() {
   localStorage.removeItem(NITRODROP_STORAGE_KEY);
+}
+
+// ===================================================================
+// SESSION SIGNÉE — sécurité de l'identité des joueurs
+// -------------------------------------------------------------------
+// Le navigateur ne doit JAMAIS dire au worker « je suis tel discordId ».
+// Après la connexion Discord, on échange le token OAuth contre un jeton de
+// session signé par le worker (HMAC). Ce jeton est ensuite envoyé dans l'entête
+// Authorization: Bearer de chaque requête. Le worker en extrait le discordId de
+// façon fiable — impossible à falsifier sans le secret serveur.
+// ===================================================================
+const NITRODROP_SESSION_KEY = 'nitrodrop_session';
+
+function nitrodropSaveSession(token) {
+  if (!token) return;
+  try { localStorage.setItem(NITRODROP_SESSION_KEY, token); } catch (e) {}
+  try {
+    document.cookie = NITRODROP_SESSION_KEY + '=' + encodeURIComponent(token) +
+      '; max-age=2592000; path=/; SameSite=Lax';
+  } catch (e) {}
+}
+
+function nitrodropGetSession() {
+  try {
+    const t = localStorage.getItem(NITRODROP_SESSION_KEY);
+    if (t) return t;
+  } catch (e) {}
+  try {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + NITRODROP_SESSION_KEY + '=([^;]*)'));
+    if (m) {
+      const t = decodeURIComponent(m[1]);
+      try { localStorage.setItem(NITRODROP_SESSION_KEY, t); } catch (e) {}
+      return t;
+    }
+  } catch (e) {}
+  return '';
+}
+
+function nitrodropClearSession() {
+  try { localStorage.removeItem(NITRODROP_SESSION_KEY); } catch (e) {}
+  try { document.cookie = NITRODROP_SESSION_KEY + '=; max-age=0; path=/; SameSite=Lax'; } catch (e) {}
+}
+
+// Échange le token OAuth Discord contre un jeton de session signé par le worker.
+// Appelé une seule fois, juste après le login (dans discord-callback.html).
+async function nitrodropEstablishSession(workerBase, accessToken) {
+  if (!workerBase || !accessToken) throw new Error('missing_params');
+  const resp = await fetch(workerBase + '/auth/session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ accessToken }),
+  });
+  let data = {};
+  try { data = await resp.json(); } catch (e) {}
+  if (data && data.ok && data.session) {
+    nitrodropSaveSession(data.session);
+    return data;
+  }
+  throw new Error('session_failed:' + (data && data.reason ? data.reason : resp.status));
+}
+
+// fetch authentifié : ajoute automatiquement l'entête Bearer.
+// À utiliser pour TOUTE route qui agit sur le compte d'un joueur.
+// On n'envoie plus jamais le discordId : le worker le déduit du jeton.
+function nitrodropAuthFetch(url, options) {
+  options = options || {};
+  const headers = Object.assign({}, options.headers || {});
+  const session = nitrodropGetSession();
+  if (session) headers['Authorization'] = 'Bearer ' + session;
+  return fetch(url, Object.assign({}, options, { headers }));
 }
