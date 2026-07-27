@@ -33,12 +33,28 @@
   .row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
   .row.single{grid-template-columns:1fr;}
   label{display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-dim); font-weight:600; margin-bottom:6px;}
-  input[type=text], input[type=url], textarea{
+  input[type=text], input[type=url], input[type=number], input[type=password], textarea, select{
     width:100%; background:var(--bg-raise); border:1px solid var(--line-strong); border-radius:9px;
     padding:10px 12px; color:var(--text); font-size:13.5px; font-family:'Nunito Sans'; resize:vertical;
   }
-  input:focus, textarea:focus{outline:none; border-color:var(--green);}
+  input:focus, textarea:focus, select:focus{outline:none; border-color:var(--green);}
   textarea{min-height:64px; line-height:1.5;}
+  input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button{
+    -webkit-appearance:none; margin:0;
+  }
+  input[type=number]{-moz-appearance:textfield;}
+  input[type=checkbox]{width:auto; accent-color:var(--gold);}
+  select{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none; cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%239591B0' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 13px center; padding-right:34px;
+  }
+  select:hover{border-color:var(--gold);}
+
+  ::-webkit-scrollbar{width:10px; height:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:6px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--gold);}
   .field{margin-bottom:14px;}
   .subheading{font-size:12.5px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:0.05em; margin:18px 0 10px; padding-top:14px; border-top:1px solid var(--line);}
   .subheading:first-of-type{border-top:none; margin-top:0; padding-top:0;}
