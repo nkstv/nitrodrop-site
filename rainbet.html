@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Username Search</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #171a21;
+    --accent: #7c5cff;
+    --text: #e8e8ef;
+    --muted: #8a8fa3;
+    --border: #262a35;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  .search-wrap {
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+  }
+  input[type="text"]:focus {
+    border-color: var(--accent);
+  }
+  .count {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0 0;
+    width: 100%;
+    max-width: 480px;
+    max-height: 60vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+  }
+  li {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+  li:last-child { border-bottom: none; }
+  li mark {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 4px;
+    padding: 0 2px;
+  }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 24px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Username Search</h1>
+<div class="subtitle" id="subtitle"></div>
+
+<div class="search-wrap">
+  <input type="text" id="searchInput" placeholder="Type a username..." autocomplete="off">
+</div>
+
+<div class="count" id="count"></div>
+<ul id="results"></ul>
+
+<script>
+const users = ["dfgfdhd", "AbleZombie298", "Smalld1ckdav", "Carlcarlsson5", "karol0978", "ortega12333", "Jinxed00", "Degengamer0", "Emper0202", "Leonidas031", "Nish272001", "Gerike8", "Enzitoo7", "Ievablyat", "maythew2026", "Diesdas666", "BNB123", "w3rci420", "AgileSnow370", "NeatPen492", "Babylok13", "ejcjcidjcncjcj", "Grivan", "yakubadam", "FastHatch644", "BiggzTv", "momo66", "Erlin22", "farmerross18", "SoftFlame145", "BriefMoon727", "and77rew", "Hickey88", "CuteSky423", "Jason 2402", "Whitetiger", "Noslaine31", "madmaxbd", "Georgeessa777", "BriefRose473", "emersonAndres", "BrianAmador559", "Legoeighty", "OddIron982", "ClearBacon667", "PalePencil232", "Anujmma", "19shatton87", "Shubh9090", "TrueGlass293", "TrueGlass293", "MuteHeart40", "Algorithums", "Naaz121", "AlertInk691", "Itszach", "KingEd7788", "noahturner1", "MARIASKARE", "Antman2live", "presa666", "HarshLamb299", "cloud6647", "GiddyKing658", "WarmZebra220", "jeffery33", "FuzzyDoor91", "MATIAS1", "CheaterTeq", "Gendhai", "edu111", "Hamzek", "KUNG", "Basit6996", "Contender2828", "MintDream734", "Gavin5009", "Death_Wish", "Eliekanaan", "orel", "FlatSock19", "Namsot96", "Mollyywater", "Sasaki99", "UniqueMoon364", "Karlito144", "ururdudud72", "illestdragon", "ignaciorsimo", "23omar24", "Giovanni08", "Louklan", "@mahesh3677", "C282900", "BOREK3422222", "RyoThaGoat", "crw101010", "GeriG9209", "Bigtrav75", "Semah7 h", "Psykotyk", "sasase83", "Harshkk00", "jcantu361", "0x91073738", "deva", "Bmillig90", "Napo", "dienoob000", "DraQlah", "Trao74331", "BonkMaster", "Lapalula", "Legenden", "Prezesl3702", "Chardy19", "Jimmyjamz83", "pe21321", "Lavagrantbelle", "nickydel", "0xdc8e6445", "jsosnoski", "Kelvin9263", "Tchoupi943802", "Jens888du", "Glyde", "Raiyan1", "Ruthless506", "sharcky", "Neylia", "Rico323", "Bandit29", "BlackSkyZz42001", "Pony999", "Matteo", "Tanngo", "Berwin65", "Herxom", "schindler74", "Amanthakur75", "pattyf", "anish2848", "kanetaylor059", "unknownn69", "Allingk", "Adad123asd123", "Ou1204", "Helicopter123", "Xmax23", "Harshit Escobar", "Shivam3008", "Bro rayann", "smalldickdav", "Tayoro", "Mathieu974", "Adriatikkosu", "pnx98", "Keshav007", "Kristians7711", "matteo2504", "efef12", "Hello123", "Gigachad2", "Flo4143", "Othniel", "nicsko", "Ddren60", "Silvinhaporto", "Microbio26", "Supercoolguy", "adrotto2000", "Panzer97x", "Mate7685", "johnson45", "S3r", "Agnes6669", "errorxravann", "bennzari", "VINSIN", "0x5de836c9", "Nekosiscool", "virat00k1", "Kishore9857", "Magixam", "Tengher88", "jaymsn05", "Markaeren13", "PteroZachtyl", "aleksejsuchanov", "Quierounmillon", "Kamin30", "Stevec1717", "Baba0007", "Neil", "Pape Mouhamadou", "D33ZNUTTS", "Maryjaneb009", "lilohbeep", "Danho", "kaleooka1", "Jeto123456", "hardstylelover", "Gobeux", "6b8y", "Reverendtaco420", "Subaaaa", "gdela1", "sako2009", "Lamborghini", "Ak2393", "1603611479", "Saf2085", "Love8988", "Lazone", "KOOLDY3", "Gucgd34", "Painlessmax", "Bavasab", "Max93", "Pum93", "Pepewe", "Pradeep2423", "Simplo", "Abhishek10", "21BCA1198", "ikiala", "kny987", "Gaurav", "Frenzy 98", "Firoz123", "Janesz", "Amal12390", "Gustaveau", "0x32ab9eba", "abdmbaye", "RADOzaze2024", "S82JWL9771", "Dienoob69", "Bokit22", "Boubacar kande", "Nerozz", "Diallo le robot", "0152149232", "Matthieu33", "0rel23", "asdad", "Marloune22", "kendokoly3", "bhatiaharsh", "begeza25", "spartan", "BigBananaBill", "rghanei", "Sandrine225", "dodoledodz", "judemarley", "Cheikh35039", "axou128", "Arvin021kid", "Artigjonaj", "Lalit0004", "Diggg", "Jas3m63", "Prakheebehal", "Lobomal", "Tizoflo23", "zinzin", "simcard91", "Tems", "Angeaxel12", "maginzu369", "Malickdarr", "Rodneyredtue", "ll123123", "Luck4me", "rbriggs420", "PAULP05", "ATTIKO", "Princealadin", "zingzang", "Hljvgghnnlk", "Koffbdt", "ryliebonneau23", "mrspinxxx", "bruno12", "Pesoniglo44", "Kpegli12", "Alex8306", "YorktownCope98", "Yeomar01", "Dilyor", "Liltias", "slo2134", "tonyinacio95", "SirusLeo85", "Navy5555", "Moka09", "Shubhammodi", "Lamorenita", "Pbandchelleys", "Keelerautumn22", "manikpatil007", "Legendx", "rnvrsinghyadav", "Xmax234", "VoltePlayer", "dmich9321", "eva221778", "Sanja93Z", "JoneMichon", "Travis", "dannnn", "Kareemo", "Mommapunz", "Shadoswd", "Whit8886", "Pratham48048", "Legrandg", "emoscuk99", "Anderson88888", "RADU", "Jdiggity24", "Wailhad", "Ouattara Ismael", "SteveKurtis", "Nozes12", "Hassane1805", "luizandre19", "Semo83", "Sneakerladxl", "noemierob98", "gufyavo", "ccammaron", "Billcooper", "Butcherman1982", "nanitvn", "1ofAKind", "Phrankieee", "birambamba", "NNNadiAAA", "Nicodu61", "AxLuciano", "Stephane 27", "Mudassar3427", "Gdaddy3315", "Spaztaztic87", "ssar111", "Douglas018", "Babyboi2463", "SithLife", "Mc91", "Hermano12", "Hbandy", "Owan56", "LaBeuteu", "Virgilio1", "Andreuccio8792", "najib22", "Snarf23", "Bamba Hamed", "Rajjimini", "Lickmyanus", "Okholm", "ThiagoR", "Tommy127", "Lesliemag", "Dxvid", "jiffylube767", "DialloIbrahim26", "Dubz27", "Samuel6274", "Sukh", "Gabriel91x", "Nkk9772", "jguer245", "abipary", "kondziu8522", "timmy507", "Secret", "XSXereka", "Myriah66", "Antoinepl", "Andidratze", "LaVida", "Echojesse", "Muradmaala0", "nathan91250", "Abdel97", "SANJUARA 07", "Jean paul", "Marktannoury", "Julien8bota", "lunchpapa", "S333R", "myazek083", "Brandondoan2003", "Niquejdv", "vivalaweed78", "tomateunpase", "kayrus69", "POOKEee", "m1kewh1te83", "jasline", "Subhi", "kentod", "Qrw", "PolatG2022", "Galyud", "Bob123", "brunojakob", "BrassTaxMan", "nasrinq1334", "xEugen97", "android666", "Tylerx9", "Sanaa", "NUTPHA天", "Sabby", "alirezaq13342", "Cacazl39", "Mayank Thapa", "HellsMinion", "smashedpot", "Babs9", "Elie1986", "Douplez", "Enslugen86", "ennonas", "Malzy", "VINCENTAMANE02", "RafaleScarlet", "0xee01d828", "Sashkuash", "Steeve", "Almoubarak 123", "Bamba", "Nazmi", "Rosly", "Fadj228", "Kamso", "parastuteja45", "Kabir", "Walter1", "Azlan123", "angelucu123", "Cedriccc29", "Bewolfe09", "Dypso47", "realgambler", "Drtybrdy12e", "Allanr69", "djennings00", "Abhi192003", "DSNRVREYOZE", "Junayedjim", "Jnevels1", "kendistar", "masoom0611", "Deekayx1978", "Brayden535", "Yako"];
+
+const input = document.getElementById('searchInput');
+const resultsEl = document.getElementById('results');
+const countEl = document.getElementById('count');
+const subtitleEl = document.getElementById('subtitle');
+
+subtitleEl.textContent = users.length + " usernames total";
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function highlight(name, query) {
+  if (!query) return escapeHtml(name);
+  const idx = name.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return escapeHtml(name);
+  const before = escapeHtml(name.slice(0, idx));
+  const match = escapeHtml(name.slice(idx, idx + query.length));
+  const after = escapeHtml(name.slice(idx + query.length));
+  return `${before}<mark>${match}</mark>${after}`;
+}
+
+function render(query) {
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? users.filter(u => u.toLowerCase().includes(q))
+    : users;
+
+  countEl.textContent = filtered.length + " result" + (filtered.length !== 1 ? "s" : "");
+
+  if (filtered.length === 0) {
+    resultsEl.innerHTML = '<div class="empty">No username found</div>';
+    return;
+  }
+
+  resultsEl.innerHTML = filtered
+    .map(u => `<li>${highlight(u, query)}</li>`)
+    .join('');
+}
+
+input.addEventListener('input', () => render(input.value));
+render('');
+</script>
+
+</body>
+</html>
