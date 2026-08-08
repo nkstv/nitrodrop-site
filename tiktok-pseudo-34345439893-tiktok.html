@@ -219,7 +219,7 @@
   .history{
     width: 100%;
     max-width: 420px;
-    margin: 18px auto 0;
+    margin: 40px auto 0;
     position: relative;
   }
 
@@ -255,6 +255,9 @@
     flex-direction: column;
     gap: 8px;
   }
+  .history-list li{
+    margin: 0; padding: 0;
+  }
 
   .history-item{
     display:flex;
@@ -267,6 +270,13 @@
     padding: 10px 14px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12.5px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color .12s ease, transform .12s ease;
+  }
+  .history-item:hover{
+    border-color: var(--accent);
+    transform: translateX(2px);
   }
 
   .history-item .who{
@@ -333,7 +343,7 @@
 
   <div class="history">
     <div class="history-head">
-      <span>Historique</span>
+      <span>Historique des recherches</span>
       <button type="button" id="clear-history">Effacer</button>
     </div>
     <ul class="history-list" id="history-list"></ul>
@@ -376,8 +386,13 @@
 
     items.slice().reverse().forEach(function(item){
       const li = document.createElement('li');
-      li.className = 'history-item';
-      li.innerHTML = '<span class="who">@' + item.pseudo + '</span><span class="when">' + formatTime(item.time) + '</span>';
+      const link = document.createElement('a');
+      link.className = 'history-item';
+      link.href = 'https://www.tiktok.com/@' + encodeURIComponent(item.pseudo);
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.innerHTML = '<span class="who">@' + item.pseudo + '</span><span class="when">' + formatTime(item.time) + '</span>';
+      li.appendChild(link);
       historyList.appendChild(li);
     });
   }
