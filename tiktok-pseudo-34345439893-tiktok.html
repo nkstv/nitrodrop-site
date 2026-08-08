@@ -288,6 +288,38 @@
     font-size: 11px;
   }
 
+  .history-item .right{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+
+  .copy-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width: 22px;
+    height: 22px;
+    border: none;
+    background: transparent;
+    color: #8a9791;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 0;
+    transition: color .12s ease, background .12s ease;
+  }
+  .copy-btn:hover{
+    color: var(--accent-dark);
+    background: #fff1ec;
+  }
+  .copy-btn svg{
+    width: 14px;
+    height: 14px;
+  }
+  .copy-btn.copied{
+    color: var(--good);
+  }
+
   .history-empty{
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
@@ -385,13 +417,49 @@
     historyList.classList.remove('hidden');
 
     items.slice().reverse().forEach(function(item){
+      const url = 'https://www.tiktok.com/@' + encodeURIComponent(item.pseudo);
+
       const li = document.createElement('li');
       const link = document.createElement('a');
       link.className = 'history-item';
-      link.href = 'https://www.tiktok.com/@' + encodeURIComponent(item.pseudo);
+      link.href = url;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
-      link.innerHTML = '<span class="who">@' + item.pseudo + '</span><span class="when">' + formatTime(item.time) + '</span>';
+
+      const who = document.createElement('span');
+      who.className = 'who';
+      who.textContent = '@' + item.pseudo;
+
+      const right = document.createElement('span');
+      right.className = 'right';
+
+      const when = document.createElement('span');
+      when.className = 'when';
+      when.textContent = formatTime(item.time);
+
+      const copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.className = 'copy-btn';
+      copyBtn.title = 'Copier le lien';
+      copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+
+      copyBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        navigator.clipboard.writeText(url).then(function(){
+          copyBtn.classList.add('copied');
+          copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>';
+          setTimeout(function(){
+            copyBtn.classList.remove('copied');
+            copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+          }, 1400);
+        });
+      });
+
+      right.appendChild(when);
+      right.appendChild(copyBtn);
+      link.appendChild(who);
+      link.appendChild(right);
       li.appendChild(link);
       historyList.appendChild(li);
     });
