@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrez votre pseudo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink: #0f1a17;
+    --paper: #eef3ef;
+    --line: #cfd9d2;
+    --accent: #ff5a36;
+    --accent-dark: #c73f22;
+    --good: #1f8a5f;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0; height:100%;
+    background: var(--paper);
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--ink);
+  }
+
+  .stage{
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* dotted route background, evokes tracking/delivery */
+  .stage::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image: radial-gradient(var(--line) 1.4px, transparent 1.4px);
+    background-size: 26px 26px;
+    opacity: .6;
+    pointer-events:none;
+  }
+
+  .card{
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 18px;
+    padding: 36px 32px 32px;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    background: #fff1ec;
+    border: 1px solid var(--accent);
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+
+  .tag .dot{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--accent);
+  }
+
+  h1{
+    margin: 0 0 8px;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  p.sub{
+    margin: 0 0 26px;
+    font-size: 14.5px;
+    color: #4c5a54;
+    line-height: 1.5;
+  }
+
+  label{
+    display:block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #4c5a54;
+    margin-bottom: 8px;
+  }
+
+  .input-wrap{
+    display:flex;
+    align-items:center;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 4px 4px 4px 14px;
+    background: var(--paper);
+    margin-bottom: 22px;
+    transition: box-shadow .15s ease;
+  }
+  .input-wrap:focus-within{
+    box-shadow: 0 0 0 3px rgba(255,90,54,.25);
+    border-color: var(--accent);
+  }
+
+  .input-wrap span{
+    font-family: 'JetBrains Mono', monospace;
+    color: #8a9791;
+    font-size: 15px;
+  }
+
+  input#pseudo{
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    padding: 12px 10px;
+    color: var(--ink);
+  }
+  input#pseudo::placeholder{ color: #a6b1ab; }
+
+  button#go{
+    width: 100%;
+    border: none;
+    background: var(--ink);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+    transition: transform .12s ease, background .15s ease;
+  }
+  button#go:hover{ background: var(--accent-dark); }
+  button#go:active{ transform: translateY(2px); }
+  button#go:disabled{
+    background: #c6ccc8;
+    cursor: not-allowed;
+  }
+
+  .error{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent-dark);
+    margin: -14px 0 16px;
+    min-height: 14px;
+  }
+
+  /* ---- confirmation view ---- */
+  .card.confirm{
+    text-align:center;
+    padding-top: 40px;
+  }
+
+  .stamp{
+    width: 64px; height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #e8f6ee;
+    border: 2px solid var(--good);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .stamp svg{ width: 30px; height: 30px; }
+
+  .confirm h1{ font-size: 22px; }
+
+  .confirm .pseudo-echo{
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
+
+  .progress{
+    margin: 28px 0 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .progress-bar{
+    height: 100%;
+    width: 0%;
+    background: var(--good);
+    border-radius: 999px;
+    animation: fill 1.8s ease forwards;
+  }
+  @keyframes fill{ to{ width: 100%; } }
+
+  .progress-label{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #4c5a54;
+    letter-spacing: .06em;
+  }
+
+  .hidden{ display:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .progress-bar{ animation: none; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Vue 1 : saisie du pseudo -->
+  <div class="card" id="view-form">
+    <div class="tag"><span class="dot"></span>Nouvelle demande</div>
+    <h1>Choisissez votre pseudo</h1>
+    <p class="sub">Il servira à identifier votre commande jusqu'à la livraison.</p>
+
+    <form id="pseudo-form">
+      <label for="pseudo">Pseudo</label>
+      <div class="input-wrap">
+        <span>@</span>
+        <input type="text" id="pseudo" name="pseudo" placeholder="ex. renard_du_soir" maxlength="24" autocomplete="off">
+      </div>
+      <div class="error" id="error-msg"></div>
+
+      <button type="submit" id="go">Valider mon pseudo →</button>
+    </form>
+  </div>
+
+  <!-- Vue 2 : confirmation -->
+  <div class="card confirm hidden" id="view-confirm">
+    <div class="stamp">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 12.5L9.5 18L20 6" stroke="#1f8a5f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1>Votre demande est prise en compte</h1>
+    <p class="sub">
+      Merci <span class="pseudo-echo" id="pseudo-echo"></span> !
+      Livraison dans un instant.
+    </p>
+    <div class="progress"><div class="progress-bar"></div></div>
+    <div class="progress-label" id="progress-label">Préparation en cours…</div>
+  </div>
+
+</div>
+
+<script>
+  const form = document.getElementById('pseudo-form');
+  const input = document.getElementById('pseudo');
+  const errorMsg = document.getElementById('error-msg');
+  const viewForm = document.getElementById('view-form');
+  const viewConfirm = document.getElementById('view-confirm');
+  const pseudoEcho = document.getElementById('pseudo-echo');
+  const progressLabel = document.getElementById('progress-label');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const value = input.value.trim();
+
+    if(value.length < 2){
+      errorMsg.textContent = 'Entrez au moins 2 caractères.';
+      input.focus();
+      return;
+    }
+
+    errorMsg.textContent = '';
+    pseudoEcho.textContent = '@' + value;
+
+    viewForm.classList.add('hidden');
+    viewConfirm.classList.remove('hidden');
+
+    setTimeout(function(){
+      progressLabel.textContent = 'Livré ✓';
+    }, 1900);
+  });
+</script>
+
+</body>
+</html>
