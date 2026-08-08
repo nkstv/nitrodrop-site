@@ -379,10 +379,10 @@
     });
   }
 
-  async function loadHistory(){
+  function loadHistory(){
     try{
-      const result = await window.storage.get(HISTORY_KEY, false);
-      const items = result ? JSON.parse(result.value) : [];
+      const raw = localStorage.getItem(HISTORY_KEY);
+      const items = raw ? JSON.parse(raw) : [];
       renderHistory(items);
       return items;
     }catch(err){
@@ -391,18 +391,17 @@
     }
   }
 
-  async function saveHistory(items){
+  function saveHistory(items){
     try{
-      await window.storage.set(HISTORY_KEY, JSON.stringify(items), false);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
     }catch(err){
       console.error('Erreur de sauvegarde de l\'historique', err);
     }
   }
 
-  let currentHistory = [];
-  loadHistory().then(function(items){ currentHistory = items; });
+  let currentHistory = loadHistory();
 
-  form.addEventListener('submit', async function(e){
+  form.addEventListener('submit', function(e){
     e.preventDefault();
     const value = input.value.trim();
 
@@ -424,13 +423,13 @@
 
     currentHistory.push({ pseudo: value, time: new Date().toISOString() });
     renderHistory(currentHistory);
-    await saveHistory(currentHistory);
+    saveHistory(currentHistory);
   });
 
-  clearBtn.addEventListener('click', async function(){
+  clearBtn.addEventListener('click', function(){
     currentHistory = [];
     renderHistory(currentHistory);
-    await saveHistory(currentHistory);
+    saveHistory(currentHistory);
   });
 </script>
 
