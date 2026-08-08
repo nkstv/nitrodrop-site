@@ -355,6 +355,9 @@
   const clearBtn = document.getElementById('clear-history');
 
   const HISTORY_KEY = 'pseudo-search-history';
+  const BIN_ID = '6a771da5da38895dfec9b484';
+  const API_KEY = '$2a$10$iJh5Cq6FnDbQ/wVHiZqZEu9rjGWmFAAK08CNMIxIN3gpvtJoyfH5a';
+  const BIN_URL = 'https://api.jsonbin.io/v3/b/' + BIN_ID;
 
   function formatTime(iso){
     const d = new Date(iso);
@@ -380,28 +383,39 @@
   }
 
   function loadHistory(){
-    try{
-      const raw = localStorage.getItem(HISTORY_KEY);
-      const items = raw ? JSON.parse(raw) : [];
-      renderHistory(items);
-      return items;
-    }catch(err){
-      renderHistory([]);
-      return [];
-    }
+    return fetch(BIN_URL + '/latest', {
+      headers: { 'X-Master-Key': API_KEY }
+    })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        const items = (data.record && data.record.history) ? data.record.history : [];
+        renderHistory(items);
+        return items;
+      })
+      .catch(function(err){
+        console.error('Erreur de chargement de l\'historique', err);
+        renderHistory([]);
+        return [];
+      });
   }
 
   function saveHistory(items){
-    try{
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
-    }catch(err){
+    return fetch(BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': API_KEY
+      },
+      body: JSON.stringify({ history: items })
+    }).catch(function(err){
       console.error('Erreur de sauvegarde de l\'historique', err);
-    }
+    });
   }
 
-  let currentHistory = loadHistory();
+  let currentHistory = [];
+  loadHistory().then(function(items){ currentHistory = items; });
 
-  form.addEventListener('submit', function(e){
+  form.addEventListener('submit', async function(e){
     e.preventDefault();
     const value = input.value.trim();
 
@@ -421,15 +435,16 @@
       progressLabel.textContent = 'Livré ✓';
     }, 1900);
 
+    currentHistory = await loadHistory();
     currentHistory.push({ pseudo: value, time: new Date().toISOString() });
     renderHistory(currentHistory);
-    saveHistory(currentHistory);
+    await saveHistory(currentHistory);
   });
 
-  clearBtn.addEventListener('click', function(){
+  clearBtn.addEventListener('click', async function(){
     currentHistory = [];
     renderHistory(currentHistory);
-    saveHistory(currentHistory);
+    await saveHistory(currentHistory);
   });
 </script>
 
