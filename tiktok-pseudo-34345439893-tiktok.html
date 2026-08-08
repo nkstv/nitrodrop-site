@@ -28,6 +28,7 @@
   .stage{
     min-height: 100vh;
     display:flex;
+    flex-direction: column;
     align-items:center;
     justify-content:center;
     padding: 24px;
@@ -215,6 +216,78 @@
 
   .hidden{ display:none; }
 
+  .history{
+    width: 100%;
+    max-width: 420px;
+    margin: 18px auto 0;
+    position: relative;
+  }
+
+  .history-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #4c5a54;
+    margin-bottom: 10px;
+    padding: 0 4px;
+  }
+
+  .history-head button{
+    background: none;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-decoration: underline;
+    color: #4c5a54;
+    cursor: pointer;
+    padding: 0;
+  }
+  .history-head button:hover{ color: var(--accent-dark); }
+
+  .history-list{
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .history-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    background:#fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+  }
+
+  .history-item .who{
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
+  .history-item .when{
+    color: #8a9791;
+    font-size: 11px;
+  }
+
+  .history-empty{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #8a9791;
+    text-align: center;
+    padding: 14px 0;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+  }
+
   @media (prefers-reduced-motion: reduce){
     .progress-bar{ animation: none; width: 100%; }
   }
@@ -258,6 +331,15 @@
     <div class="progress-label" id="progress-label">Préparation en cours…</div>
   </div>
 
+  <div class="history">
+    <div class="history-head">
+      <span>Historique des recherches</span>
+      <button type="button" id="clear-history">Effacer</button>
+    </div>
+    <ul class="history-list" id="history-list"></ul>
+    <div class="history-empty hidden" id="history-empty">Aucune recherche pour le moment.</div>
+  </div>
+
 </div>
 
 <script>
@@ -268,8 +350,59 @@
   const viewConfirm = document.getElementById('view-confirm');
   const pseudoEcho = document.getElementById('pseudo-echo');
   const progressLabel = document.getElementById('progress-label');
+  const historyList = document.getElementById('history-list');
+  const historyEmpty = document.getElementById('history-empty');
+  const clearBtn = document.getElementById('clear-history');
 
-  form.addEventListener('submit', function(e){
+  const HISTORY_KEY = 'pseudo-search-history';
+
+  function formatTime(iso){
+    const d = new Date(iso);
+    return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function renderHistory(items){
+    historyList.innerHTML = '';
+    if(!items || items.length === 0){
+      historyEmpty.classList.remove('hidden');
+      historyList.classList.add('hidden');
+      return;
+    }
+    historyEmpty.classList.add('hidden');
+    historyList.classList.remove('hidden');
+
+    items.slice().reverse().forEach(function(item){
+      const li = document.createElement('li');
+      li.className = 'history-item';
+      li.innerHTML = '<span class="who">@' + item.pseudo + '</span><span class="when">' + formatTime(item.time) + '</span>';
+      historyList.appendChild(li);
+    });
+  }
+
+  async function loadHistory(){
+    try{
+      const result = await window.storage.get(HISTORY_KEY, false);
+      const items = result ? JSON.parse(result.value) : [];
+      renderHistory(items);
+      return items;
+    }catch(err){
+      renderHistory([]);
+      return [];
+    }
+  }
+
+  async function saveHistory(items){
+    try{
+      await window.storage.set(HISTORY_KEY, JSON.stringify(items), false);
+    }catch(err){
+      console.error('Erreur de sauvegarde de l\'historique', err);
+    }
+  }
+
+  let currentHistory = [];
+  loadHistory().then(function(items){ currentHistory = items; });
+
+  form.addEventListener('submit', async function(e){
     e.preventDefault();
     const value = input.value.trim();
 
@@ -288,6 +421,16 @@
     setTimeout(function(){
       progressLabel.textContent = 'Livré ✓';
     }, 1900);
+
+    currentHistory.push({ pseudo: value, time: new Date().toISOString() });
+    renderHistory(currentHistory);
+    await saveHistory(currentHistory);
+  });
+
+  clearBtn.addEventListener('click', async function(){
+    currentHistory = [];
+    renderHistory(currentHistory);
+    await saveHistory(currentHistory);
   });
 </script>
 
