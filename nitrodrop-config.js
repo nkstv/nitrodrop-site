@@ -253,8 +253,8 @@ const NITRODROP_DEFAULT_CONFIG = {
           "depositRequired": false
         },
         {
-          "featured": false,
-          "badge": "",
+          "featured": true,
+          "badge": "TOP",
           "mark": "W",
           "markColorStart": "#198dc8",
           "markColorEnd": "#57c5db",
