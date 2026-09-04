@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NITRODROP — Panel admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -437,18 +438,8 @@
       <p>Langue de la configuration</p>
     </div>
 <div class="panel" style="border-color:rgba(139,92,255,0.4);">
-    <h2>Langues</h2>
-    <div class="sub">Modifie les textes séparément pour chaque langue. Bascule l'onglet ci-dessous pour éditer l'anglais ou le français — ils sont indépendants (rien n'est traduit automatiquement).</div>
-    <div style="display:flex; gap:10px; margin-bottom:14px;">
-      <button type="button" class="lang-tab active" data-lang="en" onclick="switchAdminLang('en')">🇬🇧 English</button>
-      <button type="button" class="lang-tab" data-lang="fr" onclick="switchAdminLang('fr')">🇫🇷 Français</button>
-    </div>
-    <div class="field"><label>Langue affichée par défaut aux visiteurs</label>
-      <select id="defaultLang" onchange="cfg.defaultLang = this.value;">
-        <option value="en">Anglais</option>
-        <option value="fr">Français</option>
-      </select>
-    </div>
+    <h2>Langue</h2>
+    <div class="sub">Le site est désormais en anglais uniquement — plus besoin de gérer deux versions séparées des textes.</div>
   </div>
   </section>
   <section class="admin-section" id="section-publish" style="display:none;">
@@ -552,6 +543,11 @@
     cfg.defaultLang = cfg.defaultLang || 'en';
   }
   migrateToI18n(cfg);
+  // Le site est maintenant en anglais uniquement : on retire tout contenu
+  // français résiduel (ex: un brouillon local datant d'avant ce changement),
+  // pour être sûr qu'il ne soit jamais republié par erreur.
+  if (cfg.content && cfg.content.fr) delete cfg.content.fr;
+  cfg.defaultLang = 'en';
 
   let activeLang = 'en';
   let content = cfg.content[activeLang];
@@ -612,16 +608,39 @@
     renderOffersFields();
   }
 
+  // Échange l'offre à l'index i avec sa voisine (direction: -1 = monter, +1 = descendre)
+  function moveOffer(i, direction){
+    readForm();
+    const j = i + direction;
+    if (j < 0 || j >= content.offers.length) return;
+    const tmp = content.offers[i];
+    content.offers[i] = content.offers[j];
+    content.offers[j] = tmp;
+    renderOffersFields();
+  }
+
   function renderOffersFields(){
     const container = document.getElementById('offers-fields');
     container.innerHTML = '';
     content.offers.forEach((offer, i) => {
       const block = el('div', {class:'offer-block'});
-      const headerRow = el('div', {style:'display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;'});
-      headerRow.appendChild(el('h3', {text:`Offre ${i+1}`, style:'margin-bottom:0;'}));
+      const headerRow = el('div', {style:'display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:8px;'});
+      headerRow.appendChild(el('h3', {text:`Offre ${i+1} — ${offer.name || '?'}`, style:'margin-bottom:0;'}));
+      const actionsWrap = el('div', {style:'display:flex; gap:8px; align-items:center;'});
+      const upBtn = el('button', {type:'button', class:'btn btn-reset', text:'▲ Monter', style:'padding:6px 12px; font-size:12px;'});
+      upBtn.disabled = (i === 0);
+      if (upBtn.disabled) upBtn.style.opacity = '0.35';
+      upBtn.addEventListener('click', () => moveOffer(i, -1));
+      const downBtn = el('button', {type:'button', class:'btn btn-reset', text:'▼ Descendre', style:'padding:6px 12px; font-size:12px;'});
+      downBtn.disabled = (i === content.offers.length - 1);
+      if (downBtn.disabled) downBtn.style.opacity = '0.35';
+      downBtn.addEventListener('click', () => moveOffer(i, 1));
       const delBtn = el('button', {type:'button', class:'btn btn-reset', text:'Supprimer', style:'padding:6px 12px; font-size:12px;'});
       delBtn.addEventListener('click', () => removeOffer(i));
-      headerRow.appendChild(delBtn);
+      actionsWrap.appendChild(upBtn);
+      actionsWrap.appendChild(downBtn);
+      actionsWrap.appendChild(delBtn);
+      headerRow.appendChild(actionsWrap);
       block.appendChild(headerRow);
 
       const chk = el('div', {class:'checkbox-row'});
@@ -726,7 +745,6 @@
 
   // ---------- Remplit tous les champs simples depuis cfg ----------
   function fillForm(){
-    document.getElementById('defaultLang').value = cfg.defaultLang || 'en';
     cfg.heroBanner = cfg.heroBanner || {};
     cfg.floatingWidget = cfg.floatingWidget || {};
 
