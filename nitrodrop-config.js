@@ -85,6 +85,27 @@ const NITRODROP_DEFAULT_CONFIG = {
           "depositRequired": false
         },
         {
+          "featured": true,
+          "badge": "TOP",
+          "mark": "W",
+          "markColorStart": "#198dc8",
+          "markColorEnd": "#57c5db",
+          "markClass": "mark-1",
+          "name": "Winna",
+          "sub": "Crypto Casino · Best Deals",
+          "bonusAmount": "Free Money",
+          "bonusSuffix": "one time",
+          "desc": "Register with the link, submit your username, and get your tip. **No deposit** needed. ",
+          "code": "luckymood",
+          "codeEnabled": true,
+          "depositRequired": false,
+          "signupHref": "https://winna.com/?r=luckymood",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false
+        },
+        {
           "featured": false,
           "badge": "",
           "mark": "S",
@@ -251,27 +272,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHighlighted": true,
           "claimHighlighted": false,
           "depositRequired": false
-        },
-        {
-          "featured": true,
-          "badge": "TOP",
-          "mark": "W",
-          "markColorStart": "#198dc8",
-          "markColorEnd": "#57c5db",
-          "markClass": "mark-1",
-          "name": "Winna",
-          "sub": "Crypto Casino · Best Deals",
-          "bonusAmount": "Free Money",
-          "bonusSuffix": "one time",
-          "desc": "Register with the link, submit your username, and get your tip. **No deposit** needed. ",
-          "code": "luckymood",
-          "codeEnabled": true,
-          "depositRequired": false,
-          "signupHref": "https://winna.com/?r=luckymood",
-          "signupText": "1. Create Account",
-          "claimText": "2. Claim My Bonus",
-          "signupHighlighted": true,
-          "claimHighlighted": false
         }
       ],
       "tickerSettings": {
