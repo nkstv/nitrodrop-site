@@ -863,8 +863,13 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   ];
   function renderVipBadge(wagered){
     const el = document.getElementById('pf-vip-badge');
-    const tier = VIP_TIERS.find(t => wagered >= t.min) || VIP_TIERS[VIP_TIERS.length - 1];
-    el.innerHTML = `<span class="pf-vip-badge" style="color:${tier.color};">${tier.icon} ${tier.name}</span>`;
+    const idx = VIP_TIERS.findIndex(t => wagered >= t.min);
+    const tier = idx >= 0 ? VIP_TIERS[idx] : VIP_TIERS[VIP_TIERS.length - 1];
+    const next = idx > 0 ? VIP_TIERS[idx - 1] : null;
+    const tooltip = next
+      ? `Total wagered: 🔑 ${fmt(wagered)} — 🔑 ${fmt(next.min - wagered)} more to reach ${next.name}`
+      : `Total wagered: 🔑 ${fmt(wagered)} — highest tier reached`;
+    el.innerHTML = `<span class="pf-vip-badge" style="color:${tier.color};" title="${escapeHtml(tooltip)}">${tier.icon} ${tier.name}</span>`;
     el.style.display = '';
   }
 
