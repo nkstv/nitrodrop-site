@@ -879,23 +879,42 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   // Stake") — la donnée existe dans la config depuis le début (offres,
   // pseudos, montants), on se contente de l'afficher. Dupliqué une fois pour
   // un défilement en boucle sans saut visuel (voir @keyframes tickerScroll).
-  function renderTicker(){
-    const cfg = getActive();
+  // Bandeau défilant de preuve sociale — branché sur les VRAIES demandes de
+  // bonus déjà envoyées (statut "sent"), plus de noms fictifs inventés dans
+  // la config. Si personne n'a encore reçu de bonus, le bandeau reste caché
+  // plutôt que d'afficher du contenu vide ou inventé.
+  function timeAgo(dateMs){
+    const diffMin = Math.max(0, Math.round((Date.now() - dateMs) / 60000));
+    if (diffMin < 1) return 'just now';
+    if (diffMin < 60) return `${diffMin} min ago`;
+    const diffH = Math.round(diffMin / 60);
+    if (diffH < 24) return `${diffH}h ago`;
+    return `${Math.round(diffH / 24)}d ago`;
+  }
+
+  async function renderTicker(){
     const bar = document.getElementById('ticker-bar');
     const track = document.getElementById('ticker-track');
-    if (!cfg || !cfg.ticker || cfg.ticker.length === 0){
+    if (!workerBase){ bar.style.display = 'none'; return; }
+    try{
+      const resp = await fetch(`${workerBase}/ticker/recent?limit=15`);
+      const data = await resp.json();
+      const entries = data.entries || [];
+      if (entries.length === 0){
+        bar.style.display = 'none';
+        return;
+      }
+      const itemsHtml = entries.map(entry => `
+        <span class="ticker-item">🎉 <b>${escapeHtml(entry.pseudo)}</b> just claimed a bonus on <span class="amt">${escapeHtml(entry.platform)}</span> <span style="opacity:.6;">· ${escapeHtml(timeAgo(entry.dateMs))}</span></span>
+      `).join('');
+      // Deux copies à la suite : l'animation ne parcourt que 50% de la largeur
+      // totale, donc au moment du bouclage la 2e copie est déjà à la position
+      // exacte de la 1re — aucun saut visible.
+      track.innerHTML = itemsHtml + itemsHtml;
+      bar.style.display = '';
+    }catch(e){
       bar.style.display = 'none';
-      return;
     }
-    const verb = (cfg.tickerSettings && cfg.tickerSettings.verbText) || 'just claimed';
-    const itemsHtml = cfg.ticker.map(entry => `
-      <span class="ticker-item">🎉 <b>${escapeHtml(entry.name)}</b> ${escapeHtml(verb)} <span class="amt">${escapeHtml(entry.message)}</span></span>
-    `).join('');
-    // Deux copies à la suite : l'animation ne parcourt que 50% de la largeur
-    // totale, donc au moment du bouclage la 2e copie est déjà à la position
-    // exacte de la 1re — aucun saut visible.
-    track.innerHTML = itemsHtml + itemsHtml;
-    bar.style.display = '';
   }
 
   function renderOffers(){
