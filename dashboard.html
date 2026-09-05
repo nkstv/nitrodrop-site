@@ -326,6 +326,7 @@
       <button class="dash-tab" id="tab-btn-affiliates" onclick="switchDashTab('affiliates')">📊 Affiliés</button>
       <button class="dash-tab" id="tab-btn-users" onclick="switchDashTab('users')">👥 Utilisateurs</button>
       <button class="dash-tab" id="tab-btn-leaderboard" onclick="switchDashTab('leaderboard')">🏆 Leaderboard</button>
+      <button class="dash-tab" id="tab-btn-referral" onclick="switchDashTab('referral')">🤝 Parrainage</button>
     </div>
 
     <div id="tab-bonus">
@@ -506,6 +507,16 @@
       </div>
 
       <div id="lb-table-container"></div>
+    </div>
+
+    <div id="tab-referral" style="display:none;">
+      <div class="stats" id="referral-stats"></div>
+
+      <h3 style="margin:20px 0 10px; color:var(--gold); font-size:15px;">💸 Demandes de retrait</h3>
+      <div id="referral-requests-container"></div>
+
+      <h3 style="margin:28px 0 10px; color:var(--gold); font-size:15px;">🤝 Parrainages validés</h3>
+      <div id="referral-list-container"></div>
     </div>
   </div>
 </div>
@@ -1566,6 +1577,7 @@
   let usersLoaded = false;
   let leaderboardLoaded = false;
   let statsLoaded = false;
+  let referralLoaded = false;
   let activeDashTab = 'bonus';
 
   function switchDashTab(tab){
@@ -1575,11 +1587,13 @@
     document.getElementById('tab-users').style.display = tab === 'users' ? '' : 'none';
     document.getElementById('tab-leaderboard').style.display = tab === 'leaderboard' ? '' : 'none';
     document.getElementById('tab-stats').style.display = tab === 'stats' ? '' : 'none';
+    document.getElementById('tab-referral').style.display = tab === 'referral' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
     document.getElementById('tab-btn-users').classList.toggle('active', tab === 'users');
     document.getElementById('tab-btn-leaderboard').classList.toggle('active', tab === 'leaderboard');
     document.getElementById('tab-btn-stats').classList.toggle('active', tab === 'stats');
+    document.getElementById('tab-btn-referral').classList.toggle('active', tab === 'referral');
     if (tab === 'users' && !usersLoaded){
       loadUsers();
     }
@@ -1593,6 +1607,10 @@
       affiliatesLoaded = true;
       refreshAffiliateCasinosList();
     }
+    if (tab === 'referral' && !referralLoaded){
+      referralLoaded = true;
+      loadReferralAdmin();
+    }
   }
 
   // Le bouton "Rafraîchir" de la barre du haut rafraîchit l'onglet actuellement affiché
@@ -1603,6 +1621,8 @@
       loadAdminLeaderboard();
     } else if (activeDashTab === 'stats'){
       loadStats();
+    } else if (activeDashTab === 'referral'){
+      loadReferralAdmin();
     } else {
       loadSubmissions();
     }
@@ -2239,6 +2259,127 @@
       <div class="stat"><div class="n">${totalWager.toFixed(2)}</div><div class="l">Total misé (affiché)</div></div>
       <div class="stat"><div class="n">${adjustedCount}</div><div class="l">Corrigés</div></div>
       <div class="stat"><div class="n">${excludedCount}</div><div class="l">Masqués du classement</div></div>
+    `;
+  }
+
+  // ---------- Onglet Parrainage (argent réel, pas des clés) ----------
+  let allReferrals = [];
+  let allReferralRequests = [];
+
+  async function loadReferralAdmin(){
+    const reqContainer = document.getElementById('referral-requests-container');
+    const listContainer = document.getElementById('referral-list-container');
+    reqContainer.innerHTML = '<div class="empty">Chargement…</div>';
+    listContainer.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const [listResp, reqResp] = await Promise.all([
+        fetch(`${workerBaseUrl}/referral/admin/list`, { headers: { 'X-Dashboard-Key': dashboardKey } }),
+        fetch(`${workerBaseUrl}/referral/admin/requests`, { headers: { 'X-Dashboard-Key': dashboardKey } }),
+      ]);
+      if (!listResp.ok || !reqResp.ok) throw new Error('HTTP ' + listResp.status + '/' + reqResp.status);
+      const listData = await listResp.json();
+      const reqData = await reqResp.json();
+      allReferrals = listData.referrals || [];
+      allReferralRequests = reqData.requests || [];
+      renderReferralStats();
+      renderReferralRequests();
+      renderReferralList();
+    }catch(e){
+      reqContainer.innerHTML = `<div class="empty">Erreur de chargement : ${escapeHtml(e.message)}</div>`;
+      listContainer.innerHTML = '';
+    }
+  }
+
+  function renderReferralStats(){
+    const pending = allReferralRequests.filter(r => r.status === 'pending');
+    const pendingAmount = pending.reduce((sum, r) => sum + (r.amount || 0), 0);
+    document.getElementById('referral-stats').innerHTML = `
+      <div class="stat"><div class="n">${allReferrals.length}</div><div class="l">Parrainages validés</div></div>
+      <div class="stat"><div class="n">${pending.length}</div><div class="l">Demandes en attente</div></div>
+      <div class="stat"><div class="n">$${pendingAmount.toFixed(2)}</div><div class="l">Montant en attente</div></div>
+    `;
+  }
+
+  function renderReferralRequests(){
+    const container = document.getElementById('referral-requests-container');
+    const pending = allReferralRequests.filter(r => r.status === 'pending');
+    const processed = allReferralRequests.filter(r => r.status !== 'pending').slice(0, 20);
+
+    if (allReferralRequests.length === 0){
+      container.innerHTML = '<div class="empty">Aucune demande de retrait pour le moment.</div>';
+      return;
+    }
+
+    const rowsHtml = (list, isPending) => list.map(r => `
+      <tr>
+        <td class="mono" style="font-size:11px;">${escapeHtml(formatLocalDate({ dateMs: r.dateMs }))}</td>
+        <td>${escapeHtml(r.pseudo || '?')}</td>
+        <td class="mono" style="font-size:11px;">${escapeHtml(r.discordId)}</td>
+        <td style="font-weight:700; color:var(--gold);">$${(r.amount || 0).toFixed(2)}</td>
+        <td>${isPending
+          ? '<span class="badge" style="background:#FFC75922; color:#FFC759;">En attente</span>'
+          : (r.status === 'paid'
+              ? '<span class="badge" style="background:#8fce8f22; color:#8fce8f;">Payé</span>'
+              : '<span class="badge" style="background:#FF7A9022; color:#FF7A90;">Refusé</span>')
+        }</td>
+        <td>${isPending ? `
+          <button class="btn" style="padding:5px 10px; font-size:11px;" onclick="processReferralWithdrawal('${r.id}','paid')">Marquer payé</button>
+          <button class="btn" style="padding:5px 10px; font-size:11px; color:#FF7A90; border-color:#FF7A90;" onclick="processReferralWithdrawal('${r.id}','declined')">Refuser</button>
+        ` : '—'}</td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table style="width:100%;">
+          <thead><tr>
+            <th>Date</th><th>Pseudo</th><th>Discord ID</th><th>Montant</th><th>Statut</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            ${pending.length ? rowsHtml(pending, true) : ''}
+            ${processed.length ? rowsHtml(processed, false) : ''}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  async function processReferralWithdrawal(id, status){
+    const verb = status === 'paid' ? 'marquer cette demande comme payée' : 'refuser cette demande';
+    if (!confirm(`Confirmer : ${verb} ? Le versement réel se fait de ton côté, en dehors du site — ceci ne fait que mettre à jour le suivi.`)) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/referral/admin/requests/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ id, status }),
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      await loadReferralAdmin();
+    }catch(e){
+      alert('Erreur : ' + e.message);
+    }
+  }
+
+  function renderReferralList(){
+    const container = document.getElementById('referral-list-container');
+    if (allReferrals.length === 0){
+      container.innerHTML = '<div class="empty">Aucun parrainage validé pour le moment.</div>';
+      return;
+    }
+    const rows = allReferrals.map(r => `
+      <tr>
+        <td class="mono" style="font-size:11px;">${escapeHtml(formatLocalDate({ dateMs: r.dateMs }))}</td>
+        <td><b>${escapeHtml(r.referrerPseudo || r.referrerId)}</b> <span style="color:var(--text-dim);">a parrainé</span> <b>${escapeHtml(r.referredPseudo || r.referredId)}</b></td>
+        <td class="mono" style="font-size:11px;">${escapeHtml(r.ip || '—')}</td>
+      </tr>
+    `).join('');
+    container.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table style="width:100%;">
+          <thead><tr><th>Date</th><th>Parrainage</th><th>IP du filleul</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
     `;
   }
 

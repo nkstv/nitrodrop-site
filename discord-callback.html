@@ -74,6 +74,29 @@
       try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
     }catch(e){}
 
+    // Parrainage : si cette connexion vient d'un lien ?ref=<discordId> (stocké
+    // avant la redirection OAuth par la page d'origine), on tente de créditer
+    // le parrain — le worker vérifie lui-même que ce membre est bien nouveau,
+    // donc rien à craindre si cette fonction est rappelée par erreur.
+    if (workerBase){
+      try{
+        const refCode = sessionStorage.getItem('nitrodrop_ref') || '';
+        if (refCode && refCode !== user.id){
+          fetch(`${workerBase}/referral/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              referrerId: refCode,
+              referredId: user.id,
+              referredPseudo: user.username,
+              referredAvatarUrl: avatarUrl,
+            }),
+          }).catch(() => {});
+        }
+        sessionStorage.removeItem('nitrodrop_ref');
+      }catch(e){}
+    }
+
     // Échange le token OAuth contre un jeton de session signé par le worker.
     // C'est CE jeton (et non le discordId brut) qui authentifiera ensuite chaque
     // requête de jeu. Sans lui, le worker refusera toute action sur le compte.

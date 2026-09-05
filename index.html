@@ -808,6 +808,16 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   if (urlLangParam && CONFIG.content && CONFIG.content[urlLangParam]) currentLang = urlLangParam;
   if (!CONFIG.content || !CONFIG.content[currentLang]) currentLang = (CONFIG.defaultLang || 'en');
 
+  // Parrainage : si quelqu'un arrive via un lien "?ref=<discordId>", on garde
+  // ce code de côté (il survit à l'aller-retour de connexion Discord) pour
+  // pouvoir créditer le parrain une fois la connexion établie. On ne l'écrase
+  // jamais si un code est déjà en attente (sinon un visiteur qui recharge la
+  // page sans le paramètre perdrait le parrainage en cours).
+  try{
+    const refParam = new URLSearchParams(location.search).get('ref');
+    if (refParam) sessionStorage.setItem('nitrodrop_ref', refParam);
+  }catch(e){}
+
   function getActive(){ return CONFIG.content[currentLang]; }
 
   // Échappe d'abord tout le HTML (sécurité), PUIS convertit **texte** en gras.

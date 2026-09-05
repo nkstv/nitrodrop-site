@@ -568,6 +568,21 @@
       </div>
 
       <section class="card">
+        <div class="card-h"><h2>Referral program</h2><span class="card-tag" id="pf-ref-count">0 referred</span></div>
+        <p class="card-sub">Share your link — earn $1 in real money for every new member who joins via Discord.</p>
+        <div style="display:flex; gap:8px; align-items:center; background:var(--panel-3); border:1px solid var(--line); border-radius:var(--r-m); padding:10px 14px; margin-bottom:14px;">
+          <input type="text" id="pf-ref-link" readonly style="flex:1; min-width:0; background:none; border:none; color:var(--cream); font-family:monospace; font-size:12.5px; outline:none;">
+          <button class="bet-btn" id="pf-ref-copy-btn" style="width:auto; padding:8px 14px; font-size:12.5px;">Copy</button>
+        </div>
+        <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:14px;">
+          <span style="font-size:12px; color:var(--muted);">Referral balance</span>
+          <span style="font-size:22px; font-weight:800; color:var(--gold); font-family:'Baloo 2',sans-serif;">$<span id="pf-ref-balance">0.00</span></span>
+        </div>
+        <button class="bet-btn" id="pf-ref-withdraw-btn" disabled>Withdraw (available at $100)</button>
+        <p class="pf-empty" id="pf-ref-status" style="display:none;"></p>
+      </section>
+
+      <section class="card">
         <div class="card-h"><h2>Statistics</h2><span class="card-tag">All time</span></div>
         <div class="pf-stats" id="pf-stats"></div>
       </section>
@@ -954,6 +969,79 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     }
   }
 
+  // Parrainage : lien à partager + solde en argent réel + demande de retrait
+  // (jamais de paiement automatique, uniquement une demande que l'admin traite
+  // à la main, exactement comme pour les demandes de bonus).
+  async function loadReferralInfo(discordId){
+    const linkInput = document.getElementById('pf-ref-link');
+    const balanceEl = document.getElementById('pf-ref-balance');
+    const countEl = document.getElementById('pf-ref-count');
+    const withdrawBtn = document.getElementById('pf-ref-withdraw-btn');
+    const statusEl = document.getElementById('pf-ref-status');
+    if (!linkInput) return;
+
+    linkInput.value = `${location.origin}/?ref=${discordId}`;
+
+    if (!workerBase){ return; }
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/referral/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      const balance = data.balance || 0;
+      countEl.textContent = `${data.referralCount || 0} referred`;
+      balanceEl.textContent = balance.toFixed(2);
+
+      if (data.pendingWithdrawal){
+        withdrawBtn.disabled = true;
+        withdrawBtn.textContent = 'Withdrawal request pending';
+      } else if (balance >= 100){
+        withdrawBtn.disabled = false;
+        withdrawBtn.textContent = `Withdraw $${balance.toFixed(2)}`;
+      } else {
+        withdrawBtn.disabled = true;
+        withdrawBtn.textContent = `Withdraw (available at $100 — you have $${balance.toFixed(2)})`;
+      }
+    }catch(e){
+      window.pfDebugLog('GET /referral/status a échoué', e.message, true);
+    }
+  }
+
+  document.getElementById('pf-ref-copy-btn').addEventListener('click', () => {
+    const linkInput = document.getElementById('pf-ref-link');
+    navigator.clipboard.writeText(linkInput.value).then(() => {
+      const btn = document.getElementById('pf-ref-copy-btn');
+      const original = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => { btn.textContent = original; }, 1600);
+    }).catch(() => {});
+  });
+
+  document.getElementById('pf-ref-withdraw-btn').addEventListener('click', async () => {
+    const discordId = getSharedDiscordId();
+    const statusEl = document.getElementById('pf-ref-status');
+    if (!discordId || !workerBase) return;
+    const btn = document.getElementById('pf-ref-withdraw-btn');
+    btn.disabled = true;
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/referral/withdraw`, { method: 'POST' });
+      const data = await resp.json();
+      if (data.ok){
+        statusEl.textContent = '✅ Withdrawal request sent — we\'ll process it manually and reach out via Discord.';
+        statusEl.style.display = '';
+        btn.textContent = 'Withdrawal request pending';
+      } else {
+        statusEl.textContent = data.reason === 'already_pending'
+          ? 'You already have a pending withdrawal request.'
+          : 'Could not submit your request — please try again later.';
+        statusEl.style.display = '';
+        btn.disabled = false;
+      }
+    }catch(e){
+      statusEl.textContent = 'Network error — please try again later.';
+      statusEl.style.display = '';
+      btn.disabled = false;
+    }
+  });
+
   async function loadBonusRequests(discordId){
     const list = document.getElementById('pf-bonus-list');
     const empty = document.getElementById('pf-bonus-empty');
@@ -1036,6 +1124,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       renderRecent(data.recent || []);
       loadBonusRequests(discordId);
       checkDiscordMembership(discordId);
+      loadReferralInfo(discordId);
     }catch(e){
       pfLoading.style.display = 'none';
       pfNotice.style.display = '';
