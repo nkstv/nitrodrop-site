@@ -153,6 +153,26 @@
   .pf-notice p{font-size:14px; color:var(--muted); line-height:1.6; margin:10px 0 22px;}
   .pf-notice .bet-btn{font-size:15px; padding:13px;}
 
+  /* Affiché PENDANT qu'on vérifie si la personne est connectée — évite
+     d'afficher "Connect with Discord" une fraction de seconde à quelqu'un
+     qui est déjà connecté, le temps que la requête réseau réponde. */
+  .pf-loading{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:16px; padding:80px 28px; text-align:center;
+  }
+  .pf-loading-spinner{position:relative; width:52px; height:52px;}
+  .pf-loading-ring{
+    position:absolute; inset:0; border-radius:50%;
+    border:3px solid rgba(232,193,104,.18); border-top-color:var(--gold);
+    animation:pfSpin 1s linear infinite;
+  }
+  .pf-loading-ring.d2{
+    inset:9px; border-color:rgba(232,193,104,.1); border-bottom-color:var(--gold-deep);
+    animation:pfSpin 1.5s linear infinite reverse;
+  }
+  @keyframes pfSpin{to{transform:rotate(360deg);}}
+  .pf-loading p{font-size:13.5px; color:var(--muted); margin:0;}
+
   .pf-wrap{display:flex; flex-direction:column; gap:16px;}
 
   .pf-hero{
@@ -486,7 +506,15 @@
       </div>
     </div>
 
-    <div class="pf-notice" id="pf-notice">
+    <div class="pf-loading" id="pf-loading">
+      <div class="pf-loading-spinner">
+        <div class="pf-loading-ring"></div>
+        <div class="pf-loading-ring d2"></div>
+      </div>
+      <p>Loading your profile…</p>
+    </div>
+
+    <div class="pf-notice" id="pf-notice" style="display:none;">
       <div class="pf-notice-icon">🔒</div>
       <h2>Connect with Discord</h2>
       <p>Log in to see your profile, claim your daily keys and track your achievements.</p>
@@ -699,7 +727,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   drawer.querySelectorAll('.d-item').forEach(b=>b.addEventListener('click',()=>toggle(false)));
 
   const balanceSidebarEl=document.getElementById('balance-sidebar');
-  const pfWrap=document.getElementById('pf-wrap'), pfNotice=document.getElementById('pf-notice');
+  const pfWrap=document.getElementById('pf-wrap'), pfNotice=document.getElementById('pf-notice'), pfLoading=document.getElementById('pf-loading');
   const claimBtn=document.getElementById('pf-claim-btn');
   const cooldownEl=document.getElementById('pf-cooldown'), timerEl=document.getElementById('pf-timer');
   const streakEl=document.getElementById('pf-streak'), streakN=document.getElementById('pf-streak-n');
@@ -976,6 +1004,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const discordId = getSharedDiscordId();
     window.pfDebugLog('discordId détecté', discordId || '(vide — identité Discord non trouvée en localStorage/cookie)', !discordId);
     if (!discordId || !workerBase){
+      pfLoading.style.display = 'none';
       pfNotice.style.display = '';
       pfWrap.style.display = 'none';
       return;
@@ -983,8 +1012,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     try{
       const resp = await nitrodropAuthFetch(`${workerBase}/profile/summary?discordId=${encodeURIComponent(discordId)}`);
       const data = await resp.json();
-      if (!data.ok){ pfNotice.style.display = ''; pfWrap.style.display = 'none'; return; }
+      if (!data.ok){ pfLoading.style.display = 'none'; pfNotice.style.display = ''; pfWrap.style.display = 'none'; return; }
 
+      pfLoading.style.display = 'none';
       pfNotice.style.display = 'none';
       pfWrap.style.display = '';
 
@@ -1006,6 +1036,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       loadBonusRequests(discordId);
       checkDiscordMembership(discordId);
     }catch(e){
+      pfLoading.style.display = 'none';
       pfNotice.style.display = '';
       pfWrap.style.display = 'none';
     }
