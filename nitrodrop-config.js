@@ -124,7 +124,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "codeEnabled": true,
           "markColorStart": "#3748a0",
           "markColorEnd": "#1d2863",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": true,
@@ -187,7 +187,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "codeEnabled": false,
           "markColorStart": "#41a51d",
           "markColorEnd": "#0d540e",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": false,
@@ -208,7 +208,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#2c9108",
           "markColorEnd": "#0e4d0a",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": true,
@@ -229,7 +229,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#6c3fff",
           "markColorEnd": "#2a1a66",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": false,
@@ -250,7 +250,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#ffe419",
           "markColorEnd": "#675c13",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": false,
@@ -271,7 +271,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": true,
@@ -292,7 +292,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "depositRequired": false
+          "depositRequired": true
         }
       ],
       "tickerSettings": {
