@@ -2366,17 +2366,43 @@
       container.innerHTML = '<div class="empty">Aucun parrainage validé pour le moment.</div>';
       return;
     }
-    const rows = allReferrals.map(r => `
+
+    // Fréquence de chaque IP sur l'ENSEMBLE des parrainages (pas juste la page,
+    // contrairement au "Check doublons" des demandes de bonus — ici le volume
+    // est bien plus faible, pas besoin de cette distinction).
+    const ipCounts = {};
+    allReferrals.forEach(r => {
+      const ip = (r.ip || '').trim();
+      if (ip) ipCounts[ip] = (ipCounts[ip] || 0) + 1;
+    });
+    // IP connue du parrain lui-même, au moment où LUI a été parrainé (si
+    // applicable) — permet de repérer un parrain qui se parraine via un
+    // second compte, même si cette IP n'apparaît qu'une seule autre fois.
+    const ipByReferredId = {};
+    allReferrals.forEach(r => { if (r.referredId && r.ip) ipByReferredId[r.referredId] = r.ip.trim(); });
+
+    const rows = allReferrals.map(r => {
+      const ip = (r.ip || '').trim();
+      const reusedElsewhere = ip && ipCounts[ip] > 1;
+      const referrerOwnIp = ipByReferredId[r.referrerId];
+      const sameAsReferrer = ip && referrerOwnIp && referrerOwnIp === ip;
+      const alert = reusedElsewhere || sameAsReferrer;
+      const alertLabel = sameAsReferrer
+        ? 'Même IP que le parrain lors de son propre parrainage'
+        : `Cette IP apparaît ${ipCounts[ip]} fois dans les parrainages`;
+      return `
       <tr>
         <td class="mono" style="font-size:11px;">${escapeHtml(formatLocalDate({ dateMs: r.dateMs }))}</td>
         <td><b>${escapeHtml(r.referrerPseudo || r.referrerId)}</b> <span style="color:var(--text-dim);">a parrainé</span> <b>${escapeHtml(r.referredPseudo || r.referredId)}</b></td>
         <td class="mono" style="font-size:11px;">${escapeHtml(r.ip || '—')}</td>
+        <td>${alert ? `<span title="${escapeHtml(alertLabel)}" style="display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; background:#FF7A9022; color:#FF7A90; cursor:help;">🚨 Alerte</span>` : '<span style="color:var(--text-faint); font-size:11.5px;">—</span>'}</td>
       </tr>
-    `).join('');
+    `;
+    }).join('');
     container.innerHTML = `
       <div style="overflow-x:auto;">
         <table style="width:100%;">
-          <thead><tr><th>Date</th><th>Parrainage</th><th>IP du filleul</th></tr></thead>
+          <thead><tr><th>Date</th><th>Parrainage</th><th>IP du filleul</th><th>Alerte</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
