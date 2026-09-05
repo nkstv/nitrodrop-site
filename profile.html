@@ -199,6 +199,12 @@
     font-size:11px; font-weight:800; letter-spacing:.03em; padding:3px 10px 3px 8px;
     border-radius:999px; border:1px solid currentColor;
   }
+  .pf-vip-progress-track{
+    width:100%; max-width:260px; height:6px; border-radius:999px;
+    background:rgba(255,255,255,.08); margin-top:8px; overflow:hidden;
+  }
+  .pf-vip-progress-fill{height:100%; border-radius:999px; transition:width .4s ease;}
+  .pf-vip-progress-label{font-size:10.5px; color:var(--muted-2); margin-top:4px;}
   .pf-hero-balance{text-align:right;}
   .pf-hero-balance .l{font-size:10px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; color:var(--muted);}
   .pf-hero-balance .v{font-family:"Baloo 2"; font-weight:800; font-size:26px; color:var(--gold); margin-top:2px;}
@@ -869,7 +875,22 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     const tooltip = next
       ? `Total wagered: 🔑 ${fmt(wagered)} — 🔑 ${fmt(next.min - wagered)} more to reach ${next.name}`
       : `Total wagered: 🔑 ${fmt(wagered)} — highest tier reached`;
-    el.innerHTML = `<span class="pf-vip-badge" style="color:${tier.color};" title="${escapeHtml(tooltip)}">${tier.icon} ${tier.name}</span>`;
+
+    let progressHtml = '';
+    if (next){
+      const pct = Math.max(0, Math.min(100, ((wagered - tier.min) / (next.min - tier.min)) * 100));
+      progressHtml = `
+        <div class="pf-vip-progress-track"><div class="pf-vip-progress-fill" style="width:${pct}%; background:${next.color};"></div></div>
+        <div class="pf-vip-progress-label">🔑 ${fmt(wagered)} / ${fmt(next.min)} to reach ${next.name}</div>
+      `;
+    } else {
+      progressHtml = `
+        <div class="pf-vip-progress-track"><div class="pf-vip-progress-fill" style="width:100%; background:${tier.color};"></div></div>
+        <div class="pf-vip-progress-label">🔑 ${fmt(wagered)} wagered — highest tier reached</div>
+      `;
+    }
+
+    el.innerHTML = `<span class="pf-vip-badge" style="color:${tier.color};" title="${escapeHtml(tooltip)}">${tier.icon} ${tier.name}</span>${progressHtml}`;
     el.style.display = '';
   }
 
