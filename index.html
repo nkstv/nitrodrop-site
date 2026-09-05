@@ -167,6 +167,22 @@
   .burger{display:none}
 
   /* ---------- Offres / Bonus ---------- */
+  .ticker-bar{
+    overflow:hidden; white-space:nowrap; background:var(--panel-2); border:1px solid var(--line);
+    border-radius:12px; padding:10px 0; margin-bottom:18px; -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .ticker-track{
+    display:inline-flex; gap:36px;
+    animation:tickerScroll 42s linear infinite;
+  }
+  .ticker-track:hover{animation-play-state:paused;}
+  .ticker-item{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:var(--muted); white-space:nowrap;}
+  .ticker-item b{color:var(--cream); font-weight:700;}
+  .ticker-item .amt{color:var(--gold); font-weight:700;}
+  @keyframes tickerScroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  @media (prefers-reduced-motion: reduce){ .ticker-track{animation:none;} }
+
   .offers-intro{text-align:center; max-width:640px; margin:0 auto 4px;}
   .offers-tag{
     display:inline-block; background:var(--panel-3); border:1px solid var(--line); color:var(--gold);
@@ -567,6 +583,10 @@
       </div>
     </div>
 
+    <div class="ticker-bar" id="ticker-bar" style="display:none;">
+      <div class="ticker-track" id="ticker-track"></div>
+    </div>
+
     <div class="offers-intro">
       <div class="offers-tag" id="offers-tag">Current offers</div>
       <h2 class="offers-title" id="offers-title">Discover Bonuses 🎁</h2>
@@ -853,6 +873,29 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   function seoPageHref(offerName){
     const slug = String(offerName || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     return SEO_PAGES[slug] || '';
+  }
+
+  // Bandeau défilant de preuve sociale ("kaelynn_ just claimed $7.00 on
+  // Stake") — la donnée existe dans la config depuis le début (offres,
+  // pseudos, montants), on se contente de l'afficher. Dupliqué une fois pour
+  // un défilement en boucle sans saut visuel (voir @keyframes tickerScroll).
+  function renderTicker(){
+    const cfg = getActive();
+    const bar = document.getElementById('ticker-bar');
+    const track = document.getElementById('ticker-track');
+    if (!cfg || !cfg.ticker || cfg.ticker.length === 0){
+      bar.style.display = 'none';
+      return;
+    }
+    const verb = (cfg.tickerSettings && cfg.tickerSettings.verbText) || 'just claimed';
+    const itemsHtml = cfg.ticker.map(entry => `
+      <span class="ticker-item">🎉 <b>${escapeHtml(entry.name)}</b> ${escapeHtml(verb)} <span class="amt">${escapeHtml(entry.message)}</span></span>
+    `).join('');
+    // Deux copies à la suite : l'animation ne parcourt que 50% de la largeur
+    // totale, donc au moment du bouclage la 2e copie est déjà à la position
+    // exacte de la 1re — aucun saut visible.
+    track.innerHTML = itemsHtml + itemsHtml;
+    bar.style.display = '';
   }
 
   function renderOffers(){
@@ -1502,6 +1545,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 
   applyModalTexts();
   renderOffers();
+  renderTicker();
   applyIdentity();
   restoreClaimDraftIfAny();
   loadBonusLimitStatus();
