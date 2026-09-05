@@ -194,6 +194,11 @@
   .pf-hero-name{font-family:"Baloo 2"; font-weight:800; font-size:21px; color:var(--cream);
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .pf-hero-sub{font-size:12px; color:var(--muted-2); margin-top:2px;}
+  .pf-vip-badge{
+    display:inline-flex; align-items:center; gap:5px; margin-top:6px;
+    font-size:11px; font-weight:800; letter-spacing:.03em; padding:3px 10px 3px 8px;
+    border-radius:999px; border:1px solid currentColor;
+  }
   .pf-hero-balance{text-align:right;}
   .pf-hero-balance .l{font-size:10px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; color:var(--muted);}
   .pf-hero-balance .v{font-family:"Baloo 2"; font-weight:800; font-size:26px; color:var(--gold); margin-top:2px;}
@@ -534,6 +539,7 @@
         <div class="pf-hero-text">
           <div class="pf-hero-name" id="pf-name">—</div>
           <div class="pf-hero-sub">via Discord</div>
+          <div id="pf-vip-badge" style="display:none;"></div>
         </div>
         <div class="pf-hero-balance">
           <div class="l">Balance</div>
@@ -846,10 +852,27 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   });
 
   // ---------------- Statistiques ----------------
+  // Paliers VIP purement visuels (pas de récompense pour l'instant), basés
+  // sur le total misé à vie — déjà suivi de façon fiable sur D1.
+  const VIP_TIERS = [
+    { name: 'Diamond', min: 50000, icon: '💎', color: '#C9A6F5' },
+    { name: 'Platinum', min: 10000, icon: '💠', color: '#9FE0F0' },
+    { name: 'Gold', min: 2500, icon: '🥇', color: '#E8C168' },
+    { name: 'Silver', min: 500, icon: '🥈', color: '#C7CDD6' },
+    { name: 'Bronze', min: 0, icon: '🥉', color: '#CD8A4E' },
+  ];
+  function renderVipBadge(wagered){
+    const el = document.getElementById('pf-vip-badge');
+    const tier = VIP_TIERS.find(t => wagered >= t.min) || VIP_TIERS[VIP_TIERS.length - 1];
+    el.innerHTML = `<span class="pf-vip-badge" style="color:${tier.color};">${tier.icon} ${tier.name}</span>`;
+    el.style.display = '';
+  }
+
   function renderStats(s){
     const gameNames = { mines:'Mines', blackjack:'Blackjack', dice:'Dice', slots:'Slot' };
     const netClass = s.net > 0 ? 'green' : (s.net < 0 ? 'red' : '');
     const bestGame = s.bestMultiplierGame ? (gameNames[s.bestMultiplierGame] || s.bestMultiplierGame) : '—';
+    renderVipBadge(s.wagered || 0);
     document.getElementById('pf-stats').innerHTML = `
       <div class="pf-stat"><div class="k">Rounds played</div><div class="v">${fmt(s.plays)}</div></div>
       <div class="pf-stat gold"><div class="k">Total wagered</div><div class="v"><span class="key">🔑</span>${fmt(s.wagered)}</div></div>
