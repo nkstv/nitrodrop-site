@@ -194,6 +194,11 @@
     box-shadow:0 3px 10px rgba(0,0,0,.35);
   }
   .offer-name{font-family:"Baloo 2"; font-weight:800; font-size:16.5px; color:var(--cream);}
+  .offer-info-link{
+    display:inline-block; margin-left:6px; color:var(--muted); text-decoration:none;
+    font-size:13px; vertical-align:middle; transition:.15s color;
+  }
+  .offer-info-link:hover{color:var(--gold);}
   .offer-sub{font-size:12px; color:var(--muted-2); margin-top:1px;}
   .offer-bonus{font-family:"Baloo 2"; font-weight:800; font-size:30px; color:var(--gold); line-height:1.1;}
   .offer-bonus small{font-family:"Nunito Sans"; font-weight:700; font-size:13px; color:var(--muted); margin-left:7px;}
@@ -809,6 +814,26 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     return escapeHtml(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
 
+  // Page SEO dédiée par offre, si elle existe (clé = nom de l'offre "slugifié",
+  // même logique que le lien profond ?claim=). Une offre sans entrée ici
+  // n'affiche simplement pas l'icône ⓘ — jamais de lien mort.
+  const SEO_PAGES = {
+    duelcom: '/duel-bonus-code',
+    stakecom: '/stake-bonus-code',
+    rainbetcom: '/rainbet-bonus-code',
+    winningzcom: '/winningz-bonus-code',
+    gamdomcom: '/gamdom-bonus-code',
+    flushcom: '/flush-bonus-code',
+    rollbitcom: '/rollbit-bonus-code',
+    mystake: '/mystake-bonus-code',
+    bcgame: '/bcgame-bonus-code',
+    winna: '/winna-bonus-code',
+  };
+  function seoPageHref(offerName){
+    const slug = String(offerName || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+    return SEO_PAGES[slug] || '';
+  }
+
   function renderOffers(){
     const cfg = getActive();
     if (!cfg || !cfg.offers) return;
@@ -832,7 +857,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         <div class="offer-top">
           <div class="offer-mark ${escapeHtml(offer.markClass || '')}"${markStyle}>${escapeHtml(offer.mark)}</div>
           <div>
-            <div class="offer-name">${escapeHtml(offer.name)}</div>
+            <div class="offer-name">${escapeHtml(offer.name)}${seoPageHref(offer.name) ? `<a href="${seoPageHref(offer.name)}" class="offer-info-link" title="More info about this offer" aria-label="More info about this offer" target="_blank" rel="noopener">ⓘ</a>` : ''}</div>
             <div class="offer-sub">${escapeHtml(offer.sub)}</div>
           </div>
         </div>
