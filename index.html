@@ -878,6 +878,23 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         }).catch(() => {});
       });
     });
+
+    // Ouverture automatique de la modale de réclamation si on arrive depuis un
+    // lien profond (ex: une page SEO dédiée à une offre) via ?claim=duelcom.
+    // Protégé par un drapeau pour ne se déclencher qu'une fois, même si
+    // renderOffers() est rappelée plus tard (ex: une fois les limites de
+    // soumission chargées).
+    if (!window.__claimDeepLinkHandled){
+      const claimSlug = (new URLSearchParams(location.search).get('claim') || '').toLowerCase();
+      if (claimSlug){
+        const slugify = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+        const target = cfg.offers.find(o => slugify(o.name) === claimSlug);
+        if (target && !(bonusLimitStatus[target.name] && bonusLimitStatus[target.name].reached)){
+          window.__claimDeepLinkHandled = true;
+          openModal(target.name, target.code, target.signupHref, target.codeEnabled !== false, target.depositRequired === true);
+        }
+      }
+    }
   }
 
   // ==================================================================
