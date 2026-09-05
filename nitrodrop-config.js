@@ -169,6 +169,27 @@ const NITRODROP_DEFAULT_CONFIG = {
           "depositRequired": false
         },
         {
+          "featured": true,
+          "badge": "TOP",
+          "mark": "R",
+          "markColorStart": "#cc28b7",
+          "markColorEnd": "#ee7ce5",
+          "markClass": "mark-2",
+          "name": "Rakebit",
+          "sub": "Bitcoin and Crypto Casino",
+          "bonusAmount": "$5.00",
+          "bonusSuffix": "$5.00 one time",
+          "desc": "Sign up with the code, deposit a minimum of $5, and wager $30 to claim your reward. New users only.",
+          "code": "PMO4NQGA",
+          "codeEnabled": true,
+          "depositRequired": true,
+          "signupHref": "https://rakebit.com/?trtag=151969_6a95644909f86",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false
+        },
+        {
           "featured": false,
           "badge": "",
           "mark": "G",
