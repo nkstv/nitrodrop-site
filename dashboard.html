@@ -327,6 +327,7 @@
       <button class="dash-tab" id="tab-btn-users" onclick="switchDashTab('users')">👥 Utilisateurs</button>
       <button class="dash-tab" id="tab-btn-leaderboard" onclick="switchDashTab('leaderboard')">🏆 Leaderboard</button>
       <button class="dash-tab" id="tab-btn-referral" onclick="switchDashTab('referral')">🤝 Parrainage</button>
+      <button class="dash-tab" id="tab-btn-broadcast" onclick="switchDashTab('broadcast')">📨 Diffusion</button>
     </div>
 
     <div id="tab-bonus">
@@ -335,19 +336,6 @@
     <div class="toolbar" style="margin-bottom:2px;">
       <button onclick="runSubmissionsMigration()" id="migrate-d1-btn" style="background:#2a2115; border:1px solid rgba(232,193,104,.35); color:#E8C168; padding:8px 14px; border-radius:10px; font-weight:700; cursor:pointer;">🛠️ Migrer les demandes vers D1 (à faire une seule fois)</button>
       <span id="migrate-d1-status" style="margin-left:12px; font-size:13px; color:rgba(244,236,216,.7);"></span>
-    </div>
-
-    <div style="background:#221a10; border:1px solid rgba(232,193,104,.2); border-radius:12px; padding:14px 16px; margin:14px 0;">
-      <div style="font-weight:700; color:#E8C168; margin-bottom:8px;">📨 Renvoyer un message à tous ceux qui ont déjà reçu un DM du bot</div>
-      <div style="font-size:12.5px; color:rgba(244,236,216,.65); margin-bottom:10px;">
-        Touche tout le monde dont une demande a été tipsée ou refusée (une seule fois par personne, même avec plusieurs demandes).
-        <span id="broadcast-count-label"></span>
-      </div>
-      <textarea id="broadcast-message" rows="3" placeholder="Message à envoyer..." style="width:100%; background:#171209; border:1px solid rgba(232,193,104,.25); border-radius:8px; color:#F4ECD8; padding:10px; font-family:inherit; font-size:13.5px; resize:vertical;"></textarea>
-      <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
-        <button onclick="runBroadcastDM()" id="broadcast-btn" style="background:#2a2115; border:1px solid rgba(232,193,104,.35); color:#E8C168; padding:8px 14px; border-radius:10px; font-weight:700; cursor:pointer;">Envoyer à tout le monde</button>
-        <span id="broadcast-status" style="font-size:13px; color:rgba(244,236,216,.7);"></span>
-      </div>
     </div>
 
     <div class="toolbar" style="flex-wrap:wrap;">
@@ -536,6 +524,27 @@
       <h3 style="margin:28px 0 10px; color:var(--gold); font-size:15px;">🤝 Parrainages validés</h3>
       <div id="referral-list-container"></div>
     </div>
+
+    <div id="tab-broadcast" style="display:none;">
+      <div style="background:#221a10; border:1px solid rgba(232,193,104,.2); border-radius:12px; padding:14px 16px; margin-bottom:20px;">
+        <div style="font-weight:700; color:#E8C168; margin-bottom:8px;">📨 Renvoyer un message à tous ceux qui ont déjà reçu un DM du bot</div>
+        <div style="font-size:12.5px; color:rgba(244,236,216,.65); margin-bottom:10px;">
+          Touche tout le monde dont une demande a été tipsée ou refusée (une seule fois par personne, même avec plusieurs demandes).
+          <span id="broadcast-count-label"></span>
+        </div>
+        <textarea id="broadcast-message" rows="3" placeholder="Message à envoyer..." style="width:100%; background:#171209; border:1px solid rgba(232,193,104,.25); border-radius:8px; color:#F4ECD8; padding:10px; font-family:inherit; font-size:13.5px; resize:vertical;"></textarea>
+        <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
+          <button onclick="runBroadcastDM()" id="broadcast-btn" style="background:#2a2115; border:1px solid rgba(232,193,104,.35); color:#E8C168; padding:8px 14px; border-radius:10px; font-weight:700; cursor:pointer;">Envoyer à tout le monde</button>
+          <span id="broadcast-status" style="font-size:13px; color:rgba(244,236,216,.7);"></span>
+        </div>
+      </div>
+
+      <h3 style="margin:20px 0 10px; color:var(--gold); font-size:15px;">📊 Historique des annonces</h3>
+      <div style="font-size:12px; color:rgba(244,236,216,.5); margin-bottom:10px;">
+        Pas de colonne "ouvertures" — Discord ne donne cette information à aucun bot, ce n'est pas mesurable.
+      </div>
+      <div id="broadcast-history-container"></div>
+    </div>
   </div>
 </div>
 
@@ -657,6 +666,43 @@
     }catch(e){ /* silencieux, non bloquant */ }
   }
 
+  async function loadBroadcastHistory(){
+    const container = document.getElementById('broadcast-history-container');
+    if (!container || !workerBaseUrl || !dashboardKey) return;
+    container.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/admin/broadcasts`, {
+        headers: { 'X-Dashboard-Key': dashboardKey },
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      const list = data.broadcasts || [];
+      if (list.length === 0){
+        container.innerHTML = '<div class="empty">Aucune annonce envoyée pour le moment.</div>';
+        return;
+      }
+      const rows = list.map(b => `
+        <tr>
+          <td class="mono" style="font-size:11px; white-space:nowrap;">${escapeHtml(formatLocalDate({ dateMs: b.dateMs }))}</td>
+          <td style="max-width:340px; white-space:normal;">${escapeHtml(b.message.length > 140 ? b.message.slice(0, 140) + '…' : b.message)}</td>
+          <td style="color:#8fce8f; font-weight:700;">${b.sent}</td>
+          <td style="color:${b.failed > 0 ? '#e08a8a' : 'var(--text-dim)'}; font-weight:700;">${b.failed}</td>
+          <td style="color:#E8C168; font-weight:700;">${b.clicks}</td>
+        </tr>
+      `).join('');
+      container.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table style="width:100%;">
+            <thead><tr><th>Date</th><th>Message</th><th>Envoyés</th><th>Échoués</th><th>Clics</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    }catch(e){
+      container.innerHTML = `<div class="empty">Erreur de chargement : ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
   async function runBroadcastDM(){
     const textarea = document.getElementById('broadcast-message');
     const btn = document.getElementById('broadcast-btn');
@@ -696,6 +742,7 @@
       status.style.color = data.failed > 0 ? '#f0c060' : '#8fce8f';
       textarea.value = '';
       loadBroadcastPreviewCount();
+      loadBroadcastHistory();
     }catch(e){
       status.textContent = 'Erreur : ' + e.message;
       status.style.color = '#e08a8a';
@@ -778,7 +825,6 @@
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     loadSubmissions();
-    loadBroadcastPreviewCount();
   }
 
   // ---------- Score de suspicion (croisement IP / Discord ID / email / pseudo similaires) ----------
@@ -1686,6 +1732,7 @@
   let leaderboardLoaded = false;
   let statsLoaded = false;
   let referralLoaded = false;
+  let broadcastLoaded = false;
   let activeDashTab = 'bonus';
 
   function switchDashTab(tab){
@@ -1696,12 +1743,14 @@
     document.getElementById('tab-leaderboard').style.display = tab === 'leaderboard' ? '' : 'none';
     document.getElementById('tab-stats').style.display = tab === 'stats' ? '' : 'none';
     document.getElementById('tab-referral').style.display = tab === 'referral' ? '' : 'none';
+    document.getElementById('tab-broadcast').style.display = tab === 'broadcast' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
     document.getElementById('tab-btn-users').classList.toggle('active', tab === 'users');
     document.getElementById('tab-btn-leaderboard').classList.toggle('active', tab === 'leaderboard');
     document.getElementById('tab-btn-stats').classList.toggle('active', tab === 'stats');
     document.getElementById('tab-btn-referral').classList.toggle('active', tab === 'referral');
+    document.getElementById('tab-btn-broadcast').classList.toggle('active', tab === 'broadcast');
     if (tab === 'users' && !usersLoaded){
       loadUsers();
     }
@@ -1719,6 +1768,11 @@
       referralLoaded = true;
       loadReferralAdmin();
     }
+    if (tab === 'broadcast' && !broadcastLoaded){
+      broadcastLoaded = true;
+      loadBroadcastPreviewCount();
+      loadBroadcastHistory();
+    }
   }
 
   // Le bouton "Rafraîchir" de la barre du haut rafraîchit l'onglet actuellement affiché
@@ -1731,6 +1785,9 @@
       loadStats();
     } else if (activeDashTab === 'referral'){
       loadReferralAdmin();
+    } else if (activeDashTab === 'broadcast'){
+      loadBroadcastPreviewCount();
+      loadBroadcastHistory();
     } else {
       loadSubmissions();
     }

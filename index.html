@@ -847,6 +847,22 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     if (refParam) sessionStorage.setItem('nitrodrop_ref', refParam);
   }catch(e){}
 
+  // Suivi des clics sur les liens envoyés par annonce Discord (?bc=<id>).
+  // Un seul appel silencieux, jamais bloquant pour l'affichage de la page —
+  // et jamais compté deux fois pour la même visite (rechargement de page).
+  try{
+    const bcParam = new URLSearchParams(location.search).get('bc');
+    const alreadyTracked = sessionStorage.getItem('nitrodrop_bc_tracked');
+    if (bcParam && workerBase && alreadyTracked !== bcParam){
+      sessionStorage.setItem('nitrodrop_bc_tracked', bcParam);
+      fetch(`${workerBase}/track/click`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ broadcastId: bcParam }),
+      }).catch(() => {});
+    }
+  }catch(e){}
+
   function getActive(){ return CONFIG.content[currentLang]; }
 
   // Échappe d'abord tout le HTML (sécurité), PUIS convertit **texte** en gras.
