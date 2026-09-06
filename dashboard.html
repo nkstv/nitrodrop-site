@@ -668,8 +668,8 @@
 
   async function loadBroadcastHistory(){
     const container = document.getElementById('broadcast-history-container');
-    if (!container || !workerBaseUrl || !dashboardKey) return;
-    container.innerHTML = '<div class="empty">Chargement…</div>';
+    if (!container || !workerBaseUrl || !dashboardKey) return null;
+    if (!container.querySelector('table')) container.innerHTML = '<div class="empty">Chargement…</div>';
     try{
       const resp = await fetch(`${workerBaseUrl}/admin/broadcasts`, {
         headers: { 'X-Dashboard-Key': dashboardKey },
@@ -679,12 +679,13 @@
       const list = data.broadcasts || [];
       if (list.length === 0){
         container.innerHTML = '<div class="empty">Aucune annonce envoyée pour le moment.</div>';
-        return;
+        return list;
       }
       const rows = list.map(b => `
         <tr>
           <td class="mono" style="font-size:11px; white-space:nowrap;">${escapeHtml(formatLocalDate({ dateMs: b.dateMs }))}</td>
-          <td style="max-width:340px; white-space:normal;">${escapeHtml(b.message.length > 140 ? b.message.slice(0, 140) + '…' : b.message)}</td>
+          <td style="max-width:320px; white-space:normal;">${escapeHtml(b.message.length > 140 ? b.message.slice(0, 140) + '…' : b.message)}</td>
+          <td>${b.status === 'done' ? '<span style="color:#8fce8f;">✅ Terminé</span>' : '<span style="color:#f0c060;">⏳ En cours</span>'}</td>
           <td style="color:#8fce8f; font-weight:700;">${b.sent}</td>
           <td style="color:${b.failed > 0 ? '#e08a8a' : 'var(--text-dim)'}; font-weight:700;">${b.failed}</td>
           <td style="color:#E8C168; font-weight:700;">${b.clicks}</td>
@@ -693,13 +694,15 @@
       container.innerHTML = `
         <div style="overflow-x:auto;">
           <table style="width:100%;">
-            <thead><tr><th>Date</th><th>Message</th><th>Envoyés</th><th>Échoués</th><th>Clics</th></tr></thead>
+            <thead><tr><th>Date</th><th>Message</th><th>Statut</th><th>Envoyés</th><th>Échoués</th><th>Clics</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
         </div>
       `;
+      return list;
     }catch(e){
       container.innerHTML = `<div class="empty">Erreur de chargement : ${escapeHtml(e.message)}</div>`;
+      return null;
     }
   }
 
@@ -721,7 +724,7 @@
     if (!confirm(`Ce message va être envoyé en DM Discord à TOUT LE MONDE ayant déjà reçu un message du bot (tipsé ou refusé). L'envoi est irréversible une fois lancé. Continuer ?\n\n"${message}"`)) return;
 
     btn.disabled = true;
-    status.textContent = 'Envoi en cours… (espacé pour respecter les limites Discord, peut prendre plusieurs minutes)';
+    status.textContent = 'Mise en file d\'attente…';
     status.style.color = 'rgba(244,236,216,.7)';
     try{
       const resp = await fetch(`${workerBaseUrl}/admin/broadcast-dm`, {
@@ -731,23 +734,28 @@
       });
       if (!resp.ok) throw new Error('HTTP ' + resp.status + ' — ' + await resp.text());
       const data = await resp.json();
-      let summary = `Terminé ✅ — ${data.sent}/${data.attempted} message(s) envoyé(s) avec succès.`;
-      if (data.totalRecipients > data.attempted){
-        summary += ` ⚠️ ${data.totalRecipients - data.attempted} destinataire(s) restant(s) non traités (limite de 300 par envoi) — relance l'envoi pour couvrir le reste.`;
-      }
-      if (data.failed > 0){
-        summary += ` ${data.failed} échec(s) (DM fermés ou bot bloqué) : ${data.failures.map(f => f.pseudo || f.discordId).join(', ')}`;
-      }
-      status.textContent = summary;
-      status.style.color = data.failed > 0 ? '#f0c060' : '#8fce8f';
+      status.textContent = `📤 Envoi lancé pour ${data.queued} destinataire(s) — ça continue même si tu quittes cette page. Suivi automatique ci-dessous…`;
+      status.style.color = '#8fce8f';
       textarea.value = '';
       loadBroadcastPreviewCount();
-      loadBroadcastHistory();
+      pollBroadcastProgress(data.broadcastId);
     }catch(e){
       status.textContent = 'Erreur : ' + e.message;
       status.style.color = '#e08a8a';
     }finally{
       btn.disabled = false;
+    }
+  }
+
+  // Rafraîchit l'historique toutes les 5s tant que l'envoi lancé n'est pas
+  // marqué "terminé" côté serveur — visible même si on a rechargé la page
+  // entre-temps, puisque le statut vit en base, pas dans le navigateur.
+  async function pollBroadcastProgress(broadcastId){
+    for (let i = 0; i < 24; i++){
+      await new Promise(r => setTimeout(r, 5000));
+      const done = await loadBroadcastHistory();
+      const row = (done || []).find(b => b.id === broadcastId);
+      if (row && row.status === 'done') return;
     }
   }
 
