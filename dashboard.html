@@ -337,6 +337,19 @@
       <span id="migrate-d1-status" style="margin-left:12px; font-size:13px; color:rgba(244,236,216,.7);"></span>
     </div>
 
+    <div style="background:#221a10; border:1px solid rgba(232,193,104,.2); border-radius:12px; padding:14px 16px; margin:14px 0;">
+      <div style="font-weight:700; color:#E8C168; margin-bottom:8px;">📨 Renvoyer un message à tous ceux qui ont déjà reçu un DM du bot</div>
+      <div style="font-size:12.5px; color:rgba(244,236,216,.65); margin-bottom:10px;">
+        Touche tout le monde dont une demande a été tipsée ou refusée (une seule fois par personne, même avec plusieurs demandes).
+        <span id="broadcast-count-label"></span>
+      </div>
+      <textarea id="broadcast-message" rows="3" placeholder="Message à envoyer..." style="width:100%; background:#171209; border:1px solid rgba(232,193,104,.25); border-radius:8px; color:#F4ECD8; padding:10px; font-family:inherit; font-size:13.5px; resize:vertical;"></textarea>
+      <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
+        <button onclick="runBroadcastDM()" id="broadcast-btn" style="background:#2a2115; border:1px solid rgba(232,193,104,.35); color:#E8C168; padding:8px 14px; border-radius:10px; font-weight:700; cursor:pointer;">Envoyer à tout le monde</button>
+        <span id="broadcast-status" style="font-size:13px; color:rgba(244,236,216,.7);"></span>
+      </div>
+    </div>
+
     <div class="toolbar" style="flex-wrap:wrap;">
       <select id="filter-casino" onchange="applyFilters()" class="filter-select" style="width:130px;">
         <option value="">Tous les casinos</option>
@@ -631,6 +644,66 @@
     }
   }
 
+  async function loadBroadcastPreviewCount(){
+    const label = document.getElementById('broadcast-count-label');
+    if (!label || !workerBaseUrl || !dashboardKey) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/admin/broadcast-dm/preview`, {
+        headers: { 'X-Dashboard-Key': dashboardKey },
+      });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      label.textContent = ` (${data.count} destinataire${data.count === 1 ? '' : 's'} actuellement)`;
+    }catch(e){ /* silencieux, non bloquant */ }
+  }
+
+  async function runBroadcastDM(){
+    const textarea = document.getElementById('broadcast-message');
+    const btn = document.getElementById('broadcast-btn');
+    const status = document.getElementById('broadcast-status');
+    const message = textarea.value.trim();
+    if (!workerBaseUrl || !dashboardKey){
+      status.textContent = 'Renseigne d\'abord l\'URL du Worker et la clé dashboard (page de connexion).';
+      status.style.color = '#e08a8a';
+      return;
+    }
+    if (!message){
+      status.textContent = 'Écris un message avant d\'envoyer.';
+      status.style.color = '#e08a8a';
+      return;
+    }
+    if (!confirm(`Ce message va être envoyé en DM Discord à TOUT LE MONDE ayant déjà reçu un message du bot (tipsé ou refusé). L'envoi est irréversible une fois lancé. Continuer ?\n\n"${message}"`)) return;
+
+    btn.disabled = true;
+    status.textContent = 'Envoi en cours… (espacé pour respecter les limites Discord, peut prendre plusieurs minutes)';
+    status.style.color = 'rgba(244,236,216,.7)';
+    try{
+      const resp = await fetch(`${workerBaseUrl}/admin/broadcast-dm`, {
+        method: 'POST',
+        headers: { 'X-Dashboard-Key': dashboardKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status + ' — ' + await resp.text());
+      const data = await resp.json();
+      let summary = `Terminé ✅ — ${data.sent}/${data.attempted} message(s) envoyé(s) avec succès.`;
+      if (data.totalRecipients > data.attempted){
+        summary += ` ⚠️ ${data.totalRecipients - data.attempted} destinataire(s) restant(s) non traités (limite de 300 par envoi) — relance l'envoi pour couvrir le reste.`;
+      }
+      if (data.failed > 0){
+        summary += ` ${data.failed} échec(s) (DM fermés ou bot bloqué) : ${data.failures.map(f => f.pseudo || f.discordId).join(', ')}`;
+      }
+      status.textContent = summary;
+      status.style.color = data.failed > 0 ? '#f0c060' : '#8fce8f';
+      textarea.value = '';
+      loadBroadcastPreviewCount();
+    }catch(e){
+      status.textContent = 'Erreur : ' + e.message;
+      status.style.color = '#e08a8a';
+    }finally{
+      btn.disabled = false;
+    }
+  }
+
   async function runSubmissionsMigration(){
     const btn = document.getElementById('migrate-d1-btn');
     const status = document.getElementById('migrate-d1-status');
@@ -705,6 +778,7 @@
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     loadSubmissions();
+    loadBroadcastPreviewCount();
   }
 
   // ---------- Score de suspicion (croisement IP / Discord ID / email / pseudo similaires) ----------
