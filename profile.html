@@ -833,7 +833,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     try{
       const resp = await nitrodropAuthFetch(`${workerBase}/profile/claim`, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ discordId }),
+        body: JSON.stringify({ discordId, pseudo: getSharedUsername(), avatarUrl: getSharedAvatarUrl() }),
       });
       const data = await resp.json();
       if (!data.ok){
