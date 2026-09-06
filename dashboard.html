@@ -681,16 +681,28 @@
         container.innerHTML = '<div class="empty">Aucune annonce envoyée pour le moment.</div>';
         return list;
       }
-      const rows = list.map(b => `
+      const rows = list.map(b => {
+        let failureDetails = [];
+        try { failureDetails = JSON.parse(b.failureDetails || '[]'); } catch(e){ failureDetails = []; }
+        const failedCell = b.failed === 0
+          ? '<span style="color:var(--text-dim); font-weight:700;">0</span>'
+          : `<details>
+              <summary style="color:#e08a8a; font-weight:700; cursor:pointer;">${b.failed}</summary>
+              <ul style="margin:6px 0 0; padding-left:16px; font-size:11.5px; color:rgba(244,236,216,.75); font-weight:400;">
+                ${failureDetails.map(f => `<li><b>${escapeHtml(f.pseudo || f.discordId)}</b> — ${escapeHtml(f.error || 'raison inconnue')}</li>`).join('')}
+              </ul>
+            </details>`;
+        return `
         <tr>
           <td class="mono" style="font-size:11px; white-space:nowrap;">${escapeHtml(formatLocalDate({ dateMs: b.dateMs }))}</td>
           <td style="max-width:320px; white-space:normal;">${escapeHtml(b.message.length > 140 ? b.message.slice(0, 140) + '…' : b.message)}</td>
           <td>${b.status === 'done' ? '<span style="color:#8fce8f;">✅ Terminé</span>' : '<span style="color:#f0c060;">⏳ En cours</span>'}</td>
           <td style="color:#8fce8f; font-weight:700;">${b.sent}</td>
-          <td style="color:${b.failed > 0 ? '#e08a8a' : 'var(--text-dim)'}; font-weight:700;">${b.failed}</td>
+          <td>${failedCell}</td>
           <td style="color:#E8C168; font-weight:700;">${b.clicks}</td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
       container.innerHTML = `
         <div style="overflow-x:auto;">
           <table style="width:100%;">
