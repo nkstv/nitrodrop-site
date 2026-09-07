@@ -979,6 +979,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
             ? `<span class="offer-cta" style="opacity:.45; cursor:not-allowed; pointer-events:none;" title="You've already reached the submission limit for this offer.">Bonus limit reached</span>`
             : `<a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>`}
         </div>
+        ${(bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].limit > 0)
+          ? `<div style="text-align:center; font-size:10.5px; color:var(--muted-2); margin-top:6px;">${bonusLimitStatus[offer.name].count}/${bonusLimitStatus[offer.name].limit} requested</div>`
+          : ''}
       `;
       grid.appendChild(card);
     });
@@ -1381,6 +1384,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     stepDeposit.style.display = 'none';
     stepDelivery.style.display = 'block';
     runDeliveryAnimation();
+
+    // La demande vient de partir avec succès : on rafraîchit tout de suite le
+    // compteur/statut de limite (au lieu d'attendre un rechargement de page),
+    // pour que le bouton se grise immédiatement si c'était la dernière
+    // demande autorisée pour cette offre.
+    loadBonusLimitStatus();
   }
 
   // Animation d'attente : purement visuelle, elle rassure le joueur pendant que
