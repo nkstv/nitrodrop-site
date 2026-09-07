@@ -520,6 +520,36 @@
   }
   .modal-submit:hover{filter:brightness(1.06);}
   .modal-submit:disabled{opacity:.55; filter:none; cursor:default;}
+
+  /* Popup de conversion clés -> $ : par défaut (mobile), les 2 cartes restent
+     empilées normalement, comme n'importe quel autre contenu — comportement
+     mobile intact, rien à faire de plus ici. */
+  .convert-transfer{display:none;}
+
+  /* Desktop uniquement : 2 colonnes côte à côte, avec une petite animation de
+     transfert entre les deux (clés -> $) qui boucle en continu. */
+  @media(min-width:640px){
+    .convert-modal{max-width:640px;}
+    .convert-cards-wrap{
+      display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:6px;
+    }
+    .convert-cards-wrap .convert-card{margin:18px 0 !important;}
+    .convert-transfer{
+      display:flex; flex-direction:column; align-items:center; gap:6px; padding:0 6px;
+    }
+    .convert-transfer-icon{font-size:18px; opacity:.8;}
+    .convert-transfer-dot{
+      width:6px; height:6px; border-radius:50%; background:var(--gold);
+      animation:convertTransferFlow 1.6s ease-in-out infinite;
+    }
+    .convert-transfer-dot:nth-child(3){animation-delay:.25s;}
+    .convert-transfer-dot:nth-child(4){animation-delay:.5s;}
+    @keyframes convertTransferFlow{
+      0%,100%{opacity:.2; transform:translateX(-3px);}
+      50%{opacity:1; transform:translateX(3px);}
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -1429,29 +1459,39 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
 </script>
 <!-- Popup de conversion des clés en argent réel -->
 <div class="modal-overlay" id="convert-modal-overlay">
-  <div class="modal">
+  <div class="modal convert-modal">
     <button class="modal-close" onclick="closeConvertModal()" aria-label="Close">×</button>
     <div class="modal-tag">Convert keys</div>
     <h3>Convert 🔑 to $</h3>
     <p class="modal-sub">Turn your keys into real money — 100 🔑 = $1. Converting uses your entire current balance.</p>
 
-    <div style="background:var(--panel-2, rgba(255,255,255,.04)); border:1px solid var(--line, rgba(232,193,104,.14)); border-radius:14px; padding:18px; margin:18px 0;">
-      <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;">Your keys</div>
-      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; color:var(--gold); margin-top:2px;">
-        🔑 <span id="convert-keys-balance">0</span>
+    <div class="convert-cards-wrap">
+      <div class="convert-card" style="background:var(--panel-2, rgba(255,255,255,.04)); border:1px solid var(--line, rgba(232,193,104,.14)); border-radius:14px; padding:18px; margin:18px 0;">
+        <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;">Your keys</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; color:var(--gold); margin-top:2px;">
+          🔑 <span id="convert-keys-balance">0</span>
+        </div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">≈ $<span id="convert-keys-preview">0.00</span> if converted now</div>
+        <button type="button" class="modal-submit" id="convert-keys-btn" style="margin-top:14px;">Convert to $</button>
+        <p id="convert-status" style="font-size:12.5px; margin-top:10px; display:none;"></p>
       </div>
-      <div style="font-size:12px; color:var(--muted); margin-top:2px;">≈ $<span id="convert-keys-preview">0.00</span> if converted now</div>
-      <button type="button" class="modal-submit" id="convert-keys-btn" style="margin-top:14px;">Convert to $</button>
-      <p id="convert-status" style="font-size:12.5px; margin-top:10px; display:none;"></p>
-    </div>
 
-    <div style="background:var(--panel-2, rgba(255,255,255,.04)); border:1px solid var(--line, rgba(232,193,104,.14)); border-radius:14px; padding:18px;">
-      <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;">Your cash balance</div>
-      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; color:var(--gold); margin-top:2px;">
-        $<span id="convert-cash-balance">0.00</span>
+      <div class="convert-transfer" aria-hidden="true">
+        <span class="convert-transfer-icon">🔑</span>
+        <span class="convert-transfer-dot"></span>
+        <span class="convert-transfer-dot"></span>
+        <span class="convert-transfer-dot"></span>
+        <span class="convert-transfer-icon">$</span>
       </div>
-      <button type="button" class="modal-submit" id="convert-withdraw-btn" style="margin-top:14px;" disabled>Withdraw (available at $100)</button>
-      <p id="withdraw-status" style="font-size:12.5px; margin-top:10px; display:none;"></p>
+
+      <div class="convert-card" style="background:var(--panel-2, rgba(255,255,255,.04)); border:1px solid var(--line, rgba(232,193,104,.14)); border-radius:14px; padding:18px;">
+        <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;">Your cash balance</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; color:var(--gold); margin-top:2px;">
+          $<span id="convert-cash-balance">0.00</span>
+        </div>
+        <button type="button" class="modal-submit" id="convert-withdraw-btn" style="margin-top:14px;" disabled>Withdraw (available at $100)</button>
+        <p id="withdraw-status" style="font-size:12.5px; margin-top:10px; display:none;"></p>
+      </div>
     </div>
   </div>
 </div>
