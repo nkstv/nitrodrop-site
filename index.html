@@ -977,7 +977,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
           <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
           ${(bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].reached)
             ? `<span class="offer-cta" style="opacity:.45; cursor:not-allowed; pointer-events:none;" title="You've already reached the submission limit for this offer.">Bonus limit reached</span>`
-            : `<a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>`}
+            : (bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].onCooldown)
+              ? `<span class="offer-cta" style="opacity:.45; cursor:not-allowed; pointer-events:none;" title="You already requested this bonus recently — one request per offer every 24h.">Try again in ${bonusLimitStatus[offer.name].hoursRemaining}h</span>`
+              : `<a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>`}
         </div>
         ${(bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].limit > 0)
           ? `<div style="text-align:center; font-size:10.5px; color:var(--muted-2); margin-top:6px;">${bonusLimitStatus[offer.name].count}/${bonusLimitStatus[offer.name].limit} requested</div>`
@@ -992,6 +994,10 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         const offer = cfg.offers[parseInt(btn.dataset.claimIdx, 10)];
         if (bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].reached){
           showAlert("You've already reached the submission limit for this offer.");
+          return;
+        }
+        if (bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].onCooldown){
+          showAlert(`You already requested this bonus recently — try again in ${bonusLimitStatus[offer.name].hoursRemaining}h.`);
           return;
         }
         openModal(offer.name, offer.code, offer.signupHref, offer.codeEnabled !== false, offer.depositRequired === true);
@@ -1020,7 +1026,8 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       if (claimSlug){
         const slugify = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
         const target = cfg.offers.find(o => slugify(o.name) === claimSlug);
-        if (target && !(bonusLimitStatus[target.name] && bonusLimitStatus[target.name].reached)){
+        const targetStatus = target && bonusLimitStatus[target.name];
+        if (target && !(targetStatus && (targetStatus.reached || targetStatus.onCooldown))){
           window.__claimDeepLinkHandled = true;
           openModal(target.name, target.code, target.signupHref, target.codeEnabled !== false, target.depositRequired === true);
         }
