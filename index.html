@@ -614,6 +614,11 @@
     <button class="d-out" id="drawer-logout-btn" aria-label="Log out" style="display:none;">→]</button>
   </div>
   <div class="d-sep"></div>
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:2px 4px 12px;">
+    <div><span class="key">🔑</span> <b id="balance-drawer" style="font-family:'Baloo 2',sans-serif; font-size:16px;">0</b></div>
+    <button type="button" onclick="openConvertModal()" style="background:var(--panel-3); border:1px solid var(--line); color:var(--cream); font-weight:700; font-size:12.5px; padding:8px 12px; border-radius:10px;">Convert 🔑 to $</button>
+  </div>
+  <div class="d-sep"></div>
   <div class="d-grid">
     <a class="d-item" href="/profile">Profile</a><a class="d-item" href="/leaderboard">Leaderboard</a><a class="d-item" href="/">Bonuses</a>
     <a class="d-item" href="/vault">Vault</a>
@@ -857,7 +862,11 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     dot.style.display = pending ? '' : 'none';
   }
 
-  function setBalance(v){ balanceSidebarEl.textContent = v; }
+  function setBalance(v){
+    balanceSidebarEl.textContent = v;
+    const drawerBal = document.getElementById('balance-drawer');
+    if (drawerBal) drawerBal.textContent = v;
+  }
 
   // ---------------- Offres (lues depuis la même config que la page d'accueil) ----------------
   let currentLang = 'en';
