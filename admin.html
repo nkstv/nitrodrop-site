@@ -227,7 +227,9 @@
     <div id="offers-fields"></div>
     <button type="button" class="btn btn-save" onclick="addOffer()" style="margin-top:6px;">+ Ajouter une offre</button>
     <div class="note" style="margin-top:18px;">
-      <strong>Limites de soumission :</strong> réglage séparé de la config du site, stocké directement sur le Worker (nécessite l'URL et la clé renseignées dans la section "Coffre-fort"). L'effet est immédiat, pas besoin de publier sur GitHub.
+      <strong>💡 Ce bouton est différent du reste de cette page.</strong><br>
+      Il n'attend pas que tu cliques sur "Publier sur GitHub" en bas — il enregistre <strong>tout de suite</strong>, dès que tu cliques dessus.<br>
+      Pour que ça marche, il faut d'abord avoir rempli l'URL de ton Worker et ta clé dans la section 🔒 <strong>Coffre-fort</strong> (menu de gauche) — sans ça, ce bouton n'a nulle part où enregistrer et affichera une erreur.
       <div style="margin-top:12px;">
         <button type="button" class="btn btn-save" onclick="saveOfferSubmissionLimits()">Enregistrer les limites de soumission</button>
         <span id="offer-limits-status" style="margin-left:10px; font-size:12.5px; color:var(--text-dim);"></span>
@@ -708,14 +710,14 @@
       block.appendChild(chkDeposit);
 
       const fLimit = el('div', {class:'field'});
-      fLimit.appendChild(el('label', {text:'Limite de soumissions par joueur pour cette offre (0 = illimité)'}));
+      fLimit.appendChild(el('label', {text:'Nombre max de demandes par joueur pour cette offre (0 = pas de limite)'}));
       const inLimit = el('input', {
         type:'number', min:'0', step:'1', id:`offer-submissionLimit-${i}`,
         value: String(offerSubmissionLimits[offer.name] || 0),
       });
       fLimit.appendChild(inLimit);
       fLimit.appendChild(el('div', {class:'sub', style:'margin-top:4px; margin-bottom:0;',
-        text:'Réglage à part de la config du site : enregistré directement sur le Worker via le bouton dédié plus bas, effet immédiat sans republier.'}));
+        text:'⚡ S\'enregistre avec le bouton dédié plus bas dans cette section, pas avec "Publier sur GitHub".'}));
       block.appendChild(fLimit);
 
       const row4 = el('div', {class:'row'});
