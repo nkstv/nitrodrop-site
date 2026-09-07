@@ -1268,6 +1268,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   }
 
   // ---------------- Conversion clés -> $ (taux fixe, retrait manuel) ----------------
+  // Attaché seulement une fois le HTML entier chargé (DOMContentLoaded), par
+  // cohérence et sécurité avec les autres pages du site.
+  document.addEventListener('DOMContentLoaded', function(){
   const convertOverlay = document.getElementById('convert-modal-overlay');
 
   async function openConvertModal(){
@@ -1368,6 +1371,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       status.style.display = '';
       btn.disabled = false;
     }
+  });
   });
 
   function gateYes(){

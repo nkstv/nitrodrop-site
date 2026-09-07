@@ -622,6 +622,12 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
   }
 
   // ---------------- Conversion clés -> $ (taux fixe, retrait manuel) ----------------
+  // Attaché seulement une fois le HTML entier chargé (DOMContentLoaded) : ce bloc
+  // référence la popup, qui se trouve tout en bas du fichier, juste avant </body> —
+  // sans cette précaution, le navigateur exécute ce script AVANT d'avoir lu cette
+  // partie plus bas dans le document, et .addEventListener plante sur un élément
+  // encore introuvable (null).
+  document.addEventListener('DOMContentLoaded', function(){
   const convertOverlay = document.getElementById('convert-modal-overlay');
 
   async function openConvertModal(){
@@ -720,6 +726,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       status.style.display = '';
       btn.disabled = false;
     }
+  });
   });
 
 

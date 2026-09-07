@@ -838,8 +838,15 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     balanceSidebarEl.textContent = v;
     const drawerBal = document.getElementById('balance-drawer');
     if (drawerBal) drawerBal.textContent = v;
+  }
 
   // ---------------- Conversion clés -> $ (taux fixe, retrait manuel) ----------------
+  // Attaché seulement une fois le HTML entier chargé (DOMContentLoaded) : ce bloc
+  // référence la popup, qui se trouve tout en bas du fichier, juste avant </body> —
+  // sans cette précaution, le navigateur exécute ce script AVANT d'avoir lu cette
+  // partie plus bas dans le document, et .addEventListener plante sur un élément
+  // encore introuvable (null).
+  document.addEventListener('DOMContentLoaded', function(){
   const convertOverlay = document.getElementById('convert-modal-overlay');
 
   async function openConvertModal(){
@@ -939,9 +946,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       btn.disabled = false;
     }
   });
-
-
-  }
+  });
 
   function buildEmptyGrid(){
     grid.innerHTML='';
