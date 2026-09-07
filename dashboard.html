@@ -328,6 +328,7 @@
       <button class="dash-tab" id="tab-btn-leaderboard" onclick="switchDashTab('leaderboard')">🏆 Leaderboard</button>
       <button class="dash-tab" id="tab-btn-referral" onclick="switchDashTab('referral')">🤝 Parrainage</button>
       <button class="dash-tab" id="tab-btn-broadcast" onclick="switchDashTab('broadcast')">📨 Diffusion</button>
+      <button class="dash-tab" id="tab-btn-cash" onclick="switchDashTab('cash')">💵 Retrait $</button>
     </div>
 
     <div id="tab-bonus">
@@ -544,6 +545,16 @@
         Pas de colonne "ouvertures" — Discord ne donne cette information à aucun bot, ce n'est pas mesurable.
       </div>
       <div id="broadcast-history-container"></div>
+    </div>
+
+    <div id="tab-cash" style="display:none;">
+      <div class="stats" id="cash-stats"></div>
+
+      <h3 style="margin:20px 0 10px; color:var(--gold); font-size:15px;">💸 Demandes de retrait ($ convertis depuis des clés)</h3>
+      <div id="cash-requests-container"></div>
+
+      <h3 style="margin:28px 0 10px; color:var(--gold); font-size:15px;">🔑 Historique des conversions</h3>
+      <div id="cash-conversions-container"></div>
     </div>
   </div>
 </div>
@@ -1754,6 +1765,7 @@
   let statsLoaded = false;
   let referralLoaded = false;
   let broadcastLoaded = false;
+  let cashLoaded = false;
   let activeDashTab = 'bonus';
 
   function switchDashTab(tab){
@@ -1765,6 +1777,7 @@
     document.getElementById('tab-stats').style.display = tab === 'stats' ? '' : 'none';
     document.getElementById('tab-referral').style.display = tab === 'referral' ? '' : 'none';
     document.getElementById('tab-broadcast').style.display = tab === 'broadcast' ? '' : 'none';
+    document.getElementById('tab-cash').style.display = tab === 'cash' ? '' : 'none';
     document.getElementById('tab-btn-bonus').classList.toggle('active', tab === 'bonus');
     document.getElementById('tab-btn-affiliates').classList.toggle('active', tab === 'affiliates');
     document.getElementById('tab-btn-users').classList.toggle('active', tab === 'users');
@@ -1772,6 +1785,7 @@
     document.getElementById('tab-btn-stats').classList.toggle('active', tab === 'stats');
     document.getElementById('tab-btn-referral').classList.toggle('active', tab === 'referral');
     document.getElementById('tab-btn-broadcast').classList.toggle('active', tab === 'broadcast');
+    document.getElementById('tab-btn-cash').classList.toggle('active', tab === 'cash');
     if (tab === 'users' && !usersLoaded){
       loadUsers();
     }
@@ -1794,6 +1808,10 @@
       loadBroadcastPreviewCount();
       loadBroadcastHistory();
     }
+    if (tab === 'cash' && !cashLoaded){
+      cashLoaded = true;
+      loadCashAdmin();
+    }
   }
 
   // Le bouton "Rafraîchir" de la barre du haut rafraîchit l'onglet actuellement affiché
@@ -1809,6 +1827,8 @@
     } else if (activeDashTab === 'broadcast'){
       loadBroadcastPreviewCount();
       loadBroadcastHistory();
+    } else if (activeDashTab === 'cash'){
+      loadCashAdmin();
     } else {
       loadSubmissions();
     }
@@ -2544,6 +2564,130 @@
     }catch(e){
       alert('Erreur : ' + e.message);
     }
+  }
+
+  // ---------- Onglet Retrait $ (conversion clés -> argent réel) ----------
+  let allCashWithdrawals = [];
+  let allCashConversions = [];
+
+  async function loadCashAdmin(){
+    const reqContainer = document.getElementById('cash-requests-container');
+    const convContainer = document.getElementById('cash-conversions-container');
+    reqContainer.innerHTML = '<div class="empty">Chargement…</div>';
+    convContainer.innerHTML = '<div class="empty">Chargement…</div>';
+    try{
+      const [wResp, cResp] = await Promise.all([
+        fetch(`${workerBaseUrl}/admin/cash/withdrawals`, { headers: { 'X-Dashboard-Key': dashboardKey } }),
+        fetch(`${workerBaseUrl}/admin/cash/conversions`, { headers: { 'X-Dashboard-Key': dashboardKey } }),
+      ]);
+      if (!wResp.ok || !cResp.ok) throw new Error('HTTP ' + wResp.status + '/' + cResp.status);
+      const wData = await wResp.json();
+      const cData = await cResp.json();
+      allCashWithdrawals = wData.withdrawals || [];
+      allCashConversions = cData.conversions || [];
+      renderCashStats();
+      renderCashRequests();
+      renderCashConversions();
+    }catch(e){
+      reqContainer.innerHTML = `<div class="empty">Erreur de chargement : ${escapeHtml(e.message)}</div>`;
+      convContainer.innerHTML = '';
+    }
+  }
+
+  function renderCashStats(){
+    const pending = allCashWithdrawals.filter(r => r.status === 'pending');
+    const pendingAmount = pending.reduce((sum, r) => sum + (r.amount || 0), 0);
+    const totalConverted = allCashConversions.reduce((sum, c) => sum + (c.dollarsCredited || 0), 0);
+    document.getElementById('cash-stats').innerHTML = `
+      <div class="stat"><div class="n">${allCashConversions.length}</div><div class="l">Conversions effectuées</div></div>
+      <div class="stat"><div class="n">$${totalConverted.toFixed(2)}</div><div class="l">Total converti (jamais)</div></div>
+      <div class="stat"><div class="n">${pending.length}</div><div class="l">Demandes en attente</div></div>
+      <div class="stat"><div class="n">$${pendingAmount.toFixed(2)}</div><div class="l">Montant en attente</div></div>
+    `;
+  }
+
+  function renderCashRequests(){
+    const container = document.getElementById('cash-requests-container');
+    const pending = allCashWithdrawals.filter(r => r.status === 'pending');
+    const processed = allCashWithdrawals.filter(r => r.status !== 'pending').slice(0, 20);
+
+    if (allCashWithdrawals.length === 0){
+      container.innerHTML = '<div class="empty">Aucune demande de retrait pour le moment.</div>';
+      return;
+    }
+
+    const rowsHtml = (list, isPending) => list.map(r => `
+      <tr>
+        <td class="mono" style="font-size:11px;">${escapeHtml(formatLocalDate({ dateMs: r.dateMs }))}</td>
+        <td>${escapeHtml(r.pseudo || '?')}</td>
+        <td class="mono" style="font-size:11px;">${escapeHtml(r.discordId)}</td>
+        <td style="font-weight:700; color:var(--gold);">$${(r.amount || 0).toFixed(2)}</td>
+        <td>${isPending
+          ? '<span class="badge" style="background:#FFC75922; color:#FFC759;">En attente</span>'
+          : (r.status === 'paid'
+              ? '<span class="badge" style="background:#8fce8f22; color:#8fce8f;">Payé</span>'
+              : '<span class="badge" style="background:#FF7A9022; color:#FF7A90;">Refusé</span>')
+        }</td>
+        <td>${isPending ? `
+          <button class="btn" style="padding:5px 10px; font-size:11px;" onclick="processCashWithdrawal('${r.id}','paid')">Marquer payé</button>
+          <button class="btn" style="padding:5px 10px; font-size:11px; color:#FF7A90; border-color:#FF7A90;" onclick="processCashWithdrawal('${r.id}','declined')">Refuser</button>
+        ` : '—'}</td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table style="width:100%;">
+          <thead><tr>
+            <th>Date</th><th>Pseudo</th><th>Discord ID</th><th>Montant</th><th>Statut</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            ${pending.length ? rowsHtml(pending, true) : ''}
+            ${processed.length ? rowsHtml(processed, false) : ''}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  async function processCashWithdrawal(id, status){
+    const verb = status === 'paid' ? 'marquer cette demande comme payée' : 'refuser cette demande';
+    if (!confirm(`Confirmer : ${verb} ? Le versement réel se fait de ton côté, en dehors du site — ceci ne fait que mettre à jour le suivi.`)) return;
+    try{
+      const resp = await fetch(`${workerBaseUrl}/admin/cash/withdrawals/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashboardKey },
+        body: JSON.stringify({ id, status }),
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      await loadCashAdmin();
+    }catch(e){
+      alert('Erreur : ' + e.message);
+    }
+  }
+
+  function renderCashConversions(){
+    const container = document.getElementById('cash-conversions-container');
+    if (allCashConversions.length === 0){
+      container.innerHTML = '<div class="empty">Aucune conversion effectuée pour le moment.</div>';
+      return;
+    }
+    const rows = allCashConversions.map(c => `
+      <tr>
+        <td class="mono" style="font-size:11px;">${escapeHtml(formatLocalDate({ dateMs: c.dateMs }))}</td>
+        <td>${escapeHtml(c.pseudo || c.discordId)}</td>
+        <td>🔑 ${(c.keysConverted || 0).toLocaleString('fr-FR')}</td>
+        <td style="color:var(--gold); font-weight:700;">$${(c.dollarsCredited || 0).toFixed(2)}</td>
+      </tr>
+    `).join('');
+    container.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table style="width:100%;">
+          <thead><tr><th>Date</th><th>Joueur</th><th>Clés converties</th><th>$ crédités</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
   }
 
   function renderReferralList(){

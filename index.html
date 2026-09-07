@@ -542,7 +542,7 @@
     <div class="wallet">
       <div class="k">Balance</div>
       <div class="v"><span class="key">🔑</span> <b id="balance-sidebar">0</b></div>
-      <button disabled title="New keys every day, automatically">Top up</button>
+      <button type="button" onclick="openConvertModal()" id="convert-open-btn" title="Turn your keys into real money">Convert 🔑 to $</button>
     </div>
 
     <div class="s-label">MENU</div>
@@ -707,6 +707,35 @@
       <div class="countdown" id="countdown">24:00:00</div>
       <p class="modal-note" id="confirm-note"></p>
       <a href="#" class="modal-ghost" id="confirm-telegram-btn" style="margin-top:20px; display:block; text-align:center; text-decoration:none;">Join the Telegram channel</a>
+    </div>
+  </div>
+</div>
+
+<!-- Popup de conversion des clés en argent réel -->
+<div class="modal-overlay" id="convert-modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeConvertModal()" aria-label="Close">×</button>
+    <div class="modal-tag">Convert keys</div>
+    <h3>Convert 🔑 to $</h3>
+    <p class="modal-sub">Turn your keys into real money — 100 🔑 = $1. Converting uses your entire current balance.</p>
+
+    <div style="background:var(--panel-2, rgba(255,255,255,.04)); border:1px solid var(--line, rgba(232,193,104,.14)); border-radius:14px; padding:18px; margin:18px 0;">
+      <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;">Your keys</div>
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; color:var(--gold); margin-top:2px;">
+        🔑 <span id="convert-keys-balance">0</span>
+      </div>
+      <div style="font-size:12px; color:var(--muted); margin-top:2px;">≈ $<span id="convert-keys-preview">0.00</span> if converted now</div>
+      <button type="button" class="modal-submit" id="convert-keys-btn" style="margin-top:14px;">Convert to $</button>
+      <p id="convert-status" style="font-size:12.5px; margin-top:10px; display:none;"></p>
+    </div>
+
+    <div style="background:var(--panel-2, rgba(255,255,255,.04)); border:1px solid var(--line, rgba(232,193,104,.14)); border-radius:14px; padding:18px;">
+      <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;">Your cash balance</div>
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:28px; color:var(--gold); margin-top:2px;">
+        $<span id="convert-cash-balance">0.00</span>
+      </div>
+      <button type="button" class="modal-submit" id="convert-withdraw-btn" style="margin-top:14px;" disabled>Withdraw (available at $100)</button>
+      <p id="withdraw-status" style="font-size:12.5px; margin-top:10px; display:none;"></p>
     </div>
   </div>
 </div>
@@ -1228,6 +1257,109 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
     clearInterval(termsCountdownInterval);
     clearTimeout(autoCloseTimeout);
   }
+
+  // ---------------- Conversion clés -> $ (taux fixe, retrait manuel) ----------------
+  const convertOverlay = document.getElementById('convert-modal-overlay');
+
+  async function openConvertModal(){
+    const discordId = getSharedDiscordId();
+    if (!discordId){ connectDiscord(); return; }
+    convertOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('convert-status').style.display = 'none';
+    document.getElementById('withdraw-status').style.display = 'none';
+    await refreshConvertModal();
+  }
+  function closeConvertModal(){
+    convertOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  window.openConvertModal = openConvertModal;
+  window.closeConvertModal = closeConvertModal;
+  convertOverlay.addEventListener('click', (e) => { if (e.target === convertOverlay) closeConvertModal(); });
+
+  async function refreshConvertModal(){
+    const discordId = getSharedDiscordId();
+    if (!discordId || !workerBase) return;
+
+    // Solde de clés actuel (déjà affiché dans la sidebar, on relit juste pour être sûr d'avoir la valeur la plus fraîche)
+    const keys = parseFloat((document.getElementById('balance-sidebar').textContent || '0').replace(/,/g, '')) || 0;
+    document.getElementById('convert-keys-balance').textContent = keys.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    document.getElementById('convert-keys-preview').textContent = (keys / 100).toFixed(2);
+    document.getElementById('convert-keys-btn').disabled = keys <= 0;
+
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/cash/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      const balance = data.balance || 0;
+      document.getElementById('convert-cash-balance').textContent = balance.toFixed(2);
+      const withdrawBtn = document.getElementById('convert-withdraw-btn');
+      if (data.pendingWithdrawal){
+        withdrawBtn.disabled = true;
+        withdrawBtn.textContent = 'Withdrawal request pending';
+      } else if (balance >= 100){
+        withdrawBtn.disabled = false;
+        withdrawBtn.textContent = `Withdraw $${balance.toFixed(2)}`;
+      } else {
+        withdrawBtn.disabled = true;
+        withdrawBtn.textContent = `Withdraw (available at $100 — you have $${balance.toFixed(2)})`;
+      }
+    }catch(e){ /* pas bloquant, le solde $ reste juste à 0 affiché */ }
+  }
+
+  document.getElementById('convert-keys-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('convert-keys-btn');
+    const status = document.getElementById('convert-status');
+    btn.disabled = true;
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/keys/convert`, { method: 'POST' });
+      const data = await resp.json();
+      if (data.ok){
+        status.textContent = `✅ Converted 🔑${Number(data.keysConverted).toLocaleString('en-US', { maximumFractionDigits: 2 })} into $${data.dollarsCredited.toFixed(2)}.`;
+        status.style.color = '#5FD68B';
+        setBalance('0');
+        loadBonusLimitStatus();
+      } else {
+        status.textContent = data.reason === 'no_keys' ? "You don't have any keys to convert." : 'Could not convert right now — please try again later.';
+        status.style.color = '#e08a8a';
+      }
+      status.style.display = '';
+      await refreshConvertModal();
+    }catch(e){
+      status.textContent = 'Network error — please try again later.';
+      status.style.color = '#e08a8a';
+      status.style.display = '';
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('convert-withdraw-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('convert-withdraw-btn');
+    const status = document.getElementById('withdraw-status');
+    btn.disabled = true;
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/cash/withdraw`, { method: 'POST' });
+      const data = await resp.json();
+      if (data.ok){
+        status.textContent = "✅ Withdrawal request sent — we'll process it manually and reach out via Discord.";
+        status.style.color = '#5FD68B';
+        btn.textContent = 'Withdrawal request pending';
+      } else {
+        status.textContent = data.reason === 'already_pending'
+          ? 'You already have a pending withdrawal request.'
+          : 'Could not submit your request — please try again later.';
+        status.style.color = '#e08a8a';
+        btn.disabled = false;
+      }
+      status.style.display = '';
+    }catch(e){
+      status.textContent = 'Network error — please try again later.';
+      status.style.color = '#e08a8a';
+      status.style.display = '';
+      btn.disabled = false;
+    }
+  });
 
   function gateYes(){
     stepGate.style.display = 'none';
