@@ -562,11 +562,14 @@
   .custom-alert-overlay.show{display:flex;}
   .custom-alert-box{
     background:linear-gradient(180deg,#241c12,#191309); border:1px solid var(--line); border-radius:18px;
-    padding:24px 26px; max-width:340px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.55);
+    padding:24px 26px; max-width:380px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.55);
     animation:reveal .18s ease;
   }
   .custom-alert-title{font-family:"Baloo 2"; font-weight:800; font-size:15px; color:var(--gold); margin-bottom:10px;}
   .custom-alert-msg{font-size:14.5px; color:var(--cream); line-height:1.5; margin-bottom:20px;}
+  .custom-alert-msg a{color:var(--gold); text-decoration:underline;}
+  .custom-alert-msg ul{margin:10px 0 0; padding-left:18px; text-align:left;}
+  .custom-alert-msg li{margin-bottom:7px;}
   .custom-alert-btn{
     width:100%; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); color:#3a2a08;
     font-family:"Baloo 2"; font-weight:800; font-size:15px; padding:12px; border-radius:12px; transition:.15s;
@@ -902,7 +905,7 @@
 const customAlertOverlay = document.getElementById('customAlertOverlay');
 const customAlertMsg = document.getElementById('customAlertMsg');
 function showAlert(message){
-  customAlertMsg.textContent = message;
+  customAlertMsg.innerHTML = message;
   customAlertOverlay.classList.add('show');
 }
 document.getElementById('customAlertOkBtn').addEventListener('click', () => {
@@ -1230,7 +1233,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       });
       const data = await resp.json();
       if (!data.ok){
-        if (data.reason==='insufficient_keys') showAlert('Not enough keys.');
+        if (data.reason==='insufficient_keys') showAlert("🔑 Out of keys? Here's how to get more:<ul><li>Claim <b>2 free keys every day</b> on your <a href=\"/profile\">profile</a></li><li>Earn <b>100 keys</b> per friend who joins via your referral link (also on your profile)</li><li>Random key drops in our <a href=\"/discord-casino\">Discord</a> and the <a href=\"/vault\">Vault</a> — no fixed schedule, so check in often</li><li>More drops announced in our <a href=\"/telegram-casino\">Telegram</a> channel</li></ul>");
         else if (data.reason==='round_in_progress') showAlert('A round is already in progress. Finish it before starting a new one, or reload the page.');
         else if (data.reason==='banned') showAlert('Your account has been banned from the games.');
         else showAlert("Could not deal the hand.");
@@ -1257,7 +1260,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       });
       const data = await resp.json();
       if (!data.ok){
-        if (data.reason==='insufficient_keys') showAlert('Not enough keys for this action.');
+        if (data.reason==='insufficient_keys') showAlert("🔑 Out of keys? Here's how to get more:<ul><li>Claim <b>2 free keys every day</b> on your <a href=\"/profile\">profile</a></li><li>Earn <b>100 keys</b> per friend who joins via your referral link (also on your profile)</li><li>Random key drops in our <a href=\"/discord-casino\">Discord</a> and the <a href=\"/vault\">Vault</a> — no fixed schedule, so check in often</li><li>More drops announced in our <a href=\"/telegram-casino\">Telegram</a> channel</li></ul>");
         busy=false;
         return;
       }
@@ -1279,7 +1282,7 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
       });
       const data = await resp.json();
       if (!data.ok){
-        if (data.reason==='insufficient_keys') showAlert('Not enough keys for insurance.');
+        if (data.reason==='insufficient_keys') showAlert("🔑 Out of keys? Here's how to get more:<ul><li>Claim <b>2 free keys every day</b> on your <a href=\"/profile\">profile</a></li><li>Earn <b>100 keys</b> per friend who joins via your referral link (also on your profile)</li><li>Random key drops in our <a href=\"/discord-casino\">Discord</a> and the <a href=\"/vault\">Vault</a> — no fixed schedule, so check in often</li><li>More drops announced in our <a href=\"/telegram-casino\">Telegram</a> channel</li></ul>");
         busy=false;
         return;
       }
