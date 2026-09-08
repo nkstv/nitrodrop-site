@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Drop Cash">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171209">
+<title>How to Set Up a Crypto Wallet for Online Casinos | Drop Cash</title>
+<meta name="description" content="A beginner's guide to crypto wallets — custodial vs non-custodial, how to set one up safely, and what you actually need before using a crypto casino.">
+<link rel="canonical" href="https://drop-cash.com/crypto-wallet-guide">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to Set Up a Crypto Wallet for Online Casinos | Drop Cash">
+<meta property="og:description" content="A beginner's guide to crypto wallets — custodial vs non-custodial, how to set one up safely, and what you actually need before using a crypto casino.">
+<meta property="og:url" content="https://drop-cash.com/crypto-wallet-guide">
+<meta property="og:image" content="https://drop-cash.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://drop-cash.com/og-image.png">
+<meta name="twitter:title" content="How to Set Up a Crypto Wallet for Online Casinos | Drop Cash">
+<meta name="twitter:description" content="A beginner's guide to crypto wallets — custodial vs non-custodial, how to set one up safely, and what you actually need before using a crypto casino.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://drop-cash.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Crypto Wallet Guide", "item": "https://drop-cash.com/crypto-wallet-guide" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need a crypto wallet to use casino bonuses?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It depends on the offer. No-deposit bonuses generally only need an account and a username — a wallet only becomes relevant once you're depositing, withdrawing, or converting real crypto." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a custodial or non-custodial wallet better for casino use?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Neither is universally better — it's a trade-off. Custodial wallets (like an exchange account) are simpler and recover access if you forget your password, but the platform technically controls the funds. Non-custodial wallets give you full control, but if you lose your seed phrase, there's no customer support to call — it's gone for good." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I lose my seed phrase?",
+      "acceptedAnswer": { "@type": "Answer", "text": "With a non-custodial wallet, the seed phrase is the only way to recover your funds if you lose access to the device or app. There's no password reset option — losing it means losing access permanently. That's exactly why it needs to be written down and stored offline, not just remembered." }
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
+    --line:rgba(232,193,104,.14); --gold:#E8C168; --gold-deep:#C79A3C;
+    --cream:#F2E9D8; --muted:#9a8b6d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif; line-height:1.65;}
+  a{color:var(--gold)}
+  .wrap{max-width:760px; margin:0 auto; padding:32px 20px 80px;}
+  header{display:flex; align-items:center; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:10px;}
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--cream); font-family:"Baloo 2",sans-serif; font-weight:800; font-size:18px;}
+  .brand span{background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .back{color:var(--muted); font-size:13px; text-decoration:none;}
+  h1{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:30px; margin:0 0 10px; line-height:1.2;}
+  h2{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:20px; margin:34px 0 12px;}
+  h3{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:16px; color:var(--cream); margin:0 0 6px;}
+  p{color:var(--muted); font-size:15px;}
+  .lede{color:var(--cream); font-size:16px;}
+  .card{background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line); border-radius:18px; padding:26px; margin:22px 0;}
+  ul, ol{color:var(--muted); font-size:15px; padding-left:20px;}
+  li{margin-bottom:8px;}
+  .warn{background:rgba(255,122,144,.08); border:1px solid rgba(255,122,144,.25); border-radius:12px; padding:16px 18px; margin:20px 0; font-size:14px; color:var(--cream);}
+  .cta{display:block; text-align:center; text-decoration:none; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:16px; color:#3a2a08; padding:15px; border-radius:12px; margin-top:6px; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));}
+  .faq-item{margin-bottom:20px;}
+  .faq-item p{margin:0;}
+  footer{margin-top:50px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; text-align:center;}
+  .disclaimer{font-size:12px; color:var(--muted); margin-top:30px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="/">🦁 <span>Drop Cash</span></a>
+    <a class="back" href="/">← Back to Drop Cash</a>
+  </header>
+
+  <h1>How to Set Up a Crypto Wallet for Online Casinos</h1>
+  <p class="lede">If you've never touched crypto before, "set up a wallet" can sound like a bigger job than it is. It's really just choosing where your funds live and understanding the one rule that actually matters: whoever holds the keys controls the money.</p>
+
+  <div class="card">
+    <h2 style="margin-top:0;">What a wallet actually is</h2>
+    <p style="margin-bottom:0;">A crypto wallet isn't a physical thing holding coins — it's an app or account that manages the keys proving you own a given balance, and lets you send or receive funds using an address (a long string of letters and numbers, unique to you).</p>
+  </div>
+
+  <h2>Custodial vs non-custodial: the one decision that matters</h2>
+  <ul>
+    <li><b>Custodial wallets</b> — typically the wallet built into an exchange (like Coinbase or Binance). The platform holds your keys for you. Easier to recover if you forget a password, since there's a support team behind it — but you're trusting that platform with control of your funds.</li>
+    <li><b>Non-custodial wallets</b> — apps like MetaMask or Trust Wallet, where only you hold the private key (usually shown as a 12 or 24-word "seed phrase"). Nobody can freeze or recover it for you, which means full control, but also full responsibility.</li>
+  </ul>
+  <p>For most beginners just getting started, a well-known custodial exchange is the simpler entry point. Non-custodial wallets make more sense once you're comfortable with the basics and want direct control over your funds.</p>
+
+  <h2>Setting one up, step by step</h2>
+  <ol>
+    <li><b>Pick a reputable option</b> — a major exchange for custodial, or a widely-used app like MetaMask or Trust Wallet for non-custodial. Avoid anything you found through an unsolicited link or ad.</li>
+    <li><b>Create the account or wallet</b> — for non-custodial wallets, this generates your seed phrase immediately. Write it down on paper. Not a screenshot, not a notes app — a physical copy, stored somewhere private.</li>
+    <li><b>Never enter that seed phrase anywhere else.</b> No legitimate support agent, casino, or exchange will ever ask you for it. If something asks, it's a scam, full stop.</li>
+    <li><b>Fund the wallet</b> — usually by buying crypto directly through an exchange, or transferring from an account you already have.</li>
+  </ol>
+
+  <div class="warn">
+    <b>The one habit that prevents almost every wallet scam:</b> nobody legitimate will ever ask for your seed phrase or private key. Not a casino, not "support," not a giveaway. If you're ever asked for it, stop — it's not real.
+  </div>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-item">
+    <h3>Do I need a crypto wallet to use casino bonuses?</h3>
+    <p>It depends on the offer. No-deposit bonuses generally only need an account and a username — a wallet only becomes relevant once you're depositing, withdrawing, or converting real crypto.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Is a custodial or non-custodial wallet better for casino use?</h3>
+    <p>Neither is universally better — it's a trade-off. Custodial wallets (like an exchange account) are simpler and recover access if you forget your password, but the platform technically controls the funds. Non-custodial wallets give you full control, but if you lose your seed phrase, there's no customer support to call — it's gone for good.</p>
+  </div>
+  <div class="faq-item">
+    <h3>What happens if I lose my seed phrase?</h3>
+    <p>With a non-custodial wallet, the seed phrase is the only way to recover your funds if you lose access to the device or app. There's no password reset option — losing it means losing access permanently. That's exactly why it needs to be written down and stored offline, not just remembered.</p>
+  </div>
+
+  <h2>Ready to explore Drop Cash?</h2>
+  <p>You don't need a wallet at all to claim most of our no-deposit bonuses — just a Discord account.</p>
+  <a class="cta" href="/">Browse current bonuses →</a>
+
+  <p class="disclaimer">This page is general information, not financial advice — Drop Cash doesn't recommend specific wallets or coins. Gambling and cryptocurrency both involve risk; only use funds you can afford to lose, and only on platforms available in your jurisdiction.</p>
+
+  <footer>Drop Cash — Free casino bonuses and games, updated daily.</footer>
+</div>
+</body>
+</html>
