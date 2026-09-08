@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Drop Cash">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171209">
+<title>How Does Dice Work? Odds & Multiplier Explained | Drop Cash</title>
+<meta name="description" content="How the Dice game actually calculates its multiplier, why picking a tighter target pays more, and whether it's rigged. A short, honest explainer before you play.">
+<link rel="canonical" href="https://drop-cash.com/dice-guide">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How Does Dice Work? Odds & Multiplier Explained | Drop Cash">
+<meta property="og:description" content="How the Dice game actually calculates its multiplier, why picking a tighter target pays more, and whether it's rigged. A short, honest explainer before you play.">
+<meta property="og:url" content="https://drop-cash.com/dice-guide">
+<meta property="og:image" content="https://drop-cash.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://drop-cash.com/og-image.png">
+<meta name="twitter:title" content="How Does Dice Work? Odds & Multiplier Explained | Drop Cash">
+<meta name="twitter:description" content="How the Dice game actually calculates its multiplier, why picking a tighter target pays more, and whether it's rigged. A short, honest explainer before you play.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://drop-cash.com/" },
+    { "@type": "ListItem", "position": 2, "name": "How Dice Works", "item": "https://drop-cash.com/dice-guide" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Dice rigged?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The number the game rolls is generated independently for each bet, after you've already locked in your target and direction. It isn't chosen to make you lose — it's a fresh random result every single time." }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the best number to pick in Dice?",
+      "acceptedAnswer": { "@type": "Answer", "text": "There isn't a 'best' number — it's a direct trade-off. A wide target (easy to hit) pays a small multiplier. A narrow target (hard to hit) pays a large one. Neither is mathematically better; they just suit different risk appetites." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the multiplier change when I move the slider?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The multiplier is directly tied to how likely your chosen range is to hit. Narrow the range and the odds of winning drop, so the payout rises to match. It updates live so you always know the exact odds before you bet, not after." }
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
+    --line:rgba(232,193,104,.14); --gold:#E8C168; --gold-deep:#C79A3C;
+    --cream:#F2E9D8; --muted:#9a8b6d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif; line-height:1.65;}
+  a{color:var(--gold)}
+  .wrap{max-width:760px; margin:0 auto; padding:32px 20px 80px;}
+  header{display:flex; align-items:center; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:10px;}
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--cream); font-family:"Baloo 2",sans-serif; font-weight:800; font-size:18px;}
+  .brand span{background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .back{color:var(--muted); font-size:13px; text-decoration:none;}
+  h1{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:30px; margin:0 0 10px; line-height:1.2;}
+  h2{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:20px; margin:34px 0 12px;}
+  h3{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:16px; color:var(--cream); margin:0 0 6px;}
+  p{color:var(--muted); font-size:15px;}
+  .lede{color:var(--cream); font-size:16px;}
+  .card{background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line); border-radius:18px; padding:26px; margin:22px 0;}
+  ul, ol{color:var(--muted); font-size:15px; padding-left:20px;}
+  li{margin-bottom:8px;}
+  .cta{display:block; text-align:center; text-decoration:none; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:16px; color:#3a2a08; padding:15px; border-radius:12px; margin-top:6px; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));}
+  .faq-item{margin-bottom:20px;}
+  .faq-item p{margin:0;}
+  footer{margin-top:50px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; text-align:center;}
+  .disclaimer{font-size:12px; color:var(--muted); margin-top:30px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="/">🦁 <span>Drop Cash</span></a>
+    <a class="back" href="/dice">← Play Dice</a>
+  </header>
+
+  <h1>How Does Dice Work?</h1>
+  <p class="lede">Dice looks simple — pick a number, roll — but the way the multiplier is calculated confuses a lot of first-time players. It's actually one of the most transparent games there is, once you see the logic.</p>
+
+  <div class="card">
+    <h2 style="margin-top:0;">The basic idea</h2>
+    <p style="margin-bottom:0;">You choose a target number and whether you're betting the roll lands <b>above</b> or <b>below</b> it. The game generates a random result between 0 and 100. If it lands on your side of the target, you win the multiplier shown before you bet. If not, the round's over.</p>
+  </div>
+
+  <h2>Why a "harder" bet pays more</h2>
+  <p>This is the part that trips people up: the multiplier isn't set by the house arbitrarily — it's directly calculated from your odds of winning. If you bet "roll above 95," you're only covering 5% of outcomes, so a win pays a big multiplier to balance how rarely it happens. Bet "roll above 5" instead, and you're covering 95% of outcomes — you'll win far more often, but each win pays very little. Move the slider, and the payout updates instantly because the math behind it is just that: probability, not house whim.</p>
+
+  <h2>Thinking about risk in Dice</h2>
+  <ul>
+    <li><b>Wide targets (high win chance, low payout)</b> — better if you want longer sessions with frequent small wins.</li>
+    <li><b>Narrow targets (low win chance, high payout)</b> — better if you're chasing a big multiplier and are fine with longer losing streaks between hits.</li>
+    <li><b>The house edge is baked into the curve itself</b> — no target on the slider gives you a mathematical edge over another; they're all calibrated the same way, just at different points on the risk spectrum.</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-item">
+    <h3>Is Dice rigged?</h3>
+    <p>The number the game rolls is generated independently for each bet, after you've already locked in your target and direction. It isn't chosen to make you lose — it's a fresh random result every single time.</p>
+  </div>
+  <div class="faq-item">
+    <h3>What's the best number to pick in Dice?</h3>
+    <p>There isn't a "best" number — it's a direct trade-off. A wide target (easy to hit) pays a small multiplier. A narrow target (hard to hit) pays a large one. Neither is mathematically better; they just suit different risk appetites.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Why does the multiplier change when I move the slider?</h3>
+    <p>The multiplier is directly tied to how likely your chosen range is to hit. Narrow the range and the odds of winning drop, so the payout rises to match. It updates live so you always know the exact odds before you bet, not after.</p>
+  </div>
+
+  <h2>Ready to try it?</h2>
+  <p>Drop Cash gives you free daily keys to play Dice — no deposit needed. Set your target and see the odds update in real time.</p>
+  <a class="cta" href="/dice">Play Dice for Free →</a>
+
+  <p class="disclaimer">Drop Cash is an independent site offering free-to-play games funded by daily keys and casino bonus offers. Gambling involves risk — please play responsibly.</p>
+
+  <footer>Drop Cash — Free casino bonuses and games, updated daily.</footer>
+</div>
+</body>
+</html>
