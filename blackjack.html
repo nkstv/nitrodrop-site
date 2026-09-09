@@ -888,120 +888,16 @@
     dot.style.display = pending ? '' : 'none';
   }
 
-  function setBalance(v){
-    balanceEl.textContent = v;
-    balanceSidebarEl.textContent = v;
-    const drawerBal = document.getElementById('balance-drawer');
-    if (drawerBal) drawerBal.textContent = v;
-  }
-
+  // setBalance et toute la popup de conversion clés -> $ vivent maintenant
+  // dans nitrodrop-config.js (chargé plus haut) — centralisées pour ne plus
+  // jamais devoir corriger la même logique 4 fois séparément.
   // ---------------- Conversion clés -> $ (taux fixe, retrait manuel) ----------------
   // Attaché seulement une fois le HTML entier chargé (DOMContentLoaded) : ce bloc
   // référence la popup, qui se trouve tout en bas du fichier, juste avant </body> —
   // sans cette précaution, le navigateur exécute ce script AVANT d'avoir lu cette
   // partie plus bas dans le document, et .addEventListener plante sur un élément
   // encore introuvable (null).
-  document.addEventListener('DOMContentLoaded', function(){
-  const convertOverlay = document.getElementById('convert-modal-overlay');
-
-  async function openConvertModal(){
-    const discordId = getSharedDiscordId();
-    if (!discordId){ connectDiscord(); return; }
-    convertOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    document.getElementById('convert-status').style.display = 'none';
-    document.getElementById('withdraw-status').style.display = 'none';
-    await refreshConvertModal();
-  }
-  function closeConvertModal(){
-    convertOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-  window.openConvertModal = openConvertModal;
-  window.closeConvertModal = closeConvertModal;
-  convertOverlay.addEventListener('click', (e) => { if (e.target === convertOverlay) closeConvertModal(); });
-
-  async function refreshConvertModal(){
-    const discordId = getSharedDiscordId();
-    if (!discordId || !workerBase) return;
-
-    const keys = parseFloat((document.getElementById('balance-sidebar').textContent || '0').replace(/,/g, '')) || 0;
-    document.getElementById('convert-keys-balance').textContent = keys.toLocaleString('en-US', { maximumFractionDigits: 2 });
-    document.getElementById('convert-keys-preview').textContent = (keys / 100).toFixed(2);
-    document.getElementById('convert-keys-btn').disabled = keys <= 0;
-
-    try{
-      const resp = await nitrodropAuthFetch(`${workerBase}/cash/status?discordId=${encodeURIComponent(discordId)}`);
-      const data = await resp.json();
-      const balance = data.balance || 0;
-      document.getElementById('convert-cash-balance').textContent = balance.toFixed(2);
-      const withdrawBtn = document.getElementById('convert-withdraw-btn');
-      if (data.pendingWithdrawal){
-        withdrawBtn.disabled = true;
-        withdrawBtn.textContent = 'Withdrawal request pending';
-      } else if (balance >= 100){
-        withdrawBtn.disabled = false;
-        withdrawBtn.textContent = `Withdraw $${balance.toFixed(2)}`;
-      } else {
-        withdrawBtn.disabled = true;
-        withdrawBtn.textContent = `Withdraw (available at $100 — you have $${balance.toFixed(2)})`;
-      }
-    }catch(e){ /* pas bloquant, le solde $ reste juste à 0 affiché */ }
-  }
-
-  document.getElementById('convert-keys-btn').addEventListener('click', async () => {
-    const btn = document.getElementById('convert-keys-btn');
-    const status = document.getElementById('convert-status');
-    btn.disabled = true;
-    try{
-      const resp = await nitrodropAuthFetch(`${workerBase}/keys/convert`, { method: 'POST' });
-      const data = await resp.json();
-      if (data.ok){
-        status.textContent = `✅ Converted 🔑${Number(data.keysConverted).toLocaleString('en-US', { maximumFractionDigits: 2 })} into $${data.dollarsCredited.toFixed(2)}.`;
-        status.style.color = '#5FD68B';
-        setBalance('0');
-      } else {
-        status.textContent = data.reason === 'no_keys' ? "You don't have any keys to convert." : 'Could not convert right now — please try again later.';
-        status.style.color = '#e08a8a';
-      }
-      status.style.display = '';
-      await refreshConvertModal();
-    }catch(e){
-      status.textContent = 'Network error — please try again later.';
-      status.style.color = '#e08a8a';
-      status.style.display = '';
-    }finally{
-      btn.disabled = false;
-    }
-  });
-
-  document.getElementById('convert-withdraw-btn').addEventListener('click', async () => {
-    const btn = document.getElementById('convert-withdraw-btn');
-    const status = document.getElementById('withdraw-status');
-    btn.disabled = true;
-    try{
-      const resp = await nitrodropAuthFetch(`${workerBase}/cash/withdraw`, { method: 'POST' });
-      const data = await resp.json();
-      if (data.ok){
-        status.textContent = "✅ Withdrawal request sent — we'll process it manually and reach out via Discord.";
-        status.style.color = '#5FD68B';
-        btn.textContent = 'Withdrawal request pending';
-      } else {
-        status.textContent = data.reason === 'already_pending'
-          ? 'You already have a pending withdrawal request.'
-          : 'Could not submit your request — please try again later.';
-        status.style.color = '#e08a8a';
-        btn.disabled = false;
-      }
-      status.style.display = '';
-    }catch(e){
-      status.textContent = 'Network error — please try again later.';
-      status.style.color = '#e08a8a';
-      status.style.display = '';
-      btn.disabled = false;
-    }
-  });
-  });
+  
 
   function cardValueLabel(cards){
     // Calcul purement visuel (le vrai calcul/tirage se fait côté serveur)
