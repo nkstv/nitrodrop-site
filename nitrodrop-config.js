@@ -66,23 +66,23 @@ const NITRODROP_DEFAULT_CONFIG = {
         {
           "featured": true,
           "badge": "TOP",
-          "mark": "W",
-          "markColorStart": "#198dc8",
-          "markColorEnd": "#57c5db",
+          "mark": "D",
           "markClass": "mark-1",
-          "name": "Winna",
+          "name": "Duel.com",
           "sub": "Crypto Casino · Best Deals",
           "bonusAmount": "$8.00",
-          "bonusSuffix": "$1.00/day × 8",
-          "desc": "Register with the link, submit your username, and get your tip. **No deposit** needed. ",
-          "code": "luckymood",
-          "codeEnabled": true,
-          "depositRequired": false,
-          "signupHref": "https://winna.com/?r=luckymood",
+          "bonusSuffix": "$2.00/day × 4",
+          "desc": "Register with the code, submit your username, and get your tip. **No deposit** needed. (not available) ",
+          "code": "welcomebonus2026",
+          "signupHref": "https://duel-casino-home.com/welcomebonus/",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false
+          "claimHighlighted": false,
+          "codeEnabled": true,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66",
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -124,48 +124,6 @@ const NITRODROP_DEFAULT_CONFIG = {
           "codeEnabled": true,
           "markColorStart": "#3748a0",
           "markColorEnd": "#1d2863",
-          "depositRequired": true
-        },
-        {
-          "featured": true,
-          "badge": "TOP",
-          "mark": "R",
-          "markColorStart": "#cc28b7",
-          "markColorEnd": "#ee7ce5",
-          "markClass": "mark-2",
-          "name": "Rakebit",
-          "sub": "Bitcoin and Crypto Casino",
-          "bonusAmount": "$5.00",
-          "bonusSuffix": "$5.00 one time",
-          "desc": "Sign up with the code, deposit a minimum of $5, and wager $30 to claim your reward. New users only.",
-          "code": "PMO4NQGA",
-          "codeEnabled": true,
-          "depositRequired": true,
-          "signupHref": "https://rakebit.com/?trtag=151969_6a95644909f86",
-          "signupText": "1. Create Account",
-          "claimText": "2. Claim My Bonus",
-          "signupHighlighted": true,
-          "claimHighlighted": false
-        },
-        {
-          "featured": true,
-          "badge": "TOP",
-          "mark": "D",
-          "markClass": "mark-1",
-          "name": "Duel.com",
-          "sub": "Crypto Casino · Best Deals",
-          "bonusAmount": "$8.00",
-          "bonusSuffix": "$2.00/day × 4",
-          "desc": "Register with the code, submit your username, and get your tip. **No deposit** needed. (not available) ",
-          "code": "welcomebonus2026",
-          "signupHref": "https://duel-casino-home.com/welcomebonus/",
-          "signupText": "1. Create Account",
-          "claimText": "2. Claim My Bonus",
-          "signupHighlighted": true,
-          "claimHighlighted": false,
-          "codeEnabled": true,
-          "markColorStart": "#6c3fff",
-          "markColorEnd": "#2a1a66",
           "depositRequired": false
         },
         {
@@ -182,12 +140,12 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHref": "https://taap.it/30free",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
-          "signupHighlighted": true,
+          "signupHighlighted": false,
           "claimHighlighted": false,
           "codeEnabled": false,
           "markColorStart": "#41a51d",
           "markColorEnd": "#0d540e",
-          "depositRequired": true
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -208,7 +166,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#2c9108",
           "markColorEnd": "#0e4d0a",
-          "depositRequired": true
+          "depositRequired": false
         },
         {
           "featured": true,
@@ -229,7 +187,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#6c3fff",
           "markColorEnd": "#2a1a66",
-          "depositRequired": true
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -250,7 +208,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#ffe419",
           "markColorEnd": "#675c13",
-          "depositRequired": true
+          "depositRequired": false
         },
         {
           "featured": false,
@@ -271,7 +229,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "depositRequired": true
+          "depositRequired": false
         },
         {
           "featured": true,
@@ -292,7 +250,28 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "depositRequired": true
+          "depositRequired": false
+        },
+        {
+          "featured": true,
+          "badge": "TOP",
+          "mark": "W",
+          "markColorStart": "#198dc8",
+          "markColorEnd": "#57c5db",
+          "markClass": "mark-1",
+          "name": "Winna",
+          "sub": "Crypto Casino · Best Deals",
+          "bonusAmount": "Free Money",
+          "bonusSuffix": "one time",
+          "desc": "Register with the link, submit your username, and get your tip. **No deposit** needed. ",
+          "code": "luckymood",
+          "codeEnabled": true,
+          "depositRequired": false,
+          "signupHref": "https://winna.com/?r=luckymood",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false
         }
       ],
       "tickerSettings": {
@@ -680,3 +659,91 @@ function nitrodropAuthFetch(url, options) {
   if (session) headers['Authorization'] = 'Bearer ' + session;
   return fetch(url, Object.assign({}, options, { headers }));
 }
+
+// =====================================================================
+// Fonctions communes, extraites des 4 pages de jeu (mines/blackjack/dice/
+// slot) où elles étaient dupliquées mot pour mot. Centralisées ici pour
+// qu'un correctif ne doive plus jamais être répété 4 fois séparément.
+// Écrites pour être autonomes (aucune dépendance à une variable propre à
+// une page) — appelables depuis n'importe quelle page qui charge ce fichier.
+// =====================================================================
+
+const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function isMobileDevice(){
+  return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+}
+
+function saveDiscordIdentity(discordId, username, avatarUrl){
+  const payload = JSON.stringify({ discordId, username, avatarUrl });
+  try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
+  try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
+}
+
+function clearDiscordIdentity(){
+  try{ localStorage.removeItem(DISCORD_STORAGE_KEY); }catch(e){}
+  try{ document.cookie = DISCORD_STORAGE_KEY + '=; max-age=0; path=/; SameSite=Lax'; }catch(e){}
+}
+
+function getSavedDiscordIdentity(){
+  try{
+    const raw = localStorage.getItem(DISCORD_STORAGE_KEY);
+    if (raw){
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.discordId) return parsed;
+    }
+  }catch(e){}
+  try{
+    const match = document.cookie.match(new RegExp('(?:^|; )' + DISCORD_STORAGE_KEY + '=([^;]*)'));
+    if (match){
+      const raw = decodeURIComponent(match[1]);
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.discordId){
+        try{ localStorage.setItem(DISCORD_STORAGE_KEY, raw); }catch(e){}
+        return parsed;
+      }
+    }
+  }catch(e){}
+  return null;
+}
+
+function getSharedDiscordId(){ const s = getSavedDiscordIdentity(); return s ? s.discordId : ''; }
+function getSharedUsername(){ const s = getSavedDiscordIdentity(); return s ? s.username : ''; }
+function getSharedAvatarUrl(){ const s = getSavedDiscordIdentity(); return s ? (s.avatarUrl || '') : ''; }
+
+// Popup d'alerte maison (remplace alert() natif du navigateur). Fait sa
+// propre recherche d'éléments à chaque appel plutôt que de dépendre de
+// variables externes — reste correct peu importe l'ordre de chargement
+// des scripts sur la page qui l'utilise.
+function showAlert(message){
+  const msgEl = document.getElementById('customAlertMsg');
+  const overlayEl = document.getElementById('customAlertOverlay');
+  if (msgEl) msgEl.innerHTML = message;
+  if (overlayEl) overlayEl.classList.add('show');
+}
+document.addEventListener('DOMContentLoaded', function(){
+  const okBtn = document.getElementById('customAlertOkBtn');
+  const overlayEl = document.getElementById('customAlertOverlay');
+  if (okBtn && overlayEl){
+    okBtn.addEventListener('click', () => { overlayEl.classList.remove('show'); });
+  }
+});
+
+function connectDiscord(){
+  const cfg = nitrodropLoadPublishedConfig();
+  const clientId = cfg.discordOAuth && cfg.discordOAuth.clientId;
+  if (!clientId){ showAlert('Discord login has not been set up by the site administrator.'); return; }
+  const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
+  const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
+  // Redirection pleine page (desktop + mobile) : plus de popup, donc aucun
+  // blocage possible par le navigateur ou une extension. Au retour de Discord,
+  // discord-callback.html ramène sur cette page via nitrodrop_oauth_return.
+  try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
+  window.location.href = authUrl;
+}
+

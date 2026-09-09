@@ -774,7 +774,6 @@
 <script src="nitrodrop-config.js?v=20260904a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
-  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
 
@@ -783,76 +782,13 @@
     return new Date(dateMs).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
   }
 
-  function escapeHtml(str){
-    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-
-  function isMobileDevice(){
-    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
-  }
-
-  function saveDiscordIdentity(discordId, username, avatarUrl){
-    const payload = JSON.stringify({ discordId, username, avatarUrl });
-    try{ localStorage.setItem(DISCORD_STORAGE_KEY, payload); }catch(e){}
-    try{ document.cookie = DISCORD_STORAGE_KEY + '=' + encodeURIComponent(payload) + '; max-age=31536000; path=/; SameSite=Lax'; }catch(e){}
-  }
-
-  function clearDiscordIdentity(){
-    try{ localStorage.removeItem(DISCORD_STORAGE_KEY); }catch(e){}
-    try{ document.cookie = DISCORD_STORAGE_KEY + '=; max-age=0; path=/; SameSite=Lax'; }catch(e){}
-  }
-
-  function getSavedDiscordIdentity(){
-    try{
-      const raw = localStorage.getItem(DISCORD_STORAGE_KEY);
-      if (raw){
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.discordId) return parsed;
-      }
-    }catch(e){}
-    try{
-      const match = document.cookie.match(new RegExp('(?:^|; )' + DISCORD_STORAGE_KEY + '=([^;]*)'));
-      if (match){
-        const raw = decodeURIComponent(match[1]);
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.discordId){
-          try{ localStorage.setItem(DISCORD_STORAGE_KEY, raw); }catch(e){}
-          return parsed;
-        }
-      }
-    }catch(e){}
-    return null;
-  }
-
-  function getSharedDiscordId(){ const s = getSavedDiscordIdentity(); return s ? s.discordId : ''; }
-  function getSharedUsername(){ const s = getSavedDiscordIdentity(); return s ? s.username : ''; }
-  function getSharedAvatarUrl(){ const s = getSavedDiscordIdentity(); return s ? (s.avatarUrl || '') : ''; }
-
-  function connectDiscord(){
-    const clientId = CONFIG.discordOAuth && CONFIG.discordOAuth.clientId;
-    if (!clientId){ showAlert('Discord login has not been set up by the site administrator.'); return; }
-    const redirectUri = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}discord-callback.html`;
-    const authUrl = `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20guilds.join`;
-    // Redirection pleine page (desktop + mobile) : plus de popup, donc aucun
-    // blocage possible par le navigateur ou une extension. Au retour de Discord,
-    // discord-callback.html ramène sur cette page via nitrodrop_oauth_return.
-    try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
-    window.location.href = authUrl;
-  }
+  // escapeHtml, isMobileDevice, saveDiscordIdentity, clearDiscordIdentity,
+  // getSavedDiscordIdentity, getSharedDiscordId/Username/AvatarUrl, connectDiscord
+  // et showAlert (+ son bouton OK) vivent maintenant dans nitrodrop-config.js
+  // (chargé juste au-dessus) — centralisés pour ne plus jamais devoir corriger
+  // la même chose 4 fois séparément.
 </script>
 <script>
-// Popup d'alerte maison (remplace alert() natif du navigateur) — globale, utilisée
-// aussi bien ici que dans le script d'identité partagé (connectDiscord, etc.)
-const customAlertOverlay = document.getElementById('customAlertOverlay');
-const customAlertMsg = document.getElementById('customAlertMsg');
-function showAlert(message){
-  customAlertMsg.innerHTML = message;
-  customAlertOverlay.classList.add('show');
-}
-document.getElementById('customAlertOkBtn').addEventListener('click', () => {
-  customAlertOverlay.classList.remove('show');
-});
 
 (async function(){
   const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');

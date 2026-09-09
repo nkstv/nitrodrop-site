@@ -734,7 +734,6 @@
 <script src="nitrodrop-config.js?v=20260904a"></script>
 <script>
   const CONFIG = nitrodropLoadPublishedConfig();
-  const DISCORD_STORAGE_KEY = 'nitrodrop_discord_identity';
   const relayUrl = (CONFIG.telegramRelay && CONFIG.telegramRelay.url) || '';
   const workerBase = relayUrl.replace(/\/notify\/?$/, '');
   if (window.pfDebugLog) window.pfDebugLog('workerBase (URL du Worker détectée)', workerBase || '(vide — problème de config CONFIG.telegramRelay.url)', !workerBase);
