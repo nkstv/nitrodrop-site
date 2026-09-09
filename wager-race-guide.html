@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Drop Cash">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171209">
+<title>What Is a Wager Race? How Streamer Leaderboards Work | Drop Cash</title>
+<meta name="description" content="Wager race explained — how streamer-run leaderboards pay out based on how much you bet, why some games count less than others, and what to watch for.">
+<link rel="canonical" href="https://drop-cash.com/wager-race-guide">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What Is a Wager Race? How Streamer Leaderboards Work | Drop Cash">
+<meta property="og:description" content="Wager race explained — how streamer-run leaderboards pay out based on how much you bet, why some games count less than others, and what to watch for.">
+<meta property="og:url" content="https://drop-cash.com/wager-race-guide">
+<meta property="og:image" content="https://drop-cash.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://drop-cash.com/og-image.png">
+<meta name="twitter:title" content="What Is a Wager Race? How Streamer Leaderboards Work | Drop Cash">
+<meta name="twitter:description" content="Wager race explained — how streamer-run leaderboards pay out based on how much you bet, why some games count less than others, and what to watch for.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://drop-cash.com/" },
+    { "@type": "ListItem", "position": 2, "name": "What Is a Wager Race?", "item": "https://drop-cash.com/wager-race-guide" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do you need to win to place well in a wager race?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — ranking is based on total amount wagered, not profit. Someone who bets a large volume and loses overall can still outrank someone who wagered less but won, since the leaderboard only tracks turnover." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do some games count less toward a wager race?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Casinos typically weight wagers by a game's house edge. Low-edge games like Blackjack or Baccarat often count for only a fraction of the bet — sometimes as little as 10% — specifically to stop players from grinding a nearly break-even game purely to climb the leaderboard." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I have to sign up through a specific code to join a wager race?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Almost always, yes. Wager races are typically run by an individual streamer using their own affiliate code — signing up any other way usually means your wagers won't be tracked for that particular race, even on the same casino." }
+    }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
+    --line:rgba(232,193,104,.14); --gold:#E8C168; --gold-deep:#C79A3C;
+    --cream:#F2E9D8; --muted:#9a8b6d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--cream); font-family:"Nunito Sans",system-ui,sans-serif; line-height:1.65;}
+  a{color:var(--gold)}
+  .wrap{max-width:760px; margin:0 auto; padding:32px 20px 80px;}
+  header{display:flex; align-items:center; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:10px;}
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--cream); font-family:"Baloo 2",sans-serif; font-weight:800; font-size:18px;}
+  .brand span{background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .back{color:var(--muted); font-size:13px; text-decoration:none;}
+  h1{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:30px; margin:0 0 10px; line-height:1.2;}
+  h2{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:20px; margin:34px 0 12px;}
+  h3{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:16px; color:var(--cream); margin:0 0 6px;}
+  p{color:var(--muted); font-size:15px;}
+  .lede{color:var(--cream); font-size:16px;}
+  .card{background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line); border-radius:18px; padding:26px; margin:22px 0;}
+  ul, ol{color:var(--muted); font-size:15px; padding-left:20px;}
+  li{margin-bottom:8px;}
+  table{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:6px;}
+  th{text-align:left; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; padding:8px 10px; border-bottom:1px solid var(--line);}
+  td{padding:9px 10px; border-bottom:1px solid var(--line); color:var(--cream);}
+  .example-row{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px;}
+  .example-row a{color:var(--cream); font-size:12.5px; text-decoration:none; background:var(--panel-2); border:1px solid var(--line); border-radius:999px; padding:7px 14px;}
+  .warn{background:rgba(255,122,144,.08); border:1px solid rgba(255,122,144,.25); border-radius:12px; padding:16px 18px; margin:20px 0; font-size:14px; color:var(--cream);}
+  .faq-item{margin-bottom:20px;}
+  .faq-item p{margin:0;}
+  .cta{display:block; text-align:center; text-decoration:none; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:16px; color:#3a2a08; padding:15px; border-radius:12px; margin-top:6px; background:linear-gradient(180deg,#F0D08A,var(--gold) 60%,var(--gold-deep));}
+  .disclaimer{font-size:12px; color:var(--muted); margin-top:30px;}
+  footer{margin-top:50px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="/">🦁 <span>Drop Cash</span></a>
+    <a class="back" href="/streamers">← Streamer profiles</a>
+  </header>
+
+  <h1>What Is a Wager Race?</h1>
+  <p class="lede">Not a giveaway, not a raffle — a wager race pays out based on how much you actually bet, tracked on a live leaderboard. Here's how the format really works, and the one detail most players miss.</p>
+
+  <div class="card">
+    <h2 style="margin-top:0;">The basic structure</h2>
+    <p style="margin-bottom:0;">Sign up on a casino through a streamer's specific code, then everything you wager over a set period — a week, a month, sometimes both — gets tracked on a leaderboard. When the race ends, a fixed prize pool gets split among the top-ranked wagerers, usually the top 10 to 20 spots.</p>
+  </div>
+
+  <h2>Volume matters, not results</h2>
+  <p>This is the part that surprises people: ranking is based on total wagered, not profit. Someone who bets heavily and ends up down money overall can still land above someone who wagered less but won — the leaderboard only counts turnover, never your actual win or loss.</p>
+
+  <h2>Why some games count less than others</h2>
+  <p>Casinos typically weight wagers by house edge, so grinding a nearly break-even game doesn't let you dominate a leaderboard for free. A common structure looks something like this:</p>
+  <table>
+    <thead><tr><th>Game type</th><th>Typical house edge</th><th>How much counts toward the race</th></tr></thead>
+    <tbody>
+      <tr><td>Most slots, sports betting, live casino</td><td>Above ~2%</td><td>100%</td></tr>
+      <tr><td>Lower-edge originals</td><td>~1–2%</td><td>~50%</td></tr>
+      <tr><td>Blackjack, Baccarat</td><td>Under ~1%</td><td>As low as 10%</td></tr>
+    </tbody>
+  </table>
+  <p>The exact numbers vary by casino, but the logic is consistent — the lower a game's house edge, the less it counts, since otherwise players could rack up huge volume on near-even games with minimal real risk.</p>
+  <div class="example-row">
+    <a href="/streamers/szymool-net-worth">See a real weighting breakdown →</a>
+    <a href="/streamers/syztmz-net-worth">See a $60,000 weekly race →</a>
+  </div>
+
+  <div class="warn">
+    <b>Worth remembering:</b> climbing a wager race means betting more, not betting smarter — and every wager still carries the same underlying risk it always would. A leaderboard prize doesn't offset losses from the wagering it took to get there.
+  </div>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-item">
+    <h3>Do you need to win to place well in a wager race?</h3>
+    <p>No — ranking is based on total amount wagered, not profit. Someone who bets a large volume and loses overall can still outrank someone who wagered less but won, since the leaderboard only tracks turnover.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Why do some games count less toward a wager race?</h3>
+    <p>Casinos typically weight wagers by a game's house edge. Low-edge games like Blackjack or Baccarat often count for only a fraction of the bet — sometimes as little as 10% — specifically to stop players from grinding a nearly break-even game purely to climb the leaderboard.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Do I have to sign up through a specific code to join a wager race?</h3>
+    <p>Almost always, yes. Wager races are typically run by an individual streamer using their own affiliate code — signing up any other way usually means your wagers won't be tracked for that particular race, even on the same casino.</p>
+  </div>
+
+  <h2>Related terms</h2>
+  <div class="example-row">
+    <a href="/bonus-buy-guide">What is a Bonus Buy? →</a>
+    <a href="/bonus-hunt-guide">What is a Bonus Hunt? →</a>
+  </div>
+
+  <h2>Play on Drop Cash instead</h2>
+  <p>No wagering required to climb our leaderboard — just play with your free daily keys.</p>
+  <a class="cta" href="/leaderboard">See the Drop Cash Leaderboard →</a>
+
+  <p class="disclaimer">This page is general information, not gambling advice. Drop Cash is an independent site. Gambling involves risk — please play responsibly.</p>
+
+  <footer>Drop Cash — Free casino bonuses and games, updated daily.</footer>
+</div>
+</body>
+</html>
