@@ -66,23 +66,23 @@ const NITRODROP_DEFAULT_CONFIG = {
         {
           "featured": true,
           "badge": "TOP",
-          "mark": "D",
+          "mark": "W",
+          "markColorStart": "#198dc8",
+          "markColorEnd": "#57c5db",
           "markClass": "mark-1",
-          "name": "Duel.com",
+          "name": "Winna",
           "sub": "Crypto Casino · Best Deals",
           "bonusAmount": "$8.00",
-          "bonusSuffix": "$2.00/day × 4",
-          "desc": "Register with the code, submit your username, and get your tip. **No deposit** needed. (not available) ",
-          "code": "welcomebonus2026",
-          "signupHref": "https://duel-casino-home.com/welcomebonus/",
+          "bonusSuffix": "$1.00/day × 8",
+          "desc": "Register with the link, submit your username, and get your tip. **No deposit** needed. ",
+          "code": "luckymood",
+          "codeEnabled": true,
+          "depositRequired": false,
+          "signupHref": "https://winna.com/?r=luckymood",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
-          "claimHighlighted": false,
-          "codeEnabled": true,
-          "markColorStart": "#6c3fff",
-          "markColorEnd": "#2a1a66",
-          "depositRequired": false
+          "claimHighlighted": false
         },
         {
           "featured": false,
@@ -124,6 +124,48 @@ const NITRODROP_DEFAULT_CONFIG = {
           "codeEnabled": true,
           "markColorStart": "#3748a0",
           "markColorEnd": "#1d2863",
+          "depositRequired": true
+        },
+        {
+          "featured": true,
+          "badge": "TOP",
+          "mark": "R",
+          "markColorStart": "#cc28b7",
+          "markColorEnd": "#ee7ce5",
+          "markClass": "mark-2",
+          "name": "Rakebit",
+          "sub": "Bitcoin and Crypto Casino",
+          "bonusAmount": "$5.00",
+          "bonusSuffix": "$5.00 one time",
+          "desc": "Sign up with the code, deposit a minimum of $5, and wager $30 to claim your reward. New users only.",
+          "code": "PMO4NQGA",
+          "codeEnabled": true,
+          "depositRequired": true,
+          "signupHref": "https://rakebit.com/?trtag=151969_6a95644909f86",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false
+        },
+        {
+          "featured": true,
+          "badge": "TOP",
+          "mark": "D",
+          "markClass": "mark-1",
+          "name": "Duel.com",
+          "sub": "Crypto Casino · Best Deals",
+          "bonusAmount": "$8.00",
+          "bonusSuffix": "$2.00/day × 4",
+          "desc": "Register with the code, submit your username, and get your tip. **No deposit** needed. (not available) ",
+          "code": "welcomebonus2026",
+          "signupHref": "https://duel-casino-home.com/welcomebonus/",
+          "signupText": "1. Create Account",
+          "claimText": "2. Claim My Bonus",
+          "signupHighlighted": true,
+          "claimHighlighted": false,
+          "codeEnabled": true,
+          "markColorStart": "#6c3fff",
+          "markColorEnd": "#2a1a66",
           "depositRequired": false
         },
         {
@@ -140,12 +182,12 @@ const NITRODROP_DEFAULT_CONFIG = {
           "signupHref": "https://taap.it/30free",
           "signupText": "1. Create Account",
           "claimText": "2. Claim My Bonus",
-          "signupHighlighted": false,
+          "signupHighlighted": true,
           "claimHighlighted": false,
           "codeEnabled": false,
           "markColorStart": "#41a51d",
           "markColorEnd": "#0d540e",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": false,
@@ -166,7 +208,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#2c9108",
           "markColorEnd": "#0e4d0a",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": true,
@@ -187,7 +229,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#6c3fff",
           "markColorEnd": "#2a1a66",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": false,
@@ -208,7 +250,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimHighlighted": false,
           "markColorStart": "#ffe419",
           "markColorEnd": "#675c13",
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": false,
@@ -229,7 +271,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "depositRequired": false
+          "depositRequired": true
         },
         {
           "featured": true,
@@ -250,28 +292,7 @@ const NITRODROP_DEFAULT_CONFIG = {
           "claimText": "2. Claim My Bonus",
           "signupHighlighted": true,
           "claimHighlighted": false,
-          "depositRequired": false
-        },
-        {
-          "featured": true,
-          "badge": "TOP",
-          "mark": "W",
-          "markColorStart": "#198dc8",
-          "markColorEnd": "#57c5db",
-          "markClass": "mark-1",
-          "name": "Winna",
-          "sub": "Crypto Casino · Best Deals",
-          "bonusAmount": "Free Money",
-          "bonusSuffix": "one time",
-          "desc": "Register with the link, submit your username, and get your tip. **No deposit** needed. ",
-          "code": "luckymood",
-          "codeEnabled": true,
-          "depositRequired": false,
-          "signupHref": "https://winna.com/?r=luckymood",
-          "signupText": "1. Create Account",
-          "claimText": "2. Claim My Bonus",
-          "signupHighlighted": true,
-          "claimHighlighted": false
+          "depositRequired": true
         }
       ],
       "tickerSettings": {
