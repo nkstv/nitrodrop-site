@@ -11,11 +11,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#171209">
 <title>Casino Streamers — Net Worth, Bios & Where They Play | Drop Cash</title>
-<meta name="description" content="Profiles of the biggest names in casino streaming — net worth estimates, what they play, and where to watch. New streamers added regularly.">
+<meta name="description" content="Sourced profiles of casino streamers on Kick and Twitch — net worth estimates explained honestly, follower stats, sponsors, and where to watch. Updated regularly.">
 <link rel="canonical" href="https://drop-cash.com/streamers">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Casino Streamers — Net Worth, Bios & Where They Play | Drop Cash">
-<meta property="og:description" content="Profiles of the biggest names in casino streaming — net worth estimates, what they play, and where to watch. New streamers added regularly.">
+<meta property="og:description" content="Sourced profiles of casino streamers on Kick and Twitch — net worth estimates explained honestly, follower stats, sponsors, and where to watch. Updated regularly.">
 <meta property="og:url" content="https://drop-cash.com/streamers">
 <meta property="og:image" content="https://drop-cash.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -23,7 +23,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://drop-cash.com/og-image.png">
 <meta name="twitter:title" content="Casino Streamers — Net Worth, Bios & Where They Play | Drop Cash">
-<meta name="twitter:description" content="Profiles of the biggest names in casino streaming — net worth estimates, what they play, and where to watch. New streamers added regularly.">
+<meta name="twitter:description" content="Sourced profiles of casino streamers on Kick and Twitch — net worth estimates explained honestly, follower stats, sponsors, and where to watch. Updated regularly.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -31,6 +31,34 @@
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://drop-cash.com/" },
     { "@type": "ListItem", "position": 2, "name": "Casino Streamers", "item": "https://drop-cash.com/streamers" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much do casino streamers actually make?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It varies enormously — from smaller creators with no meaningful sponsorship income to top names reportedly paid tens of millions a year by a single casino. Most of that money comes from flat-fee sponsorship deals, not from actually winning on stream." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do casino streamers gamble with their own money?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Usually not, for sponsored streamers. The bankroll shown on screen is typically funded by the casino sponsor as part of the promotional deal — the streamer gets paid whether they win or lose. Smaller, unsponsored streamers are more likely to be using real personal funds, though this is rarely independently verifiable either way." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do net worth estimates for the same streamer vary so much?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because none of them come from actual financial records. Streamers almost never disclose real income or net worth, so every published figure is a third-party guess built from visible signals — follower counts, rumored sponsorship sizes, occasional accidental on-stream reveals. Different guessers weigh those signals differently, which is why ranges can differ by 10x or more for the same person." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is casino streaming legal?",
+      "acceptedAnswer": { "@type": "Answer", "text": "That depends entirely on the streamer's location, the platform's licensing, and local gambling law — it varies by country and even by region. It's also why platforms differ sharply in their rules: Twitch restricts unlicensed gambling content, while Kick allows it, which is why most dedicated casino streamers ended up concentrated on Kick." }
+    }
   ]
 }
 </script>
@@ -62,13 +90,16 @@
     background:linear-gradient(180deg,#F6E3B4,var(--gold) 55%,var(--gold-deep));
     -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   }
-  .lede{color:var(--muted); font-size:16px; max-width:560px; margin:0 auto;}
+  .lede{color:var(--muted); font-size:16px; max-width:600px; margin:0 auto;}
 
-  h2{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:20px; margin:0 0 6px;}
+  h2{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:22px; margin:40px 0 12px;}
+  h3{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:16px; color:var(--cream); margin:0 0 6px;}
   p{color:var(--muted); font-size:15px;}
+  ul{color:var(--muted); font-size:15px; padding-left:20px;}
+  li{margin-bottom:8px;}
 
   .streamer-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin:32px 0;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin:24px 0;
   }
   .streamer-card{
     background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
@@ -84,18 +115,34 @@
     display:flex; align-items:center; justify-content:center; font-size:24px;
   }
   .streamer-name{font-family:"Baloo 2",sans-serif; font-weight:700; font-size:15px; color:var(--cream); position:relative;}
+  .streamer-followers{font-size:11px; color:var(--muted); margin-top:2px; position:relative;}
   .streamer-soon{
     display:inline-block; margin-top:10px; font-size:10.5px; font-weight:800; letter-spacing:.06em;
     text-transform:uppercase; color:var(--muted); background:var(--bg-soft); border:1px solid var(--line);
     border-radius:999px; padding:4px 12px; position:relative;
   }
 
+  .compare-wrap{overflow-x:auto; margin:20px 0; border-radius:16px; border:1px solid var(--line);}
+  table{width:100%; border-collapse:collapse; font-size:13px; min-width:640px;}
+  thead th{
+    text-align:left; color:var(--gold); font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+    padding:12px 14px; background:var(--panel-2); border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  tbody td{padding:12px 14px; border-bottom:1px solid var(--line); color:var(--cream); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:nth-child(even){background:rgba(255,255,255,.02);}
+  tbody a{color:var(--gold); text-decoration:none; font-weight:700;}
+  .nw-known{color:var(--cream);}
+  .nw-unknown{color:var(--muted); font-style:italic;}
+
   .info-card{
     background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line);
-    border-radius:18px; padding:26px; margin:26px 0;
+    border-radius:18px; padding:26px; margin:20px 0;
   }
-  .info-card ul{color:var(--muted); font-size:14.5px; padding-left:20px; margin:10px 0 0;}
-  .info-card li{margin-bottom:8px;}
+  .info-card ul{margin:10px 0 0;}
+
+  .faq-item{margin-bottom:20px;}
+  .faq-item p{margin:0;}
 
   .suggest{
     display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;
@@ -116,6 +163,10 @@
   }
   .disclaimer{font-size:12px; color:var(--muted); margin-top:30px;}
   footer{margin-top:50px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; text-align:center;}
+
+  @media(max-width:640px){
+    h1{font-size:30px;}
+  }
 </style>
 </head>
 <body>
@@ -128,48 +179,56 @@
   <div class="hero">
     <div class="hero-tag">🎥 Streamer Profiles</div>
     <h1>Casino Streamers</h1>
-    <p class="lede">Who they are, what they play, and what's publicly known about their earnings — a growing collection of profiles on the biggest names in casino streaming.</p>
+    <p class="lede">Who they are, what they play, and what's honestly known about their earnings — sourced profiles of casino streamers on Kick and Twitch, from mega-deals worth tens of millions down to smaller channels nobody's bothered to estimate yet.</p>
   </div>
 
   <div class="streamer-grid">
+    <a href="/streamers/adinross-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+      <div class="streamer-avatar">👑</div>
+      <div class="streamer-name">Adin Ross</div>
+      <div class="streamer-followers">~2.2M followers</div>
+      <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
+    </a>
     <a href="/streamers/thedoctor-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">TheDoctor</div>
-      <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
-    </a>
-    <a href="/streamers/lospollostv-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
-      <div class="streamer-avatar">🐔</div>
-      <div class="streamer-name">LosPollosTV</div>
+      <div class="streamer-followers">~99.5K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
     <a href="/streamers/syztmz-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">Syztmz</div>
+      <div class="streamer-followers">~101.8K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/demizexrosspicks-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
-      <div class="streamer-avatar">🎰</div>
-      <div class="streamer-name">DeMize x RossPicks</div>
+    <a href="/streamers/lospollostv-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+      <div class="streamer-avatar">🐔</div>
+      <div class="streamer-name">LosPollosTV</div>
+      <div class="streamer-followers">400K+ combined</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
     <a href="/streamers/kyootbot-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">💚</div>
       <div class="streamer-name">kyootbot</div>
-      <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
-    </a>
-    <a href="/streamers/alkapone-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
-      <div class="streamer-avatar">🎮</div>
-      <div class="streamer-name">ALKAPONE</div>
-      <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
-    </a>
-    <a href="/streamers/adinross-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
-      <div class="streamer-avatar">👑</div>
-      <div class="streamer-name">Adin Ross</div>
+      <div class="streamer-followers">~46K (Kick)</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
     <a href="/streamers/powerfish-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎣</div>
       <div class="streamer-name">powerfish</div>
+      <div class="streamer-followers">~26.1K followers</div>
+      <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
+    </a>
+    <a href="/streamers/demizexrosspicks-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+      <div class="streamer-avatar">🎰</div>
+      <div class="streamer-name">DeMize x RossPicks</div>
+      <div class="streamer-followers">~24.3K followers</div>
+      <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
+    </a>
+    <a href="/streamers/alkapone-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+      <div class="streamer-avatar">🎮</div>
+      <div class="streamer-name">ALKAPONE</div>
+      <div class="streamer-followers">~22.3K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
     <div class="streamer-card">
@@ -179,13 +238,101 @@
     </div>
   </div>
 
+  <h2>Quick comparison</h2>
+  <p>A fast overview before you click into any single profile — platform, main casino tie-in, and where the net worth question actually stands for each.</p>
+  <div class="compare-wrap">
+    <table>
+      <thead>
+        <tr><th>Streamer</th><th>Platform(s)</th><th>Followers</th><th>Casino / Sponsor</th><th>Net worth</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="/streamers/adinross-net-worth">Adin Ross</a></td>
+          <td>Kick</td>
+          <td>~2.2M</td>
+          <td>Rainbet</td>
+          <td class="nw-known">$24M-$60M (disputed, up to $100M claimed)</td>
+        </tr>
+        <tr>
+          <td><a href="/streamers/lospollostv-net-worth">LosPollosTV</a></td>
+          <td>Kick, YouTube</td>
+          <td>400K+ combined</td>
+          <td>Stake</td>
+          <td class="nw-known">$500K-$1.5M (estimate)</td>
+        </tr>
+        <tr>
+          <td><a href="/streamers/syztmz-net-worth">Syztmz</a></td>
+          <td>Kick</td>
+          <td>~101.8K</td>
+          <td>Stake</td>
+          <td class="nw-unknown">Unconfirmed — circulating figure unsourced</td>
+        </tr>
+        <tr>
+          <td><a href="/streamers/thedoctor-net-worth">TheDoctor</a></td>
+          <td>Kick</td>
+          <td>~99.5K</td>
+          <td>DegenCity</td>
+          <td class="nw-known">$300K-$500K (estimate)</td>
+        </tr>
+        <tr>
+          <td><a href="/streamers/kyootbot-net-worth">kyootbot</a></td>
+          <td>Kick, Twitch</td>
+          <td>~46K (Kick)</td>
+          <td>Stake</td>
+          <td class="nw-unknown">$100K-$4.37M (estimates wildly disagree)</td>
+        </tr>
+        <tr>
+          <td><a href="/streamers/powerfish-net-worth">powerfish</a></td>
+          <td>Kick</td>
+          <td>~26.1K</td>
+          <td>None found</td>
+          <td class="nw-unknown">No estimate exists</td>
+        </tr>
+        <tr>
+          <td><a href="/streamers/demizexrosspicks-net-worth">DeMize x RossPicks</a></td>
+          <td>Kick</td>
+          <td>~24.3K</td>
+          <td>Stake</td>
+          <td class="nw-unknown">No estimate exists</td>
+        </tr>
+        <tr>
+          <td><a href="/streamers/alkapone-net-worth">ALKAPONE</a></td>
+          <td>Kick, Twitch</td>
+          <td>~22.3K</td>
+          <td>None found</td>
+          <td class="nw-unknown">No estimate exists</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>How we research these profiles</h2>
   <div class="info-card">
-    <h2>What each profile covers</h2>
+    <p style="margin:0;">Every figure on this page is checked against multiple independent sources before it's published, and net worth in particular gets treated with real skepticism — because it deserves to be.</p>
     <ul>
-      <li><b>Net worth estimates</b> — sourced and clearly marked as estimates, not confirmed figures. Nobody outside a streamer's own accountant knows the real number.</li>
-      <li><b>What they're known for streaming</b> — which games, which platforms, and their general style.</li>
-      <li><b>Notable moments</b> — big wins or losses that made news or went viral, when there's real reporting behind them.</li>
+      <li><b>Net worth is always labeled as an estimate</b>, never presented as confirmed. When sources disagree — which is most of the time — we show the range rather than picking a number that flatters the article.</li>
+      <li><b>When there's no credible source, we say so.</b> Several profiles here explicitly report that no reliable net worth figure exists, instead of filling the gap with an invented number the way some sites do.</li>
+      <li><b>Self-disclosed numbers get flagged as such.</b> A streamer showing their own earnings dashboard on stream is treated differently from a guess made by an outside blog — both are noted, but they're not equally reliable.</li>
+      <li><b>Casino sponsorships and affiliate codes are reported factually</b> — which platform, what the deal structure appears to be — without assuming a streamer's on-screen bankroll is personal money unless that's actually been established.</li>
     </ul>
+  </div>
+
+  <h2>Frequently asked questions</h2>
+  <div class="faq-item">
+    <h3>How much do casino streamers actually make?</h3>
+    <p>It varies enormously — from smaller creators with no meaningful sponsorship income to top names reportedly paid tens of millions a year by a single casino. Most of that money comes from flat-fee sponsorship deals, not from actually winning on stream.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Do casino streamers gamble with their own money?</h3>
+    <p>Usually not, for sponsored streamers. The bankroll shown on screen is typically funded by the casino sponsor as part of the promotional deal — the streamer gets paid whether they win or lose. Smaller, unsponsored streamers are more likely to be using real personal funds, though this is rarely independently verifiable either way.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Why do net worth estimates for the same streamer vary so much?</h3>
+    <p>Because none of them come from actual financial records. Streamers almost never disclose real income or net worth, so every published figure is a third-party guess built from visible signals — follower counts, rumored sponsorship sizes, occasional accidental on-stream reveals. Different guessers weigh those signals differently, which is why ranges can differ by 10x or more for the same person.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Is casino streaming legal?</h3>
+    <p>That depends entirely on the streamer's location, the platform's licensing, and local gambling law — it varies by country and even by region. It's also why platforms differ sharply in their rules: Twitch restricts unlicensed gambling content, while Kick allows it, which is why most dedicated casino streamers ended up concentrated on Kick.</p>
   </div>
 
   <div class="suggest">
