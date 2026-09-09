@@ -448,77 +448,6 @@ const NITRODROP_DEFAULT_CONFIG = {
         "statParticipantsLabel": "",
         "winnersTitle": "Latest winners",
         "winnersEmpty": ""
-      },
-      "scratchTicket": {
-        "navLabel": "🎟️ Ticket",
-        "tag": "🎟️ Scratch Card",
-        "title": "Try Your Luck",
-        "subtitle": "One Free Try Per Day",
-        "usernameLabel": "Username*",
-        "usernamePlaceholder": "your username",
-        "discordNote": "Connect your Discord account to participate (1 free try per day).",
-        "triesRemainingText": "{remaining} try(ies) left today",
-        "playAgainText": "Play again",
-        "submitText": "Scratch the Card",
-        "alreadyPlayedMessage": "You've already played today. Come back tomorrow!",
-        "winMessage": "🎉 Congratulations! You won {amount}!",
-        "loseMessage": "No luck. Try again tomorrow!",
-        "discordButtonText": "Claim on Discord",
-        "cooldownMessage": "Come back in {time} ⏳",
-        "discordRequiredMessage": "Connect to Discord before continuing.",
-        "genericErrorMessage": "An error has occurred, please try again.",
-        "networkErrorMessage": "Connection error, please try again.",
-        "discordAccountLabel": "DISCORD*",
-        "discordConnectText": "🎮 Log in with Discord",
-        "resultTitle": "Ticket"
-      },
-      "slotMachine": {
-        "navLabel": "🎰 Slot",
-        "tag": "🎰 Slot Machine",
-        "title": "Try your luck",
-        "subtitle": "One free spin per day.",
-        "usernameLabel": "Username*",
-        "usernamePlaceholder": "your username",
-        "discordNote": "Connect your Discord account to participate (1 free spin per day).",
-        "triesRemainingText": "{remaining} spin(s) left today",
-        "playAgainText": "Play again",
-        "spinText": "Spin",
-        "spinningText": "It's rolling...",
-        "alreadyPlayedMessage": "You've already played today, come back tomorrow!",
-        "cooldownMessage": "⏳ Come back in {time}",
-        "discordRequiredMessage": "Connect to Discord before continuing.",
-        "genericErrorMessage": "An error has occurred, please try again.",
-        "networkErrorMessage": "Connection error, please try again.",
-        "winMessage": "🎉 Congratulations! You won {amount}!",
-        "loseMessage": "No luck. Try again tomorrow!",
-        "discordButtonText": "Claim on Discord",
-        "discordAccountLabel": "Discord*",
-        "discordConnectText": "🎮 Log in with Discord",
-        "resultTitle": "Result"
-      },
-      "wheelGame": {
-        "navLabel": "🎡 Wheel",
-        "tag": "Wheel of Fortune",
-        "title": "Spin the wheel",
-        "subtitle": "Try your luck every day.",
-        "usernameLabel": "Username*",
-        "usernamePlaceholder": "your username",
-        "discordNote": "Discord connection required to participate.",
-        "discordAccountLabel": "Discord",
-        "discordConnectText": "🎮 Connect with Discord",
-        "resultTitle": "Result",
-        "spinText": "Spin ",
-        "spinningText": "It's rolling...",
-        "alreadyPlayedMessage": "You've already played today, come back tomorrow!",
-        "cooldownMessage": "⏳ Come back in {time}",
-        "triesRemainingText": "{remaining} Trial(s) remaining today",
-        "playAgainText": "Spin",
-        "discordRequiredMessage": "Connect to Discord before continuing.",
-        "genericErrorMessage": "An error has occurred, please try again.",
-        "networkErrorMessage": "Connection error, please try again.",
-        "winMessage": "🎉 Congratulations! You won {amount}!",
-        "loseMessage": "No luck, come back tomorrow!",
-        "discordButtonText": "Claim on Discord"
       }
     }
   },
@@ -542,17 +471,8 @@ const NITRODROP_DEFAULT_CONFIG = {
     "linkUrl": "https://discord.gg/7h7QHXdZeK"
   },
   "telegramPosition": "below",
-  "scratchTicket": {
-    "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
-  },
-  "slotMachine": {
-    "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
-  },
   "vault": {
     "discordNewRoundMessage": "🔐 New Vault 🚨\n\nClaim **{amount} Keys**!  with Secret Code : ||{code}||\n\n👉 Here: https://drop-cash.com/vault \n\nGood luck 🍀 "
-  },
-  "wheelGame": {
-    "discordClaimLink": "https://discord.gg/7h7QHXdZeK"
   }
 };
 
@@ -767,4 +687,133 @@ function connectDiscord(){
   try{ sessionStorage.setItem('nitrodrop_oauth_return', location.href); }catch(e){}
   window.location.href = authUrl;
 }
+
+// Met à jour l'affichage du solde de clés partout où il apparaît sur la page
+// (sidebar desktop + tiroir mobile + éventuel solde spécifique au jeu). Fait
+// ses propres recherches d'éléments — safe même si un de ces éléments
+// n'existe pas sur telle ou telle page (ex: pas de #balance sur certaines).
+function setBalance(v){
+  const balanceEl = document.getElementById('balance');
+  if (balanceEl) balanceEl.textContent = v;
+  const balanceSidebarEl = document.getElementById('balance-sidebar');
+  if (balanceSidebarEl) balanceSidebarEl.textContent = v;
+  const drawerBal = document.getElementById('balance-drawer');
+  if (drawerBal) drawerBal.textContent = v;
+}
+
+// =====================================================================
+// Popup de conversion clés -> $ (100 clés = 1$, retrait manuel dès 100$).
+// Identique mot pour mot sur mines/blackjack/dice/slot avant cette
+// centralisation — la logique la plus critique du site puisqu'elle touche
+// à de l'argent réel, donc désormais corrigée UNE seule fois si besoin.
+// Calcule elle-même workerBase (via la config publiée) plutôt que de
+// dépendre d'une variable de la page — reste correcte peu importe où et
+// quand ce fichier est chargé.
+// =====================================================================
+document.addEventListener('DOMContentLoaded', function(){
+  const convertOverlay = document.getElementById('convert-modal-overlay');
+  if (!convertOverlay) return; // page sans popup de conversion : rien à faire
+
+  const cfg = nitrodropLoadPublishedConfig();
+  const relayUrl = (cfg.telegramRelay && cfg.telegramRelay.url) || '';
+  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+
+  async function openConvertModal(){
+    const discordId = getSharedDiscordId();
+    if (!discordId){ connectDiscord(); return; }
+    convertOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('convert-status').style.display = 'none';
+    document.getElementById('withdraw-status').style.display = 'none';
+    await refreshConvertModal();
+  }
+  function closeConvertModal(){
+    convertOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  window.openConvertModal = openConvertModal;
+  window.closeConvertModal = closeConvertModal;
+  convertOverlay.addEventListener('click', (e) => { if (e.target === convertOverlay) closeConvertModal(); });
+
+  async function refreshConvertModal(){
+    const discordId = getSharedDiscordId();
+    if (!discordId || !workerBase) return;
+
+    const keys = parseFloat((document.getElementById('balance-sidebar').textContent || '0').replace(/,/g, '')) || 0;
+    document.getElementById('convert-keys-balance').textContent = keys.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    document.getElementById('convert-keys-preview').textContent = (keys / 100).toFixed(2);
+    document.getElementById('convert-keys-btn').disabled = keys <= 0;
+
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/cash/status?discordId=${encodeURIComponent(discordId)}`);
+      const data = await resp.json();
+      const balance = data.balance || 0;
+      document.getElementById('convert-cash-balance').textContent = balance.toFixed(2);
+      const withdrawBtn = document.getElementById('convert-withdraw-btn');
+      if (data.pendingWithdrawal){
+        withdrawBtn.disabled = true;
+        withdrawBtn.textContent = 'Withdrawal request pending';
+      } else if (balance >= 100){
+        withdrawBtn.disabled = false;
+        withdrawBtn.textContent = `Withdraw $${balance.toFixed(2)}`;
+      } else {
+        withdrawBtn.disabled = true;
+        withdrawBtn.textContent = `Withdraw (available at $100 — you have $${balance.toFixed(2)})`;
+      }
+    }catch(e){ /* pas bloquant, le solde $ reste juste à 0 affiché */ }
+  }
+
+  document.getElementById('convert-keys-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('convert-keys-btn');
+    const status = document.getElementById('convert-status');
+    btn.disabled = true;
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/keys/convert`, { method: 'POST' });
+      const data = await resp.json();
+      if (data.ok){
+        status.textContent = `✅ Converted 🔑${Number(data.keysConverted).toLocaleString('en-US', { maximumFractionDigits: 2 })} into $${data.dollarsCredited.toFixed(2)}.`;
+        status.style.color = '#5FD68B';
+        setBalance('0');
+      } else {
+        status.textContent = data.reason === 'no_keys' ? "You don't have any keys to convert." : 'Could not convert right now — please try again later.';
+        status.style.color = '#e08a8a';
+      }
+      status.style.display = '';
+      await refreshConvertModal();
+    }catch(e){
+      status.textContent = 'Network error — please try again later.';
+      status.style.color = '#e08a8a';
+      status.style.display = '';
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('convert-withdraw-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('convert-withdraw-btn');
+    const status = document.getElementById('withdraw-status');
+    btn.disabled = true;
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/cash/withdraw`, { method: 'POST' });
+      const data = await resp.json();
+      if (data.ok){
+        status.textContent = "✅ Withdrawal request sent — we'll process it manually and reach out via Discord.";
+        status.style.color = '#5FD68B';
+        btn.textContent = 'Withdrawal request pending';
+      } else {
+        status.textContent = data.reason === 'already_pending'
+          ? 'You already have a pending withdrawal request.'
+          : 'Could not submit your request — please try again later.';
+        status.style.color = '#e08a8a';
+        btn.disabled = false;
+      }
+      status.style.display = '';
+    }catch(e){
+      status.textContent = 'Network error — please try again later.';
+      status.style.color = '#e08a8a';
+      status.style.display = '';
+      btn.disabled = false;
+    }
+  });
+});
 
