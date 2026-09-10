@@ -1085,9 +1085,9 @@ document.getElementById('customAlertOkBtn').addEventListener('click', () => {
         <div class="offer-btns">
           <a href="${escapeHtml(offer.signupHref)}" target="_blank" rel="noopener" class="offer-cta${offer.signupHighlighted ? ' accent' : ''}">${escapeHtml(offer.signupText)}</a>
           ${(bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].reached)
-            ? `<span class="offer-cta" style="opacity:.45; cursor:not-allowed; pointer-events:none;" title="You've already reached the submission limit for this offer.">Bonus limit reached</span>`
+            ? `<span class="offer-cta" style="opacity:.55; cursor:not-allowed; pointer-events:none;" title="You've already reached the submission limit for this offer.">Bonus limit reached</span>`
             : (bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].onCooldown)
-              ? `<span class="offer-cta" style="opacity:.45; cursor:not-allowed; pointer-events:none;" title="You already requested this bonus recently — one request per offer every 24h.">Try again in ${bonusLimitStatus[offer.name].hoursRemaining}h</span>`
+              ? `<span class="offer-cta" style="opacity:.55; cursor:not-allowed; pointer-events:none;" title="You already requested this bonus recently — one request per offer every 24h.">Try again in ${bonusLimitStatus[offer.name].hoursRemaining}h</span>`
               : `<a href="#" class="offer-cta${offer.claimHighlighted ? ' accent' : ''}" data-claim-idx="${idx}">${escapeHtml(offer.claimText)}</a>`}
         </div>
         ${(bonusLimitStatus[offer.name] && bonusLimitStatus[offer.name].limit > 0)
