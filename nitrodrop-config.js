@@ -817,3 +817,226 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 });
 
+
+// =====================================================================
+// ROUE QUOTIDIENNE — bouton flottant en bas à droite, visible sur toutes
+// les pages qui chargent ce fichier. Disponible une fois par jour à partir
+// de 15h heure de Paris (le calcul du fuseau et le tirage au sort sont
+// toujours faits côté serveur — ce fichier ne fait qu'afficher/animer).
+// Tout le HTML/CSS est injecté ici en JS plutôt que dupliqué sur chaque
+// page HTML : un seul endroit à maintenir, garantie de cohérence partout.
+// =====================================================================
+document.addEventListener('DOMContentLoaded', function(){
+  const cfg = nitrodropLoadPublishedConfig();
+  const relayUrl = (cfg.telegramRelay && cfg.telegramRelay.url) || '';
+  const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+  if (!workerBase) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .wheel-fab{
+      position:fixed; bottom:22px; right:22px; z-index:9998;
+      width:60px; height:60px; border-radius:50%; display:none; align-items:center; justify-content:center;
+      background:linear-gradient(180deg,#F0D08A,#E8C168 60%,#C79A3C);
+      border:2px solid rgba(255,255,255,.25); cursor:pointer; font-size:28px;
+      box-shadow:0 4px 18px rgba(0,0,0,.4), 0 0 0 0 rgba(232,193,104,.6);
+      animation:wheelFabPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes wheelFabPulse{
+      0%{box-shadow:0 4px 18px rgba(0,0,0,.4), 0 0 0 0 rgba(232,193,104,.55);}
+      70%{box-shadow:0 4px 18px rgba(0,0,0,.4), 0 0 0 14px rgba(232,193,104,0);}
+      100%{box-shadow:0 4px 18px rgba(0,0,0,.4), 0 0 0 0 rgba(232,193,104,0);}
+    }
+    .wheel-modal-overlay{
+      position:fixed; inset:0; background:rgba(10,7,3,.72); z-index:9999;
+      display:none; align-items:center; justify-content:center; padding:20px;
+    }
+    .wheel-modal-overlay.active{ display:flex; }
+    .wheel-modal{
+      background:linear-gradient(180deg,#2a2115,#221a10); border:1px solid rgba(232,193,104,.22);
+      border-radius:22px; padding:28px 24px 26px; max-width:360px; width:100%; text-align:center;
+      font-family:"Nunito Sans",system-ui,sans-serif; color:#F2E9D8; position:relative;
+    }
+    .wheel-modal-close{
+      position:absolute; top:14px; right:16px; background:none; border:none; color:#9a8b6d;
+      font-size:20px; cursor:pointer; line-height:1;
+    }
+    .wheel-modal h3{
+      font-family:"Baloo 2",sans-serif; font-weight:800; font-size:19px; margin:0 0 4px; color:#F2E9D8;
+    }
+    .wheel-modal .wheel-sub{ font-size:12.5px; color:#9a8b6d; margin:0 0 20px; }
+    .wheel-visual-wrap{ position:relative; width:220px; height:220px; margin:0 auto 20px; }
+    .wheel-pointer{
+      position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+      width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent;
+      border-top:18px solid #E8C168; z-index:2; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));
+    }
+    .wheel-disc{
+      width:220px; height:220px; border-radius:50%; position:relative;
+      background:conic-gradient(#C79A3C 0deg 216deg, #E8C168 216deg 324deg, #F6E3B4 324deg 360deg);
+      border:4px solid rgba(255,255,255,.15); box-shadow:0 0 0 6px rgba(0,0,0,.25) inset, 0 6px 20px rgba(0,0,0,.4);
+      transition:transform 3.6s cubic-bezier(.17,.67,.16,1);
+    }
+    .wheel-disc .wl{
+      position:absolute; top:50%; left:50%; font-family:"Baloo 2",sans-serif; font-weight:800;
+      font-size:14px; color:#3a2a08; white-space:nowrap;
+    }
+    .wheel-center-dot{
+      position:absolute; top:50%; left:50%; width:18px; height:18px; border-radius:50%;
+      background:#171209; border:2px solid rgba(232,193,104,.5); transform:translate(-50%,-50%); z-index:2;
+    }
+    .wheel-spin-btn{
+      width:100%; padding:13px; border:none; border-radius:12px; font-family:"Baloo 2",sans-serif;
+      font-weight:800; font-size:15px; color:#3a2a08; cursor:pointer;
+      background:linear-gradient(180deg,#F0D08A,#E8C168 60%,#C79A3C); transition:.15s;
+    }
+    .wheel-spin-btn:disabled{ opacity:.5; cursor:default; }
+    .wheel-result{
+      margin-top:14px; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:16px;
+      min-height:22px; color:#5FD68B;
+    }
+    .wheel-odds{ margin-top:16px; font-size:11px; color:#9a8b6d; line-height:1.7; }
+  `;
+  document.head.appendChild(style);
+
+  const fab = document.createElement('button');
+  fab.className = 'wheel-fab';
+  fab.id = 'wheel-fab';
+  fab.title = 'Daily free spin';
+  fab.innerHTML = '🎡';
+  document.body.appendChild(fab);
+
+  const overlay = document.createElement('div');
+  overlay.className = 'wheel-modal-overlay';
+  overlay.id = 'wheel-modal-overlay';
+  overlay.innerHTML = `
+    <div class="wheel-modal">
+      <button class="wheel-modal-close" id="wheel-modal-close">✕</button>
+      <h3>Daily Free Spin 🎡</h3>
+      <p class="wheel-sub">One free spin per day — guaranteed keys, no deposit needed.</p>
+      <div class="wheel-visual-wrap">
+        <div class="wheel-pointer"></div>
+        <div class="wheel-disc" id="wheel-disc">
+          <div class="wl" style="transform:translate(-50%,-50%) rotate(108deg) translateY(-78px) rotate(-108deg);">🔑 2</div>
+          <div class="wl" style="transform:translate(-50%,-50%) rotate(270deg) translateY(-78px) rotate(-270deg);">🔑 5</div>
+          <div class="wl" style="transform:translate(-50%,-50%) rotate(342deg) translateY(-78px) rotate(-342deg); font-size:12px;">🔑 10</div>
+        </div>
+        <div class="wheel-center-dot"></div>
+      </div>
+      <button class="wheel-spin-btn" id="wheel-spin-btn">Spin Now</button>
+      <div class="wheel-result" id="wheel-result"></div>
+      <div class="wheel-odds">60% chance · 🔑2 &nbsp;·&nbsp; 30% chance · 🔑5 &nbsp;·&nbsp; 10% chance · 🔑10</div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const disc = document.getElementById('wheel-disc');
+  const spinBtn = document.getElementById('wheel-spin-btn');
+  const resultEl = document.getElementById('wheel-result');
+  let currentRotation = 0;
+  let spinning = false;
+
+  function openWheelModal(){
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    resultEl.textContent = '';
+    spinBtn.disabled = false;
+    spinBtn.textContent = 'Spin Now';
+  }
+  function closeWheelModal(){
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('wheel-modal-close').addEventListener('click', closeWheelModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeWheelModal(); });
+
+  // Angle du CENTRE de chaque segment dans le repère de la roue (0° = haut,
+  // sens horaire), voir le conic-gradient ci-dessus : 2 clés = 0-216°,
+  // 5 clés = 216-324°, 10 clés = 324-360°.
+  const SEGMENT_CENTER = { 2: 108, 5: 270, 10: 342 };
+
+  async function doSpin(){
+    if (spinning) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    spinBtn.textContent = 'Spinning…';
+    resultEl.textContent = '';
+
+    let data;
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/wheel/spin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: getSharedUsername(), avatarUrl: getSharedAvatarUrl() }),
+      });
+      data = await resp.json();
+    }catch(e){
+      resultEl.style.color = '#e08a8a';
+      resultEl.textContent = 'Network error — please try again later.';
+      spinBtn.disabled = false;
+      spinBtn.textContent = 'Spin Now';
+      spinning = false;
+      return;
+    }
+
+    if (!data.ok){
+      const messages = {
+        already_spun: "You've already spun today — come back tomorrow!",
+        too_early: 'The daily spin unlocks at 3 PM (Paris time).',
+        banned: 'This account is not eligible for rewards.',
+        not_authenticated: 'Please log in with Discord first.',
+      };
+      resultEl.style.color = '#e08a8a';
+      resultEl.textContent = messages[data.reason] || 'Could not spin right now — please try again later.';
+      spinBtn.disabled = true;
+      spinBtn.textContent = 'Spin Now';
+      spinning = false;
+      if (data.reason === 'already_spun' || data.reason === 'banned') fab.style.display = 'none';
+      return;
+    }
+
+    const segCenter = SEGMENT_CENTER[data.rewardKeys] || 108;
+    const extraSpins = 5;
+    currentRotation += extraSpins * 360 + ((360 - segCenter) - (currentRotation % 360) + 360) % 360;
+    disc.style.transform = `rotate(${currentRotation}deg)`;
+
+    setTimeout(() => {
+      resultEl.style.color = '#5FD68B';
+      resultEl.textContent = `🎉 You won ${data.rewardKeys} keys!`;
+      if (data.keys !== null && data.keys !== undefined) setBalance(data.keys);
+      spinBtn.disabled = true;
+      spinBtn.textContent = 'Come back tomorrow';
+      spinning = false;
+      fab.style.display = 'none';
+    }, 3700);
+  }
+  spinBtn.addEventListener('click', doSpin);
+
+  fab.addEventListener('click', () => {
+    const discordId = getSharedDiscordId();
+    if (!discordId){ connectDiscord(); return; }
+    openWheelModal();
+  });
+
+  function parisHourNow(){
+    const h = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hour12: false }).format(new Date());
+    return parseInt(h, 10);
+  }
+
+  async function refreshWheelVisibility(){
+    if (parisHourNow() < 15){ fab.style.display = 'none'; return; }
+    const discordId = getSharedDiscordId();
+    if (!discordId){ fab.style.display = 'flex'; return; } // visible en teaser, ouvre le login Discord au clic
+    try{
+      const resp = await nitrodropAuthFetch(`${workerBase}/wheel/status`);
+      const data = await resp.json();
+      fab.style.display = (data.ok && data.available) ? 'flex' : 'none';
+    }catch(e){
+      fab.style.display = 'none';
+    }
+  }
+  refreshWheelVisibility();
+  // Reviens vérifier périodiquement (utile si la page reste ouverte au
+  // moment où 15h arrive, ou si le solde du jour change dans un autre onglet)
+  setInterval(refreshWheelVisibility, 5 * 60 * 1000);
+});
