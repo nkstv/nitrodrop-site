@@ -125,7 +125,7 @@
     position:absolute; top:12px; right:12px; display:flex; align-items:center; gap:5px;
     font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:#ff5a6e;
     background:rgba(255,90,110,.12); border:1px solid rgba(255,90,110,.35); border-radius:999px;
-    padding:3px 9px; z-index:1;
+    padding:3px 9px; z-index:1; cursor:pointer;
   }
   .streamer-live-dot{
     width:6px; height:6px; border-radius:50%; background:#ff5a6e;
@@ -519,6 +519,16 @@
           const badge = document.createElement('div');
           badge.className = 'streamer-live-badge';
           badge.innerHTML = '<span class="streamer-live-dot"></span>Live';
+          badge.title = 'Watch live on Kick';
+          // La carte entière est déjà un lien vers la fiche — on ne peut pas
+          // mettre un <a> imbriqué dedans (HTML invalide, comportement peu
+          // fiable). On intercepte donc le clic sur le badge lui-même pour
+          // ouvrir la chaîne Kick à la place, sans déclencher le lien parent.
+          badge.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.open(`https://kick.com/${encodeURIComponent(card.dataset.kick)}`, '_blank', 'noopener');
+          });
           card.appendChild(badge);
         }
       });
