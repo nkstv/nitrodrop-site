@@ -43,12 +43,14 @@
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"></noscript>
 <style>
   :root{
     --bg:#171209; --bg-soft:#1d1710; --panel:#221a10; --panel-2:#2a2115; --panel-3:#332818;
     --line:rgba(232,193,104,.10); --gold:#E8C168; --gold-deep:#C79A3C;
-    --cream:#F2E9D8; --muted:#9a8b6d; --muted-2:#6f6350;
+    --cream:#F2E9D8; --muted:#9a8b6d; --muted-2:#9b8f7c;
     --red:#F26D6D; --green:#5FD68B;
     --r-l:20px; --r-m:14px;
     --gap:14px; --chrome:300px; --side:238px;
@@ -192,7 +194,11 @@
   .offers-title{font-family:"Baloo 2"; font-weight:800; font-size:27px; color:var(--cream); line-height:1.25;}
   .offers-desc{color:var(--muted); font-size:14px; line-height:1.65; margin-top:10px;}
 
-  .offers-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:18px;}
+  /* Hauteur réservée pour éviter un décalage de mise en page (CLS) quand la
+     grille se remplit en JS après le chargement — calculée pour 11 offres (config anglaise par défaut).
+     À ajuster si le nombre d'offres change nettement (voir nitrodrop-config.js).
+     align-content:start évite que l'espace réservé n'étire les cartes elles-mêmes. */
+  .offers-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; min-height:1454px; align-content:start;}
   .offer-card{
     background:linear-gradient(180deg,var(--panel-2),var(--panel));
     border:1px solid var(--line); border-radius:var(--r-l); padding:22px 20px 20px;
@@ -252,9 +258,9 @@
     border-color:transparent; box-shadow:0 4px 12px rgba(232,193,104,.2);
   }
   .offer-cta.accent:hover{filter:brightness(1.06);}
-  @media(max-width:1100px){ .offers-grid{grid-template-columns:repeat(2, 1fr);} }
+  @media(max-width:1100px){ .offers-grid{grid-template-columns:repeat(2, 1fr); min-height:2190px;} }
   @media(max-width:860px){
-    .offers-grid{grid-template-columns:1fr;}
+    .offers-grid{grid-template-columns:1fr; min-height:4030px;}
     .offers-title{font-size:22px;}
   }
 
@@ -602,7 +608,7 @@
   </aside>
 
   <!-- ============ CONTENU ============ -->
-  <div class="main">
+  <main class="main">
     <div class="topbar">
       <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span><span></span></button>
       <h1>Bonuses</h1>
@@ -658,7 +664,7 @@
       <a href="/streamers" style="color:var(--muted); font-size:13px; text-decoration:underline;">🎥 Casino Streamer Profiles →</a>
     </div>
 
-  </div>
+  </main>
 </div>
 
 <div class="scrim" id="scrim"></div>
