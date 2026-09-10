@@ -121,6 +121,19 @@
     text-transform:uppercase; color:var(--muted); background:var(--bg-soft); border:1px solid var(--line);
     border-radius:999px; padding:4px 12px; position:relative;
   }
+  .streamer-live-badge{
+    position:absolute; top:12px; right:12px; display:flex; align-items:center; gap:5px;
+    font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:#ff5a6e;
+    background:rgba(255,90,110,.12); border:1px solid rgba(255,90,110,.35); border-radius:999px;
+    padding:3px 9px; z-index:1;
+  }
+  .streamer-live-dot{
+    width:6px; height:6px; border-radius:50%; background:#ff5a6e;
+    animation:streamerLivePulse 1.4s ease-in-out infinite;
+  }
+  @keyframes streamerLivePulse{
+    0%,100%{opacity:1;} 50%{opacity:.35;}
+  }
 
   .compare-wrap{overflow-x:auto; margin:20px 0; border-radius:16px; border:1px solid var(--line);}
   table{width:100%; border-collapse:collapse; font-size:13px; min-width:640px;}
@@ -183,103 +196,103 @@
   </div>
 
   <div class="streamer-grid">
-    <a href="/streamers/adinross-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/adinross-net-worth" class="streamer-card" data-kick="adinross" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">👑</div>
       <div class="streamer-name">Adin Ross</div>
       <div class="streamer-followers">~2.2M followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/thedoctor-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/thedoctor-net-worth" class="streamer-card" data-kick="thedoctor" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">TheDoctor</div>
       <div class="streamer-followers">~99.5K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/syztmz-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/syztmz-net-worth" class="streamer-card" data-kick="syztmz" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">Syztmz</div>
       <div class="streamer-followers">~101.8K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/lospollostv-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/lospollostv-net-worth" class="streamer-card" data-kick="lospollostv" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🐔</div>
       <div class="streamer-name">LosPollosTV</div>
       <div class="streamer-followers">400K+ combined</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/kyootbot-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/kyootbot-net-worth" class="streamer-card" data-kick="kyootbot" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">💚</div>
       <div class="streamer-name">kyootbot</div>
       <div class="streamer-followers">~46K (Kick)</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/powerfish-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/powerfish-net-worth" class="streamer-card" data-kick="powerfish" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎣</div>
       <div class="streamer-name">powerfish</div>
       <div class="streamer-followers">~26.1K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/demizexrosspicks-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/demizexrosspicks-net-worth" class="streamer-card" data-kick="demize" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">DeMize x RossPicks</div>
       <div class="streamer-followers">~24.3K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/alkapone-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/alkapone-net-worth" class="streamer-card" data-kick="alkapone" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎮</div>
       <div class="streamer-name">ALKAPONE</div>
       <div class="streamer-followers">~22.3K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/kaysan-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/kaysan-net-worth" class="streamer-card" data-kick="kaysan" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎮</div>
       <div class="streamer-name">Kaysan</div>
       <div class="streamer-followers">~28.3K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/szymool-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/szymool-net-worth" class="streamer-card" data-kick="szymool" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🇵🇱</div>
       <div class="streamer-name">szymool</div>
       <div class="streamer-followers">~206K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/frankdimes-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/frankdimes-net-worth" class="streamer-card" data-kick="frankdimes" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🕶️</div>
       <div class="streamer-name">FrankDimes</div>
       <div class="streamer-followers">~63K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/lordtreputin-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/lordtreputin-net-worth" class="streamer-card" data-kick="lord_treputin2" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">Lord Treputin</div>
       <div class="streamer-followers">~65.1K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/hstikkytokky-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/hstikkytokky-net-worth" class="streamer-card" data-kick="hstikkytokky" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">hstikkytokky</div>
       <div class="streamer-followers">~286.3K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/haddzy-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/haddzy-net-worth" class="streamer-card" data-kick="haddzy" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">Haddzy</div>
       <div class="streamer-followers">~37.5K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/chillingog-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/chillingog-net-worth" class="streamer-card" data-kick="chilling_og" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🌙</div>
       <div class="streamer-name">chilling_og</div>
       <div class="streamer-followers">~30.7K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/xposed-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/xposed-net-worth" class="streamer-card" data-kick="xposed" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎰</div>
       <div class="streamer-name">Xposed</div>
       <div class="streamer-followers">~184.5K followers</div>
       <div class="streamer-soon" style="background:rgba(232,193,104,.12); color:var(--gold); border-color:var(--line);">Net worth & bio →</div>
     </a>
-    <a href="/streamers/ac7ionman-net-worth" class="streamer-card" style="text-decoration:none; display:block;">
+    <a href="/streamers/ac7ionman-net-worth" class="streamer-card" data-kick="ac7ionman" style="text-decoration:none; display:block;">
       <div class="streamer-avatar">🎮</div>
       <div class="streamer-name">Ac7ionMan</div>
       <div class="streamer-followers">~231.8K followers</div>
@@ -478,5 +491,41 @@
 
   <footer>Drop Cash — Free casino bonuses and games, updated daily.</footer>
 </div>
+<script src="nitrodrop-config.js?v=20260904a"></script>
+<script>
+  // Vérifie côté serveur (via notre worker, jamais Kick directement depuis
+  // le navigateur) quels streamers de cette page sont actuellement en
+  // direct, puis pose un badge "LIVE" discret sur les cartes concernées.
+  // Best-effort : si l'appel échoue pour une raison ou une autre (Kick
+  // bloque la requête, le worker est indisponible...), la page reste
+  // parfaitement normale, juste sans badge — aucune erreur visible.
+  (async function(){
+    try {
+      const cfg = nitrodropLoadPublishedConfig();
+      const relayUrl = (cfg.telegramRelay && cfg.telegramRelay.url) || '';
+      const workerBase = relayUrl.replace(/\/notify\/?$/, '');
+      if (!workerBase) return;
+
+      const cards = Array.from(document.querySelectorAll('.streamer-card[data-kick]'));
+      const channels = cards.map(c => c.dataset.kick).join(',');
+      if (!channels) return;
+
+      const resp = await fetch(`${workerBase}/kick/live-status?channels=${encodeURIComponent(channels)}`);
+      const data = await resp.json();
+      if (!data || !data.live) return;
+
+      cards.forEach(card => {
+        if (data.live[card.dataset.kick] === true) {
+          const badge = document.createElement('div');
+          badge.className = 'streamer-live-badge';
+          badge.innerHTML = '<span class="streamer-live-dot"></span>Live';
+          card.appendChild(badge);
+        }
+      });
+    } catch (e) {
+      // silencieux : la page fonctionne très bien sans badges live
+    }
+  })();
+</script>
 </body>
 </html>
