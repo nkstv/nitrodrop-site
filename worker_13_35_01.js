@@ -112,7 +112,7 @@ export default {
         }
       }));
       return new Response(JSON.stringify({ ok: true, live }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=600' },
       });
     }
 
